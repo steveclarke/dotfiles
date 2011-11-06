@@ -1,5 +1,35 @@
-#!/bin/sh
+#!/bin/bash
+# TODO: convert this to rake file
+
+## Setup bash
 ln -s ~/dotfiles/bash/bash_profile.symlink ~/.bash_profile
-ln -s ~/dotfiles/bin ~/bin
+
+## Setup personal bin dir
+if [ -d ~/bin ];
+  then
+    echo "Skipping ~/bin because directory already exists."
+  else
+    if [ -L ~/bin ];
+      then
+        echo "Skipping ~/bin because symlink already exists."
+      else
+      ln -s ~/dotfiles/bin.symlink ~/bin
+      echo "Created symlink for ~/bin"
+    fi
+fi
+
+## Setup Vim
 ln -s ~/dotfiles/vim/vimrc.symlink ~/.vimrc
-ln -s ~/dotfiles/vim/vim.symlink ~/.vim
+if [ -d ~/.vim ];
+  then
+    echo "Skipping ~/.vim because directory already exists."
+  else
+    if [ -L ~/.vim ];
+      then
+        echo "Skipping ~/.vim because symlink already exists."
+      else
+      ln -s ~/dotfiles/vim/vim.symlink ~/.vim
+      echo "Created symlink for ~/.vim"
+    fi
+fi
+
