@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+require 'net/http'
+require 'rexml/document'
+
+class Lipsum
+  def initialize
+    @host = "lipsum.com"
+    @path = "/feed/xml?"
+  end
+  
+  def bytes(amount = 1, start = false)
+    generate("bytes", amount, start)
+  end
+  
+  def words(amount = 1, start = false)
+    generate("words", amount, start)
+  end
+  
+  def paras(amount = 1, start = false)
+    generate("paras", amount, start)
+  end
+  
+  def lists(amount = 1, start = false)
+    generate("lists", amount, start)
+  end
+  
+  private
+  def generate(what, amount, start)
+    if start
+      start = 'yes'
+    else
+      start = 'no'
+    end
+    path = @path + "what=#{what}" + "&amount=#{amount}" + "&start=#{start}"
+    response = Net::HTTP.get_response(@host, path)
+    if response.message == "OK"
+      doc = REXML::Document.new(response.body)
+      lipsum = doc.elements["feed/lipsum"].text
+    end
+    lipsum
+  end
+end
+
+lip = Lipsum.new
+# puts lip.bytes(10)
+# puts lip.words(10)
+# puts lip.paras(2, true)
+puts lip.words(10, false)

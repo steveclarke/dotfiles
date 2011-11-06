@@ -1,0 +1,79 @@
+#!/opt/local/bin/ruby
+
+require 'net/http'
+require 'optparse'
+require 'ostruct'
+require 'win32/clipboard'
+
+class Cli
+	PasteUrl    = 'http://rafb.net/paste/paste.php'
+	ShortenUrl  = 'http://www.rubyurl.com/rubyurl/create'
+	Languages   = %w[ C89 C C++ C# Java Pascal Perl PHP PL/I Python Ruby SQL VB Plain\ Text ]
+	TabSettings = %w[ No 2 3 4 5 6 7 8 ]
+
+	def initialize
+		defaults = {:lang => 'Plain Text',
+			          :nick => 'Anon',
+								:desc => '',
+								:tabs => 'No',
+		            :shortenurl => false}
+		@options = OpenStruct.new(defaults)
+
+		@parser = OptionParser.new do |opts|
+			opts.banner += " [file ...]"
+			opts.separator ""
+			opts.on("-l", "--language LANGUAGE", "Specify the language of the code snippet") do |lang|
+				@options.lang = Languages.find { |l| lang.downcase == l.downcase } || raise(OptionParser::InvalidArgument, lang)
+			end
+			opts.on("-n", "--nickname NICKNAME", String, "Specify a nickname") { |nick| @options.nick = nick }
+			opts.on("-d", "--description DESCRIPTION", String, "Specify a description of the text") { |desc| @options.desc = desc }
+			opts.on("-t", "--tabs TABS", TabSettings, "Specify tab handling") { |tabs| @options.tabs = tabs }
+			opts.on("-s", "--shorten-url", "Shorten URL using rubyurl.com") { |s| @options.shortenurl = true }
+			opts.on("-h", "--help", "Show this message") { |h| puts opts; exit }
+			opts.separator ""
+			opts.separator "Languages: (case insensitive)"
+			opts.separator Languages.map {|x| x.downcase}.sort.join(',')
+		end
+		
+		begin
+			@parser.parse!(ARGV)
+		rescue OptionParser::ParseError => e
+			STDERR.puts e, @parser
+			exit
+		end
+	end
+
+	def paste(text)
+		url = URI.parse(PasteUrl)
+		response = Net::HTTP.post_form(url, {'lang' => @options.lang,
+																				 'nick' => @options.nick,
+																			   'desc' => @options.desc,
+																				 'cvt_tabs' => @options.tabs,
+																				 'text' => text})
+
+		url.merge! response['location'] || raise("No URL returned by server.")
+
+		if @options.shortenurl
+			shorten(url)
+		else
+			url.to_s
+		end
+	end
+
+	def shorten(url)
+		shorten_url = URI.parse(ShortenUrl)
+		response = Net::HTTP.post_form(shorten_url, {'rubyurl[website_url]' => url})
+		"http://rubyurl.com/" + response['location'][/\w+$/]
+	end
+
+	def run
+		res = paste(ARGF.read)
+		Win32::Clipboard.data = res
+		print res
+	end
+end
+
+if $0 == __FILE__
+	Cli.new.run
+end
+
