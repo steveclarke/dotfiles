@@ -1,0 +1,10 @@
+eval "$(rbenv init -)"
+
+. ~/dotfiles/bash/aliases
+. ~/dotfiles/bash/completions
+. ~/dotfiles/bash/config
+
+# use a local-only file for stuff unique to this system
+if [ -f ~/.thisrc ]; then
+  source ~/.thisrc
+fi
