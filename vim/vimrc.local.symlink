@@ -1,2 +1,3 @@
 colorscheme Tomorrow-Night-Bright
-let mapleader = ","
+"let mapleader   = ","
+"let g:mapleader = ","
