@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # TODO: convert this to rake file
 
 ## Setup bash
