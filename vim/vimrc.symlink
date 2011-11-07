@@ -33,7 +33,8 @@ set showmode
 set showcmd
 set hidden
 set wildmenu
-set wildmode=list:longest
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
 set backspace=indent,eol,start
 set visualbell           " no annoying beeps
 set ttyfast

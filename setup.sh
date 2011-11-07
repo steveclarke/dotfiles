@@ -19,17 +19,20 @@ if [ -d ~/bin ];
 fi
 
 ## Setup Vim
-ln -s ~/dotfiles/vim/vimrc.symlink ~/.vimrc
-if [ -d ~/.vim ];
-  then
-    echo "Skipping ~/.vim because directory already exists."
-  else
-    if [ -L ~/.vim ];
-      then
-        echo "Skipping ~/.vim because symlink already exists."
-      else
-      ln -s ~/dotfiles/vim/vim.symlink ~/.vim
-      echo "Created symlink for ~/.vim"
-    fi
-fi
+ln -s ~/dotfiles/vim/vimrc.local.symlink ~/.vimrc.local
+ln -s ~/dotfiles/vim/gvimrc.local.symlink ~/.gvimrc.local
+ln -s ~/dotfiles/vim/janus.rake.symlink ~/.janus.rake
+#ln -s ~/dotfiles/vim/vimrc.symlink ~/.vimrc
+#if [ -d ~/.vim ];
+  #then
+    #echo "Skipping ~/.vim because directory already exists."
+  #else
+    #if [ -L ~/.vim ];
+      #then
+        #echo "Skipping ~/.vim because symlink already exists."
+      #else
+      #ln -s ~/dotfiles/vim/vim.symlink ~/.vim
+      #echo "Created symlink for ~/.vim"
+    #fi
+#fi
 

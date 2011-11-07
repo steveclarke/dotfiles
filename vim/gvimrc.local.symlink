@@ -1,0 +1,4 @@
+if has("gui_macvim")
+  set guifont=Menlo:h13
+  colorscheme Tomorrow-Night-Bright
+endif
