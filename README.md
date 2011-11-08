@@ -5,7 +5,7 @@ You came to the wrong place if you're looking for any elegance. Move along... no
 ## Pre-requisites
 
 * Repository lives at `~/dotfiles`
-* Ideally install and configure MacVim first (currently using [Janus](https://github.com/doctorbh/janus) (my personal fork, just in case)
+* Ideally install and configure MacVim first -- currently using [Janus](https://github.com/doctorbh/janus) (my personal fork, just in case)
 
 ## Installation
 
