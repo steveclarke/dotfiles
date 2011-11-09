@@ -9,4 +9,9 @@ git config --global user.email "doctorbh@ninjanizr.com"
 git config --global github.user doctorbh
 git config --global github.token $GITHUB_TOKEN
 
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.head log -1
+
 git config -l
