@@ -32,6 +32,7 @@ GIT_BUNDLES = [
   "git://github.com/bdd/vim-scala.git",
   "git://github.com/mattn/gist-vim.git",
   "git://git.wincent.com/command-t.git",
+  "git://github.com/godlygeek/csapprox.git",
 ]
 
 require 'fileutils'

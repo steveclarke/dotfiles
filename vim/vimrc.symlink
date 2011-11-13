@@ -3,7 +3,7 @@ set nocompatible
 call pathogen#infect('~/src/vim/bundles')
 
 " Default color scheme
-color Tomorrow-Night-Bright
+color ir_black
 
 
 set number
