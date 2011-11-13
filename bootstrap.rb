@@ -79,4 +79,4 @@ else
   mkdir_p(File.join(VIM_BUNDLES_DIR, 'bundles'))    # also create bundles while we're at it
 end
 
-puts "--> Done. Now cd #{VIM_DIR_DOTFILE} and run install_bundles."
+puts "--> Done. Now cd #{DOTFILES_DIR}/vim and run install_bundles."
