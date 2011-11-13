@@ -1,8 +1,10 @@
 eval "$(rbenv init -)"
 
-. ~/dotfiles/bash/aliases
-. ~/dotfiles/bash/completions
-. ~/dotfiles/bash/config
+export DOTFILES_DIR=~/src/dotfiles
+
+. $DOTFILES_DIR/bash/aliases
+. $DOTFILES_DIR/bash/completions
+. $DOTFILES_DIR/bash/config
 
 # use a local-only file for stuff unique to this system
 if [ -f ~/.thisrc ]; then

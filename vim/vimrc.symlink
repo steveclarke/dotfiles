@@ -1,9 +1,10 @@
 set nocompatible
 
-" Default color scheme
-"color 'inkpot'
-
 call pathogen#infect('~/src/vim/bundles')
+
+" Default color scheme
+color Tomorrow-Night-Bright
+
 
 set number
 set ruler
@@ -138,6 +139,9 @@ runtime! macros/matchit.vim
 
 " Show (partial) command in the status line
 set showcmd
+
+" Don't beep
+set visualbell
 
 " Include user's local vim config
 if filereadable(expand("~/.vimrc.local"))

@@ -2,7 +2,7 @@ if has("gui_macvim")
   set guifont=Menlo:h13
 
   " Default gui color scheme
-  "color 'Tomorrow-Night-Bright'
+  color Tomorrow-Night-Bright
 
   " Fullscreen takes up entire screen
   set fuoptions=maxhorz,maxvert
@@ -36,9 +36,6 @@ if has("gui_macvim")
   map <Leader>= <C-w>=
   imap <Leader>= <Esc> <C-w>=
 endif
-
-" Don't beep
-set visualbell
 
 " Start without the toolbar
 set guioptions-=T
