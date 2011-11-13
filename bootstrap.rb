@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-include FileUtils::DryRun
+#include FileUtils::DryRun
+include FileUtils
 
 HOME_DIR     = File.expand_path('~')
 SRC_DIR      = File.join(HOME_DIR, 'src')

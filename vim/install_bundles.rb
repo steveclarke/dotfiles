@@ -36,8 +36,8 @@ GIT_BUNDLES = [
 
 require 'fileutils'
 
-puts HOME_DIR    = File.expand_path('~')
-puts BUNDLES_DIR = File.join(HOME_DIR, 'src/vim/bundles')
+HOME_DIR    = File.expand_path('~')
+BUNDLES_DIR = File.join(HOME_DIR, 'src/vim/bundles')
 
 if !Dir.exists?(BUNDLES_DIR)
   puts "*** Oops looks like you're missing the bundles directory."
