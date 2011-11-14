@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-#include FileUtils::DryRun
+# include FileUtils::DryRun
 include FileUtils
 
 HOME_DIR     = File.expand_path('~')
@@ -37,6 +37,16 @@ if Dir.exists?(BIN_DIR)
 else
   puts "+++ Creating #{BIN_DIR}"
   ln_s(BIN_DIR_DOTFILE, BIN_DIR)
+end
+
+## Setup Ruby stuff
+puts GEMRC         = File.join(HOME_DIR, '.gemrc')
+puts GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
+if File.exists?(GEMRC)
+  puts "### Skipping #{GEMRC}. Already exists."
+else
+  puts "+++ Creating #{GEMRC}"
+  ln_s(GEMRC_DOTFILE, GEMRC)
 end
 
 ## Setup Vim
