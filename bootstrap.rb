@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-#include FileUtils::DryRun
+# include FileUtils::DryRun
 include FileUtils
 
 HOME_DIR     = File.expand_path('~')
@@ -37,6 +37,16 @@ if Dir.exists?(BIN_DIR)
 else
   puts "+++ Creating #{BIN_DIR}"
   ln_s(BIN_DIR_DOTFILE, BIN_DIR)
+end
+
+## Setup Ruby stuff
+GEMRC         = File.join(HOME_DIR, '.gemrc')
+GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
+if File.exists?(GEMRC)
+  puts "### Skipping #{GEMRC}. Already exists."
+else
+  puts "+++ Creating #{GEMRC}"
+  ln_s(GEMRC_DOTFILE, GEMRC)
 end
 
 ## Setup Vim
@@ -75,8 +85,13 @@ VIM_BUNDLES_DIR = File.join(SRC_DIR, 'vim')
 if Dir.exists?(VIM_BUNDLES_DIR)
   puts "### Skipping #{VIM_BUNDLES_DIR}. Already exists."
 else
-  puts "+++ Creating #{VIM_BUNDLES_DIR}"
+  puts "+++ Creating #{VIM_BUNDLES_DIR}/bundles"
   mkdir_p(File.join(VIM_BUNDLES_DIR, 'bundles'))    # also create bundles while we're at it
+  # symlink install_bundles.rb inside of ~/vim
+  install_bundles_scrpt   = File.join(DOTFILES_DIR, 'vim/install_bundles.rb')
+  install_bundles_symlink = File.join(VIM_BUNDLES_DIR, 'install_bundles.rb')
+  puts "+++ Creating symlink to install_bundles.rb in ~/src/vim"
+  ln_s(install_bundles_scrpt, install_bundles_symlink)
 end
 
-puts "--> Done. Now cd #{DOTFILES_DIR}/vim and run install_bundles."
+puts "--> Done. Now run install_bundles.rb."

@@ -33,6 +33,9 @@ GIT_BUNDLES = [
   "git://github.com/mattn/gist-vim.git",
   "git://git.wincent.com/command-t.git",
   "git://github.com/godlygeek/csapprox.git",
+  "git://github.com/rygwdn/vim-conque.git",
+  "git://github.com/Townk/vim-autoclose.git",
+  "git://github.com/tpope/vim-ragtag.git",
 ]
 
 require 'fileutils'
