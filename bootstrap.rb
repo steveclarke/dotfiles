@@ -40,8 +40,8 @@ else
 end
 
 ## Setup Ruby stuff
-puts GEMRC         = File.join(HOME_DIR, '.gemrc')
-puts GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
+GEMRC         = File.join(HOME_DIR, '.gemrc')
+GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
 if File.exists?(GEMRC)
   puts "### Skipping #{GEMRC}. Already exists."
 else
