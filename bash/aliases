@@ -1,3 +1,6 @@
 alias ff='clear'
 alias s='cd ~/src'
 alias reload='. ~/.bash_profile'
+
+alias m='mvim'
+alias v='vim'
