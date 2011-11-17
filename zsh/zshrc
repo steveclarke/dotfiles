@@ -3,7 +3,7 @@ ZSH=$HOME/src/dotfiles/zsh
 # load configs
 for config_file ($ZSH/config/*.zsh) source $config_file
 
-# Load functions
+# load functions
 fpath=($ZSH/functions $fpath)
 for function_file ($ZSH/functions/*.zsh) source $function_file
 
