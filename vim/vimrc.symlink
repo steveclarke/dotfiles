@@ -1,5 +1,7 @@
 set nocompatible
 
+let mapleader = ','
+
 call pathogen#infect('~/src/vim/bundles')
 
 " Default color scheme
