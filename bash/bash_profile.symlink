@@ -7,6 +7,6 @@ export DOTFILES_DIR=~/src/dotfiles
 . $DOTFILES_DIR/bash/config
 
 # use a local-only file for stuff unique to this system
-if [ -f ~/.thisrc ]; then
-  source ~/.thisrc
+if [ -f ~/.bash_profile_local ]; then
+  source ~/.bash_profile_local
 fi
