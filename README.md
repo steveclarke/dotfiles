@@ -8,6 +8,8 @@ to place things.
 ## Pre-requisites
 
 * Repository lives at `~/src/dotfiles`
+* [Homebrew](http://mxcl.github.com/homebrew/) is configured
+* Ruby 1.9.2+ is installed with [rbenv](https://github.com/sstephenson/rbenv)
 
 ## Installation
 
