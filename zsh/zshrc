@@ -1,0 +1,11 @@
+ZSH=$HOME/src/dotfiles/zsh
+
+# Add the function paths
+fpath=($ZSH/functions $ZSH/completions $fpath)
+
+# configure
+for config_file ($ZSH/config/*.zsh) source $config_file
+
+
+
+
