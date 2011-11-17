@@ -13,7 +13,7 @@ VIM_DIR      = File.join(HOME_DIR, '.vim')
 ## Sanity check
 # complain and exit if ~/src/dotfiles (and by extension ~/src) doesn't exist
 if Dir.exists?(DOTFILES_DIR)
-  puts "--> OK. Looks like we have a ~/src/dotfiles directory... moving right along."
+  puts "--> Looks like we have a ~/src/dotfiles directory... moving right along...\n\n"
 else
   puts "I'm expecting stuff to be setup inside ~/src/dotfiles."
   puts "Just what do you think you're doing, Dave....er I mean Steve."
@@ -21,6 +21,7 @@ else
 end
 
 ## Setup bash
+puts "--- BASH"
 BASH_PROFILE_DOTFILE = File.join(DOTFILES_DIR, 'bash/bash_profile.symlink')
 BASH_PROFILE_SYMLINK = File.join(HOME_DIR,     '.bash_profile')
 if File.exists?(BASH_PROFILE_SYMLINK)
@@ -30,7 +31,19 @@ else
   ln_s(BASH_PROFILE_DOTFILE, BASH_PROFILE_SYMLINK)
 end
 
+## Setup ZSH
+puts "--- ZSH"
+ZSHRC_DOTFILE = File.join(DOTFILES_DIR, 'zsh/zshrc')
+ZSHRC_SYMLINK = File.join(HOME_DIR,     '.zshrc')
+if File.exists?(ZSHRC_SYMLINK)
+  puts "### Skipping #{ZSHRC_SYMLINK}. Already exists."
+else
+  puts "+++ Creating #{ZSHRC_SYMLINK}"
+  ln_s(ZSHRC_DOTFILE, ZSHRC_SYMLINK)
+end
+
 ## Setup personal bin dir
+puts "--- PERSONAL BIN DIR"
 BIN_DIR_DOTFILE = File.join(DOTFILES_DIR, 'bin.symlink')
 if Dir.exists?(BIN_DIR)
   puts "### Skipping #{BIN_DIR}. Already exists."
@@ -40,6 +53,7 @@ else
 end
 
 ## Setup Ruby stuff
+puts "--- RUBY"
 GEMRC         = File.join(HOME_DIR, '.gemrc')
 GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
 if File.exists?(GEMRC)
@@ -50,6 +64,7 @@ else
 end
 
 ## Setup Vim
+puts "--- VIM"
 # symlink .vim dir
 VIM_DIR_DOTFILE = File.join(DOTFILES_DIR, 'vim/vim.symlink')
 if Dir.exists?(VIM_DIR)
@@ -94,4 +109,8 @@ else
   ln_s(install_bundles_scrpt, install_bundles_symlink)
 end
 
-puts "--> Done. Now run install_bundles.rb."
+puts ""
+puts "--> Done. Now run vim/install_bundles.rb to finish Vim config.\n\n"
+puts "--> Make ZSH your shell with: chsh -s `which zsh`\n\n"
+puts "--> Add GITHUB_TOKEN to your .bash_profile_local and/or .zshrc_local"
+puts "    then run git/setup.sh"
