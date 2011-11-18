@@ -45,7 +45,7 @@ inoremap jj <esc>
 nnoremap ; :
 
 " <leader>a to :Align
-vnoremap <leader>a :Align
+vnoremap <leader>a :Align<space>
 
 " Re-hardwrap paragraphs of text
 nnoremap <leader>q gqip
