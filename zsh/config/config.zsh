@@ -1,4 +1,5 @@
 src=/Users/steve/src
+dot=/Users/steve/src/dotfiles
 
 export EDITOR='vim'
 
