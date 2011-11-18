@@ -21,6 +21,8 @@ Leader key remapped to `,`
 
 `<leader>q`: Re-hardwrap paragraphs of text.
 
-`<leader>w`: Open a new vertical split and switch to it.
+`<leader>v`: Open a new vertical split and switch to it.
+
+`<leader>h`: Open a new horizontal split and switch to it.
 
 `<leader>s`: Save current buffer.
