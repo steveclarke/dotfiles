@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-# include FileUtils::DryRun
+#include FileUtils::DryRun
 include FileUtils
 
 HOME_DIR     = File.expand_path('~')
@@ -18,6 +18,16 @@ else
   puts "I'm expecting stuff to be setup inside ~/src/dotfiles."
   puts "Just what do you think you're doing, Dave....er I mean Steve."
   exit
+end
+
+## Setup .dotfiles
+puts "--- .DOTFILES"
+DOTFILES_DIR_SYMLINK = File.join(HOME_DIR, '.dotfiles')
+if Dir.exists?(DOTFILES_DIR_SYMLINK)
+  puts "### Skipping #{DOTFILES_DIR_SYMLINK}. Already exists."
+else
+  puts "+++ Creating #{DOTFILES_DIR_SYMLINK}"
+  ln_s(DOTFILES_DIR, DOTFILES_DIR_SYMLINK)
 end
 
 ## Setup bash
