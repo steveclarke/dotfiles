@@ -11,6 +11,7 @@ GIT_BUNDLES = [
   "git://github.com/wycats/nerdtree.git",
   "git://github.com/ddollar/nerdcommenter.git",
   "git://github.com/tpope/vim-surround.git",
+  "git://github.com/tpope/vim-repeat.git",
   "git://github.com/vim-scripts/taglist.vim.git",
   "git://github.com/tpope/vim-vividchalk.git",
   "git://github.com/altercation/vim-colors-solarized.git",
