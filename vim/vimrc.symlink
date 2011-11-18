@@ -23,15 +23,39 @@ set nowrap
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set expandtab
+set expandtab      " convert tabs to spaces
+set colorcolumn=85 " show a colored column to help with wrapping
 set list listchars=tab:\ \ ,trail:·
 set backspace=indent,eol,start  " backspace over everything in insert mode
 
 " Searching
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
+set hlsearch   " highlight search results
+set incsearch  " incremental search
+set ignorecase " case-insensitive search unless...
+set smartcase  " if search contains caps, make case-sensitive
+" use normal regex instead of Vim's
+nnoremap / /\v
+vnoremap / /\v
+nnoremap <leader><space> :noh<cr>  " clear highlighting
+
+" help save an <esc> key today
+inoremap jj <esc>
+
+" help save a <shift> key today
+nnoremap ; :
+
+" <leader>a to :Align
+vnoremap <leader>a :Align
+
+" Re-hardwrap paragraphs of text
+nnoremap <leader>q gqip
+
+" Open new vsplit and switch to it
+nnoremap <leader>v <C-w>v<C-w>l
+nnoremap <leader>h <C-w>s<C-w>j
+
+" Save buffer
+nnoremap <leader>s <esc>:w<cr>
 
 " Tab completion
 set wildmode=list:longest,list:full
