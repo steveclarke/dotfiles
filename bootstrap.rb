@@ -113,10 +113,13 @@ else
   puts "+++ Creating #{VIM_BUNDLES_DIR}/bundles"
   mkdir_p(File.join(VIM_BUNDLES_DIR, 'bundles'))    # also create bundles while we're at it
   # symlink install_bundles.rb inside of ~/vim
-  install_bundles_scrpt   = File.join(DOTFILES_DIR, 'vim/install_bundles.rb')
+  install_bundles_script  = File.join(DOTFILES_DIR,    'vim/install_bundles.rb')
+  update_bundles_script   = File.join(DOTFILES_DIR,    'vim/update_bundles.zsh')
   install_bundles_symlink = File.join(VIM_BUNDLES_DIR, 'install_bundles.rb')
-  puts "+++ Creating symlink to install_bundles.rb in ~/src/vim"
-  ln_s(install_bundles_scrpt, install_bundles_symlink)
+  update_bundles_symlink  = File.join(VIM_BUNDLES_DIR, 'update_bundles.zsh')
+  puts "+++ Creating symlink to install_bundles.rb and update_bundles.zsh in ~/src/vim"
+  ln_s(install_bundles_script, install_bundles_symlink)
+  ln_s(update_bundles_script,  update_bundles_symlink)
 end
 
 puts ""
