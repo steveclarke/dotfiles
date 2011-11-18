@@ -12,7 +12,7 @@ VIM_DIR      = File.join(HOME_DIR, '.vim')
 
 ## Sanity check
 # complain and exit if ~/src/dotfiles (and by extension ~/src) doesn't exist
-if Dir.exists?(DOTFILES_DIR)
+if File.directory?(DOTFILES_DIR)
   puts "--> Looks like we have a ~/src/dotfiles directory... moving right along...\n\n"
 else
   puts "I'm expecting stuff to be setup inside ~/src/dotfiles."
@@ -45,7 +45,7 @@ end
 ## Setup personal bin dir
 puts "--- PERSONAL BIN DIR"
 BIN_DIR_DOTFILE = File.join(DOTFILES_DIR, 'bin.symlink')
-if Dir.exists?(BIN_DIR)
+if File.directory?(BIN_DIR)
   puts "### Skipping #{BIN_DIR}. Already exists."
 else
   puts "+++ Creating #{BIN_DIR}"
@@ -67,7 +67,7 @@ end
 puts "--- VIM"
 # symlink .vim dir
 VIM_DIR_DOTFILE = File.join(DOTFILES_DIR, 'vim/vim.symlink')
-if Dir.exists?(VIM_DIR)
+if File.directory?(VIM_DIR)
   puts "### Skipping #{VIM_DIR}. Already exists."
 else
   puts "+++ Creating #{VIM_DIR}"
@@ -97,7 +97,7 @@ end
 ## Configure Pathogen with bundles
 # create ~/src/vim if it doesn't exist
 VIM_BUNDLES_DIR = File.join(SRC_DIR, 'vim')
-if Dir.exists?(VIM_BUNDLES_DIR)
+if File.directory?(VIM_BUNDLES_DIR)
   puts "### Skipping #{VIM_BUNDLES_DIR}. Already exists."
 else
   puts "+++ Creating #{VIM_BUNDLES_DIR}/bundles"
