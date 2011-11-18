@@ -13,3 +13,8 @@ to place things.
 ## Installation
 
 Run `bootstrap.rb` and do what it says (within reason).
+
+## TODO:
+
+* Turn config scripts into Rake tasks
+* Tweak my prompt
