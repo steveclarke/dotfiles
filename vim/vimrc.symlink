@@ -1,19 +1,22 @@
-set nocompatible
+set nocompatible     " it's the 21st century
 
-let mapleader = ','
+let mapleader = ','  " use , instead of \. Load early.
 
+" use Pathogen.vim to load vim bundles
 call pathogen#infect('~/src/vim/bundles')
 
-" Default color scheme
-color ir_black
+color ir_black     " default colorscheme
+syntax on          " syntax highlighting
 
-
-set number
-set ruler
-syntax on
-
-" Set encoding
-set encoding=utf-8
+set relativenumber " show how far away each line is from current one
+set ruler          " show line and column # of cursor position
+set cursorline     " hightlight the line we're on
+set ttyfast        " assume fast terminal
+set scrolloff=3    " min. # of lines above and below the cursor
+set laststatus=2   " Status bar
+set encoding=utf-8 " set encoding
+set showcmd        " show (partial) command in the status line
+set visualbell     " no annoying beep, please
 
 " Whitespace stuff
 set nowrap
@@ -22,6 +25,7 @@ set shiftwidth=2
 set softtabstop=2
 set expandtab
 set list listchars=tab:\ \ ,trail:·
+set backspace=indent,eol,start  " backspace over everything in insert mode
 
 " Searching
 set hlsearch
@@ -33,11 +37,8 @@ set smartcase
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
 
-" Status bar
-set laststatus=2
-
 " Without setting this, ZoomWin restores windows in a way that causes
-" equalalways behavior to be triggered the next time CommandT is used.
+" equal always behavior to be triggered the next time CommandT is used.
 " This is likely a bludgeon to solve some other issue, but it works
 set noequalalways
 
@@ -51,9 +52,11 @@ let g:CommandTMaxHeight=20
 " ZoomWin configuration
 map <Leader><Leader> :ZoomWin<CR>
 
+" This stuff came along with Janus config. Leaving it here until
+" I understand what it is and whether I want it. :D
 " CTags
-map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
-map <C-\> :tnext<CR>
+"map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+"map <C-\> :tnext<CR>
 
 " Remember last location in file
 if has("autocmd")
@@ -83,9 +86,6 @@ au BufNewFile,BufRead *.json set ft=javascript
 
 au BufRead,BufNewFile *.txt call s:setupWrapping()
 
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
 " load the plugin and indent settings for the detected filetype
 filetype plugin indent on
 
@@ -101,7 +101,8 @@ map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " Command mode: Ctrl+P
 cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 
-" Unimpaired configuration
+" Unimpaired configuration (see http://vimcasts.org/episodes/bubbling-text/)
+" TODO: This mapping conflicts with default OS X mapping currently.
 " Bubble single lines
 nmap <C-Up> [e
 nmap <C-Down> ]e
@@ -138,12 +139,6 @@ let macvim_hig_shift_movement = 1
 
 " % to bounce from do to end etc.
 runtime! macros/matchit.vim
-
-" Show (partial) command in the status line
-set showcmd
-
-" Don't beep
-set visualbell
 
 " Include user's local vim config
 if filereadable(expand("~/.vimrc.local"))
