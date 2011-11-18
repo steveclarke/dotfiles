@@ -15,7 +15,7 @@ Leader key remapped to `,`
 
 `Ctrl+P`: Insert the path of the currently edited file into a command.
 
-`%`: Bounce from `do` to `end` etc.k
+`%`: Bounce from `do` to `end` etc.
 
 `;` is the same as `:`. Help save a `<shift>` key.
 
