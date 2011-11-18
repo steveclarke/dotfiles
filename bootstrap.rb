@@ -23,7 +23,7 @@ end
 ## Setup .dotfiles
 puts "--- .DOTFILES"
 DOTFILES_DIR_SYMLINK = File.join(HOME_DIR, '.dotfiles')
-if Dir.exists?(DOTFILES_DIR_SYMLINK)
+if File.directory?(DOTFILES_DIR_SYMLINK)
   puts "### Skipping #{DOTFILES_DIR_SYMLINK}. Already exists."
 else
   puts "+++ Creating #{DOTFILES_DIR_SYMLINK}"

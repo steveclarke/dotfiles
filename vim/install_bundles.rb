@@ -45,7 +45,7 @@ require 'fileutils'
 HOME_DIR    = File.expand_path('~')
 BUNDLES_DIR = File.join(HOME_DIR, 'src/vim/bundles')
 
-if !Dir.exists?(BUNDLES_DIR)
+if !File.directory?(BUNDLES_DIR)
   puts "*** Oops looks like you're missing the bundles directory."
   puts "*** Maybe you didn't run bootsrap.rb from your dotfiles root?"
   puts "*** ABORTING UNTIL YOU STRAIGHTEN OUT THIS MESS YOUNG MAN!"
