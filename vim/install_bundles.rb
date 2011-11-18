@@ -37,9 +37,7 @@ GIT_BUNDLES = [
   "git://github.com/Townk/vim-autoclose.git",
   "git://github.com/tpope/vim-ragtag.git",
   "git://github.com/Vladimiroff/vim-sparkup.git",
-  "git://github.com/garbas/vim-snipmate.git",
-  "git://github.com/MarcWeber/vim-addon-mw-utils.git", # req by snipmate
-  "git://github.com/tomtom/tlib_vim.git",              # req by snipmate
+  "git@github.com:doctorbh/snipmate.vim.git",
 ]
 
 require 'fileutils'

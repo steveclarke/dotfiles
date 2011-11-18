@@ -8,6 +8,9 @@ call pathogen#infect('~/src/vim/bundles')
 color ir_black     " default colorscheme
 syntax on          " syntax highlighting
 
+let g:my_name="Steve Clarke"
+let g:my_email="steve@sevenseven.co"
+
 set relativenumber " show how far away each line is from current one
 set ruler          " show line and column # of cursor position
 set cursorline     " hightlight the line we're on
@@ -163,6 +166,9 @@ let macvim_hig_shift_movement = 1
 
 " % to bounce from do to end etc.
 runtime! macros/matchit.vim
+
+" SnipMate
+let g:snips_author=g:my_name
 
 " Include user's local vim config
 if filereadable(expand("~/.vimrc.local"))

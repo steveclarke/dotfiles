@@ -1,0 +1,16 @@
+# <VirtualHost>
+snippet vir
+	<VirtualHost ${1:*}:${2:80}>
+		ServerAdmin ${3:webmaster@example.com}
+		DocumentRoot ${4:/www/example.com}
+		ServerName ${5:www.example.com}
+	</VirtualHost>
+
+# <Directory>
+snippet dir
+	<Directory ${1:/}>
+		DirectoryIndex ${2:index.html}
+		Order Deny,Allow
+		Deny from All
+	</Directory>
+
