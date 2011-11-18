@@ -21,7 +21,6 @@ GIT_BUNDLES = [
   "git://github.com/tpope/vim-rails.git",
   "git://github.com/taq/vim-rspec.git",
   "git://github.com/vim-scripts/ZoomWin.git",
-  "git://github.com/msanders/snipmate.vim.git",
   "git://github.com/tpope/vim-markdown.git",
   "git://github.com/tsaleh/vim-align.git",
   "git://github.com/tpope/vim-unimpaired.git",
@@ -38,6 +37,9 @@ GIT_BUNDLES = [
   "git://github.com/Townk/vim-autoclose.git",
   "git://github.com/tpope/vim-ragtag.git",
   "git://github.com/Vladimiroff/vim-sparkup.git",
+  "git://github.com/garbas/vim-snipmate.git",
+  "git://github.com/MarcWeber/vim-addon-mw-utils.git", # req by snipmate
+  "git://github.com/tomtom/tlib_vim.git",              # req by snipmate
 ]
 
 require 'fileutils'
@@ -62,4 +64,4 @@ end
 
 puts "--> Done. Go and configure Command-t bundle now."
 puts "    You're a big boy. I'm sure you'll remember how."
-puts "    Hint: 'rbenv shell system', 'rake:make'"
+puts "    Hint: 'rbenv shell system', 'rake make'"
