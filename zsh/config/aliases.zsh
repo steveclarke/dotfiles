@@ -17,4 +17,4 @@ alias v='vim'
 alias gs='git status'
 alias gpu='git push'
 alias gpl='git pull'
-
+alias gci='git commit'
