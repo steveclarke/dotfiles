@@ -1,0 +1,48 @@
+#clearsnippets
+
+snippet template "HTML5 template" b
+<!doctype html>
+<html>
+  <head>
+    <title>${1:Site Title}</title>
+  </head>
+  <body>
+    ${3:<h1>${2:$1}</h1>}$0
+  </body>
+</html>
+endsnippet
+
+snippet doctype "HTML5 doctype" !b
+<!doctype html>
+
+endsnippet
+
+snippet bc "Blueprint container div" !b
+  <div class="container$1">
+    $0
+  </div>
+endsnippet
+
+snippet bs "Blueprint span div" !b
+  <div class="span-${1:24}">
+    $0
+  </div>
+endsnippet
+
+snippet d. "Div with class" !b
+  <div class="$1">
+    $0
+  </div>
+endsnippet
+
+snippet d# "Div with id" !b
+  <div id="$1">
+    $0
+  </div>
+endsnippet
+
+snippet d.c "Div with class and end comment" !b
+  <div class="$1">
+    $0
+  </div><!-- /$1 -->
+endsnippet
