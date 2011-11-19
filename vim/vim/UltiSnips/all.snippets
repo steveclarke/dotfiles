@@ -1,3 +1,13 @@
+# NICE BOXES #
+global !p
+def cs(snip):
+    c = '#'
+    cs = snip.opt("&commentstring")
+    if len(cs) == 3:
+        c = cs[0]
+    return c
+endglobal
+
 snippet date
 `!v strftime("%d-%m-%Y")`
 endsnippet
@@ -23,3 +33,19 @@ snippet meem
 `!v g:my_name` <`!v g:my_email`>
 endsnippet
 
+snippet cbox "Comment header in a pretty box" b
+`!p
+c = cs(snip)
+n = '-'
+bar = c + ' '
+bar += 73*n
+
+snip.rv = bar
+snip += c + " " + (71-len(t[1]))/2*' '
+`${1:content}`!p
+
+a = 71-len(t[1])
+snip.rv = (a/2 + a%2) * " " + " " + '|'
+snip += bar`
+$0
+endsnippet
