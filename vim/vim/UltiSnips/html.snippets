@@ -1,4 +1,4 @@
-#clearsnippets
+clearsnippets
 
 snippet template "HTML5 template" b
 <!doctype html>
@@ -46,3 +46,59 @@ snippet d.c "Div with class and end comment" !b
     $0
   </div><!-- /$1 -->
 endsnippet
+
+snippet d#c "Div with class and end comment" !b
+  <div id="$1">
+    $0
+  </div><!-- /$1 -->
+endsnippet
+
+snippet nbs "non-breaking space" i
+&nbsp;
+endsnippet
+
+snippet . "class" i
+class="${1}"$0
+endsnippet
+
+snippet a "Link"
+<a href="${1:http://${2}}">${4:Text}</a>
+endsnippet
+
+snippet p "paragraph"
+<p>$1</p>$0
+endsnippet
+
+snippet ul "unordered list"
+<ul>
+  ${1:<li>${2}</li>}$0
+</ul>
+endsnippet
+
+snippet li "list item"
+<li>$1</li>$0
+endsnippet
+
+snippet table "table"
+<table>
+  <thead>
+    <tr>
+      <th>${1}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>${2}</td>
+    </tr>
+  <tbody>
+</table>$0
+endsnippet
+
+snippet td "table cell"
+<td>$1</td>$0
+endsnippet
+
+snippet tr "table row"
+<tr>$1</tr>$0
+endsnippet
+
