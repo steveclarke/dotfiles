@@ -30,6 +30,7 @@ Leader key remapped to `,`
 `<leader>u`: Edit UltiSnip file for current filetype
 
 `<leader>ev`: Edit .vimrc
+
 `<leader>rv`: Reload .vimrc
 
 `<c-j/k/h/l>`: More sane window switching
