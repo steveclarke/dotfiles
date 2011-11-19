@@ -25,4 +25,6 @@ Leader key remapped to `,`
 
 `<leader>h`: Open a new horizontal split and switch to it.
 
-`<leader>s`: Save current buffer.
+`<leader>w`: Save current buffer.
+
+`<leader>u`: Edit UltiSnip file for current filetype
