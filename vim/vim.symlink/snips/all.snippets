@@ -1,0 +1,23 @@
+snippet date
+	`strftime("%d-%m-%Y")`
+endsnippet
+
+snippet ddate
+	`strftime("%B %d, %Y")`
+endsnippet
+
+snippet c)
+	Copyright `&enc[:2] == "utf" ? "©" : "(c)"`		`strftime("%Y")` ${1:`g:snips_author`}. All Rights Reserved.${2}
+endsnippet
+
+snippet me
+	`!v g:my_name`
+endsnippet
+
+snippet em
+	`!v g:my_email`
+endsnippet
+
+snippet meem
+	`!v g:my_name` <`!v g:my_email`>
+endsnippet

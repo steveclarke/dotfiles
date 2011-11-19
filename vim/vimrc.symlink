@@ -39,7 +39,8 @@ set smartcase  " if search contains caps, make case-sensitive
 " use normal regex instead of Vim's
 nnoremap / /\v
 vnoremap / /\v
-nnoremap <leader><space> :noh<cr>  " clear highlighting
+" clear highlighting
+nnoremap <leader><space> :noh<cr>
 
 " help save an <esc> key today
 inoremap jj <esc>
@@ -58,7 +59,7 @@ nnoremap <leader>v <C-w>v<C-w>l
 nnoremap <leader>h <C-w>s<C-w>j
 
 " Save buffer
-nnoremap <leader>s <esc>:w<cr>
+nnoremap <leader>w <esc>:w<cr>
 
 " Tab completion
 set wildmode=list:longest,list:full
@@ -167,8 +168,12 @@ let macvim_hig_shift_movement = 1
 " % to bounce from do to end etc.
 runtime! macros/matchit.vim
 
-" SnipMate
-let g:snips_author=g:my_name
+" UltiSnips
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "snips"]
+let g:UltiSnipsSnippetsDir="~/.vim/snips"
+let g:UltiSnipsEditSplit="vertical"
+" edit snip for current filetype
+nnoremap <leader>u :UltiSnipsEdit<cr>
 
 " Include user's local vim config
 if filereadable(expand("~/.vimrc.local"))
