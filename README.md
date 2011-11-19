@@ -9,7 +9,7 @@ to place things.
 
 * Repository lives at `~/src/dotfiles`
 * [Homebrew](http://mxcl.github.com/homebrew/) is configured
-* Vim with Python support compiled in [see here](http://www.andrewvos.com/2011/07/23/upgrading-vim-on-os-x-with-homebrew/)
+* Vim with Python support compiled in [(see here)](http://www.andrewvos.com/2011/07/23/upgrading-vim-on-os-x-with-homebrew/) - required for UltiSnips and Sparkup.
 
 ## Installation
 
