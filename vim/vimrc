@@ -40,7 +40,7 @@ set smartcase  " if search contains caps, make case-sensitive
 nnoremap / /\v
 vnoremap / /\v
 " clear highlighting
-nnoremap <leader><space> :noh<cr>
+nnoremap <leader>/ :noh<cr>
 
 " help save an <esc> key today
 inoremap jj <esc>
@@ -52,7 +52,8 @@ nnoremap ; :
 vnoremap <leader>a :Align<space>
 
 " Re-hardwrap paragraphs of text
-nnoremap <leader>q gqip
+vnoremap <leader>q gq       " in visual mode
+nnoremap <leader>q gqip     " in normal mode
 
 " Open new vsplit and switch to it
 nnoremap <leader>v <C-w>v<C-w>l
@@ -73,7 +74,7 @@ nnoremap <c-l> <c-w>l
 
 " Make it easy to edit, resource my .vimrc file
 nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
-nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
+nnoremap <silent> <leader>rv :source $MYVIMRC<cr>
 
 " Without setting this, ZoomWin restores windows in a way that causes
 " equal always behavior to be triggered the next time CommandT is used.
