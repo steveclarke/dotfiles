@@ -169,9 +169,16 @@ let macvim_hig_shift_movement = 1
 runtime! macros/matchit.vim
 
 " UltiSnips
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "snips"]
-let g:UltiSnipsSnippetsDir="~/.vim/snips"
+let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 let g:UltiSnipsEditSplit="vertical"
+" search in regular order since the default was causing my
+" 'clearsnippets' override on defaults not to work
+let g:UltiSnipsDontReverseSearchPath="1"
+" Get all TextMatey
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " edit snip for current filetype
 nnoremap <leader>u :UltiSnipsEdit<cr>
 
