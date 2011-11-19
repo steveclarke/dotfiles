@@ -34,4 +34,5 @@ Leader key remapped to `,`
 
 `<c-j/k/h/l>`: More sane window switching
 
-`<ctrl-e>`: trigger Sparkup plugin
+`<ctrl-e>`: trigger [Sparkup
+plugin](https://github.com/rstacruz/sparkup)
