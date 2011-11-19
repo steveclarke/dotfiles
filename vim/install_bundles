@@ -33,6 +33,7 @@ GIT_BUNDLES = [
   "git://github.com/mattn/gist-vim.git",
   "git://git.wincent.com/command-t.git",
   "git://github.com/godlygeek/csapprox.git",
+  "git://github.com/emilkje/sparkup-bundle.git",
 ]
 
 require 'fileutils'

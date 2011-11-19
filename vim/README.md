@@ -33,3 +33,5 @@ Leader key remapped to `,`
 `<leader>rv`: Reload .vimrc
 
 `<c-j/k/h/l>`: More sane window switching
+
+`<ctrl-e>`: trigger Sparkup plugin
