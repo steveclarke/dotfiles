@@ -32,7 +32,7 @@ end
 
 ## Setup bash
 puts "--- BASH"
-BASH_PROFILE_DOTFILE = File.join(DOTFILES_DIR, 'bash/bash_profile.symlink')
+BASH_PROFILE_DOTFILE = File.join(DOTFILES_DIR, 'bash/bash_profile')
 BASH_PROFILE_SYMLINK = File.join(HOME_DIR,     '.bash_profile')
 if File.exists?(BASH_PROFILE_SYMLINK)
   puts "### Skipping #{BASH_PROFILE_SYMLINK}. Already exists."
@@ -54,7 +54,7 @@ end
 
 ## Setup personal bin dir
 puts "--- PERSONAL BIN DIR"
-BIN_DIR_DOTFILE = File.join(DOTFILES_DIR, 'bin.symlink')
+BIN_DIR_DOTFILE = File.join(DOTFILES_DIR, 'bin')
 if File.directory?(BIN_DIR)
   puts "### Skipping #{BIN_DIR}. Already exists."
 else
@@ -65,7 +65,7 @@ end
 ## Setup Ruby stuff
 puts "--- RUBY"
 GEMRC         = File.join(HOME_DIR, '.gemrc')
-GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc.symlink')
+GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc')
 if File.exists?(GEMRC)
   puts "### Skipping #{GEMRC}. Already exists."
 else
@@ -76,7 +76,7 @@ end
 ## Setup Vim
 puts "--- VIM"
 # symlink .vim dir
-VIM_DIR_DOTFILE = File.join(DOTFILES_DIR, 'vim/vim.symlink')
+VIM_DIR_DOTFILE = File.join(DOTFILES_DIR, 'vim/vim')
 if File.directory?(VIM_DIR)
   puts "### Skipping #{VIM_DIR}. Already exists."
 else
@@ -86,9 +86,9 @@ end
 
 # configure .vimrc and .gvimrc
 VIMRC          = File.join(HOME_DIR, '.vimrc')
-VIMRC_DOTFILE  = File.join(DOTFILES_DIR, 'vim/vimrc.symlink')
+VIMRC_DOTFILE  = File.join(DOTFILES_DIR, 'vim/vimrc')
 GVIMRC         = File.join(HOME_DIR, '.gvimrc')
-GVIMRC_DOTFILE = File.join(DOTFILES_DIR, 'vim/gvimrc.symlink')
+GVIMRC_DOTFILE = File.join(DOTFILES_DIR, 'vim/gvimrc')
 
 if File.exists?(VIMRC)
   puts "### Skipping #{VIMRC}. Already exists."
@@ -113,11 +113,11 @@ else
   puts "+++ Creating #{VIM_BUNDLES_DIR}/bundles"
   mkdir_p(File.join(VIM_BUNDLES_DIR, 'bundles'))    # also create bundles while we're at it
   # symlink install_bundles.rb inside of ~/vim
-  install_bundles_script  = File.join(DOTFILES_DIR,    'vim/install_bundles.rb')
-  update_bundles_script   = File.join(DOTFILES_DIR,    'vim/update_bundles.zsh')
-  install_bundles_symlink = File.join(VIM_BUNDLES_DIR, 'install_bundles.rb')
-  update_bundles_symlink  = File.join(VIM_BUNDLES_DIR, 'update_bundles.zsh')
-  puts "+++ Creating symlink to install_bundles.rb and update_bundles.zsh in ~/src/vim"
+  install_bundles_script  = File.join(DOTFILES_DIR,    'vim/install_bundles')
+  update_bundles_script   = File.join(DOTFILES_DIR,    'vim/update_bundles')
+  install_bundles_symlink = File.join(VIM_BUNDLES_DIR, 'install_bundles')
+  update_bundles_symlink  = File.join(VIM_BUNDLES_DIR, 'update_bundles')
+  puts "+++ Creating symlink to install_bundles and update_bundles in ~/src/vim"
   ln_s(install_bundles_script, install_bundles_symlink)
   ln_s(update_bundles_script,  update_bundles_symlink)
 end
