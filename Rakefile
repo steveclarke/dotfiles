@@ -9,9 +9,16 @@ def home(name)
   File.join(HOME_DIR, name)
 end
 
-DIRS = [{name: 'Dotfiles',     source: DOT_DIR,  target: home('.dotfiles')},
-        {name: 'Bash Profile', source: dot('bash/bash_profile'), target: home('.bash_profile')}]
-
+DIRS = {
+  dotfiles:     { source: DOT_DIR,                  target: home('.dotfiles') },
+  bash_profile: { source: dot('bash/bash_profile'), target: home('.bash_profile') },
+  zshrc:        { source: dot('zsh/zshrc'),         target: home('.zshrc') },
+  bin:          { source: dot('bin'),               target: home('bin') },
+  gemrc:        { source: dot('ruby/gemrc'),        target: home('.gemrc') },
+  vim:          { source: dot('vim/vim'),           target: home('.vim') },
+  vimrc:        { source: dot('vim/vimrc'),         target: home('.vimrc') },
+  gvimrc:       { source: dot('vim/gvimrc'),        target: home('.gvimrc') },
+}
 
 # -------------------------------------------------------------------------
 #                                Uninstall                                |
@@ -22,11 +29,11 @@ task :uninstall do
   dirs = [File.join(HOME_DIR, '.dotfiles'),
           File.join(HOME_DIR, '.bash_profile'),
           File.join(HOME_DIR, '.zshrc'),
-          File.join(HOME_DIR, 'bin'), 
-          File.join(HOME_DIR, '.gemrc'), 
-          File.join(HOME_DIR, '.vim'), 
-          File.join(HOME_DIR, '.vimrc'), 
-          File.join(HOME_DIR, '.gvimrc'), 
+          File.join(HOME_DIR, 'bin'),
+          File.join(HOME_DIR, '.gemrc'),
+          File.join(HOME_DIR, '.vim'),
+          File.join(HOME_DIR, '.vimrc'),
+          File.join(HOME_DIR, '.gvimrc'),
   ]
 
   dirs.each do |dir|
@@ -43,11 +50,9 @@ end
 
 desc 'Install everything'
 task :install do
-  DIRS.each do |dir|
-    puts "Name: #{dir[:name]}"
-    puts "Src: #{dir[:source]}"
-    puts "Tgt: #{dir[:target]}"
-    puts "--------------------"
+  DIRS.each do |name, dirs|
+    puts "--- #{name.upcase}"
+    create_symlink(dirs[:source], dirs[:target])
   end
 end
 
