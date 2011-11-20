@@ -32,44 +32,6 @@ def create_symlink(source, target)
 end
 
 # -------------------------------------------------------------------------
-#                                DOTFILES                                 |
-# -------------------------------------------------------------------------
-puts "--- .DOTFILES"
-dotfiles_dir_symlink = File.join(HOME_DIR, '.dotfiles')
-create_symlink(DOTFILES_DIR, dotfiles_dir_symlink)
-
-# -------------------------------------------------------------------------
-#                                  BASH                                   |
-# -------------------------------------------------------------------------
-puts "--- BASH"
-BASH_PROFILE_DOTFILE = File.join(DOTFILES_DIR, 'bash/bash_profile')
-BASH_PROFILE_SYMLINK = File.join(HOME_DIR,     '.bash_profile')
-create_symlink(BASH_PROFILE_DOTFILE, BASH_PROFILE_SYMLINK)
-
-# -------------------------------------------------------------------------
-#                                   ZSH                                   |
-# -------------------------------------------------------------------------
-puts "--- ZSH"
-ZSHRC_DOTFILE = File.join(DOTFILES_DIR, 'zsh/zshrc')
-ZSHRC_SYMLINK = File.join(HOME_DIR,     '.zshrc')
-create_symlink(ZSHRC_DOTFILE, ZSHRC_SYMLINK)
-
-# -------------------------------------------------------------------------
-#                            Personal Bin Dir                             |
-# -------------------------------------------------------------------------
-puts "--- PERSONAL BIN DIR"
-BIN_DIR_DOTFILE = File.join(DOTFILES_DIR, 'bin')
-create_symlink(BIN_DIR_DOTFILE, BIN_DIR)
-
-# -------------------------------------------------------------------------
-#                                  Ruby                                   |
-# -------------------------------------------------------------------------
-puts "--- RUBY"
-GEMRC         = File.join(HOME_DIR, '.gemrc')
-GEMRC_DOTFILE = File.join(DOTFILES_DIR, 'ruby/gemrc')
-create_symlink(GEMRC_DOTFILE, GEMRC)
-
-# -------------------------------------------------------------------------
 #                                   Vim                                   |
 # -------------------------------------------------------------------------
 puts "--- VIM"
