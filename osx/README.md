@@ -1,7 +1,11 @@
 ## Setting up My Mac from Scratch
 
-* Patch system
+* Install and patch system
+
 * Install [GCC](https://github.com/kennethreitz/osx-gcc-installer)
+
+`curl https://raw.github.com/doctorbh/dotfiles/master/osx/download-core.sh | sh`
+
 * Setup SSH keys
 
 `curl https://raw.github.com/doctorbh/dotfiles/master/osx/ssh-setup.sh | sh`
@@ -16,9 +20,6 @@
 
 `curl https://raw.github.com/doctorbh/dotfiles/master/osx/mac-setup.sh | sh`
 
-* Download other standard stuff while this other stuff is happening
+* Download other standard stuff after `wget` is installed:
 
-`curl
-https://raw.github.com/doctorbh/dotfiles/master/osx/download-core.sh |
-sh`
-
+`curl https://raw.github.com/doctorbh/dotfiles/master/osx/download-other.sh | sh`
