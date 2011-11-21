@@ -18,6 +18,7 @@ curl https://raw.github.com/doctorbh/dotfiles/master/git/setup.sh | sh
 brew update
 
 # Install packages
+brew install wget
 brew install ack
 brew install bcrypt
 brew install ctags
@@ -27,7 +28,6 @@ brew install markdown
 brew install mysql
 brew install postgresql
 brew install node
-brew install wget
 
 # Install and configure Rbenv
 

@@ -8,8 +8,10 @@ cd ~/Downloads
 # MacVim
 wget -c https://github.com/downloads/b4winckler/macvim/MacVim-snapshot-63.tbz
 
+# DropBox
+wget -c https://www.dropbox.com/download?plat=mac
+
 # f.lux
-echo "Downloading f.lux..."
 wget -c https://secure.herf.org/flux/Flux.zip
 
 # Tower
