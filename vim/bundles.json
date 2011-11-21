@@ -31,5 +31,6 @@
   "gist"               : "git://github.com/mattn/gist-vim.git",
   "command-t"          : "git://git.wincent.com/command-t.git",
   "csapprox"           : "git://github.com/godlygeek/csapprox.git",
-  "sparkup"            : "git://github.com/emilkje/sparkup-bundle.git"
+  "sparkup"            : "git://github.com/emilkje/sparkup-bundle.git",
+  "drawit"             : "git://github.com/vim-scripts/DrawIt.git"
 }
