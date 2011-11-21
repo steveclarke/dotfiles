@@ -34,6 +34,9 @@ defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 # Disable the warning before emptying the Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
+# Enable mouse right-click
+defaults write com.apple.driver.AppleBluetoothMultitouch.mouse MouseButtonMode "TwoButton"
+
 # Enable tap to click (Trackpad)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 
