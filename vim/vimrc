@@ -28,7 +28,7 @@ set ruler          " show line and column # of cursor position
 set cursorline     " hightlight the line we're on
 set ttyfast        " assume fast terminal
 set scrolloff=3    " min. # of lines above and below the cursor
-set laststatus=2   " Status bar
+"set laststatus=2   " Status bar
 set encoding=utf-8 " set encoding
 set showcmd        " show (partial) command in the status line
 set visualbell     " no annoying beep, please

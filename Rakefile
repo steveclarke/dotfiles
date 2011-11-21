@@ -11,6 +11,7 @@ task 'core:install'           => [ :init, :check ]
 task 'core:uninstall'         => [ :init ]
 task 'vim:install'            => [ :init, :check ]
 task 'vim:uninstall'          => [ :init ]
+task 'vim:helptags'           => [ ]
 task 'vim:bundles:install'    => [ :init, :check ]
 task 'vim:bundles:uninstall'  => [ :init ]
 task 'vim:bundles:update'     => [ :init ]
@@ -132,6 +133,17 @@ namespace :vim do
 end
 
 # -------------------------------------------------------------------------
+#                           Update Vim Helptags                           |
+# -------------------------------------------------------------------------
+namespace 'vim' do
+  desc 'Update Vim helptags'
+  task :helptags do
+    puts "Updating VIM Documentation..."
+    system "vim -e -s <<-EOF\n:Helptags\n:quit\nEOF"
+  end
+end
+
+# -------------------------------------------------------------------------
 #                           Install Vim Bundles                           |
 # -------------------------------------------------------------------------
 
@@ -155,6 +167,7 @@ namespace 'vim:bundles' do
         sh "git clone #{source} #{clone_to}"
       end
     end
+    Rake::Task['vim:helptags'].invoke
   end
 end
 
@@ -166,6 +179,7 @@ namespace 'vim:bundles' do
   desc 'Uninstall Vim bundles'
   task :uninstall do
     rm_rf(VIM_BUNDLES_DIR) if File.directory?(VIM_BUNDLES_DIR)
+    Rake::Task['vim:helptags'].invoke
   end
 end
 
@@ -176,16 +190,14 @@ end
 namespace 'vim:bundles' do
   desc 'Update Vim bundles'
   task :update do
-    if !File.directory?(VIM_BUNDLES_DIR)
-      puts "Oops! You should install bundles first with 'rake vim:bundles:install'"
-      exit
-    end
+    ensure_bundles_dir
     bundle_sources.each do |name, source|
       clone_to = File.join(VIM_BUNDLES_DIR, name)
       puts "+++ Updating #{name}..."
       cd clone_to
       sh "git pull"
     end
+    Rake::Task['vim:helptags'].invoke
   end
 end
 
@@ -195,11 +207,10 @@ end
 namespace 'vim:bundles' do
   desc 'Config Vim bundles'
   task :config do
-    if !File.directory?(VIM_BUNDLES_DIR)
-      puts "Oops! You should install bundles first with 'rake vim:bundles:install'"
-      exit
-    end
-    # TODO: compile Command-T extensions
+    ensure_bundles_dir
+    # compile Command-T extensions
+    cd(File.join(VIM_BUNDLES_DIR, 'command-t'))
+    sh("/usr/bin/rake make")
   end
 end
 
@@ -227,4 +238,11 @@ end
 def bundle_sources
   bundles_file = File.open(File.join(DOT_DIR, 'vim/bundles.json'), 'r').read
   JSON.parse(bundles_file)
+end
+
+def ensure_bundles_dir
+  if !File.directory?(VIM_BUNDLES_DIR)
+    puts "Oops! You should install bundles first."
+    exit
+  end
 end
