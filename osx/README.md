@@ -6,17 +6,11 @@
 
 `curl https://raw.github.com/doctorbh/dotfiles/master/osx/download-core.sh | sh`
 
-* Setup SSH keys
+* Setup SSH keys and GitHub token
 
 `export SSH_KEY_HOST=[hostname to retrive ssh key(s) from]`
 
-`curl https://raw.github.com/doctorbh/dotfiles/master/osx/ssh-setup.sh | sh`
-
-* Setup Github
-
 `export GITHUB_TOKEN=[my token]`
-
-`curl https://raw.github.com/doctorbh/dotfiles/master/git/setup.sh | sh`
 
 * Run mac-setup.sh
 

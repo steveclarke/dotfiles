@@ -7,7 +7,10 @@
 curl https://raw.github.com/doctorbh/dotfiles/master/osx/defaults.sh | sh
 
 # Configure SSH keys
-#curl https://raw.github.com/doctorbh/dotfiles/master/osx/ssh-setup.sh | sh
+curl https://raw.github.com/doctorbh/dotfiles/master/osx/ssh-setup.sh | sh
+
+# Configure GitHub
+curl https://raw.github.com/doctorbh/dotfiles/master/git/setup.sh | sh
 
 # Install Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
