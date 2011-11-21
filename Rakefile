@@ -226,8 +226,6 @@ namespace :osx do
   task :config do
     config_script = File.join(DOT_DIR, 'osx/defaults.sh')
     sh "/bin/sh #{config_script}"
-    puts "+++ Opening Visor termial theme..."
-    sh "open #{File.join(DOT_DIR, 'osx/Visor.terminal')}"
   end
 end
 
