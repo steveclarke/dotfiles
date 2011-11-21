@@ -40,3 +40,12 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 # Map bottom right Trackpad corner to right-click
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+
+# Enable iTunes song and artist dock icon popups
+defaults write com.apple.dock itunes-notifications -bool TRUE
+
+# Back out previous if desired
+# defaults delete com.apple.dock itunes-notifications
+
+# restart Dock to make some settings take effect
+killall Dock
