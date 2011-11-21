@@ -8,5 +8,5 @@ fpath=($ZSH/functions $fpath)
 for function_file ($ZSH/functions/*.zsh) source $function_file
 
 # use a local config file if it exists
-[[ -f ~/.zshrc_local ]] && . ~/.zshrc_local
+[[ -f ~/.localrc ]] && . ~/.localrc
 

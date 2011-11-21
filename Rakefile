@@ -83,6 +83,9 @@ namespace :core do
       puts "### #{name.upcase}"
       create_symlink(dirs[:source], dirs[:target])
     end
+    localrc = File.join(HOME_DIR, '.localrc')
+    stub_text = "# shared local shell config for private stuff"
+    sh "echo '#{stub_text}' > #{localrc}" unless File.exists?(localrc)
   end
 end
 
@@ -235,8 +238,6 @@ namespace :zsh do
   desc 'Configure Zsh'
   task :config do
     sh "chsh -s `which zsh`"
-    zsh_local = File.join(HOME_DIR, '.zsh_local')
-    touch zsh_local unless File.exists?(zsh_local)
   end
 end
 
