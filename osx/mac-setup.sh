@@ -18,6 +18,10 @@ brew install markdown
 brew install mysql
 brew install postgresql
 
+# install Vim with python compiled in for some plugins to work
+brew install mercurial
+brew install https://raw.github.com/AndrewVos/homebrew-alt/master/duplicates/vim.rb
+
 # Install Node / npm
 brew install node
 curl http://npmjs.org/install.sh | sh
