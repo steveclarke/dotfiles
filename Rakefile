@@ -191,9 +191,9 @@ namespace 'vim:bundles' do
   task :update do
     ensure_bundles_dir
     bundle_sources.each do |name, source|
-      clone_to = File.join(VIM_BUNDLES_DIR, name)
+      bundle_dir = File.join(VIM_BUNDLES_DIR, name)
       puts "+++ Updating #{name}..."
-      cd clone_to
+      cd bundle_dir
       sh "git pull"
     end
     Rake::Task['vim:bundles:config'].invoke
