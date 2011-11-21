@@ -136,7 +136,7 @@ end
 namespace 'vim' do
   desc 'Update Vim helptags'
   task :helptags do
-    puts "Updating VIM Documentation..."
+    puts "+++ Updating VIM Documentation..."
     system "vim -e -s <<-EOF\n:Helptags\n:quit\nEOF"
   end
 end
@@ -165,6 +165,7 @@ namespace 'vim:bundles' do
         sh "git clone #{source} #{clone_to}"
       end
     end
+    Rake::Task['vim:bundles:config'].invoke
     Rake::Task['vim:helptags'].invoke
   end
 end
@@ -195,6 +196,7 @@ namespace 'vim:bundles' do
       cd clone_to
       sh "git pull"
     end
+    Rake::Task['vim:bundles:config'].invoke
     Rake::Task['vim:helptags'].invoke
   end
 end
@@ -206,7 +208,8 @@ namespace 'vim:bundles' do
   desc 'Config Vim bundles'
   task :config do
     ensure_bundles_dir
-    # compile Command-T extensions
+    # compile Command-T extensions (needs ruby 1.8, so use system ruby)
+    puts "+++ Compiling Command-T extensions..."
     cd(File.join(VIM_BUNDLES_DIR, 'command-t'))
     sh("/usr/bin/rake make")
   end
