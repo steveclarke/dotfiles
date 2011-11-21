@@ -19,5 +19,6 @@ Run `rake:install`.
 `rake --tasks` to see other stuff you can do.
 
 ## TODO:
-
+* Create bootstrap file to get brew, rbenv, etc. installed before
+  we run the rakefile
 * Tweak my prompt

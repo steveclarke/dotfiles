@@ -30,17 +30,17 @@ task :init do
   VIM_BUNDLES_DIR  = File.join(HOME_DIR, 'src/vim_bundles')
 
   CORE_DIRS = {
-    dotfiles:     { source: DOT_DIR,                  target: home('.dotfiles') },
-    bash_profile: { source: dot('bash/bash_profile'), target: home('.bash_profile') },
-    zshrc:        { source: dot('zsh/zshrc'),         target: home('.zshrc') },
-    bin:          { source: dot('bin'),               target: home('bin') },
-    gemrc:        { source: dot('ruby/gemrc'),        target: home('.gemrc') },
+    :dotfiles      => { :source => DOT_DIR,                  :target => home('.dotfiles') },
+    :bash_profile  => { :source => dot('bash/bash_profile'), :target => home('.bash_profile') },
+    :zshrc         => { :source => dot('zsh/zshrc'),         :target => home('.zshrc') },
+    :bin           => { :source => dot('bin'),               :target => home('bin') },
+    :gemrc         => { :source => dot('ruby/gemrc'),        :target => home('.gemrc') },
   }
 
   VIM_DIRS = {
-    dotvim: { source: dot('vim/vim'),    target: home('.vim') },
-    vimrc:  { source: dot('vim/vimrc'),  target: home('.vimrc') },
-    gvimrc: { source: dot('vim/gvimrc'), target: home('.gvimrc') },
+    :dotvim  => { :source => dot('vim/vim'),    :target => home('.vim') },
+    :vimrc   => { :source => dot('vim/vimrc'),  :target => home('.vimrc') },
+    :gvimrc  => { :source => dot('vim/gvimrc'), :target => home('.gvimrc') },
   }
 end
 
@@ -235,6 +235,8 @@ namespace :zsh do
   desc 'Configure Zsh'
   task :config do
     sh "chsh -s `which zsh`"
+    zsh_local = File.join(HOME_DIR, '.zsh_local')
+    touch zsh_local unless File.exists?(zsh_local)
   end
 end
 
@@ -244,7 +246,7 @@ end
 namespace :git do
   desc 'Configure Git'
   task :config do
-    if ENV['GITHUB_TOKEN'] == ''
+    if ENV['GITHUB_TOKEN'] == '' || ENV['GITHUB_TOKEN'] == nil
       puts "Set GITHUB_TOKEN environment variable and speak to me when you're ready!"
     else
       sh "/bin/sh #{File.join(DOT_DIR, 'git/setup.sh')}"
