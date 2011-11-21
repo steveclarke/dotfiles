@@ -6,7 +6,7 @@
 
 `curl https://raw.github.com/doctorbh/dotfiles/master/osx/bootstrap/download-core.sh | sh`
 
-* Setup SSH keys and GitHub token
+* Setup ENV vars we'll need for SSH keys and GitHub config
 
 `export SSH_KEY_HOST=`
 
@@ -22,4 +22,4 @@
 
 * Configure Dotfiles
 
-* Install Rails
+* Install dev tools, etc.
