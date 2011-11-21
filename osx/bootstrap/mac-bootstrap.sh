@@ -7,7 +7,7 @@
 # TODO: Check for presence of GCC
 
 # Configure SSH keys
-curl https://raw.github.com/doctorbh/dotfiles/master/osx/bootstrap/ssh-setup.sh | sh
+curl https://raw.github.com/doctorbh/dotfiles/master/ssh/ssh-setup.sh | sh
 
 # Configure GitHub
 curl https://raw.github.com/doctorbh/dotfiles/master/git/setup.sh | sh
