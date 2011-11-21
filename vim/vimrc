@@ -7,7 +7,7 @@ set nocompatible     " it's the 21st century
 let mapleader = ','  " use , instead of \. Load early.
 
 " use Pathogen.vim to load vim bundles
-call pathogen#infect('~/src/vim/bundles')
+call pathogen#infect('~/src/vim_bundles')
 
 color ir_black     " default colorscheme
 syntax on          " syntax highlighting
