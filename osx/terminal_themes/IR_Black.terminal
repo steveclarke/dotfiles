@@ -154,7 +154,7 @@
 	gouTlp+xtLkAAAAAAAABAQAAAAAAAAAZAAAAAAAAAAAAAAAAAAAAuw==
 	</data>
 	<key>Bell</key>
-	<true/>
+	<false/>
 	<key>CursorBlink</key>
 	<true/>
 	<key>CursorColor</key>

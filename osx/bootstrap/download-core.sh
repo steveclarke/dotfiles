@@ -1,13 +1,9 @@
 #!/bin/sh
 
-# Download core programs that I want on every Mac
 # These are ones I want downloaded before I get Brew installed and
 # have access to wget (where I can do resumes)
 
 cd ~/Downloads
-
-# Wallet
-curl -O http://www.acrylicapps.com/downloads/Wallet.zip
 
 # Google Chrome
 echo "Downloading Google Chrome..."
