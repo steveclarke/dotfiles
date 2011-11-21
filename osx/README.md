@@ -8,6 +8,8 @@
 
 * Setup SSH keys
 
+`export SSH_KEY_HOST=[hostname to retrive ssh key(s) from]`
+
 `curl https://raw.github.com/doctorbh/dotfiles/master/osx/ssh-setup.sh | sh`
 
 * Setup Github

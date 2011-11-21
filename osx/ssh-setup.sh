@@ -5,6 +5,4 @@ then
   mkdir ~/.ssh
 fi
 
-echo "Enter the server to copy your SSH keys from"
-read ssh_server
-scp $USER@$ssh_server:.ssh/id_rsa* .
+scp $USER@$SSH_KEY_HOST:.ssh/id_rsa* ~/.ssh
