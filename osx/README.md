@@ -8,9 +8,9 @@
 
 * Setup SSH keys and GitHub token
 
-`export SSH_KEY_HOST=[hostname to retrive ssh key(s) from]`
+`export SSH_KEY_HOST=`
 
-`export GITHUB_TOKEN=[my token]`
+`export GITHUB_TOKEN=`
 
 * Run mac-setup.sh
 
