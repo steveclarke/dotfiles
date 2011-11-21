@@ -49,9 +49,7 @@ end
 # -------------------------------------------------------------------------
 
 task :check do
-  if File.directory?(DOT_DIR)
-    puts ">>> We have a ~/src/dotfiles directory... good."
-  else
+  if !File.directory?(DOT_DIR)
     puts "I'm expecting stuff to be setup inside ~/src/dotfiles."
     puts "Just what do you think you're doing, Dave....er I mean Steve."
     exit
@@ -211,6 +209,43 @@ namespace 'vim:bundles' do
     # compile Command-T extensions
     cd(File.join(VIM_BUNDLES_DIR, 'command-t'))
     sh("/usr/bin/rake make")
+  end
+end
+
+# -------------------------------------------------------------------------
+#                             Configure OS X                              |
+# -------------------------------------------------------------------------
+namespace :osx do
+  desc 'Configure OS X'
+  task :config do
+    config_script = File.join(DOT_DIR, 'osx/defaults.sh')
+    sh "/bin/sh #{config_script}"
+    puts "+++ Opening Visor termial theme..."
+    sh "open #{File.join(DOT_DIR, 'osx/Visor.terminal')}"
+  end
+end
+
+# -------------------------------------------------------------------------
+#                              Configure Zsh                              |
+# -------------------------------------------------------------------------
+namespace :zsh do
+  desc 'Configure Zsh'
+  task :config do
+    sh "chsh -s `which zsh`"
+  end
+end
+
+# -------------------------------------------------------------------------
+#                              Configure Git                              |
+# -------------------------------------------------------------------------
+namespace :git do
+  desc 'Configure Git'
+  task :config do
+    if ENV['GITHUB_TOKEN'] == ''
+      puts "Set GITHUB_TOKEN environment variable and speak to me when you're ready!"
+    else
+      sh "/bin/sh #{File.join(DOT_DIR, 'git/setup.sh')}"
+    end
   end
 end
 

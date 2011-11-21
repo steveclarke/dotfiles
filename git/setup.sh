@@ -1,8 +1,4 @@
 #!/bin/sh
-echo "############################################################"
-echo "please make sure you set your Github token in \$GITHUB_TOKEN"
-echo "############################################################"
-
 git config --global user.name "Steve Clarke"
 git config --global user.email "doctorbh@ninjanizr.com"
 
