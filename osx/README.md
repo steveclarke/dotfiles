@@ -18,7 +18,7 @@
 
 * Download other standard stuff after `wget` is installed:
 
-`curl https://raw.github.com/doctorbh/dotfiles/master/osx/download-other.sh | sh`
+`curl https://raw.github.com/doctorbh/dotfiles/master/osx/download-apps.sh | sh`
 
 * Configure Dotfiles
 
