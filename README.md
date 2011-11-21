@@ -10,12 +10,14 @@ to place things.
 * Repository lives at `~/src/dotfiles`
 * [Homebrew](http://mxcl.github.com/homebrew/) is configured
 * Vim with Python support compiled in [(see here)](http://www.andrewvos.com/2011/07/23/upgrading-vim-on-os-x-with-homebrew/) - required for UltiSnips and Sparkup.
+* Rake is installed
 
 ## Installation
 
-Run `bootstrap.rb` and do what it says (within reason).
+Run `rake:install`.
+
+`rake --tasks` to see other stuff you can do.
 
 ## TODO:
 
-* Turn config scripts into Rake tasks
 * Tweak my prompt
