@@ -140,7 +140,7 @@ namespace 'vim' do
   desc 'Update Vim helptags'
   task :helptags do
     puts "+++ Updating VIM Documentation..."
-    system "vim -e -s <<-EOF\n:Helptags\n:quit\nEOF"
+    system "vim -c 'call pathogen#helptags() | q'"
   end
 end
 
