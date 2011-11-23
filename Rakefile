@@ -19,6 +19,7 @@ task 'vim:bundles:config'     => [ :init ]
 task 'git:config'             => [ :init, :check ]
 task 'osx:config'             => [ :init, :check ]
 task 'zsh:config'             => [ :init, :check ]
+task 'ruby:config'            => [ :init, :check ]
 
 # -------------------------------------------------------------------------
 #                               Initialize                                |
@@ -250,6 +251,16 @@ namespace :git do
     else
       sh "/bin/sh #{File.join(DOT_DIR, 'git/setup.sh')}"
     end
+  end
+end
+
+# -------------------------------------------------------------------------
+#                             Configure Ruby                              |
+# -------------------------------------------------------------------------
+namespace :ruby do
+  desc 'Configure Ruby'
+  task :config do
+    sh "/bin/sh #{File.join(DOT_DIR, 'ruby/setup.sh')}"
   end
 end
 
