@@ -1,5 +1,6 @@
 alias ff='clear'
 alias reload='. ~/.zshrc'
+alias flush='dscacheutil -flushcache'
 
 alias ..='cd ..'
 
