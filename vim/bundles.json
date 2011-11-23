@@ -25,6 +25,8 @@
   "unimpaired"         : "git://github.com/tpope/vim-unimpaired.git",
   "endwise"            : "git://github.com/tpope/vim-endwise.git",
   "ragtag"             : "git://github.com/tpope/vim-ragtag.git",
+  "bundler"            : "git://github.com/tpope/vim-bundler.git",
+  "rake"               : "git://github.com/tpope/vim-rake.git",
   "coffee-script"      : "git://github.com/kchmck/vim-coffee-script.git",
   "syntastic"          : "git://github.com/scrooloose/syntastic.git",
   "scala"              : "git://github.com/bdd/vim-scala.git",
