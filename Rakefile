@@ -249,7 +249,7 @@ namespace :git do
     if ENV['GITHUB_TOKEN'] == '' || ENV['GITHUB_TOKEN'] == nil
       puts "Set GITHUB_TOKEN environment variable and speak to me when you're ready!"
     else
-      sh "/bin/sh #{File.join(DOT_DIR, 'git/setup.sh')}"
+      sh "/bin/sh #{File.join(DOT_DIR, 'git/git-setup.sh')}"
     end
   end
 end
