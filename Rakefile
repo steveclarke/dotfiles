@@ -223,7 +223,7 @@ end
 #                             Configure OS X                              |
 # -------------------------------------------------------------------------
 namespace :osx do
-  desc 'Configure OS X'
+  desc 'Configure OS X defaults'
   task :config do
     config_script = File.join(DOT_DIR, 'osx/defaults.sh')
     sh "/bin/sh #{config_script}"
