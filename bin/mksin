@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p $1 $1/views $1/public $1/public/javascript $1/public/css $1/public/images
+touch $1/app.rb $1/config.ru $1/Gemfile
