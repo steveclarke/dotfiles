@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # User Info
-git config --global user.name "Steve Clarke"
-git config --global user.email "doctorbh@ninjanizr.com"
+git config --global user.name "Chris Clarke"
+git config --global user.email "beakr@ninjanizr.com"
 
 # Github
-git config --global github.user doctorbh
+git config --global github.user beakr
 git config --global github.token $GITHUB_TOKEN
 
 # Aliases
