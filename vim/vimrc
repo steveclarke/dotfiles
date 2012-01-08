@@ -23,7 +23,8 @@ let g:my_email="steve@sevenseven.co"
 "                               Core Config                               |
 " -------------------------------------------------------------------------
 
-set relativenumber " show how far away each line is from current one
+"set relativenumber " show how far away each line is from current one
+set number
 set ruler          " show line and column # of cursor position
 set cursorline     " hightlight the line we're on
 set ttyfast        " assume fast terminal
@@ -34,7 +35,7 @@ set showcmd        " show (partial) command in the status line
 set visualbell     " no annoying beep, please
 
 " Whitespace stuff
-set nowrap
+set wrap
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2

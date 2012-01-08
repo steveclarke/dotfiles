@@ -1,4 +1,5 @@
-# Doctor B. Honeydew's Dotfiles
+# Beakr Labs Dotfiles
+(Based on Doctor B. Honeydew's Dotfiles)
 
 This is a collection of my config files to help me get each of my
 computers quickly bootstrapped. It's a work in progress and is
