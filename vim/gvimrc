@@ -4,6 +4,9 @@ if has("gui_macvim")
   " Default gui color scheme
   color Tomorrow-Night-Bright
 
+  " Transparency
+  set transparency=15
+
   " Fullscreen takes up entire screen
   set fuoptions=maxhorz,maxvert
 
