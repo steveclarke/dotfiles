@@ -1,12 +1,13 @@
 clearsnippets
 
 snippet . "css directive" b
-${1} {
-  ${2}
+${1:selector} {
+  ${0:contents}
 }
-$0
 endsnippet
 
 snippet bg "background - full"
 background: #${1:fff} url('${2}') ${3:0} ${4:0} ${5:no-repeat};
 endsnippet
+
+

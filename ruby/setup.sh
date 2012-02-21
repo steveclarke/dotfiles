@@ -10,4 +10,4 @@ gem install lunchy
 gem install rails
 gem install cheat
 gem install ffaker
-
+gem install sinatra
