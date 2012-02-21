@@ -111,6 +111,16 @@ map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " Command mode: Ctrl+P
 cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+
 " -------------------------------------------------------------------------
 "                              Plugin Config                              |
 " -------------------------------------------------------------------------
@@ -171,7 +181,7 @@ let g:UltiSnipsEditSplit="vertical"
 " search in regular order since the default was causing my
 " 'clearsnippets' override on defaults not to work
 let g:UltiSnipsDontReverseSearchPath="1"
-" Get all TextMatey
+" Get all TextMate
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
@@ -217,7 +227,19 @@ if has("autocmd")
     \| exe "normal g'\"" | endif
 endif
 
-" Include user's local vim config
+" Include user's local vim conf(try to make it descriptive):ig
 if filereadable(expand("~/.vimrc.local"))
   source ~/.vimrc.local
 endif
+
+" CNTRL+shift+P Colorscheme system by Vimcasts
+" Made by Vimcasts.org
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+

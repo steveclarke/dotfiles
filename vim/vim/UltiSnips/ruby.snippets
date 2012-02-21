@@ -3,12 +3,21 @@ snippet ! "shebang line" b
 
 endsnippet
 
-snippet def "def" b
-def ${1:method_name}${3:(${2})}
-  $0
+snippet # "interpolated variable" i
+#{$1}$0
+endsnippet
+
+snippet 3com "Easily create 3 comments using 3com." b
+# $1
+# $2
+# $0
+endsnippet
+
+snippet proc "An easy Proc template for Ruby." b
+${1:*variable*} = Proc.new do
+  ${0:#Content}
 end
 endsnippet
 
-snippet # "embedded variable" i
-#{$1}$0
-endsnippet
+
+
