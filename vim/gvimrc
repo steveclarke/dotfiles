@@ -5,7 +5,7 @@ if has("gui_macvim")
   color Tomorrow-Night-Bright
 
   " Transparency
-  set transparency=15
+  set transparency=7
 
   " Fullscreen takes up entire screen
   set fuoptions=maxhorz,maxvert

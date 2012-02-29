@@ -22,3 +22,6 @@ alias gc='git commit -v'
 alias gca='git commit -va'
 alias ga='git add'
 alias gl='git lg'
+
+# misc
+alias t='vim ~/tasks.txt'
