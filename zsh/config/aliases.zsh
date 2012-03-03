@@ -30,10 +30,12 @@ alias ga='git add'
 alias gl='git lg'
 alias gcm='git commit -m'
 
+# get me to li1 quickly
+alias li1='ssh li1'
+
 # gems
 alias gi='gem install'
 alias gun='gem unpack' # Sounds violent, but just helps in the command line...
 alias gu='gem uninstall'
 alias gup='gem update'
 alias gw='gem which'
-
