@@ -30,4 +30,7 @@ git config --global color.status.added yellow
 git config --global color.status.changed green
 git config --global color.status.untracked cyan
 
+# Misc
+git config --global core.excludesfile ~/.gitignore
+
 git config -l
