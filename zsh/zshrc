@@ -10,3 +10,5 @@ for function_file ($ZSH/functions/*.zsh) source $function_file
 # use a local config file if it exists
 [[ -f ~/.localrc ]] && . ~/.localrc
 
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
