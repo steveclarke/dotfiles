@@ -15,7 +15,7 @@ alias m='mvim'
 alias v='vim'
 
 # git
-alias gs='git status'
+alias gits='git status'
 alias gpu='git push'
 alias gpl='git pull'
 alias gc='git commit -v'
