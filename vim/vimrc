@@ -40,6 +40,8 @@ set shiftwidth=2
 set softtabstop=2
 set expandtab      " convert tabs to spaces
 set colorcolumn=85 " show a colored column to help with wrapping
+" set color colum to sane color
+hi ColorColumn guifg=#30312c guibg=#30312c
 set list listchars=tab:\ \ ,trail:·
 set backspace=indent,eol,start  " backspace over everything in insert mode
 
