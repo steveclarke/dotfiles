@@ -25,3 +25,4 @@ alias gl='git lg'
 
 # misc
 alias t='vim ~/tasks.txt'
+alias be='bundle exec'
