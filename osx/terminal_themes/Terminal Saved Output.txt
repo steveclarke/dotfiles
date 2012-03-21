@@ -1,0 +1,96 @@
+Last login: Fri Feb 10 15:22:06 on ttys001
+➜  ~  src 
+➜  src  the-beakr-files
+zsh: command not found: the-beakr-files
+➜  src  the-beaker-files
+zsh: command not found: the-beaker-files
+➜  src  vim functional_game.rb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  1 # It's easy for the time being, all we need to do first is describe                  
+  2 # how the player reacts to certain things, and call in some FLOW CONTROL             
+  3 # to handle what items are good, or bad.                                             
+  4                                                                                      
+  5 # First, let's make an array of areas to describe where you can be mapped at the     
+  6 # start.                                                                             
+  7                                                                                      
+  8 locations = [ 'syrup volcano', 'waffle town', 'pancake city', 'srambled egg arena',  
+  9               'breakfast control', 'butter ball apartment', 'evil bacon union',      
+ 10               'orange juicer']                                                       
+ 11          # I'm sure you guys can think of more...                                    
+ 12                                                                                      
+ 13 # Now we'll list our items...                                                        
+ 14 items = ['buttergun', 'juice laser', 'sword of three syrups', 'waffle grinder',      
+ 15          'teddy bear']                                                               
+ 16                                                                                      
+ 17 # And finally the many enemies and objects.                                          
+ 18 enemies = ['phantom meat grinder', 'house fly', 'venus egg-trap', 'pixel crusher',   
+ 19            'spike pit', 'waffle dragon', 'bagglezak and his pheutonic hyper-ray',    
+ 20            'scrambler', 'yolk-head the bandit']                                      
+ 21          # Shall you add more? *wink*                                                
+ 22                                                                                      
+ 23 mapped = do |m| # See? functions ar                                                                                                                         
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+~                                                                                                                                                               
+-- INSERT --                                                                                                                                  23,36         All

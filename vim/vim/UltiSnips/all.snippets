@@ -1,4 +1,3 @@
-# NICE BOXES #
 global !p
 def cs(snip):
     c = '#'
@@ -8,31 +7,7 @@ def cs(snip):
     return c
 endglobal
 
-snippet date
-`!v strftime("%d-%m-%Y")`
-endsnippet
-
-snippet ddate
-`!v strftime("%B %d, %Y")`
-endsnippet
-
-snippet c)
-Copyright `!v &enc[:2] == "utf" ? "©" : "(c)"``!v strftime("%Y")` ${1:`!v g:my_name`}. All Rights Reserved.
-$0
-endsnippet
-
-snippet me
-`!v g:my_name`
-endsnippet
-
-snippet em
-`!v g:my_email`
-endsnippet
-
-snippet meem
-`!v g:my_name` <`!v g:my_email`>
-endsnippet
-
+# Special thanks to Doctorbh on Github (www.github.com/doctorbh) for this one.
 snippet cbox "Comment header in a pretty box" b
 `!p
 c = cs(snip)
@@ -48,13 +23,5 @@ a = 71-len(t[1])
 snip.rv = (a/2 + a%2) * " " + " " + '|'
 snip += bar`
 $0
-endsnippet
-
-snippet s "Makes a single quoted string."
-'${0:Content}'
-endsnippet
-
-snippet S "Makes a string." b
-"${0:Content}"
 endsnippet
 

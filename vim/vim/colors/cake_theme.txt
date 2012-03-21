@@ -1,8 +1,0 @@
-#-------------------------
-# Cake theme template    |
-#   Colors and plans     |
-#     Full design sheet  |
-#-------------------------
-
-TEMPLATE:
-

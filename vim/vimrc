@@ -1,115 +1,96 @@
-" -------------------------------------------------------------------------
-"                                  Setup                                  |
-" -------------------------------------------------------------------------
+"              "
+"  Main Setup  "
+"	             "
 
-set nocompatible     " it's the 21st century
+set nocompatible  " Vi is nothin' but a fossil.
 
-let mapleader = ','  " use , instead of \. Load early.
+let mapleader = ',' " use a comma instead of \. Load early
 
-" use Pathogen.vim to load vim bundles
-call pathogen#infect('~/src/vim_bundles')
+" I love you Pathogen! "
+call pathogen#infect()
 
-color ir_black     " default colorscheme
-syntax on          " syntax highlighting
+color jellybeans  " default theme
+syntax on       " syntax highlighting
 
-" -------------------------------------------------------------------------
-"                                 Globals                                 |
-" -------------------------------------------------------------------------
+"                    "
+"  Personal Globals  "
+"                    "
 
-let g:my_name="Steve Clarke"
-let g:my_email="steve@sevenseven.co"
+let g:my_name="Christopher Clarke"
+let g:my_email="beakr@ninjanizr.com" " buiseness email
+let g:personal_email="beaker2000@me.com" " personal email
+let g:my_blog="www.beakerblog.net"
 
-" -------------------------------------------------------------------------
-"                               Core Config                               |
-" -------------------------------------------------------------------------
 
-"set relativenumber " show how far away each line is from current one
+"-------------------"
+"        CORE       "
+"-------------------"
+
 set number
-set ruler          " show line and column # of cursor position
-set cursorline     " hightlight the line we're on
-set ttyfast        " assume fast terminal
-set scrolloff=3    " min. # of lines above and below the cursor
-"set laststatus=2   " Status bar
-set encoding=utf-8 " set encoding
-set showcmd        " show (partial) command in the status line
-set visualbell     " no annoying beep, please
+set ruler          " parse out what line & column your on
+set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%)
+set cursorline     " highlight current line cursor is on
+set ttyfast        " fast terminal
+set scrolloff=3
+set encoding=utf-8 " encoding
+set showcmd
+set visualbell     " I'm a bit scared of smashing the computer if this is left on...
 
-" Whitespace stuff
 set wrap
+
+  " get rid of the default godzilla tabs please
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set expandtab      " convert tabs to spaces
-set colorcolumn=85 " show a colored column to help with wrapping
-set list listchars=tab:\ \ ,trail:·
-set backspace=indent,eol,start  " backspace over everything in insert mode
 
-" Searching
+set expandtab      " easily erase tabs a space at a time
+set colorcolumn=85 " colorcolumn for wrapping purposes (bar at the side)
+set listchars=tab:\ \ ,trail:·
+set backspace=indent,eol,start " if there's nothing left to backspace, start backspacing the next line
+
+" search
 set hlsearch   " highlight search results
-set incsearch  " incremental search
-set ignorecase " case-insensitive search unless...
-set smartcase  " if search contains caps, make case-sensitive
+set incsearch  " don't keep hitting <enter> for your search
+set ignorecase " case insensensitive searching
+set smartcase  " if the search contains a capital letter, make it case sensitive
 
-" Tab completion
+" tab completion
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
 
-" Use modeline overrides
-set modeline
-set modelines=10
-
-" Directories for swp files
+" Get them .swp files outta' my sight!
 set backupdir=~/.vim/backup
 set directory=~/.vim/backup
 
-" MacVIM shift+arrow-keys behavior (required in .vimrc)
-let macvim_hig_shift_movement = 1
+"----------------"
+" abbrivtiations "
+"----------------"
+
+
+"----------"
+" mappings "
+"----------"
+
+" No arrow keys allowed
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+
+" give your hands a break from the '==' command today
+nnoremap = ==
+
+" For these times when your cursor is on the last letter, but when you go in insert mode it's in between the last and second last letter
+nnoremap a i<right>
+
 
 " -------------------------------------------------------------------------
-"                              Key Mappings                               |
+"                            Helpful Functions                            |
 " -------------------------------------------------------------------------
-
-" clear highlighting
-nnoremap <leader>/ :noh<cr>
-
-" help save an <esc> key today
-inoremap jj <esc>
-
-" <leader>a to :Align
-vnoremap <leader>a :Align<space>
-
-" Re-hardwrap paragraphs of text
-vnoremap <leader>q gq       " in visual mode
-nnoremap <leader>q gqip     " in normal mode
-
-" Open new vsplit and switch to it
-nnoremap <leader>v <C-w>v<C-w>l
-nnoremap <leader>h <C-w>s<C-w>j
-
-" Save buffer
-nnoremap <leader>w <esc>:w<cr>
-
-" Sane window switching
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-" Make it easy to edit, resource my .vimrc file
-nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
-nnoremap <silent> <leader>rv :source $MYVIMRC<cr>
-
-" Opens an edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>e
-map <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
-
-" Opens a tab edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>t
-map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
-" Inserts the path of the currently edited file into a command
-" Command mode: Ctrl+P
-cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 
 " Show syntax highlighting groups for word under cursor
 nmap <C-S-P> :call <SID>SynStack()<CR>
@@ -119,127 +100,3 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-
-
-" -------------------------------------------------------------------------
-"                              Plugin Config                              |
-" -------------------------------------------------------------------------
-
-" Without setting this, ZoomWin restores windows in a way that causes
-" equal always behavior to be triggered the next time CommandT is used.
-" This is likely a bludgeon to solve some other issue, but it works
-set noequalalways
-
-" ZoomWin configuration
-map <Leader><Leader> :ZoomWin<CR>
-
-" NERDTree configuration
-let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
-map <Leader>n :NERDTreeToggle<CR>
-
-" Command-T configuration
-let g:CommandTMaxHeight=20
-
-" This stuff came along with Janus config. Leaving it here until
-" I understand what it is and whether I want it. :D
-" CTags
-"map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
-"map <C-\> :tnext<CR>
-
-" Unimpaired configuration (see http://vimcasts.org/episodes/bubbling-text/)
-" TODO: This mapping conflicts with default OS X mapping currently.
-" Bubble single lines
-nmap <C-Up> [e
-nmap <C-Down> ]e
-" Bubble multiple lines
-vmap <C-Up> [egv
-vmap <C-Down> ]egv
-
-" Enable syntastic syntax checking
-let g:syntastic_enable_signs=1
-let g:syntastic_quiet_warnings=1
-
-" gist-vim defaults
-if has("mac")
-  let g:gist_clip_command = 'pbcopy'
-elseif has("unix")
-  let g:gist_clip_command = 'xclip -selection clipboard'
-endif
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 1
-
-" % to bounce from do to end etc.
-runtime! macros/matchit.vim
-
-" Turn off jslint errors by default
-let g:JSLintHighlightErrorLine = 0
-
-" UltiSnips
-let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
-let g:UltiSnipsEditSplit="vertical"
-" search in regular order since the default was causing my
-" 'clearsnippets' override on defaults not to work
-let g:UltiSnipsDontReverseSearchPath="1"
-" Get all TextMate
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-" edit snip for current filetype
-nnoremap <leader>u :UltiSnipsEdit<cr>
-
-" -------------------------------------------------------------------------
-"                                Filetype                                 |
-" -------------------------------------------------------------------------
-
-function! s:setupWrapping()
-  set wrap
-  set wrapmargin=2
-  set textwidth=72
-endfunction
-
-function! s:setupMarkup()
-  call s:setupWrapping()
-  map <buffer> <Leader>p :Hammer<CR>
-endfunction
-
-" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
-au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
-
-" md, markdown, and mk are markdown and define buffer-local preview
-au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
-
-" add json syntax highlighting
-au BufNewFile,BufRead *.json set ft=javascript
-
-au BufRead,BufNewFile *.txt call s:setupWrapping()
-
-" load the plugin and indent settings for the detected filetype
-filetype plugin indent on
-
-" -------------------------------------------------------------------------
-"                               Misc Config                               |
-" -------------------------------------------------------------------------
-
-" Remember last location in file
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal g'\"" | endif
-endif
-
-" Include user's local vim conf(try to make it descriptive):ig
-if filereadable(expand("~/.vimrc.local"))
-  source ~/.vimrc.local
-endif
-
-" CNTRL+shift+P Colorscheme system by Vimcasts
-" Made by Vimcasts.org
-" Show syntax highlighting groups for word under cursor
-nmap <C-S-P> :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-

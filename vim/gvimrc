@@ -1,57 +1,24 @@
 if has("gui_macvim")
-  set guifont=Menlo:h13
+	set guifont=Menlo:h12
 
-  " Default gui color scheme
-  color jellybeans
-
-  " Fullscreen takes up entire screen
-  set fuoptions=maxhorz,maxvert
-
-  " Command-T for CommandT
-  macmenu &File.New\ Tab key=<D-T>
-  map <D-t> :CommandT<CR>
-  imap <D-t> <Esc>:CommandT<CR>
-
-  " Command-Return for fullscreen
-  macmenu Window.Toggle\ Full\ Screen\ Mode key=<D-CR>
-
-  " Command-Shift-F for Ack
-  map <D-F> :Ack<space>
-
-  " Command-/ to toggle comments
-  map <D-/> <plug>NERDCommenterToggle<CR>
-  imap <D-/> <Esc><plug>NERDCommenterToggle<CR>i
-
-  " Command-Option-ArrowKey to switch viewports
-  map  <D-M-Up>    <C-w>k
-  imap <D-M-Up>    <Esc> <C-w>k
-  map  <D-M-Down>  <C-w>j
-  imap <D-M-Down>  <Esc> <C-w>j
-  map  <D-M-Right> <C-w>l
-  imap <D-M-Right> <Esc> <C-w>l
-  map  <D-M-Left>  <C-w>h
-  imap <D-M-Left>  <C-w>h
-
-  " Adjust viewports to the same size
-  map <Leader>= <C-w>=
-  imap <Leader>= <Esc> <C-w>=
+	" Default colorscheme
+	color jellybeans
 endif
 
-" Start without the toolbar
-set guioptions-=T
+	" Startup without the hated toolbar...
+	set guioptions-=T
 
-" Command-e for ConqueTerm
-map <D-e> :call StartTerm()<CR>
+	
 
-" ConqueTerm wrapper
-function StartTerm()
-  execute 'ConqueTerm ' . $SHELL . ' --login'
-  setlocal listchars=tab:\ \ 
-endfunction
 
-" NERD RELATED
-" #####################
-" Project Tree
+
+
+
+
+
+	" NERD Stuff (all credit goes to Doctorbh on Github: www.github.com/Doctorbh)
+
+	" Project Tree
 if exists("loaded_nerd_tree")
   autocmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
   autocmd FocusGained * call s:UpdateNERDTree()
@@ -205,17 +172,7 @@ endif
 " /END NERD RELATED
 " ################
 
-" Include user's local vim config
+" Include local vim config...
 if filereadable(expand("~/.gvimrc.local"))
-  source ~/.gvimrc.local
+	source ~/.gvimrc.local
 endif
-
-" Show syntax highlighting groups for word under cursor
-nmap <C-S-P> :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-
