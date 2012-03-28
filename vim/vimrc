@@ -1,98 +1,240 @@
-"              "
-"  Main Setup  "
-"	             "
+" Maintainer: Christopher Clarke
+" LICENSE: MIT
+" NOTE: This vimrc is *not* confured for non-Unix systems. Some things may not work on Windows
+" CREDITS:
+" Thanks to Doctorbh (github.com/doctorbh) for his great comment banner snippet.
+" Thanks to Vimcasts.org for color group function.
 
-set nocompatible  " Vi is nothin' but a fossil.
+" -------------------------------------------------------------------------
+"                                Standards                                |
+" -------------------------------------------------------------------------
 
-let mapleader = ',' " use a comma instead of \. Load early
+set nocompatible " Does someone really use VI?
+set shortmess=IAmx  " See :help shortmess to figure out all the stuff here
 
-" I love you Pathogen! "
-call pathogen#infect()
+" Pathogen the amazing
+call pathogen#infect('~/.vim/bundle')
 
-color jellybeans  " default theme
-syntax on       " syntax highlighting
+" Syntax highlighting
+syntax on
+syntax enable " Both work
 
-"                    "
-"  Personal Globals  "
-"                    "
+" Returns current current operating system
+function! OpSys()
+  if has("mac")
+    return "mac"
+  elseif has("linux")
+    return "linux"
+  elseif has("unix")
+    return "unix"
+  elseif has("win32")
+    return "win32"
+  elseif has("windows")
+    return "windows"
+  endif
+endfunc
 
-let g:my_name="Christopher Clarke"
-let g:my_email="beakr@ninjanizr.com" " buiseness email
-let g:personal_email="beaker2000@me.com" " personal email
-let g:my_blog="www.beakerblog.net"
+" -------------------------------------------------------------------------
+"                                Interface                                |
+" -------------------------------------------------------------------------
 
 
-"-------------------"
-"        CORE       "
-"-------------------"
+"###########
+"# General #
+"###########
 
-set number
-set ruler          " parse out what line & column your on
-set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%)
-set cursorline     " highlight current line cursor is on
-set ttyfast        " fast terminal
-set scrolloff=3
-set encoding=utf-8 " encoding
-set showcmd
-set visualbell     " I'm a bit scared of smashing the computer if this is left on...
+" Lines and columns
+set number " Line numbers
+set ruler  " Current column
+set cursorline ""
 
+" Wrap lines (must have for me)
 set wrap
+" TODO: set a wrapmargin so that wrapping begins after the colorcolumn.
 
-  " get rid of the default godzilla tabs please
-set tabstop=2
+set foldcolumn
+
+set ambw=single " Width of different symbols (copyright symbols, euro symbol, Asian letters, etc.
+
+" Encoding
+set encoding=utf-8
+
+" Wildmenu
+set wildmenu
+
+" Searching
+set ignorecase " Ignore casing conventions when searching
+set smartcase
+set hlsearch   " Highlight search so that I can actually see it
+
+" Match brackets with nice highlight
+set showmatch
+
+" Colorcolumn for easy wrapping
+set colorcolumn=85
+
+" How many tenths of a second the cursor should blink
+set mat=2
+
+" No annoying bells!
+set noerrorbells
+set novisualbell
+
+
+"##########################
+"# Colorschemes and Fonts #
+"##########################
+
+" Standard colorschemes
+if has("gui_running") 
+  color jellybeans " Nice gui font
+else
+  color ir_black   " Best for command-line
+endif
+set guifont=Menlo:h14 " Menlo rocks
+
+" Extra setup for Ubuntu which I sometimes run
+if OpSys("linux")
+  color ir_black
+  set guifont=Monospace:h10
+endif
+
+" Set the ugly red color column on the side to a nicer color
+hi ColorColumn guifg=#30312c guibg=#30312c
+
+
+"###############
+"# Indentation #
+"###############
+
+set expandtab    " Delete a tab one space at a time
 set shiftwidth=2
-set softtabstop=2
+set tabstop=2    " I like little tabs
+set smarttab     " Name gives it away
 
-set expandtab      " easily erase tabs a space at a time
-set colorcolumn=85 " colorcolumn for wrapping purposes (bar at the side)
-set listchars=tab:\ \ ,trail:·
-set backspace=indent,eol,start " if there's nothing left to backspace, start backspacing the next line
-
-" search
-set hlsearch   " highlight search results
-set incsearch  " don't keep hitting <enter> for your search
-set ignorecase " case insensensitive searching
-set smartcase  " if the search contains a capital letter, make it case sensitive
-
-" tab completion
-set wildmode=list:longest,list:full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
-
-" Get them .swp files outta' my sight!
-set backupdir=~/.vim/backup
-set directory=~/.vim/backup
-
-"----------------"
-" abbrivtiations "
-"----------------"
+set ai " Auto indentation rocks
+set si " Smart indent
 
 
-"----------"
-" mappings "
-"----------"
+"###########
+"# Windows #
+"###########
 
-" No arrow keys allowed
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
+set sb " Splitting a window will put the new window below the current one
 
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
 
-" give your hands a break from the '==' command today
-nnoremap = ==
+"##########################
+"# Backups and .swp Files #
+"##########################
 
-" For these times when your cursor is on the last letter, but when you go in insert mode it's in between the last and second last letter
-nnoremap a i<right>
+" Need I say more?
+set noswapfile
+
+" No backups, everything is plenty safe in git.
+set nobackup
+set nowb
+
+
+" Enable filetype plugin
+filetype on
+filetype plugin on
+filetype indent on
+
+
+
+" -------------------------------------------------------------------------
+"                                Mappings                                 |
+" -------------------------------------------------------------------------
+
+" Shift + A now moves to the end of the line WITHOUT going in insert mode
+nnoremap A A<esc>
+
+" Control + Q fills in :q automatically
+nnoremap <C-Q> :q
+
+" No up-down arrow keys allowed
+noremap <up> <nop>
+noremap <down> <nop>
+
+" Sane window switching
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+
+
+" -------------------------------------------------------------------------
+"                              Autocommands                               |
+" -------------------------------------------------------------------------
+
+" Use Ruby highlighting for all of these
+autocmd BufRead,BufNewFile {*.gemspec,Gemfile,Rakefile,Guardfile,Vagrantfile,Thorfile,config.ru}  set ft=ruby
+
+" JSON and Javascript are the *same*
+autocmd BufRead,BufNewFile *.json set ft=javascript
+
+
+
+
+" -------------------------------------------------------------------------
+"                              Abbreviations                              |
+" -------------------------------------------------------------------------
+
+" Automatically fill in edit
+cabbrev e edit
+
+" colo + <space> = colorscheme
+cabbrev colo colorscheme
+
+" Automatically fill w + <space> with write
+cabbrev w write
+
+" Automatically fill h with help
+cabbrev h help
+
+" Personal Info
+iabbrev my_email beakr@ninjanizr.com
+iabbrev my_name Christopher Clarke
+
+
+" -------------------------------------------------------------------------
+"                                 Plugins                                 |
+" -------------------------------------------------------------------------
+
+" NERDTree
+let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
+map <Leader>n :NERDTreeToggle<CR>
+
+" UltiSnips
+let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+let g:UltiSnipsEditSplit="vertical"
+" search in regular order since the default was causing my
+" 'clearsnippets' override on defaults not to work
+let g:UltiSnipsDontReverseSearchPath="1"
+" Get all TextMatey
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" edit snip for current filetype
+nnoremap <leader>u :UltiSnipsEdit<cr>
+
 
 
 " -------------------------------------------------------------------------
 "                            Helpful Functions                            |
 " -------------------------------------------------------------------------
 
+" Remember last location in file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal g'\"" | endif
+endif
+
 " Show syntax highlighting groups for word under cursor
+" Author: Vimcasts.org
+" Insanely nice for colorscheme builders like myself
 nmap <C-S-P> :call <SID>SynStack()<CR>
 function! <SID>SynStack()
   if !exists("*synstack")

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Sin-init is a quick command for creating a starting template for a Sinatra (app.rb) file.
+# It comes by default with some neat gems for some different things.
+
+# USAGE:
+# sin-init [FILE]
+
+echo "require 'sinatra'" >> $1
+echo "require 'pony' # Mail client" >> $1
+echo "" >> $1
+echo "get '/' do" >> $1
+echo "  " >> $1
+echo "end" >> $1

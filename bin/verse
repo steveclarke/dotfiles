@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+#require 'rubygems'
+require 'commander/import'
+#require 'verse'
+
+module Verse
+VERSION = '1.0.0'
+
+program :name, 'verse'
+program :version, Verse::VERSION 
+program :description, 'A shell tool for giving the bible verse of the day.'
+ 
+command :new do |c|
+  c.syntax = 'verse new [options]'
+  c.description = 'Print a new Verse of the Day.'
+  c.example 'description', 'command example'
+  c.option '-b', String, 'Returns the verse with the banner.'
+  c.action do |args, options|
+
+    require 'votd'
+
+
+    votd = Votd::NetBible.new
+    banner = "
+====================================================
+        VERSE OF THE DAY for #{votd.date}
+====================================================
+             "
+    options.default :b => puts(banner)
+
+    puts votd.text.capitalize
+    puts "#{votd.reference} (#{votd.version})"
+    puts ""
+
+  end
+end
+
+command :help do |c|
+  c.syntax = 'verse help [options]'
+  c.description = 'Get help.'
+  c.action do |args, options|
+    puts "
+Welcome to votd, a compact shell tool for generating a Verse of the Day
+-----------------------------------------------------------------------
+
+  Available commands:
+
+    * new     -- show the Verse of the Day
+    * help    -- view this help message
+    * version -- show the current version you're running
+------------------------------------------------------------------------
+         "
+  end
+end
+
+end
