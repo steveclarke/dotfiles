@@ -1,8 +1,11 @@
-if has("gui_macvim")
+if has("gui_macvim") " Mac config for this gui, sorry!
 	set guifont=Menlo:h12
 
 	" Default colorscheme
-	color jellybeans
+	colorscheme jellybeans
+else
+  set guifont=Monospace:h10 " I sometimes run Ubuntu
+  colorscheme wombat
 endif
 
 	" Startup without the hated toolbar...
