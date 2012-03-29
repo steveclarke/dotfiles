@@ -2,7 +2,7 @@ if has("gui_macvim")
 	set guifont=Menlo:h12
 
 	" Default colorscheme
-	color jellybeans
+	colorscheme molokai
 endif
 
 	" Startup without the hated toolbar...

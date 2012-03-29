@@ -82,7 +82,7 @@ set novisualbell
 
 " Standard colorschemes
 if has("gui_running") 
-  color jellybeans " Nice gui font
+  color molokai " Nice gui font
 else
   color ir_black   " Best for command-line
 endif
