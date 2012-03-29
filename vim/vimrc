@@ -88,11 +88,6 @@ else
 endif
 set guifont=Menlo:h14 " Menlo rocks
 
-" Extra setup for Ubuntu which I sometimes run
-if OpSys("unix")
-  color ir_black
-  set guifont=Monospace:h10
-endif
 
 " Set the ugly red color column on the side to a nicer color
 hi ColorColumn guifg=#30312c guibg=#30312c
