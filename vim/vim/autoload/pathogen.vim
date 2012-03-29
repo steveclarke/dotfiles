@@ -1,3 +1,5 @@
+" Boy what a handy tool... :'D
+
 " pathogen.vim - path option manipulation
 " Maintainer:   Tim Pope <http://tpo.pe/>
 " Version:      2.0

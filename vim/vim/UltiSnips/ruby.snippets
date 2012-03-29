@@ -1,23 +1,30 @@
-snippet ! "shebang line" b
-#!/usr/bin/env ruby
-
-endsnippet
-
-snippet # "interpolated variable" i
-#{$1}$0
-endsnippet
-
-snippet 3com "Easily create 3 comments using 3com." b
-# $1
-# $2
-# $0
-endsnippet
-
-snippet proc "An easy Proc template for Ruby." b
-${1:*variable*} = Proc.new do
-  ${0:#Content}
+snippet get "A quick snippet for a Sinatra get statement." b
+get '/$1' do
+  ${2:template} :$1
+  $0
 end
 endsnippet
 
+snippet post "A snippet for Sinatra post statements." b
+post '/$1' do
+  ${0:# ...}
+end
+endsnippet
 
+snippet put "A snippet for Sinatra put statements." b
+put '/$1' do
+  ${0:# ...}
+end
+endsnippet
 
+snippet patch "A snippet for Sinatra patch statements." b
+patch '/$1' do
+  ${0:# ...}
+end
+endsnippet
+
+snippet delete "A snippet for sinatra delete statments." b
+delete '/$1' do
+  ${0:# ...}
+end
+endsnippet

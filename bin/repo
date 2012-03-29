@@ -1,0 +1,6 @@
+# Created for Unix machines, don't attempt to use this script on others please.
+mkdir -p $1
+touch $1/README.md
+
+cd $1
+git init

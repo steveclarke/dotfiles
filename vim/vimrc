@@ -1,93 +1,155 @@
-" -------------------------------------------------------------------------
-"                                  Setup                                  |
-" -------------------------------------------------------------------------
-
-set nocompatible     " it's the 21st century
-
-let mapleader = ','  " use , instead of \. Load early.
-
-" use Pathogen.vim to load vim bundles
-call pathogen#infect('~/src/vim_bundles')
-
-color ir_black     " default colorscheme
-syntax on          " syntax highlighting
+" Maintainer: Christopher Clarke
+" LICENSE: MIT
+" NOTE: This vimrc is *not* confured for non-Unix systems. Some things may not work on Windows
+" CREDITS:
+" Thanks to Doctorbh (github.com/doctorbh) for his great comment banner snippet.
+" Thanks to Vimcasts.org for color group function.
 
 " -------------------------------------------------------------------------
-"                                 Globals                                 |
+"                                Standards                                |
 " -------------------------------------------------------------------------
 
-let g:my_name="Steve Clarke"
-let g:my_email="steve@sevenseven.co"
+set nocompatible " Does someone really use VI?
+set shortmess=IAmx  " See :help shortmess to figure out all the stuff here
+
+" Pathogen the amazing
+call pathogen#infect('~/.vim/bundle')
+
+" Syntax highlighting
+syntax on
+syntax enable " Both work
+
+" Returns current current operating system
+function! OpSys()
+  if has("mac")
+    return "mac"
+  elseif has("unix")
+    return "unix"
+  elseif has("win32")
+    return "win32"
+  elseif has("windows")
+    return "windows"
+  endif
+endfunc
 
 " -------------------------------------------------------------------------
-"                               Core Config                               |
+"                                Interface                                |
 " -------------------------------------------------------------------------
 
-"set relativenumber " show how far away each line is from current one
-set number
-set ruler          " show line and column # of cursor position
-set cursorline     " hightlight the line we're on
-set ttyfast        " assume fast terminal
-set scrolloff=3    " min. # of lines above and below the cursor
-"set laststatus=2   " Status bar
-set encoding=utf-8 " set encoding
-set showcmd        " show (partial) command in the status line
-set visualbell     " no annoying beep, please
 
-" Whitespace stuff
+"###########
+"# General #
+"###########
+
+" Lines and columns
+set number " Line numbers
+set ruler  " Current column
+set cursorline
+
+" Wrap lines (must have for me)
 set wrap
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab      " convert tabs to spaces
-set colorcolumn=85 " show a colored column to help with wrapping
-set list listchars=tab:\ \ ,trail:·
-set backspace=indent,eol,start  " backspace over everything in insert mode
+" TODO: set a wrapmargin so that wrapping begins after the colorcolumn.
+
+set foldcolumn
+
+set ambw=single " Width of different symbols (copyright symbols, euro symbol, Asian letters, etc.
+
+" Encoding
+set encoding=utf-8
 
 " Searching
-set hlsearch   " highlight search results
-set incsearch  " incremental search
-set ignorecase " case-insensitive search unless...
-set smartcase  " if search contains caps, make case-sensitive
+set ignorecase " Ignore casing conventions when searching
+set smartcase
+set hlsearch   " Highlight search so that I can actually see it
 
-" Tab completion
-set wildmode=list:longest,list:full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
+" Match brackets with nice highlight
+set showmatch
 
-" Use modeline overrides
-set modeline
-set modelines=10
+" Colorcolumn for easy wrapping
+set colorcolumn=85
 
-" Directories for swp files
-set backupdir=~/.vim/backup
-set directory=~/.vim/backup
+" How many tenths of a second the cursor should blink
+set mat=2
 
-" MacVIM shift+arrow-keys behavior (required in .vimrc)
-let macvim_hig_shift_movement = 1
+" No annoying bells!
+set noerrorbells
+set novisualbell
+
+
+"##########################
+"# Colorschemes and Fonts #
+"##########################
+
+" Standard colorschemes
+if has("gui_running") 
+  color jellybeans " Nice gui font
+else
+  color ir_black   " Best for command-line
+endif
+set guifont=Menlo:h14 " Menlo rocks
+
+" Extra setup for Ubuntu which I sometimes run
+if OpSys("unix")
+  color ir_black
+  set guifont=Monospace:h10
+endif
+
+" Set the ugly red color column on the side to a nicer color
+hi ColorColumn guifg=#30312c guibg=#30312c
+
+
+"###############
+"# Indentation #
+"###############
+
+set expandtab    " Delete a tab one space at a time
+set shiftwidth=2
+set tabstop=2    " I like little tabs
+set smarttab     " Name gives it away
+
+set ai " Auto indentation rocks
+set si " Smart indent
+
+
+"###########
+"# Windows #
+"###########
+
+set sb " Splitting a window will put the new window below the current one
+
+
+"##########################
+"# Backups and .swp Files #
+"##########################
+
+" Need I say more?
+set noswapfile
+
+" No backups, everything is plenty safe in git.
+set nobackup
+set nowb
+
+
+" Enable filetype plugin
+filetype on
+filetype plugin on
+filetype indent on
+
+
 
 " -------------------------------------------------------------------------
-"                              Key Mappings                               |
+"                                Mappings                                 |
 " -------------------------------------------------------------------------
 
-" clear highlighting
-nnoremap <leader>/ :noh<cr>
+" Shift + A now moves to the end of the line WITHOUT going in insert mode
+nnoremap A A<esc>
 
-" help save an <esc> key today
-inoremap jj <esc>
+" Control + Q fills in :q automatically
+nnoremap <C-Q> :q
 
-" <leader>a to :Align
-vnoremap <leader>a :Align<space>
-
-" Re-hardwrap paragraphs of text
-vnoremap <leader>q gq       " in visual mode
-nnoremap <leader>q gqip     " in normal mode
-
-" Open new vsplit and switch to it
-nnoremap <leader>v <C-w>v<C-w>l
-nnoremap <leader>h <C-w>s<C-w>j
-
-" Save buffer
-nnoremap <leader>w <esc>:w<cr>
+" No up-down arrow keys allowed
+noremap <up> <nop>
+noremap <down> <nop>
 
 " Sane window switching
 nnoremap <c-j> <c-w>j
@@ -95,84 +157,49 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
-" Make it easy to edit, resource my .vimrc file
-nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
-nnoremap <silent> <leader>rv :source $MYVIMRC<cr>
-
-" Opens an edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>e
-map <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
-
-" Opens a tab edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>t
-map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
-" Inserts the path of the currently edited file into a command
-" Command mode: Ctrl+P
-cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
-
-" Show syntax highlighting groups for word under cursor
-nmap <C-S-P> :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
 
 
 " -------------------------------------------------------------------------
-"                              Plugin Config                              |
+"                              Autocommands                               |
 " -------------------------------------------------------------------------
 
-" Without setting this, ZoomWin restores windows in a way that causes
-" equal always behavior to be triggered the next time CommandT is used.
-" This is likely a bludgeon to solve some other issue, but it works
-set noequalalways
+" Use Ruby highlighting for all of these
+autocmd BufRead,BufNewFile {*.gemspec,Gemfile,Rakefile,Guardfile,Vagrantfile,Thorfile,config.ru}  set ft=ruby
 
-" ZoomWin configuration
-map <Leader><Leader> :ZoomWin<CR>
+" JSON and Javascript are the *same*
+autocmd BufRead,BufNewFile *.json set ft=javascript
 
-" NERDTree configuration
+
+
+
+" -------------------------------------------------------------------------
+"                              Abbreviations                              |
+" -------------------------------------------------------------------------
+
+" Automatically fill in edit
+cabbrev e edit
+
+" colo + <space> = colorscheme
+cabbrev colo colorscheme
+
+" Automatically fill w + <space> with write
+cabbrev w write
+
+" Automatically fill h with help
+cabbrev h help
+
+" Personal Info
+iabbrev my_email beakr@ninjanizr.com
+iabbrev my_name Christopher Clarke
+
+
+" -------------------------------------------------------------------------
+"                                 Plugins                                 |
+" -------------------------------------------------------------------------
+
+" NERDTree
 let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
 map <Leader>n :NERDTreeToggle<CR>
-
-" Command-T configuration
-let g:CommandTMaxHeight=20
-
-" This stuff came along with Janus config. Leaving it here until
-" I understand what it is and whether I want it. :D
-" CTags
-"map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
-"map <C-\> :tnext<CR>
-
-" Unimpaired configuration (see http://vimcasts.org/episodes/bubbling-text/)
-" TODO: This mapping conflicts with default OS X mapping currently.
-" Bubble single lines
-nmap <C-Up> [e
-nmap <C-Down> ]e
-" Bubble multiple lines
-vmap <C-Up> [egv
-vmap <C-Down> ]egv
-
-" Enable syntastic syntax checking
-let g:syntastic_enable_signs=1
-let g:syntastic_quiet_warnings=1
-
-" gist-vim defaults
-if has("mac")
-  let g:gist_clip_command = 'pbcopy'
-elseif has("unix")
-  let g:gist_clip_command = 'xclip -selection clipboard'
-endif
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 1
-
-" % to bounce from do to end etc.
-runtime! macros/matchit.vim
-
-" Turn off jslint errors by default
-let g:JSLintHighlightErrorLine = 0
 
 " UltiSnips
 let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
@@ -181,44 +208,17 @@ let g:UltiSnipsEditSplit="vertical"
 " search in regular order since the default was causing my
 " 'clearsnippets' override on defaults not to work
 let g:UltiSnipsDontReverseSearchPath="1"
-" Get all TextMate
+" Get all TextMatey
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " edit snip for current filetype
 nnoremap <leader>u :UltiSnipsEdit<cr>
 
-" -------------------------------------------------------------------------
-"                                Filetype                                 |
-" -------------------------------------------------------------------------
 
-function! s:setupWrapping()
-  set wrap
-  set wrapmargin=2
-  set textwidth=72
-endfunction
-
-function! s:setupMarkup()
-  call s:setupWrapping()
-  map <buffer> <Leader>p :Hammer<CR>
-endfunction
-
-" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
-au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
-
-" md, markdown, and mk are markdown and define buffer-local preview
-au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
-
-" add json syntax highlighting
-au BufNewFile,BufRead *.json set ft=javascript
-
-au BufRead,BufNewFile *.txt call s:setupWrapping()
-
-" load the plugin and indent settings for the detected filetype
-filetype plugin indent on
 
 " -------------------------------------------------------------------------
-"                               Misc Config                               |
+"                            Helpful Functions                            |
 " -------------------------------------------------------------------------
 
 " Remember last location in file
@@ -227,14 +227,9 @@ if has("autocmd")
     \| exe "normal g'\"" | endif
 endif
 
-" Include user's local vim conf(try to make it descriptive):ig
-if filereadable(expand("~/.vimrc.local"))
-  source ~/.vimrc.local
-endif
-
-" CNTRL+shift+P Colorscheme system by Vimcasts
-" Made by Vimcasts.org
 " Show syntax highlighting groups for word under cursor
+" Author: Vimcasts.org
+" Insanely nice for colorscheme builders like myself
 nmap <C-S-P> :call <SID>SynStack()<CR>
 function! <SID>SynStack()
   if !exists("*synstack")
@@ -242,4 +237,3 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-

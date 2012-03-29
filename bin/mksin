@@ -1,4 +1,20 @@
 #!/bin/sh
 
 mkdir -p $1 $1/views $1/public $1/public/javascript $1/public/css $1/public/images
-touch $1/app.rb $1/config.ru $1/Gemfile
+touch $1/app.rb $1/config.ru $1/Gemfile $1/README
+
+cd $1
+git init
+cd ..
+
+# Gemifle template
+echo "source :rubygems" >> $1/Gemfile
+echo "gem 'sinatra'" >> $1/Gemfile
+echo "gem 'thin'" >> $1/Gemfile
+echo "gem 'foreman'" >> $1/Gemfile
+
+# app.rb template
+echo "require 'bundler/setup'">> $1/app.rb
+echo "require 'sinatra'">> $1/app.rb
+echo "get '/' do">> $1/app.rb
+echo "end">> $1/app.rb

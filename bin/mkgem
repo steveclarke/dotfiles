@@ -1,0 +1,18 @@
+mkdir $1 $1/tests $1/bin $1/lib $1/lib/$1
+touch $1/README.md $1/bin/$1 $1/lib/$1.rb $1/lib/$1/version.rb $1/Gemfile $1/Rakefile $1/$1.gemspec $1/.gitignore
+echo "source 'http://rubygems.org'" >> $1/Gemfile
+echo "# List dependencies via gemspec file." >> $1/Gemfile
+echo "require 'bundler/gem_tasks'" >> $1/Rakefile
+echo module $1 >> $1/lib/$1/version.rb
+echo "VERSION = '1.0.0'" >> $1/lib/$1/version.rb
+echo end >> $1/lib/$1/version.rb
+
+
+cd $1
+git init
+echo "*.gem" >> $1/.gitignore
+echo ".DS_Store" >> $1/.gitignore
+echo ".swp" >> $1/.gitignore
+bundle install
+cd ..
+

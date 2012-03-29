@@ -1,0 +1,367 @@
+#!/usr/bin/env ruby
+
+require 'commander/import'
+
+program :name, 'Aloha'
+program :version, '1.0.0'
+program :description, 'A simple program that returns a Hello World of the language of your choice.'
+ 
+command :ruby do |c|
+  c.syntax = 'aloha ruby [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Ruby
+  end
+end
+
+command :python do |c|
+  c.syntax = 'aloha python [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Python
+  end
+end
+
+command :'common-lisp' do |c|
+  c.syntax = 'aloha common-lisp [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Common-lisp
+  end
+end
+
+command :clojure do |c|
+  c.syntax = 'aloha clojure [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Clojure
+  end
+end
+
+command :scheme do |c|
+  c.syntax = 'aloha scheme [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Scheme
+  end
+end
+
+command :sh do |c|
+  c.syntax = 'aloha sh [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Sh
+  end
+end
+
+command :bash do |c|
+  c.syntax = 'aloha bash [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Bash
+  end
+end
+
+command :zsh do |c|
+  c.syntax = 'aloha zsh [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Zsh
+  end
+end
+
+command :vimscript do |c|
+  c.syntax = 'aloha vimscript [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Vimscript
+  end
+end
+
+command :c do |c|
+  c.syntax = 'aloha c [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::C
+  end
+end
+
+command :cpp do |c|
+  c.syntax = 'aloha C++ [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::C++
+  end
+end
+
+command :haskell do |c|
+  c.syntax = 'aloha haskell [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Haskell
+  end
+end
+
+command :R do |c|
+  c.syntax = 'aloha R [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::R
+  end
+end
+
+command :objective-C do |c|
+  c.syntax = 'aloha objective-C [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Objective-c
+  end
+end
+
+command :objective-j do |c|
+  c.syntax = 'aloha objective-j [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Objective-j
+  end
+end
+
+command :erlang do |c|
+  c.syntax = 'aloha erlang [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Erlang
+  end
+end
+
+command :perl do |c|
+  c.syntax = 'aloha perl [options]'
+  c.action do |args, options|
+    puts 'print("Hello World!")'
+  end
+end
+
+command :html do |c|
+  c.syntax = 'aloha html [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Html
+  end
+end
+
+command :xml do |c|
+  c.syntax = 'aloha xml [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Xml
+  end
+end
+
+command :javascript do |c|
+  c.syntax = 'aloha javascript [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Javascript
+  end
+end
+
+command :coffeescript do |c|
+  c.syntax = 'aloha coffeescript [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Coffeescript
+  end
+end
+
+command :potion do |c|
+  c.syntax = 'aloha potion [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Potion
+  end
+end
+
+command :lua do |c|
+  c.syntax = 'aloha lua [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Lua
+  end
+end
+
+command :scala do |c|
+  c.syntax = 'aloha scala [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Scala
+  end
+end
+
+command :java do |c|
+  c.syntax = 'aloha java [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Java
+  end
+end
+
+command :php do |c|
+  c.syntax = 'aloha php [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Php
+  end
+end
+
+command :assembly do |c|
+  c.syntax = 'aloha assembly [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Assembly
+  end
+end
+
+command :io do |c|
+  c.syntax = 'aloha io [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Io
+  end
+end
+
+command :go do |c|
+  c.syntax = 'aloha go [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Go
+  end
+end
+
+command :elisp do |c|
+  c.syntax = 'aloha elisp [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Elisp
+  end
+end
+
+command :actionscript do |c|
+  c.syntax = 'aloha actionscript [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Actionscript
+  end
+end
+
+command :applescript do |c|
+  c.syntax = 'aloha applescript [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Applescript
+  end
+end
+
+command :FORTRAN do |c|
+  c.syntax = 'aloha FORTRAN [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aloha::Commands::Fortran
+  end
+end
+
