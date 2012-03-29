@@ -23,8 +23,6 @@ syntax enable " Both work
 function! OpSys()
   if has("mac")
     return "mac"
-  elseif has("linux")
-    return "linux"
   elseif has("unix")
     return "unix"
   elseif has("win32")
@@ -46,7 +44,7 @@ endfunc
 " Lines and columns
 set number " Line numbers
 set ruler  " Current column
-set cursorline ""
+set cursorline
 
 " Wrap lines (must have for me)
 set wrap
@@ -58,9 +56,6 @@ set ambw=single " Width of different symbols (copyright symbols, euro symbol, As
 
 " Encoding
 set encoding=utf-8
-
-" Wildmenu
-set wildmenu
 
 " Searching
 set ignorecase " Ignore casing conventions when searching
@@ -94,7 +89,7 @@ endif
 set guifont=Menlo:h14 " Menlo rocks
 
 " Extra setup for Ubuntu which I sometimes run
-if OpSys("linux")
+if OpSys("unix")
   color ir_black
   set guifont=Monospace:h10
 endif
