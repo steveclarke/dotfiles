@@ -1,5 +1,12 @@
 ZSH=$HOME/src/dotfiles/zsh
 
+# ------------------------------------------------
+# Path
+# ------------------------------------------------
+PATH=/usr/local/bin:/usr/local/sbin:$PATH:~/bin
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
 # load configs
 for config_file ($ZSH/config/*.zsh) source $config_file
 
@@ -10,5 +17,57 @@ for function_file ($ZSH/functions/*.zsh) source $function_file
 # use a local config file if it exists
 [[ -f ~/.localrc ]] && . ~/.localrc
 
+# ------------------------------------------------
+# Config
+# ------------------------------------------------
+src=/Users/steve/src
+dot=/Users/steve/src/dotfiles
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export EDITOR='vim'
+
+# ls colors
+autoload colors; colors;
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+setopt auto_cd
+setopt multios
+setopt cdablevarS
+
+# ------------------------------------------------
+# Aliases
+# ------------------------------------------------
+alias ff='clear'
+alias reload='. ~/.zshrc'
+alias flush='dscacheutil -flushcache'
+
+alias ..='cd ..'
+
+# ls
+alias ls='ls -FG'
+alias ll='ls -lFG'
+alias la='ls -AFG'
+alias lla='ls -lAFG'
+
+# vim
+alias m='mvim'
+alias v='vim'
+
+# git
+alias gits='git status'
+alias gpu='git push'
+alias gpl='git pull'
+alias gc='git commit -v'
+alias gca='git commit -va'
+alias ga='git add'
+alias gl='git lg'
+
+# misc
+alias t='vim ~/tasks.txt'
+alias be='bundle exec'
+alias p='cd ~/src/projects'
+
+# ------------------------------------------------
+# Completion
+# ------------------------------------------------
+autoload -U compinit
+compinit
