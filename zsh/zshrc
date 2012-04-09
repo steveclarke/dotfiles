@@ -5,8 +5,6 @@ ZSH=$HOME/src/dotfiles/zsh
 # ------------------------------------------------
 PATH=/usr/local/bin:/usr/local/sbin:$PATH:~/bin
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
 # load configs
 for config_file ($ZSH/config/*.zsh) source $config_file
 
@@ -78,3 +76,5 @@ alias rake='noglob rake'
 # ------------------------------------------------
 autoload -U compinit
 compinit
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
