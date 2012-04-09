@@ -10,7 +10,7 @@
   "javascript"         : "git://github.com/pangloss/vim-javascript.git",
   "nerdtree"           : "git://github.com/wycats/nerdtree.git",
   "nerdcommenter"      : "git://github.com/ddollar/nerdcommenter.git",
-//  "supertab"           : "git://github.com/ervandew/supertab.git",
+  "supertab"           : "git://github.com/ervandew/supertab.git",
   "textile"            : "git://github.com/timcharper/textile.vim.git",
   "align"              : "git://github.com/tsaleh/vim-align.git",
   "rspec"              : "git://github.com/taq/vim-rspec.git",
@@ -33,5 +33,6 @@
   "gist"               : "git://github.com/mattn/gist-vim.git",
   "command-t"          : "git://git.wincent.com/command-t.git",
   "csapprox"           : "git://github.com/godlygeek/csapprox.git",
-  "sparkup"            : "git://github.com/emilkje/sparkup-bundle.git"
+  "sparkup"            : "git://github.com/emilkje/sparkup-bundle.git",
+  "yankring"           : "git://github.com/vim-scripts/YankRing.vim.git"
 }

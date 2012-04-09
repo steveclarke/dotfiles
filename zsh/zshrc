@@ -24,6 +24,7 @@ src=/Users/steve/src
 dot=/Users/steve/src/dotfiles
 
 export EDITOR='vim'
+export VISUAL='mvim -f'
 
 # ls colors
 autoload colors; colors;
@@ -32,6 +33,9 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 setopt auto_cd
 setopt multios
 setopt cdablevarS
+
+# Use Vim keybindings
+bindkey -v
 
 # ------------------------------------------------
 # Aliases
@@ -65,6 +69,9 @@ alias gl='git lg'
 alias t='vim ~/tasks.txt'
 alias be='bundle exec'
 alias p='cd ~/src/projects'
+
+# rake with []
+alias rake='noglob rake'
 
 # ------------------------------------------------
 # Completion
