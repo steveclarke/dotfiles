@@ -31,5 +31,6 @@
   "command-t"          : "git://git.wincent.com/command-t.git",
   "csapprox"           : "git://github.com/godlygeek/csapprox.git",
   "sparkup"            : "git://github.com/emilkje/sparkup-bundle.git",
-  "yankring"           : "git://github.com/vim-scripts/YankRing.vim.git"
+  "yankring"           : "git://github.com/vim-scripts/YankRing.vim.git",
+  "speeddating"        : "https://github.com/tpope/vim-speeddating.git"
 }
