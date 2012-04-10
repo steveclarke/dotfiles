@@ -71,6 +71,9 @@ alias p='cd ~/src/projects'
 # rake with []
 alias rake='noglob rake'
 
+# open MoU from command-line
+alias mou="open /Applications/Mou.app"
+
 # ------------------------------------------------
 # Completion
 # ------------------------------------------------
