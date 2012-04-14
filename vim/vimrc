@@ -12,6 +12,10 @@ call pathogen#infect('~/src/vim_bundles')
 color ir_black     " default colorscheme
 syntax on          " syntax highlighting
 
+" ensure vim always runs from a shell (hack to make ruby pick up rvm
+" version when running Ruby from inside Vim
+set shell=/bin/sh
+
 " -------------------------------------------------------------------------
 "                                 Globals                                 |
 " -------------------------------------------------------------------------
