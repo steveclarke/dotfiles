@@ -84,10 +84,6 @@ vnoremap <leader>a :Align<space>
 vnoremap <leader>q gq       " in visual mode
 nnoremap <leader>q gqip     " in normal mode
 
-" Open new vsplit and switch to it
-nnoremap <leader>v <C-w>v<C-w>l
-nnoremap <leader>h <C-w>s<C-w>j
-
 " Save buffer
 nnoremap <leader>w <esc>:w<cr>
 
@@ -98,8 +94,8 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Make it easy to edit, resource my .vimrc file
-nnoremap <silent> <leader>ev :e $MYVIMRC<cr>
-nnoremap <silent> <leader>rv :source $MYVIMRC<cr>
+nnoremap <silent> <leader>ve :e $MYVIMRC<cr>
+nnoremap <silent> <leader>vs :source $MYVIMRC<cr>
 
 " Opens an edit command with the path of the currently edited file filled in
 " Normal mode: <Leader>e
@@ -112,6 +108,9 @@ map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " Inserts the path of the currently edited file into a command
 " Command mode: Ctrl+P
 cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
+
+" Run the current file through Ruby
+map <Leader>r :w\|!ruby %<cr>
 
 " -------------------------------------------------------------------------
 "                              Plugin Config                              |
