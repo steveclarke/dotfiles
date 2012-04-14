@@ -215,7 +215,9 @@ namespace 'vim:bundles' do
     # compile Command-T extensions (needs ruby 1.8, so use system ruby)
     puts "+++ Compiling Command-T extensions..."
     cd(File.join(VIM_BUNDLES_DIR, 'command-t'))
-    sh("/usr/bin/rake make")
+    # use system ruby 1.8.7 if vim/mvim if compiled against that version
+    #sh("/usr/bin/rake make")
+    sh("rake make")
   end
 end
 
