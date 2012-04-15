@@ -9,7 +9,7 @@ let mapleader = ','  " use , instead of \. Load early.
 " use Pathogen.vim to load vim bundles
 call pathogen#infect('~/src/vim_bundles')
 
-color ir_black     " default colorscheme
+color ir_black     " default colorscheme (gui set in .gvimrc)
 syntax on          " syntax highlighting
 
 " ensure vim always runs from a shell (hack to make ruby pick up rvm
@@ -21,13 +21,13 @@ set shell=/bin/sh
 " -------------------------------------------------------------------------
 
 let g:my_name="Steve Clarke"
-let g:my_email="steve@sevenseven.co"
+let g:my_email="steve@seven7.ca"
 
 " -------------------------------------------------------------------------
 "                               Core Config                               |
 " -------------------------------------------------------------------------
 
-set relativenumber " show how far away each line is from current one
+"set relativenumber " show how far away each line is from current one
 set ruler          " show line and column # of cursor position
 set cursorline     " hightlight the line we're on
 set ttyfast        " assume fast terminal
@@ -88,30 +88,11 @@ vnoremap <leader>a :Align<space>
 vnoremap <leader>q gq       " in visual mode
 nnoremap <leader>q gqip     " in normal mode
 
-" Save buffer
-nnoremap <leader>w <esc>:w<cr>
-
 " Sane window switching
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
-
-" Make it easy to edit, resource my .vimrc file
-nnoremap <silent> <leader>ve :e $MYVIMRC<cr>
-nnoremap <silent> <leader>vs :source $MYVIMRC<cr>
-
-" Opens an edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>e
-map <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
-
-" Opens a tab edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>t
-map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
-" Inserts the path of the currently edited file into a command
-" Command mode: Ctrl+P
-cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 
 " Run the current file through Ruby
 map <Leader>r :w\|!ruby %<cr>
@@ -126,7 +107,7 @@ map <Leader>r :w\|!ruby %<cr>
 set noequalalways
 
 " ZoomWin configuration
-map <Leader><Leader> :ZoomWin<CR>
+map <Leader>w :ZoomWin<CR>
 
 " NERDTree configuration
 let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
@@ -134,54 +115,6 @@ map <Leader>n :NERDTreeToggle<CR>
 
 " Command-T configuration
 let g:CommandTMaxHeight=20
-
-" This stuff came along with Janus config. Leaving it here until
-" I understand what it is and whether I want it. :D
-" CTags
-"map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
-"map <C-\> :tnext<CR>
-
-" Unimpaired configuration (see http://vimcasts.org/episodes/bubbling-text/)
-" TODO: This mapping conflicts with default OS X mapping currently.
-" Bubble single lines
-nmap <C-Up> [e
-nmap <C-Down> ]e
-" Bubble multiple lines
-vmap <C-Up> [egv
-vmap <C-Down> ]egv
-
-" Enable syntastic syntax checking
-let g:syntastic_enable_signs=1
-let g:syntastic_quiet_warnings=1
-
-" gist-vim defaults
-if has("mac")
-  let g:gist_clip_command = 'pbcopy'
-elseif has("unix")
-  let g:gist_clip_command = 'xclip -selection clipboard'
-endif
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 1
-
-" % to bounce from do to end etc.
-runtime! macros/matchit.vim
-
-" Turn off jslint errors by default
-let g:JSLintHighlightErrorLine = 0
-
-" UltiSnips
-let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
-let g:UltiSnipsEditSplit="vertical"
-" search in regular order since the default was causing my
-" 'clearsnippets' override on defaults not to work
-let g:UltiSnipsDontReverseSearchPath="1"
-" Get all TextMatey
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-" edit snip for current filetype
-nnoremap <leader>u :UltiSnipsEdit<cr>
 
 " -------------------------------------------------------------------------
 "                                Filetype                                 |
@@ -193,21 +126,21 @@ function! s:setupWrapping()
   set textwidth=72
 endfunction
 
+au BufRead,BufNewFile *.txt call s:setupWrapping()
+
 function! s:setupMarkup()
   call s:setupWrapping()
   map <buffer> <Leader>p :Hammer<CR>
 endfunction
 
-" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
-au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
-
 " md, markdown, and mk are markdown and define buffer-local preview
 au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
 
+" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
+au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
+
 " add json syntax highlighting
 au BufNewFile,BufRead *.json set ft=javascript
-
-au BufRead,BufNewFile *.txt call s:setupWrapping()
 
 " load the plugin and indent settings for the detected filetype
 filetype plugin indent on
