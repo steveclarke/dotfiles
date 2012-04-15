@@ -28,6 +28,7 @@ let g:my_email="steve@seven7.ca"
 " -------------------------------------------------------------------------
 
 "set relativenumber " show how far away each line is from current one
+set number
 set ruler          " show line and column # of cursor position
 set cursorline     " hightlight the line we're on
 set ttyfast        " assume fast terminal
