@@ -9,6 +9,8 @@
 "                                Standards                                |
 " -------------------------------------------------------------------------
 
+let mapleader=","
+
 set nocompatible " Does someone really use VI?
 set shortmess=IAmx  " See :help shortmess to figure out all the stuff here
 
@@ -27,8 +29,6 @@ function! OpSys()
     return "unix"
   elseif has("win32")
     return "win32"
-  elseif has("windows")
-    return "windows"
   endif
 endfunc
 
@@ -50,8 +50,6 @@ set cursorline
 set wrap
 " TODO: set a wrapmargin so that wrapping begins after the colorcolumn.
 
-set foldcolumn
-
 set ambw=single " Width of different symbols (copyright symbols, euro symbol, Asian letters, etc.
 
 " Encoding
@@ -66,14 +64,14 @@ set hlsearch   " Highlight search so that I can actually see it
 set showmatch
 
 " Colorcolumn for easy wrapping
-set colorcolumn=85
+"set colorcolumn=85
 
 " How many tenths of a second the cursor should blink
 set mat=2
 
 " No annoying bells!
 set noerrorbells
-set novisualbell
+set visualbell
 
 
 "##########################
@@ -86,13 +84,8 @@ if has("gui_running")
 else
   color ir_black   " Best for command-line
 endif
-set guifont=Menlo:h14 " Menlo rocks
+set guifont=Menlo:h12 " Menlo rocks
 
-" Extra setup for Ubuntu which I sometimes run
-if OpSys("unix")
-  color ir_black
-  set guifont=Monospace:h10
-endif
 
 " Set the ugly red color column on the side to a nicer color
 hi ColorColumn guifg=#30312c guibg=#30312c
@@ -135,7 +128,7 @@ filetype on
 filetype plugin on
 filetype indent on
 
-
+set ofu=syntaxcomplete#Complete
 
 " -------------------------------------------------------------------------
 "                                Mappings                                 |
@@ -157,14 +150,18 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
+" -------------------------------------------------------------------------
+"                                   Commands                              |
+" -------------------------------------------------------------------------
 
+command OS :echo OpSys()
 
 " -------------------------------------------------------------------------
 "                              Autocommands                               |
 " -------------------------------------------------------------------------
 
 " Use Ruby highlighting for all of these
-autocmd BufRead,BufNewFile {*.gemspec,Gemfile,Rakefile,Guardfile,Vagrantfile,Thorfile,config.ru}  set ft=ruby
+autocmd BufRead,BufNewFile {*.gemspec,Gemfile,Rakefile,*.rake,Strapfile,Guardfile,Vagrantfile,Thorfile,config.ru}  set ft=ruby
 
 " JSON and Javascript are the *same*
 autocmd BufRead,BufNewFile *.json set ft=javascript
@@ -214,8 +211,6 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " edit snip for current filetype
 nnoremap <leader>u :UltiSnipsEdit<cr>
-
-
 
 " -------------------------------------------------------------------------
 "                            Helpful Functions                            |

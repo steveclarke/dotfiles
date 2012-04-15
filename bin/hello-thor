@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require 'thor'
+
+class HelloThor < Thor
+  desc "print", "print 'Hello Thor!'"
+  def hi
+    puts "Hello thor!"
+  end
+end
+
+HelloThor.start

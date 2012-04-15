@@ -45,27 +45,17 @@ command :help do |c|
   c.action do |args, options|
     puts ''
     puts ''
-    puts '         VERSION:
-            1.0.0
+    puts '
 
-          COMMANDS:
+    =======================================
+    Welcome to Gen Passwords for the shell!
+    =======================================
 
-            pw  -  Generates a pronounceable password
-            help  -  Help page
-            version  -  Prints version
-
-          OPTIONS
-
-            pw:
-
-              -i  -  Makes an inpronounceable password
-              -en  -  Excludes numbers
-              -es  -  Excludes symbols
-              -ec  -  Excludes capitals
-
-          ==============================================
-
-          Thanks for using Shen, Hope you enjoy!'
+    Commands:
+      pw - generate a password
+      version - return the version
+      help - return this message
+    '
 
       puts ''
       puts ''
@@ -78,8 +68,9 @@ command :pw do |c|
   c.description = ''
   c.example 'description', 'command example'
   c.option '-ec', 'Exclude capitals from the password.'
-  c.action do |args, options|
-    #options.default :ec => capitals = ['']
+  c.option '-es', "Exclude symbols from the password."
+  c.option '-en', "Excludes numbers from the password."
+  c.action do |args, options| 
   
   phonetics1 = ["ah", "blo", "pa",'sha', 'lo', 'ca', 're', 'te', 've', 'au', 'op', 'li', 'cha', 'tho', 'yar', 'ub', 'ol', 'pla', 'ja', 'mel', 'tri', 'ta', 'mya', 'gar', 've', 'po', 'my', 'il', 'ok', 'ra', 'ki', 'pi', 'pla', 'kra', 'sho', 'la', 'osh', 'wer', 'ul', 'al', 'ar', 'jo', 'to', 'tro', 'who', 'as', 'ash',  'yu',  'wa', 'er', 'es', "ka"]
   phonetics2 = ["afo", "oc", "oo", "aph", "oll", "ata", "ash", "fo", "go", "og", "ya", "za", "du", "ha", "lo", "to", "yo", "pa", "ta", "la", "po", "op", "ba", "be", "bo", "ma", "mo", "me", "em", "ee", "ye", "pe"]
@@ -90,13 +81,15 @@ command :pw do |c|
   symbols  = ['@', '!', '$', '%', '?', '~', '&', '*', '^', '#']
   jumble   = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@', '!', '?', '*', '&', '$', '#', '^', '~']
 
-    options.default :ec => capitals == ['']
+  if options.default(:ec)
+    capitals = ['']
+  end
 
-    password = phonetics1.sample + phonetics2.sample + capitals.sample + numbers.sample + symbols.sample
+  password = phonetics1.sample + phonetics2.sample + capitals.sample + numbers.sample + symbols.sample
 
-    puts ''
-    puts ' ' + password
-    puts ''
+    puts '==================='
+    puts "    #{password}"
+    puts '==================='
   end
 end
 

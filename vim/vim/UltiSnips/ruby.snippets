@@ -1,3 +1,38 @@
+
+# -------------------------------------------------------------------------
+#                                   General                               |
+# -------------------------------------------------------------------------
+
+snippet # "Ruby string interpolation" i
+#{$0}
+endsnippet
+
+snippet init "Ruby initialize" b
+def initialize(${1:args})
+  @$2 = $3
+  $0
+end
+endsnippet
+
+# -------------------------------------------------------------------------
+#                                   Rake                                  |
+# -------------------------------------------------------------------------
+
+snippet task-init "Make a task direct to a task statement" b
+task :$1 => [:$0]
+endsnippet
+
+snippet task "Make a Rake task" b
+task :$1 do
+  $0
+end
+endsnippet
+
+# -------------------------------------------------------------------------
+#                                   Sinatra                               |
+# -------------------------------------------------------------------------
+
+
 snippet get "A quick snippet for a Sinatra get statement." b
 get '/$1' do
   ${2:template} :$1

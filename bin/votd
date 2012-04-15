@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'votd' # API
+
+class Commands < Thor
+  @@votd = Votd::NETBible.new
+  def verse
+    return @@votd.text
+  end
+end
+
+Commands.start
