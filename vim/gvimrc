@@ -40,9 +40,6 @@ endif
 " Start without the toolbar
 set guioptions-=T
 
-" Command-e for ConqueTerm
-map <D-e> :call StartTerm()<CR>
-
 " NERD RELATED
 " #####################
 " Project Tree
