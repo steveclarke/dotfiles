@@ -98,6 +98,12 @@ nnoremap <c-l> <c-w>l
 " Run the current file through Ruby
 map <Leader>r :w\|!ruby %<cr>
 
+" Erase whitespace
+map <Leader>fw :EraseBadWhitespace<cr>
+
+" Fix tabs (retab)
+map <Leader>ft :retab<cr>
+
 " -------------------------------------------------------------------------
 "                              Plugin Config                              |
 " -------------------------------------------------------------------------

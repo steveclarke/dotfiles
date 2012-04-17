@@ -21,5 +21,6 @@
   "rvm"                : "https://github.com/tpope/vim-rvm.git",
   "coffee-script"      : "git://github.com/kchmck/vim-coffee-script.git",
   "command-t"          : "git://git.wincent.com/command-t.git",
-  "csapprox"           : "git://github.com/godlygeek/csapprox.git"
+  "csapprox"           : "git://github.com/godlygeek/csapprox.git",
+  "bad-whitespace"     : "https://github.com/bitc/vim-bad-whitespace.git"
 }
