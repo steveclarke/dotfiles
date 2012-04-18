@@ -1,6 +1,7 @@
-{ 
+{
   "color-irblack"      : "git://github.com/wgibbs/vim-irblack.git",
   "color-sampler-pack" : "git://github.com/vim-scripts/Color-Sampler-Pack.git",
+  "color-solarized"    : "https://github.com/altercation/vim-colors-solarized",
   "zoomwin"            : "git://github.com/vim-scripts/ZoomWin.git",
   "taglist"            : "git://github.com/vim-scripts/taglist.vim.git",
   "javascript"         : "git://github.com/pangloss/vim-javascript.git",
