@@ -104,6 +104,9 @@ map <Leader>fw :EraseBadWhitespace<cr>
 " Fix tabs (retab)
 map <Leader>ft :retab<cr>
 
+" Insert comment box
+map ,co O#<Esc>74A=<Esc>o#<Space><Esc>o#<Esc>74A=<Esc>kA
+
 " -------------------------------------------------------------------------
 "                              Plugin Config                              |
 " -------------------------------------------------------------------------
