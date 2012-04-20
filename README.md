@@ -17,7 +17,7 @@ to place things.
 
 Run `rake:install`.
 
-`rake --tasks` to see other stuff you can do.
+`rake -T` to see other stuff you can do.
 
 ## TODO:
 * Create bootstrap file to get brew, rbenv, etc. installed before
