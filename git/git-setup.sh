@@ -2,10 +2,10 @@
 
 # User Info
 git config --global user.name "Steve Clarke"
-git config --global user.email "doctorbh@ninjanizr.com"
+git config --global user.email "steve@sevenview.ca"
 
 # Github
-git config --global github.user doctorbh
+git config --global github.user steveclarke
 git config --global github.token $GITHUB_TOKEN
 
 # Aliases
@@ -32,5 +32,7 @@ git config --global color.status.untracked cyan
 
 # Misc
 git config --global core.excludesfile ~/.gitignore
+
+git config --global push.default simple
 
 git config -l
