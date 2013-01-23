@@ -1,4 +1,4 @@
-# Doctor B. Honeydew's Dotfiles
+# Steve Clarke's Dotfiles
 
 This is a collection of my config files to help me get each of my
 computers quickly bootstrapped. It's a work in progress and is
