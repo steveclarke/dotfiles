@@ -212,12 +212,7 @@ namespace 'vim:bundles' do
   desc 'Config Vim bundles'
   task :config do
     ensure_bundles_dir
-    # compile Command-T extensions
-    puts "+++ Compiling Command-T extensions..."
-    cd(File.join(VIM_BUNDLES_DIR, 'command-t'))
-    # use system ruby 1.8.7 if vim/mvim if compiled against that version
-    #sh("/usr/bin/rake make")
-    sh("rake make")
+    # Insert any post-config for Vim here
   end
 end
 
