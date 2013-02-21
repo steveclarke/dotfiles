@@ -78,5 +78,3 @@ alias mou="open /Applications/Mou.app"
 # ------------------------------------------------
 autoload -U compinit
 compinit
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
