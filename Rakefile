@@ -36,6 +36,7 @@ task :init do
     :zshrc         => { :source => dot('zsh/zshrc'),         :target => home('.zshrc') },
     :bin           => { :source => dot('bin'),               :target => home('bin') },
     :gemrc         => { :source => dot('ruby/gemrc'),        :target => home('.gemrc') },
+    :railsrc       => { :source => dot('ruby/railsrc'),      :target => home('.railsrc') }
   }
 
   VIM_DIRS = {
