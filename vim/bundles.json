@@ -7,7 +7,6 @@
   "javascript"         : "git://github.com/pangloss/vim-javascript.git",
   "nerdtree"           : "https://github.com/scrooloose/nerdtree",
   "nerdcommenter"      : "https://github.com/scrooloose/nerdcommenter.git",
-  "rspec"              : "git://github.com/taq/vim-rspec.git",
   "align"              : "git://github.com/tsaleh/vim-align.git",
   "fugitive"           : "git://github.com/tpope/vim-fugitive.git",
   "git"                : "git://github.com/tpope/vim-git.git",
