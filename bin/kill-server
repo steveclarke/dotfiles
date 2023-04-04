@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo "Port number?"
+read port
+
+lsof -wni tcp:${port}
+
+echo "PID?"
+read pid
+
+kill -QUIT ${pid}

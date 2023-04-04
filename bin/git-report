@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+
+class GitReport < Thor
+  desc 'generate', 'Generate a git report from the local repository'
+
+  option :start,
+         desc: 'Start date (YYYY-MM-DD)',
+         banner: 'YYYY-MM-DD',
+         aliases: 's',
+         required: true
+  option :end,
+         desc: 'End date (YYYY-MM-DD)',
+         banner: 'YYYY-MM-DD',
+         aliases: 'e',
+         required: true
+  
+  def generate()
+    system %Q(git --no-pager log --since=#{options[:start]} --until=#{options[:end]} --pretty=format:'"%s","%ad","%an"' --no-merges)
+  end
+
+  def self.exit_on_failure?
+    true
+  end
+
+  default_task :generate
+end
+
+GitReport.start(ARGV)
