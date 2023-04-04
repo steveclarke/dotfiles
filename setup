@@ -3,9 +3,11 @@ DOTFILES_DIR=$HOME/dotfiles
 echo "Configuring ~/bin..."
 ln -sTf "${DOTFILES_DIR}/bin" "${HOME}/bin"
 
-echo "Configuring tmux..."
+echo "Configuring Tmux..."
 ln -sTf "${DOTFILES_DIR}/tmux" "${HOME}/.config/tmux"
 
-echo "Configuring alacritty..."
+echo "Configuring Alacritty..."
 ln -sTf "${DOTFILES_DIR}/alacritty" "${HOME}/.config/alacritty"
 
+echo "Configuring Fish shell..."
+ln -sTf "${DOTFILES_DIR}/fish" "${HOME}/.config/fish"
