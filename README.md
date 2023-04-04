@@ -8,3 +8,7 @@ to place things.
 ## Pre-requisites
 
 * Repository lives at `~/dotfiles`
+
+## Installation
+
+Run ./setup
