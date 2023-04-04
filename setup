@@ -1,5 +1,11 @@
+DOTFILES_DIR=$HOME/dotfiles
+
 echo "Configuring ~/bin..."
-ln -sf "$(pwd)/bin" $HOME/bin
+ln -sTf "${DOTFILES_DIR}/bin" "${HOME}/bin"
 
 echo "Configuring tmux..."
-ln -sf "$(pwd)/tmux" $HOME/.config/tmux
+ln -sTf "${DOTFILES_DIR}/tmux" "${HOME}/.config/tmux"
+
+echo "Configuring alacritty..."
+ln -sTf "${DOTFILES_DIR}/alacritty" "${HOME}/.config/alacritty"
+
