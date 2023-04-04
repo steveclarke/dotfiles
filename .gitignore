@@ -1,8 +1,3 @@
 .DS_Store
 *.swp
 *.swo
-bin/fm
-bin/followall
-bin/lcf
-bin/lt
-bin/lu
