@@ -1,1 +1,5 @@
+echo "Configuring ~/bin..."
 ln -sf "$(pwd)/bin" $HOME/bin
+
+echo "Configuring tmux..."
+ln -sf "$(pwd)/tmux" $HOME/.config/tmux
