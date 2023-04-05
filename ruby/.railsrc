@@ -1,0 +1,1 @@
+--skip-test --database=postgresql --javascript=esbuild --css=tailwind --asset-pipeline=propshaft

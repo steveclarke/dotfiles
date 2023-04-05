@@ -4,24 +4,31 @@ is_installed() {
   [ -z "$(dpkg -l | awk "/^ii  $1/")" ]
 }
 
+banner() {
+  echo "=== $1 "
+}
+
 # Install stow if not already installed
 if is_installed stow; then
-  echo "Installing stow..."
+  banner "Installing stow"
   sudo apt install stow
 fi
 
-echo "Configuring ~/bin..."
+banner "Configuring ~/bin"
 mkdir -p "${HOME}/bin"
 stow bin
 
-echo "Configuring Tmux..."
+banner "Configuring Tmux"
 mkdir -p "${HOME}/.config/tmux"
 stow tmux
 
-echo "Configuring Alacritty..."
+banner "Configuring Alacritty"
 mkdir -p "${HOME}/.config/alacritty"
 stow alacritty
 
-echo "Configuring Fish shell..."
+banner "Configuring Fish shell"
 mkdir -p "${HOME}/.config/fish"
 stow fish
+
+banner "Configuring Ruby"
+stow ruby
