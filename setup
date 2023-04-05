@@ -1,13 +1,25 @@
 DOTFILES_DIR=$HOME/dotfiles
 
+is_installed() {
+  [ -z "$(dpkg -l | awk "/^ii  $1/")" ]
+}
+
+# Install stow if not already installed
+if is_installed stow; then
+  echo "Installing stow..."
+  sudo apt install stow
+fi
+
 echo "Configuring ~/bin..."
-ln -sTf "${DOTFILES_DIR}/bin" "${HOME}/bin"
+mkdir -p "${HOME}/bin"
+stow bin
 
 echo "Configuring Tmux..."
-ln -sTf "${DOTFILES_DIR}/tmux" "${HOME}/.config/tmux"
+mkdir -p "${HOME}/.config/tmux"
+stow tmux
 
 echo "Configuring Alacritty..."
-ln -sTf "${DOTFILES_DIR}/alacritty" "${HOME}/.config/alacritty"
+# ln -sTf "${DOTFILES_DIR}/alacritty" "${HOME}/.config/alacritty"
 
 echo "Configuring Fish shell..."
-ln -sTf "${DOTFILES_DIR}/fish" "${HOME}/.config/fish"
+# ln -sTf "${DOTFILES_DIR}/fish" "${HOME}/.config/fish"

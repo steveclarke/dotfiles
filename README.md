@@ -8,6 +8,7 @@ to place things.
 ## Pre-requisites
 
 * Repository lives at `~/dotfiles`
+* Gnu Stow is installed (http://www.gnu.org/software/stow/)
 
 ## Installation
 
