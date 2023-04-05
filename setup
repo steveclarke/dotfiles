@@ -19,7 +19,9 @@ mkdir -p "${HOME}/.config/tmux"
 stow tmux
 
 echo "Configuring Alacritty..."
-# ln -sTf "${DOTFILES_DIR}/alacritty" "${HOME}/.config/alacritty"
+mkdir -p "${HOME}/.config/alacritty"
+stow alacritty
 
 echo "Configuring Fish shell..."
-# ln -sTf "${DOTFILES_DIR}/fish" "${HOME}/.config/fish"
+mkdir -p "${HOME}/.config/fish"
+stow fish
