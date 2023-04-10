@@ -3,3 +3,4 @@ alias ff=clear
 alias upgrade="sudo nala upgrade"
 alias gg=lazygit
 alias s="cd $HOME/src"
+alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
