@@ -38,3 +38,8 @@ stow fish
 
 banner "Configuring Ruby"
 stow ruby
+
+banner "Configuring Neovim"
+mkdir -p "${HOME}/.config/nvim"
+stow nvim
+
