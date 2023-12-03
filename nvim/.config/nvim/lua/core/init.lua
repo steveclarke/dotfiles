@@ -13,6 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("core.globals")
+require("core.options")
 
 local opts = {
   defaults = {
