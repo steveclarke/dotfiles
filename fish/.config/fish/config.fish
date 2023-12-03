@@ -25,6 +25,7 @@ if status is-interactive
 	abbr -a dps "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
   abbr -a vim "nvim"
   abbr -a lg "lazygit"
+  abbr -a gg "lazygit"
 end
 
 # Android SDK
