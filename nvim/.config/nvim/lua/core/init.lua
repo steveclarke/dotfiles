@@ -12,5 +12,31 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("plugins")
+require("core.globals")
+
+local opts = {
+  defaults = {
+    lazy = true,
+  },
+  install = {
+    colorscheme = { "nightfox" }
+  },
+  rtp = {
+    disabled_plugins = {
+      "gzip",
+      "matchit",
+      "matchparen",
+      "netrwPlugin",
+      "tarPlugin",
+      "tohtml",
+      "tutor",
+      "zipPlugin",
+    }
+  },
+  change_detection = {
+    notify = true
+  },
+}
+
+require("lazy").setup("plugins", opts)
 
