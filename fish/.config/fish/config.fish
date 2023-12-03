@@ -22,4 +22,14 @@ if status is-interactive
 	abbr -a -- ff clear
 	abbr -a -- upgrade "sudo nala upgrade"
 	abbr -a kill-server-pid "kill -QUIT \$(cat tmp/pids/server.pid)"
+	abbr -a dps "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
+  abbr -a vim "nvim"
+  abbr -a lg "lazygit"
 end
+
+# Android SDK
+set -x ANDROID_HOME $HOME/Android/Sdk
+fish_add_path $ANDROID_HOME/emulator $ANDROID_HOME/tools $ANDROID_HOME/tools/bin $ANDROID_HOME/platform-tools $ANDROID_HOME/cmdline-tools/latest/bin 
+
+set -x JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+
