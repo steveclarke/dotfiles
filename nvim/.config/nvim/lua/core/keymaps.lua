@@ -2,9 +2,9 @@ local keymap = vim.keymap
 
 local opts = { noremap = true, silent = true }
 
--- [[ Directory Navigation ]]
-keymap.set("n", "<leader>m", vim.cmd.NvimTreeFocus, opts)
-keymap.set("n", "<leader>e", vim.cmd.NvimTreeToggle, opts)
+-- Nvim Tree
+keymap.set("n", "<leader><leader>", vim.cmd.NvimTreeToggle, opts)
+keymap.set("n", "<leader>e", vim.cmd.NvimTreeFocus, opts)
 
 -- Map Ctrl-l to move to the window on the right
 keymap.set("n", "<C-l>", "<C-w>l", opts)
@@ -30,3 +30,6 @@ keymap.set("v", "<A-k>", ":m '<-2<CR>gv-gv", opts)
 keymap.set("v", "<", "<gv", opts)
 keymap.set("v", ">", ">gv", opts)
 
+-- Splits
+-- keymap.set("n", "<leader>sv", vim.cmd.vsplit, opts)
+-- keymap.set("n", "<leader>sh", vim.cmd.split, opts)
