@@ -14,6 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("core.globals")
 require("core.options")
+require("core.keymaps")
 
 local opts = {
   defaults = {
