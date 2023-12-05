@@ -33,3 +33,9 @@ keymap.set("v", ">", ">gv", opts)
 -- Splits
 -- keymap.set("n", "<leader>sv", vim.cmd.vsplit, opts)
 -- keymap.set("n", "<leader>sh", vim.cmd.split, opts)
+
+-- Commenting
+-- TODO: Fix this
+keymap.set("n", "<C-/>", "gcc", { noremap = false })
+keymap.set("v", "<C-/>", "gcc", { noremap = false })
+
