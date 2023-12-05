@@ -1,9 +1,9 @@
 shell:
   program: /bin/bash
-  args:
-    - -l
-    - -c
-    - "tmux attach || tmux"
+  # args:
+  #   - -l
+  #   - -c
+  #   - "tmux attach || tmux"
 window:
   dimensions:
     columns: 124
