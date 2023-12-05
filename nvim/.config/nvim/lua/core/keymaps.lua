@@ -3,8 +3,8 @@ local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
 
 -- Nvim Tree
-keymap.set("n", "<leader><leader>", vim.cmd.NvimTreeToggle, opts)
-keymap.set("n", "<leader>e", vim.cmd.NvimTreeFocus, opts)
+keymap.set("n", "<leader><leader>", vim.cmd.NvimTreeToggle, { desc = "Toggle file explorer" })
+keymap.set("n", "<leader>e", vim.cmd.NvimTreeFocus, { desc = "Focus file explorer" })
 
 -- Map Ctrl-l to move to the window on the right
 keymap.set("n", "<C-l>", "<C-w>l", opts)
@@ -16,7 +16,7 @@ keymap.set("n", "<C-k>", "<C-w>k", opts)
 keymap.set("n", "U", "<C-r>", opts)
 
 -- Clear search highlight
-keymap.set("n", "<leader>/", "<cmd>noh<CR>", opts)
+keymap.set("n", "<leader>/", "<cmd>noh<CR>", { desc = "Clear search highlights" })
 
 -- Move current line / block with Alt-j/k ala vscode.
 keymap.set("n", "<A-j>", ":m .+1<CR>==", opts)

@@ -42,12 +42,12 @@ return {
   lazy = false,
   config = config,
   keys = {
-    keymap.set("n", "<leader>ff", ":Telescope find_files<CR>"),
-    keymap.set("n", "<leader>fb", ":Telescope buffers<CR>"),
-    keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>"),
-    keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>"),
-    keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>"),
-    keymap.set("n", "<leader>fa", ":Telescope <CR>"),
+    keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", { desc = "Find files" }),
+    keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", { desc = "Find buffers" }),
+    keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", { desc = "Find in files (grep)" }),
+    keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>" , { desc = "Find keymaps" }),
+    keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", { desc = "Find help tags" }),
+    keymap.set("n", "<leader>fa", ":Telescope <CR>", { desc = "Find all" }),
   },
 }
 
