@@ -11,23 +11,23 @@ local config = {
   },
   pickers = {
     find_files = {
-      theme = "dropdown",
+      -- theme = "dropdown",
       previewer = true,
     },
     buffers = {
-      theme = "dropdown",
+      -- theme = "dropdown",
       previewer = true,
     },
     live_grep = {
-      theme = "dropdown",
+      -- theme = "dropdown",
       previewer = true,
     },
     keymaps = {
-      theme = "dropdown",
+      -- theme = "dropdown",
       previewer = true,
     },
     help_tags = {
-      theme = "dropdown",
+      -- theme = "dropdown",
       previewer = true,
     },
   },
@@ -42,6 +42,7 @@ return {
   lazy = false,
   config = config,
   keys = {
+    keymap.set("n", "<C-p>", ":Telescope git_files<CR>", { desc = "Find files (Git-aware)" }),
     keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", { desc = "Find files" }),
     keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", { desc = "Find buffers" }),
     keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", { desc = "Find in files (grep)" }),
