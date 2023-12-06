@@ -36,6 +36,6 @@ keymap.set("v", ">", ">gv", opts)
 
 -- Commenting
 -- TODO: Fix this
-keymap.set("n", "<C-/>", "gcc", { noremap = false })
-keymap.set("v", "<C-/>", "gcc", { noremap = false })
+-- keymap.set("n", "<C-_>", "gcc", { noremap = false })
+-- keymap.set("v", "<C-_>", "gcc", { noremap = false })
 
