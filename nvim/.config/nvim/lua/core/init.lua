@@ -1,6 +1,7 @@
 require("core.globals")
 require("core.options")
 require("core.keymaps")
+require("core.autocmds")
 
 -- [[ Lazy plugin manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
