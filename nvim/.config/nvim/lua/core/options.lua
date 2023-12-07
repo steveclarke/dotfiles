@@ -36,7 +36,7 @@ opt.signcolumn = "yes"
 opt.cursorline = true
 
 -- add more space in the command line for displaying messages
-opt.cmdheight = 1
+-- opt.cmdheight = 1
 
 -- minimal number of screen lines to keep above and below the cursor.
 opt.scrolloff = 8
