@@ -35,7 +35,6 @@ keymap.set("v", ">", ">gv", opts)
 -- keymap.set("n", "<leader>sh", vim.cmd.split, opts)
 
 -- Commenting
--- TODO: Fix this
+-- FIXME: This doesn't work properly. It's supposed to map Ctrl-/ to comment/uncomment
 -- keymap.set("n", "<C-_>", "gcc", { noremap = false })
 -- keymap.set("v", "<C-_>", "gcc", { noremap = false })
-

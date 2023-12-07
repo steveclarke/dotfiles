@@ -44,7 +44,6 @@ opt.scrolloff = 8
 --  of the cursor if 'nowrap' is set.
 opt.sidescrolloff = 8
 
-
 opt.errorbells = false
 opt.swapfile = false
 opt.backup = false
@@ -68,6 +67,5 @@ opt.encoding = "UTF-8"
 -- opt.guicursor =	"n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 
 -- Don't automatically add comment on newline above/below
--- TODO: Get this working. Doesn't seem to work.
-opt.formatoptions:remove { "c", "r", "o" }
-
+-- FIXME: Get this working. Doesn't seem to work.
+opt.formatoptions:remove({ "c", "r", "o" })

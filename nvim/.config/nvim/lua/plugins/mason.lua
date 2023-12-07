@@ -1,0 +1,19 @@
+return {
+  "williamboman/mason.nvim",
+  dependencies = {
+    "williamboman/mason-lspconfig.nvim",
+  },
+  lazy = false,
+  opts = {},
+  -- FIXME: ensure_installed complains about naming the ensure_installed correctly
+  -- config = function()
+  --   local mason = require("mason")
+  --   local mason_lspconfig = require("mason-lspconfig")
+  --
+  --   mason_lspconfig.setup({
+  --     ensure_installed = {
+  --       "standardrb"
+  --     }
+  --   })
+  -- end,
+}
