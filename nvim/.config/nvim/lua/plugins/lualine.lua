@@ -1,16 +1,16 @@
-local config = function() 
-  local theme = require('lualine.themes.nightfox')
+local config = function()
+  local theme = require("lualine.themes.nightfly")
   theme.normal.c.bg = nil
 
-  require("lualine").setup {
+  require("lualine").setup({
     options = {
       theme = theme,
       globalstatus = true,
     },
     sections = {
       lualine_a = { "buffers" },
-    }
-  }
+    },
+  })
 end
 
 return {
@@ -18,4 +18,3 @@ return {
   lazy = false,
   config = config,
 }
-
