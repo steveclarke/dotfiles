@@ -1,40 +1,45 @@
-local opts = {
-  build = ":TSUpdate",
-  indent = {
-    enable = true,
-  },
-  autotag = {
-    enable = true,
-  },
-  event = {
-    "BufReadPre",
-    "BufNewFile",
-  },
-  ensure_installed = {
-    "markdown",
-    "json",
-    "javascript",
-    "typescript",
-    "yaml",
-    "html",
-    "css",
-    "bash",
-    "lua",
-    "dockerfile",
-    "gitignore",
-    "python",
-    "vue",
-    "ruby"
-  },
-  auto_install = true,
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-}
+local config = function()
+  local treesitter = require("nvim-treesitter.configs")
+
+  treesitter.setup({
+    indent = {
+      enable = true,
+    },
+    highlight = {
+      enable = true,
+      additional_vim_regex_highlighting = false,
+    },
+    autotag = {
+      enable = true,
+    },
+    event = {
+      "BufReadPre",
+      "BufNewFile",
+    },
+    ensure_installed = {
+      "bash",
+      "css",
+      "dockerfile",
+      "gitignore",
+      "html",
+      "javascript",
+      "json",
+      "lua",
+      "markdown",
+      "python",
+      "ruby",
+      "typescript",
+      "vue",
+      "yaml",
+    },
+    auto_install = true,
+  })
+end
 
 return {
   "nvim-treesitter/nvim-treesitter",
   lazy = false,
-  opts = opts,
+  build = ":TSUpdate",
+  event = { "BufReadPre", "BufNewFile" },
+  config = config,
 }
