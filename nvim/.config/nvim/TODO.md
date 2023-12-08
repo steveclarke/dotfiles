@@ -10,6 +10,7 @@ https://www.youtube.com/watch?v=87AXw9Quy9U&list=PLx2ksyallYzW4WNYHD9xOFrPRYGlnt
 - [x] Nvim Tree
 - [x] Treesitter
 - [ ] Use vim.tbl_extend to add desc to opts (https://neovim.io/doc/user/lua.html#vim.tbl_extend())
+- [ ] Resolve issue with colorscheme when using Tmux
 
 Plugins: 
 - [ ] Fugitive
