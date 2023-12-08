@@ -69,3 +69,7 @@ opt.encoding = "UTF-8"
 -- Don't automatically add comment on newline above/below
 -- FIXME: Get this working. Doesn't seem to work.
 opt.formatoptions:remove({ "c", "r", "o" })
+
+opt.foldmethod = "expr"
+opt.foldexpr = "nvim_treesitter#foldexpr()"
+opt.foldenable = false
