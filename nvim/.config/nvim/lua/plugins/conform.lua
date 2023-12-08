@@ -9,6 +9,7 @@ return {
         javascript = { "prettierd" },
         json = { "prettierd" },
         ruby = { "standardrb" },
+        vue = { "prettierd" },
         lua = { "stylua" },
       },
 
