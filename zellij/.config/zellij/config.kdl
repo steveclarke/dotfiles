@@ -3,3 +3,12 @@ default_shell "fish"
 
 theme "catppuccin-mocha"
 
+keybinds {
+  normal {
+    unbind "Ctrl h"
+    bind "Ctrl e" { SwitchToMode "move"; }
+  }
+  move {
+    bind "Ctrl e" { SwitchToMode "Normal"; }
+  }
+}
