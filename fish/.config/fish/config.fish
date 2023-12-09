@@ -26,6 +26,7 @@ if status is-interactive
   abbr -a vim "nvim"
   abbr -a lg "lazygit"
   abbr -a gg "lazygit"
+  abbr -a z "zellij"
 end
 
 # Android SDK
