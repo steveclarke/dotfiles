@@ -23,16 +23,7 @@ if status is-interactive
   direnv export fish | source
 end
 
-if status is-interactive
-	abbr -a -- ff clear
-	abbr -a -- upgrade "sudo nala upgrade"
-	abbr -a kill-server-pid "kill -QUIT \$(cat tmp/pids/server.pid)"
-	abbr -a dps "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
-  abbr -a vim "nvim"
-  abbr -a lg "lazygit"
-  abbr -a gg "lazygit"
-  abbr -a z "zellij"
-end
+# Abbrs are in ~/.config/fish/conf.d/abbr.fish
 
 set -x EDITOR nvim
 set -x VISUAL nvim
