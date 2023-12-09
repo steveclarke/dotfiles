@@ -36,7 +36,8 @@ font:
     family: "JetBrainsMono Nerd Font"
     style: Bold Italic
 import:
-  - ~/.config/alacritty/gruvbox-material-alacritty.yml
+  - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
+  # - ~/.config/alacritty/themes/gruvbox-material-alacritty.yml
 
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
