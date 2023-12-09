@@ -1,3 +1,7 @@
+# Disable default banner
+set fish_greeting
+
+# ASDF
 source ~/.asdf/asdf.fish
 source ~/.asdf/completions/asdf.fish
 
@@ -30,9 +34,6 @@ if status is-interactive
   abbr -a z "zellij"
 end
 
-# Android SDK
-set -x ANDROID_HOME $HOME/Android/Sdk
-fish_add_path $ANDROID_HOME/emulator $ANDROID_HOME/tools $ANDROID_HOME/tools/bin $ANDROID_HOME/platform-tools $ANDROID_HOME/cmdline-tools/latest/bin 
-
-set -x JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+set -x EDITOR nvim
+set -x VISUAL nvim
 
