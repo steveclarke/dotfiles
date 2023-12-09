@@ -1,9 +1,9 @@
 shell:
   program: /bin/bash
-  args:
-    - -l
-    - -c
-    - "tmux attach || tmux"
+  # args:
+  #   - -l
+  #   - -c
+  #   - "tmux attach || tmux"
 window:
   dimensions:
     columns: 124
@@ -16,23 +16,28 @@ window:
     x: 6
     y: 6
 font:
-  size: 12
+  size: 11
   normal:
-    family: "FiraCode Nerd Font Mono"
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
     style: Regular
   bold:
-    family: "FiraCode Nerd Font Mono"
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
     style: Bold
 
   italic:
-    family: "FiraCode Nerd Font Mono"
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
     style: Italic
 
   bold_italic:
-    family: "FiraCode Nerd Font Mono"
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
     style: Bold Italic
 import:
-  - ~/.config/alacritty/gruvbox-material-alacritty.yml
+  - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
+  # - ~/.config/alacritty/themes/gruvbox-material-alacritty.yml
 
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 

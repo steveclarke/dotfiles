@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 DOTFILES_DIR=$HOME/dotfiles
 
 is_installed() {
@@ -36,3 +38,12 @@ stow fish
 
 banner "Configuring Ruby"
 stow ruby
+
+banner "Configuring Neovim"
+mkdir -p "${HOME}/.config/nvim"
+stow nvim
+
+banner "Configuring Zellij"
+mkdir -p "${HOME}/.config/zellij"
+stow zellij
+
