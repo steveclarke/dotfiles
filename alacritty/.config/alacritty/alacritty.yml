@@ -35,13 +35,14 @@ font:
     # family: "FiraCode Nerd Font Mono"
     family: "JetBrainsMono Nerd Font"
     style: Bold Italic
-import:
-  - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
-  # - ~/.config/alacritty/themes/gruvbox-material-alacritty.yml
 
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
 # Import additional configuration files
+import:
+  - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
+  - ~/.config/alacritty/local.yml
+
 #
 # Imports are loaded in order, skipping all missing files, with the importing
 # file being loaded last. If a field is already present in a previous import, it
