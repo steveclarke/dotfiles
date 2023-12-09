@@ -38,8 +38,10 @@ opt.cursorline = true
 -- add more space in the command line for displaying messages
 -- opt.cmdheight = 1
 
+-- [[ Scrolloff ]]
 -- minimal number of screen lines to keep above and below the cursor.
-opt.scrolloff = 8
+opt.scrolloff = 10
+-- opt.scrolloff = 999
 --  The minimal number of screen columns to keep to the left and to the right
 --  of the cursor if 'nowrap' is set.
 opt.sidescrolloff = 8
