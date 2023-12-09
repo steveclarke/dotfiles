@@ -1,17 +1,46 @@
 layout {
-  pane size=1 borderless=true {
-    plugin location="zellij:tab-bar"
-  }
+  tab name="Code" focus=true {
+    pane size=1 borderless=true {
+      plugin location="zellij:tab-bar"
+    }
 
-  pane split_direction="vertical" {
-    pane  name="Code" size="70%"
-    pane {
-      pane name="Specs"
-      pane name="Console"
+    pane split_direction="vertical" {
+      pane  name="Code" size="70%"
+      pane {
+        pane name="Specs"
+        pane name="Console"
+      }
+    }
+
+    pane size=2 borderless=true {
+      plugin location="zellij:status-bar"
     }
   }
 
-  pane size=2 borderless=true {
-    plugin location="zellij:status-bar"
+  tab name="Services" {
+    pane size=1 borderless=true {
+      plugin location="zellij:tab-bar"
+    }
+
+    pane name="Docker"
+    pane name="Server"
+
+    pane size=2 borderless=true {
+      plugin location="zellij:status-bar"
+    }
+  }
+
+  tab name="Git" {
+    pane size=1 borderless=true {
+      plugin location="zellij:tab-bar"
+    }
+
+    pane name="Lazygit" {
+      command "lazygit"
+    }
+
+    pane size=2 borderless=true {
+      plugin location="zellij:status-bar"
+    }
   }
 }
