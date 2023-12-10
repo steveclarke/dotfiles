@@ -23,4 +23,7 @@ if status is-interactive
   abbr -a zcode "zellij --layout ~/.config/zellij/layouts/code.yml"
   abbr -a ze "zellij edit"
   abbr -a zef "zellij edit --floating"
+
+  # Links to functions
+  abbr -a mdc mkdir-cd
 end
