@@ -1,0 +1,32 @@
+---
+window:
+  dimensions:
+    columns: 124
+    # lines: 70
+    lines: 35
+  position:
+    x: 0
+    y: 0
+  padding:
+    x: 6
+    y: 6
+font:
+  size: 11
+  normal:
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
+    style: Regular
+  bold:
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
+    style: Bold
+
+  italic:
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
+    style: Italic
+
+  bold_italic:
+    # family: "FiraCode Nerd Font Mono"
+    family: "JetBrainsMono Nerd Font"
+    style: Bold Italic
