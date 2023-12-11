@@ -9,7 +9,7 @@ local mason_opts = {
   },
 }
 
-local lsp_config_opts = {
+local mason_lspconfig_opts = {
   ensure_installed = {
     "cssls",
     "docker_compose_language_service",
@@ -26,15 +26,34 @@ local lsp_config_opts = {
 }
 
 return {
-  "williamboman/mason.nvim",
-  dependencies = {
-    "williamboman/mason-lspconfig.nvim",
+  {
+    "williamboman/mason.nvim",
+    dependencies = {
+      "williamboman/mason-lspconfig.nvim",
+    },
+    lazy = false,
+    config = function()
+      local mason = require("mason")
+      local mason_lspconfig = require("mason-lspconfig")
+      mason.setup(mason_opts)
+      mason_lspconfig.setup(mason_lspconfig_opts)
+    end,
   },
-  lazy = false,
-  config = function()
-    local mason = require("mason")
-    local mason_lspconfig = require("mason-lspconfig")
-    mason.setup(mason_opts)
-    mason_lspconfig.setup(lsp_config_opts)
-  end,
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      border = "rounded",
+    },
+    config = function()
+      local lspconfig = require("lspconfig")
+
+      lspconfig.lua_ls.setup({})
+      lspconfig.jsonls.setup({})
+      lspconfig.cssls.setup({})
+      lspconfig.ruby_ls.setup({})
+      lspconfig.html.setup({})
+      lspconfig.tsserver.setup({})
+      lspconfig.emmet_ls.setup({})
+    end,
+  },
 }
