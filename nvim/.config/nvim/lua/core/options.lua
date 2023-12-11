@@ -75,3 +75,12 @@ opt.formatoptions:remove({ "c", "r", "o" })
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldenable = false
+
+-- Allow the block to expand into lines where there are no characters
+opt.virtualedit = "block"
+
+-- Show partial off-screen substitute results in a preview window
+-- i.e. :%s/foo/bar results will show in preview window, so that
+-- if substitutions are spread through the fille we can see them
+-- consolidated before accepting the change.
+opt.inccommand = "split"
