@@ -29,12 +29,6 @@ local config = function()
   local mason = require("mason")
   local mason_lspconfig = require("mason-lspconfig")
 
-  local default_setup = function(server)
-    lspconfig[server].setup({
-      capabilities = lsp_capabilities,
-    })
-  end
-
   vim.api.nvim_create_autocmd("LspAttach", {
     desc = "Lsp Actions",
     callback = function(event)
@@ -59,24 +53,72 @@ local config = function()
 
   -- Setup Mason
   mason.setup(mason_opts)
-  mason_lspconfig.setup({
-    ensure_installed = ensure_installed,
-    handlers = {
-      default_setup,
+  mason_lspconfig.setup({ ensure_installed })
 
-      -- Lua
-      lua_ls = function()
-        lspconfig.lua_ls.setup({
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" },
-              },
-            },
-          },
-        })
-      end,
+  -- [[ To automatically setup LSPs for each language, use the following ]]
+  --
+  -- local default_setup = function(server)
+  --   lspconfig[server].setup({
+  --     capabilities = lsp_capabilities,
+  --   })
+  -- end
+  --
+  -- mason_lspconfig.setup({
+  --   ensure_installed = ensure_installed,
+  --   handlers = {
+  --     default_setup,
+  --
+  --     -- Lua
+  --     lua_ls = function()
+  --       lspconfig.lua_ls.setup({
+  --         settings = {
+  --           Lua = {
+  --             diagnostics = {
+  --               globals = { "vim" },
+  --             },
+  --           },
+  --         },
+  --       })
+  --     end,
+  --   },
+  -- })
+  -- [[ End of automatic setup ]]
+
+  -- [[ Setup LSP ]]
+  -- Ruby
+  lspconfig.ruby_ls.setup({
+    capabilities = lsp_capabilities,
+  })
+  -- Lua
+  lspconfig.lua_ls.setup({
+    capabilities = lsp_capabilities,
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = { "vim" },
+        },
+      },
     },
+  })
+  -- JSON
+  lspconfig.jsonls.setup({
+    capabilities = lsp_capabilities,
+  })
+  -- CSS
+  lspconfig.cssls.setup({
+    capabilities = lsp_capabilities,
+  })
+  -- HTML
+  lspconfig.html.setup({
+    capabilities = lsp_capabilities,
+  })
+  -- JavaScript / TypeScript
+  lspconfig.tsserver.setup({
+    capabilities = lsp_capabilities,
+  })
+  -- Emmet
+  lspconfig.emmet_ls.setup({
+    capabilities = lsp_capabilities,
   })
 
   local cmp = require("cmp")
@@ -96,15 +138,6 @@ local config = function()
       end,
     },
   })
-
-  -- Setup LSP
-  -- lspconfig.lua_ls.setup({})
-  -- lspconfig.jsonls.setup({})
-  -- lspconfig.cssls.setup({})
-  -- lspconfig.ruby_ls.setup({})
-  -- lspconfig.html.setup({})
-  -- lspconfig.tsserver.setup({})
-  -- lspconfig.emmet_ls.setup({})
 end
 
 return {
