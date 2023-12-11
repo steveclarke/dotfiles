@@ -14,8 +14,8 @@ if status is-interactive
 
   # Dotfiles
   abbr -a dot "cd ~/dotfiles"
-  abbr -a dotfish "cd ~/dotfiles/fish/.config/fish"
-  abbr -a dotnvim "cd ~/dotfiles/nvim/.config/nvim"
+  abbr -a dotf "cd ~/dotfiles/fish/.config/fish"
+  abbr -a dotn "cd ~/dotfiles/nvim/.config/nvim"
   abbr -a dotz "cd ~/dotfiles/zellij/.config/zellij"
 
   # Zellij
