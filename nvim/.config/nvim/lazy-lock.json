@@ -13,7 +13,6 @@
   "neoconf.nvim": { "branch": "main", "commit": "64437787dba70fce50dad7bfbb97d184c5bc340f" },
   "nightfox.nvim": { "branch": "main", "commit": "eb82712f86319272f4b7b9dbb4ec6df650e6987f" },
   "nvim-autopairs": { "branch": "master", "commit": "0f04d78619cce9a5af4f355968040f7d675854a1" },
-  "nvim-lint": { "branch": "master", "commit": "849ccb610de3f6ce1a239ea1e68568ef1a53d5df" },
   "nvim-lspconfig": { "branch": "master", "commit": "bd405e45c5fb122c16af8f87fa2dd7ab1981b243" },
   "nvim-surround": { "branch": "main", "commit": "703ec63aa798e5e07d309b35e42def34bebe0174" },
   "nvim-tree.lua": { "branch": "master", "commit": "141c0f97c35f274031294267808ada59bb5fb08e" },
