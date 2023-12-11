@@ -86,8 +86,11 @@ local config = function()
 
   -- [[ Setup LSP ]]
   -- Ruby
-  lspconfig.ruby_ls.setup({
-    capabilities = lsp_capabilities,
+  -- lspconfig.ruby_ls.setup({
+  --   capabilities = lsp_capabilities,
+  -- })
+  lspconfig.standardrb.setup({
+    capabilities = lsp_capabilities
   })
   -- Lua
   lspconfig.lua_ls.setup({
