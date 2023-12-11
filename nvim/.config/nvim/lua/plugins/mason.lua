@@ -16,7 +16,7 @@ local lsp_config_opts = {
     "dockerls",
     "emmet_ls",
     "html",
-    "json_ls",
+    "jsonls",
     "lua_ls",
     "standardrb",
     "tailwindcss",
