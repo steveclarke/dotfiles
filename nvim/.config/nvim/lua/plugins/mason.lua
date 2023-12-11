@@ -16,11 +16,13 @@ local lsp_config_opts = {
     "dockerls",
     "emmet_ls",
     "html",
+    "jsonls",
     "lua_ls",
     "standardrb",
     "tailwindcss",
     "tsserver",
   },
+  automatic_installation = true,
 }
 
 return {
