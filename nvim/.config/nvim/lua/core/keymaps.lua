@@ -2,9 +2,9 @@ local keymap = vim.keymap
 
 local opts = { noremap = true, silent = true }
 
--- Nvim Tree
-keymap.set("n", "<leader>e", vim.cmd.NvimTreeToggle, { desc = "Toggle file explorer" })
-keymap.set("n", "<leader>fe", vim.cmd.NvimTreeFocus, { desc = "Focus file explorer" })
+-- Nvim Tree Explorer
+keymap.set("n", "<leader>e", vim.cmd.NvimTreeFocus, { desc = "Focus file explorer" })
+keymap.set("n", "<leader>fe", vim.cmd.NvimTreeToggle, { desc = "Toggle file explorer" })
 
 -- Map Ctrl-l to move to the window on the right
 keymap.set("n", "<C-l>", "<C-w>l", opts)

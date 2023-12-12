@@ -15,3 +15,4 @@ Plugins:
 
 - [ ] Fugitive
 - [x] Surround
+- [ ] [None LS](https://github.com/nvimtools/none-ls.nvim)
