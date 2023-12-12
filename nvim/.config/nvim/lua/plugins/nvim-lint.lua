@@ -9,18 +9,18 @@ return {
     local lint = require("lint")
 
     lint.linters_by_ft = {
-      css = { "stylelint" },
-      javascript = { "eslint_d" },
-      json = { "jsonlint" },
-      less = { "stylelint" },
-      lua = { "luacheck" },
-      markdown = { "markdownlint" },
+      -- css = { "stylelint" },
+      -- javascript = { "eslint_d" },
+      -- json = { "jsonlint" },
+      -- less = { "stylelint" },
+      -- lua = { "luacheck" },
+      -- markdown = { "markdownlint" },
       -- ruby = { "standardrb" },
-      sass = { "stylelint" },
-      scss = { "stylelint" },
-      typescript = { "eslint_d" },
-      vue = { "eslint_d" },
-      yaml = { "yamllint" },
+      -- sass = { "stylelint" },
+      -- scss = { "stylelint" },
+      -- typescript = { "eslint_d" },
+      -- vue = { "eslint_d" },
+      -- yaml = { "yamllint" },
     }
 
     local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

@@ -8,10 +8,10 @@ return {
     conform.setup({
       formatters_by_ft = {
         javascript = { "prettierd" },
-        json = { "prettierd" },
-        ruby = { "standardrb" },
-        vue = { "prettierd" },
-        lua = { "stylua" },
+        -- json = { "prettierd" },
+        -- ruby = { "standardrb" },
+        -- vue = { "prettierd" },
+        -- lua = { "stylua" },
       },
 
       format_on_save = {
