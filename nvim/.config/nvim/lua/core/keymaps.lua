@@ -38,3 +38,6 @@ keymap.set("v", ">", ">gv", opts)
 -- FIXME: This doesn't work properly. It's supposed to map Ctrl-/ to comment/uncomment
 -- keymap.set("n", "<C-_>", "gcc", { noremap = false })
 -- keymap.set("v", "<C-_>", "gcc", { noremap = false })
+
+-- Reformat code
+vim.keymap.set("n", "<leader>rf", "<cmd>lua vim.lsp.buf.format({async=true})<CR>")

@@ -14,7 +14,7 @@ return {
       less = { "stylelint" },
       lua = { "luacheck" },
       markdown = { "markdownlint" },
-      ruby = { "standardrb" },
+      -- ruby = { "standardrb" },
       sass = { "stylelint" },
       scss = { "stylelint" },
       typescript = { "eslint_d" },
