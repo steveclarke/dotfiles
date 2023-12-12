@@ -12,9 +12,10 @@ to place things.
 
 ## Other applications
 
-* [eza](https://github.com/eza-community/eza) (ls replacement)
+* [eza](https://github.com/eza-community/eza) -ls replacement 
 * [Neovim](https://neovim.io)
 * [Fish Shell](https://fishshell.com/)
+* [Zellij](https://github.com/zellij-org/zellij) - terminal multiplexer
 
 ## Installation
 
