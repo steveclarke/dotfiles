@@ -41,3 +41,9 @@ keymap.set("v", ">", ">gv", opts)
 
 -- Reformat code
 vim.keymap.set("n", "<leader>rf", "<cmd>lua vim.lsp.buf.format({async=true})<CR>")
+
+-- Resize splits with ctrl keys
+keymap.set("n", "<C-Up>", ":resize -2<CR>", opts)
+keymap.set("n", "<C-Down>", ":resize +2<CR>", opts)
+keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", opts)
+keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", opts)
