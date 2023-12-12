@@ -8,8 +8,8 @@ return {
       require("catppuccin").setup({
         dim_inactive = {
           enabled = true,
-          shade = "dark",
-          percentage = 0.15,
+          shade = "latte",
+          percentage = 0.35,
         },
         integrations = {
           -- cmp = true,
