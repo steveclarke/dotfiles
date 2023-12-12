@@ -24,7 +24,9 @@ if status is-interactive
   abbr -a ze "zellij edit"
   abbr -a zef "zellij edit --floating"
   abbr -a zpf "zellij action toggle-pane-frames"
+  abbr -a zcode "zellij --layout ~/.config/zellij/layouts/code.yml"
 
   # Links to functions
   abbr -a mdc mkdir-cd
 end
+
