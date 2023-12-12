@@ -12,6 +12,7 @@ return {
         -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
         vue = { "prettier" },
         lua = { "stylua" },
+        markdown = { "markdownlint" },
       },
 
       format_on_save = {

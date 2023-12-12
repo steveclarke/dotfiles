@@ -116,6 +116,9 @@ local config = function()
   -- Vue (formatting by Prettier via conform)
   lspconfig.volar.setup({})
 
+  -- Markdown
+  -- lspconfig.marksman.setup({})
+
   -- local cmp = require("cmp")
   -- cmp.setup({
   --   sources = {
@@ -146,6 +149,6 @@ return {
       "L3MON4D3/LuaSnip",
     },
     lazy = false,
-    config = config
+    config = config,
   },
 }

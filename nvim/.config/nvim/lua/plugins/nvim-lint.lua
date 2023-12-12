@@ -1,6 +1,6 @@
 return {
   "mfussenegger/nvim-lint",
-  enabled = false,
+  enabled = true,
   event = {
     "BufReadPre",
     "BufNewFile",
@@ -14,7 +14,7 @@ return {
       -- json = { "jsonlint" },
       -- less = { "stylelint" },
       -- lua = { "luacheck" },
-      -- markdown = { "markdownlint" },
+      markdown = { "markdownlint" },
       -- ruby = { "standardrb" },
       -- sass = { "stylelint" },
       -- scss = { "stylelint" },
