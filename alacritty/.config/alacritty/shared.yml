@@ -1,10 +1,10 @@
 ---
-shell:
-  program: /bin/bash
-  args:
-    - -l
-    - -c
-    - "zellij"
+# shell:
+#   program: /bin/bash
+#   args:
+#     - -l
+#     - -c
+#     - "zellij"
 window:
   dimensions:
     columns: 124
