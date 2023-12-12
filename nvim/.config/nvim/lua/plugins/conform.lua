@@ -7,11 +7,11 @@ return {
 
     conform.setup({
       formatters_by_ft = {
-        javascript = { "prettierd" },
-        -- json = { "prettierd" },
-        -- ruby = { "standardrb" },
-        -- vue = { "prettierd" },
-        -- lua = { "stylua" },
+        javascript = { "prettier" },
+        json = { "prettier" },
+        -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
+        vue = { "prettier" },
+        lua = { "stylua" },
       },
 
       format_on_save = {
@@ -22,12 +22,12 @@ return {
     })
 
     -- FIXME: This doesn't work properly in visual mode
-    vim.keymap.set({ "n", "v" }, "<leader>mp", function()
-      conform.format({
-        lsp_fallback = true,
-        async = false,
-        timeout_ms = 500,
-      })
-    end, { desc = "Format file or range" })
+    -- vim.keymap.set({ "n", "v" }, "<leader>mp", function()
+    --   conform.format({
+    --     lsp_fallback = true,
+    --     async = false,
+    --     timeout_ms = 500,
+    --   })
+    -- end, { desc = "Format file or range" })
   end,
 }
