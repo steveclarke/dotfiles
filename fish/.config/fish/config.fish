@@ -12,7 +12,6 @@ set fish_greeting
 # alias fish_greeting colortest
 
 # Path
-set -x fish_user_paths
 fish_add_path ~/bin
 
 # Exports
