@@ -10,19 +10,20 @@ if status is-interactive
   # Commonly cd'ed directories 
   abbr -a uapi "cd ~/src/unio-project/unio-api"
   abbr -a uapp "cd ~/src/unio-project/unio-app-ua740"
-  abbr -a src "cd ~/src"
+  abbr -a --set-cursor src "cd ~/src%"
 
   # Dotfiles
-  abbr -a dot "cd ~/dotfiles"
-  abbr -a dotf "cd ~/dotfiles/fish/.config/fish"
-  abbr -a dotn "cd ~/dotfiles/nvim/.config/nvim"
-  abbr -a dotz "cd ~/dotfiles/zellij/.config/zellij"
+  abbr -a --set-cursor dot "cd ~/dotfiles%"
+  abbr -a --set-cursor dotf "cd ~/dotfiles/fish/.config/fish%"
+  abbr -a --set-cursor dotn "cd ~/dotfiles/nvim/.config/nvim%"
+  abbr -a --set-cursor dotz "cd ~/dotfiles/zellij/.config/zellij%"
 
   # Zellij
   abbr -a z "zellij"
   abbr -a zcode "zellij --layout ~/.config/zellij/layouts/code.yml"
   abbr -a ze "zellij edit"
   abbr -a zef "zellij edit --floating"
+  abbr -a zpf "zellij action toggle-pane-frames"
 
   # Links to functions
   abbr -a mdc mkdir-cd
