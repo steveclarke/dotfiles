@@ -12,7 +12,7 @@ to place things.
 
 ## Other applications
 
-* [eza (ls replacement)](https://github.com/eza-community/eza)
+* [eza](https://github.com/eza-community/eza) (ls replacement)
 * [Neovim](https://neovim.io)
 * [Fish Shell](https://fishshell.com/)
 
