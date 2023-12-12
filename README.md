@@ -8,7 +8,13 @@ to place things.
 ## Pre-requisites
 
 * Repository lives at `~/dotfiles`
-* Gnu Stow is installed (http://www.gnu.org/software/stow/)
+* Gnu Stow is installed (<http://www.gnu.org/software/stow/>)
+
+## Other applications
+
+* [EZA](https://github.com/eza-community/eza)
+* [Neovim](https://neovim.io)
+* [Fish Shell](https://fishshell.com/)
 
 ## Installation
 
