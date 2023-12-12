@@ -26,5 +26,6 @@ keybinds {
     bind "Alt 0" { GoToTab 10; }
     bind "Alt t" { NewTab; }
     bind "Alt d" { NewPane "down";}
+    bind "Alt f" { ToggleFloatingPanes; }
   }
 }
