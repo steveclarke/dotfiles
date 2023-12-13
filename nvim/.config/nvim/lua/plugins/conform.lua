@@ -5,12 +5,15 @@ local config = function()
 
   conform.setup({
     formatters_by_ft = {
-      javascript = { "prettier" },
-      json = { "prettier" },
-      -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
-      vue = { "prettier" },
+      javascript = { "prettierd" },
+      typescript = { "prettierd" },
+      javascriptreact = { "prettierd" },
+      typescriptreact = { "prettierd" },
+      json = { "prettierd" },
+      vue = { "prettierd" },
       lua = { "stylua" },
       markdown = { "markdownlint" },
+      -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
     },
 
     format_on_save = {
