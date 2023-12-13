@@ -1,4 +1,4 @@
-#Editor et. al.
+# Editor et. al.
 set -gx EDITOR (which nvim)
 set -gx VISUAL $EDITOR
 set -gx SUDO_EDITOR $EDITOR
