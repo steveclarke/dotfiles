@@ -52,3 +52,9 @@ keymap.set("n", "<C-Up>", ":resize -2<CR>", opts)
 keymap.set("n", "<C-Down>", ":resize +2<CR>", opts)
 keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", opts)
 keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+
+-- Copy the current line or visual selection down
+keymap.set("n", "<leader>d", ":copy .<cr>", opts)
+keymap.set("n", "<C-d>", ":copy .<cr>", opts)
+keymap.set("v", "<leader>d", ":copy '<,'>.<CR>", opts)
+keymap.set("v", "<C-d>", ":copy '<,'>.<CR>", opts)
