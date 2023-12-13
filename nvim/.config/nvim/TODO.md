@@ -9,6 +9,8 @@
 Review [Quick config](https://github.com/albingroen/quick.nvim)
 <https://www.youtube.com/watch?v=sWvdsJH9MF8>
 
+[Awesome Neovim](https://github.com/rockerBOO/awesome-neovim)
+
 - [x] Nvim Tree
 - [x] Treesitter
 - [x] Resolve issue with colorscheme when using Tmux
@@ -22,3 +24,7 @@ Plugins:
 - [ ] markdown preview - see notes
 - [ ] Check out [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [ ] [Octo](https://github.com/pwntester/octo.nvim) - GH Pull Reviews
+
+- [ ] [Harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2) - marks
+or
+- [ ] [Trailblazer](https://github.com/LeonHeidelbach/trailblazer.nvim)
