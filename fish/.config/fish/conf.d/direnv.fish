@@ -4,7 +4,7 @@
 # This solves a problem where the .envrc wasn't parsed immediately after
 # VSCode opens a new terminal instance.
 if status is-interactive
-  if command -v direnv >/dev/null
+  if command -q direnv
     direnv hook fish | source
     direnv export fish | source
   else
