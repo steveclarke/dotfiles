@@ -13,6 +13,7 @@ set fish_greeting
 
 # Path
 fish_add_path ~/bin
+fish_add_path $HOME/.cargo/bin
 
 # Exports
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
