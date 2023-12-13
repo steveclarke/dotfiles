@@ -30,9 +30,14 @@ keymap.set("v", "<A-k>", ":m '<-2<CR>gv-gv", opts)
 keymap.set("v", "<", "<gv", opts)
 keymap.set("v", ">", ">gv", opts)
 
--- Splits
+-- [[ Splits ]]
 -- keymap.set("n", "<leader>sv", vim.cmd.vsplit, opts)
 -- keymap.set("n", "<leader>sh", vim.cmd.split, opts)
+-- open splits with new buffers
+keymap.set("n", "-ss", ":new<CR>", opts)
+keymap.set("n", "-vv", ":vnew<CR>", opts)
+keymap.set("n", "-tb", ":tabnew %<CR>", opts)
+keymap.set("n", "-tt", ":tabnew<CR>", opts)
 
 -- Commenting
 -- FIXME: This doesn't work properly. It's supposed to map Ctrl-/ to comment/uncomment
