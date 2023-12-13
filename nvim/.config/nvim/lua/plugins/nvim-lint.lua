@@ -1,4 +1,4 @@
-local core = require("utils.core")
+local keymap_options = require("utils.core").keymap_options
 
 return {
   "mfussenegger/nvim-lint",
@@ -37,6 +37,6 @@ return {
 
     vim.keymap.set("n", "<leader>l", function()
       lint.try_lint()
-    end, core.options({ desc = "Trigger linting for current buffer" }))
+    end, keymap_options({ desc = "Trigger linting for current buffer" }))
   end,
 }

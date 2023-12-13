@@ -18,9 +18,8 @@ Review [Quick config](https://github.com/albingroen/quick.nvim)
 
 Plugins:
 
-- [ ] Fugitive
 - [x] Surround
-- [ ] [None LS](https://github.com/nvimtools/none-ls.nvim)
+- [ ] Fugitive
 - [ ] markdown preview - see notes
 - [ ] Check out [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [ ] [Octo](https://github.com/pwntester/octo.nvim) - GH Pull Reviews
