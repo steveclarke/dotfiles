@@ -6,13 +6,12 @@
 #     - -c
 #     - "zellij"
 window:
-  dimensions:
-    columns: 124
-    # lines: 70
-    lines: 35
-  position:
-    x: 0
-    y: 0
+  # dimensions:
+  #   columns: 124
+  #   lines: 35
+  # position:
+  #   x: 0
+  #   y: 0
   padding:
     x: 6
     y: 6
