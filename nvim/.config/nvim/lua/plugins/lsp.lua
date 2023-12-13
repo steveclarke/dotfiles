@@ -25,70 +25,44 @@ local ensure_installed = {
 
 local config = function()
   local lspconfig = require("lspconfig")
-  -- local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+  local capabilities = require("cmp_nvim_lsp").default_capabilities()
   local mason = require("mason")
   local mason_lspconfig = require("mason-lspconfig")
 
-  -- vim.api.nvim_create_autocmd("LspAttach", {
-  --   desc = "Lsp Actions",
-  --   callback = function(event)
-  --     local opts = { buffer = event.buf }
-  --
-  --     vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-  --     vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-  --     vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-  --     vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-  --     vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-  --     vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-  --     vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-  --     vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-  --     vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-  --     vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-  --
-  --     vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
-  --     vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
-  --     vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
-  --   end,
-  -- })
+  vim.api.nvim_create_autocmd("LspAttach", {
+    desc = "Lsp Actions",
+    callback = function(event)
+      local opts = { buffer = event.buf }
+
+      vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+      vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+      vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+      vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+      vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+      vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+      vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+      vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+      vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
+      vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+
+      vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+      vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
+      vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
+    end,
+  })
 
   -- Setup Mason
   mason.setup(mason_opts)
   mason_lspconfig.setup({ ensure_installed })
 
-  -- [[ To automatically setup LSPs for each language, use the following ]]
-  --
-  -- local default_setup = function(server)
-  --   lspconfig[server].setup({
-  --     capabilities = lsp_capabilities,
-  --   })
-  -- end
-  --
-  -- mason_lspconfig.setup({
-  --   ensure_installed = ensure_installed,
-  --   handlers = {
-  --     default_setup,
-  --
-  --     -- Lua
-  --     lua_ls = function()
-  --       lspconfig.lua_ls.setup({
-  --         settings = {
-  --           Lua = {
-  --             diagnostics = {
-  --               globals = { "vim" },
-  --             },
-  --           },
-  --         },
-  --       })
-  --     end,
-  --   },
-  -- })
-  -- [[ End of automatic setup ]]
-
   -- Ruby (formatting by StandardRB via autocmds.lua)
-  lspconfig.standardrb.setup({})
+  lspconfig.standardrb.setup({
+    capabilities = capabilities
+  })
 
   -- Lua (formatting by Stylua via conform)
   lspconfig.lua_ls.setup({
+    capabilities = capabilities,
     settings = {
       Lua = {
         diagnostics = {
@@ -99,43 +73,59 @@ local config = function()
   })
 
   -- JSON (formatting by Prettier via conform)
-  lspconfig.jsonls.setup({})
+  lspconfig.jsonls.setup({
+    capabilities = capabilities
+  })
 
   -- CSS
-  lspconfig.cssls.setup({})
+  lspconfig.cssls.setup({
+    capabilities = capabilities
+  })
 
   -- HTML
-  lspconfig.html.setup({})
+  lspconfig.html.setup({
+    capabilities = capabilities
+  })
 
   -- JavaScript / TypeScript (formatting by Prettier via conform)
-  lspconfig.tsserver.setup({})
+  lspconfig.tsserver.setup({
+    capabilities = capabilities
+  })
 
   -- Emmet
-  lspconfig.emmet_ls.setup({})
+  lspconfig.emmet_ls.setup({
+    capabilities = capabilities,
+    -- add eruby as filetype
+
+  })
 
   -- Vue (formatting by Prettier via conform)
-  lspconfig.volar.setup({})
+  lspconfig.volar.setup({
+    capabilities = capabilities
+  })
 
   -- Markdown
-  -- lspconfig.marksman.setup({})
+  lspconfig.marksman.setup({
+    capabilities = capabilities
+  })
 
-  -- local cmp = require("cmp")
-  -- cmp.setup({
-  --   sources = {
-  --     { name = "nvim_lsp" },
-  --   },
-  --   mapping = cmp.mapping.preset.insert({
-  --     -- Enter key confirms completion item
-  --     ["<CR>"] = cmp.mapping.confirm({ select = false }),
-  --     -- Ctrl + space triggers completion menu
-  --     ["<C-Space>"] = cmp.mapping.complete(),
-  --   }),
-  --   snippet = {
-  --     expand = function(args)
-  --       require("luasnip").lsp_expand(args.body)
-  --     end,
-  --   },
-  -- })
+  local cmp = require("cmp")
+  cmp.setup({
+    sources = {
+      { name = "nvim_lsp" },
+    },
+    mapping = cmp.mapping.preset.insert({
+      -- Enter key confirms completion item
+      ["<CR>"] = cmp.mapping.confirm({ select = true }),
+      -- Ctrl + space triggers completion menu
+      ["<C-Space>"] = cmp.mapping.complete(),
+    }),
+    snippet = {
+      expand = function(args)
+        require("luasnip").lsp_expand(args.body)
+      end,
+    },
+  })
 end
 
 return {
