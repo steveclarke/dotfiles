@@ -1,9 +1,16 @@
 return {
   "folke/which-key.nvim",
   lazy = false,
-  config = {},
-  -- init = function()
-  --   vim.o.timeout = true
-  --   vim.o.timeoutlen = 500
-  -- end,
+  config = function()
+    local which_key = require("which-key")
+
+    which_key.register({ ["<leader>f"] = { name = "finder/file commands" } })
+    which_key.register({ ["<leader>r"] = { name = "reformat commands" } })
+    which_key.register({ ["<leader>s"] = { name = "split commands" } })
+    which_key.register({ ["<leader>y"] = { name = "yank commands" } })
+    which_key.register({ ["-s"] = { name = "split commands" } })
+    which_key.register({ ["-t"] = { name = "tab commands" } })
+    which_key.register({ ["-v"] = { name = "vertical commands" } })
+    which_key.setup({})
+  end,
 }
