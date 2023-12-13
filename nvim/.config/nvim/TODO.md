@@ -6,6 +6,9 @@
 
 [Understanding Neovim playlist](https://www.youtube.com/watch?v=87AXw9Quy9U&list=PLx2ksyallYzW4WNYHD9xOFrPRYGlntAft)
 
+Review [Quick config](https://github.com/albingroen/quick.nvim)
+<https://www.youtube.com/watch?v=sWvdsJH9MF8>
+
 - [x] Nvim Tree
 - [x] Treesitter
 - [x] Resolve issue with colorscheme when using Tmux
