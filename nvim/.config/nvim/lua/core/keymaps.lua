@@ -34,18 +34,17 @@ keymap.set("v", ">", ">gv", opts)
 -- keymap.set("n", "<leader>sv", vim.cmd.vsplit, opts)
 -- keymap.set("n", "<leader>sh", vim.cmd.split, opts)
 -- open splits with new buffers
-keymap.set("n", "-ss", ":new<CR>", opts)
-keymap.set("n", "-vv", ":vnew<CR>", opts)
-keymap.set("n", "-tb", ":tabnew %<CR>", opts)
-keymap.set("n", "-tt", ":tabnew<CR>", opts)
+keymap.set("n", "-ss", ":new<cr>", opts)
+keymap.set("n", "-vv", ":vnew<cr>", opts)
+keymap.set("n", "-tb", ":tabnew %<cr>", opts)
+keymap.set("n", "-tt", ":tabnew<cr>", opts)
 
--- Commenting
--- FIXME: This doesn't work properly. It's supposed to map Ctrl-/ to comment/uncomment
--- keymap.set("n", "<C-_>", "gcc", { noremap = false })
--- keymap.set("v", "<C-_>", "gcc", { noremap = false })
+-- Commenting - Ctrl-/ to toggle comments in normal/visual mode.
+keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", opts)
+keymap.set("x", "<C-_>", "<Plug>(comment_toggle_linewise_visual)gv", opts)
 
 -- Reformat code
-vim.keymap.set("n", "<leader>rf", "<cmd>lua vim.lsp.buf.format({async=true})<CR>")
+vim.keymap.set({ "n", "v" }, "<leader>rf", "<cmd>lua vim.lsp.buf.format({async=true})<CR>")
 
 -- Resize splits with ctrl keys
 keymap.set("n", "<C-Up>", ":resize -2<CR>", opts)
