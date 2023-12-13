@@ -1,0 +1,18 @@
+3>> - indent n lines
+dj - delete down
+gm - move to the middle current line
+X - delete character before cursor
+H,M,L - move to top, middle, bottom of screen
+>} - indent to end of paragraph
+{ - move to beginning of paragraph
+dG - delete to end of file
+dgg - delete to beginning of file
+d} - delete to end of paragraph
+d% - delete to matching parenthesis
+ZZ - equivalent to :wq
+:x - equivalent to :wq
+gv - reselect last visual selection
+:tabnew % - open current file in new tab
+* - search for word under cursor
+gt/gT - next/previous tab
+:only,:tabonly - close all but current buffer/tab
