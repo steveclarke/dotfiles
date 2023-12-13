@@ -1,5 +1,6 @@
 # ASDF
-if command -q asdf
+
+if test -d ~/.asdf
   source ~/.asdf/asdf.fish
   source ~/.asdf/completions/asdf.fish
 else
