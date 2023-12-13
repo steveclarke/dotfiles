@@ -23,7 +23,7 @@ if command -q eza
   alias la "eza --color=always --icons --group-directories-first --all"
   alias ll "eza --color=always --icons --group-directories-first --all --long"
 else
-  echo "Install eza for a better ls experience"
+  echo "Install eza for a better ls experience (https://eza.rocks)"
 end
 
 alias ncdu "ncdu --color dark"
