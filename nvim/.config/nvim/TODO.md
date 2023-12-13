@@ -14,7 +14,7 @@ Review [Quick config](https://github.com/albingroen/quick.nvim)
 - [x] Nvim Tree
 - [x] Treesitter
 - [x] Resolve issue with colorscheme when using Tmux
-- [ ] Use vim.tbl_extend to add desc to opts [see](https://neovim.io/doc/user/lua.html#vim.tbl_extend())
+- [x] Use vim.tbl_extend to add desc to opts [see](https://neovim.io/doc/user/lua.html#vim.tbl_extend())
 
 Plugins:
 
