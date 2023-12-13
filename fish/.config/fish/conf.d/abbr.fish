@@ -3,9 +3,17 @@ if status is-interactive
   abbr -a -- upgrade "sudo nala upgrade"
   abbr -a kill-server-pid "kill -QUIT \$(cat tmp/pids/server.pid)"
   abbr -a dps "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
-  abbr -a vim "nvim"
+
+  if command -q nvim
+    abbr -a vim "nvim"
+  end
+
   abbr -a lg "lazygit"
   abbr -a gg "lazygit"
+
+  if command -q bat
+    abbr -a cat bat
+  end
 
   # Commonly cd'ed directories 
   abbr -a uapi "cd ~/src/unio-project/unio-api"
