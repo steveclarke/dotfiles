@@ -68,10 +68,6 @@ opt.encoding = "UTF-8"
 
 -- opt.guicursor =	"n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 
--- Don't automatically add comment on newline above/below
--- FIXME: Get this working. Doesn't seem to work.
-opt.formatoptions:remove({ "c", "r", "o" })
-
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldenable = false
@@ -84,3 +80,15 @@ opt.virtualedit = "block"
 -- if substitutions are spread through the fille we can see them
 -- consolidated before accepting the change.
 opt.inccommand = "split"
+
+-- Don't automatically add comment on newline above/below.
+-- ** freaking annoying, don't know why this is default! **
+-- Has to be done in an autocmd because Neovim sets it in after/ftplugin/lua.lua
+-- So not only is it the most annoying default ever (well aside from the bell in vim)
+-- but it was hell to figure out how to unset it.
+-- See: https://www.reddit.com/r/neovim/comments/sqld76/stop_automatic_newline_continuation_of_comments/
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    vim.opt.formatoptions = vim.opt.formatoptions:remove({ "c", "r", "o" })
+  end,
+})
