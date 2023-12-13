@@ -16,6 +16,7 @@ to place things.
 * [Neovim](https://neovim.io)
 * [Fish Shell](https://fishshell.com/)
 * [Zellij](https://github.com/zellij-org/zellij) - terminal multiplexer
+* [Bat](https://github.com/sharkdp/bat) - cat, improved
 
 ## Installation
 
