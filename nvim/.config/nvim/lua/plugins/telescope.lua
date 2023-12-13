@@ -1,4 +1,5 @@
 local keymap = vim.keymap
+local core = require("utils.core")
 
 local config = function()
   local telescope = require("telescope")
@@ -48,12 +49,12 @@ return {
   lazy = false,
   config = config,
   keys = {
-    keymap.set("n", "<C-p>", ":Telescope git_files<CR>", { desc = "Find files (Git-aware)" }),
-    keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", { desc = "Find files" }),
-    keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", { desc = "Find buffers" }),
-    keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", { desc = "Find in files (grep)" }),
-    keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>", { desc = "Find keymaps" }),
-    keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", { desc = "Find help tags" }),
-    keymap.set("n", "<leader>fa", ":Telescope <CR>", { desc = "Find all" }),
+    keymap.set("n", "<C-p>", ":Telescope git_files<CR>", core.options({ desc = "Find files (Git-aware)" })),
+    keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", core.options({ desc = "Find files" })),
+    keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", core.options({ desc = "Find buffers" })),
+    keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", core.options({ desc = "Find in files (grep)" })),
+    keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>", core.options({ desc = "Find keymaps" })),
+    keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", core.options({ desc = "Find help tags" })),
+    keymap.set("n", "<leader>fa", ":Telescope <CR>", core.options({ desc = "Find all" })),
   },
 }
