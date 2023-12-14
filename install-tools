@@ -12,8 +12,18 @@ skipping_banner() {
   echo "=== skipping $1 - already installed"
 }
 
-# TODO: Install Fish
+# [[ fish ]]
+if not_installed fish; then
+  banner "Installing fish"
 
+  sudo apt-add-repository ppa:fish-shell/release-3
+  sudo apt update
+  sudo apt install fish
+else
+  skipping_banner "fish"
+fi
+
+# [[ eza ]]
 if not_installed eza; then
   banner "Installing eza"
 
@@ -27,8 +37,10 @@ else
   skipping_banner "eza"
 fi
 
+# [[ bat ]]
 if not_installed bat; then
   banner "Installing bat"
+  sud apt update
   sudo apt install -y bat
   ln -s /usr/bin/batcat ~/bin/bat 
 else
