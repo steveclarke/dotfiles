@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-not_installed() {
-  [ -z "$(dpkg -l | awk "/^ii  $1/")" ]
+is_installed() {
+  command -v "$1" >/dev/null 2>&1
 }
 
 banner() {
@@ -13,7 +13,7 @@ skipping_banner() {
 }
 
 # [[ Stow ]]
-if not_installed stow; then
+if ! is_installed stow; then
   banner "Installing stow"
   sudo apt update
   sudo apt install stow
@@ -22,7 +22,7 @@ else
 fi
 
 # [[ fish ]]
-if not_installed fish; then
+if ! is_installed fish; then
   banner "Installing fish"
 
   sudo apt-add-repository ppa:fish-shell/release-3
@@ -33,7 +33,7 @@ else
 fi
 
 # [[ eza ]]
-if not_installed eza; then
+if ! is_installed eza; then
   banner "Installing eza"
 
   sudo mkdir -p /etc/apt/keyrings
@@ -47,13 +47,12 @@ else
 fi
 
 # [[ bat ]]
-if not_installed bat; then
+if ! is_installed bat; then
   banner "Installing bat"
+
   sudo apt update
   sudo apt install -y bat
   ln -s /usr/bin/batcat ~/bin/bat 
 else
   skipping_banner "bat"
 fi
-
-
