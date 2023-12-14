@@ -34,6 +34,7 @@ local config = function()
     callback = function(event)
       local opts = { buffer = event.buf }
 
+      -- TODO: Add descriptions for keymaps
       vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
       vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
       vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
@@ -57,7 +58,7 @@ local config = function()
 
   -- Ruby (formatting by StandardRB via autocmds.lua)
   lspconfig.standardrb.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- Lua (formatting by Stylua via conform)
@@ -74,39 +75,43 @@ local config = function()
 
   -- JSON (formatting by Prettier via conform)
   lspconfig.jsonls.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- CSS
   lspconfig.cssls.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- HTML
   lspconfig.html.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- JavaScript / TypeScript (formatting by Prettier via conform)
   lspconfig.tsserver.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- Emmet
   lspconfig.emmet_ls.setup({
     capabilities = capabilities,
     -- add eruby as filetype
-
   })
 
   -- Vue (formatting by Prettier via conform)
   lspconfig.volar.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
   })
 
   -- Markdown
   lspconfig.marksman.setup({
-    capabilities = capabilities
+    capabilities = capabilities,
+  })
+
+  -- Tailwind CSS
+  lspconfig.tailwindcss.setup({
+    capabilities = capabilities,
   })
 
   local cmp = require("cmp")
