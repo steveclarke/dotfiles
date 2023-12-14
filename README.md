@@ -18,6 +18,7 @@ to place things.
 * [Zellij](https://github.com/zellij-org/zellij) - terminal multiplexer
 * [Bat](https://github.com/sharkdp/bat) - cat, improved
 * [Lazygit](https://github.com/jesseduffield/lazygit)
+* [Lazydocker](https://github.com/jesseduffield/lazydocker)
 
 ## Installation
 
