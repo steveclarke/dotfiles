@@ -23,6 +23,7 @@ if status is-interactive
   abbr -a vim "nvim"
   abbr -a lg "lazygit"
   abbr -a gg "lazygit"
+  abbr -a ldo "lazydocker"
   abbr -a cat "bat"
 
   # Commonly cd'ed directories 
@@ -46,6 +47,14 @@ if status is-interactive
 
   # Links to functions
   abbr -a mdc mkdir-cd
+
+  # Docker
+  abbr -a dc "docker compose"
+  abbr -a dcu "docker compose up -d"
+  abbr -a dcd "docker compose down"
+  abbr -a dcr "docker compose run"
+  abbr -a dce "docker compose exec"
+  abbr -a dcl "docker compose logs"
 
   # Eza (ls replacement)
   if command -q eza
