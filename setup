@@ -47,3 +47,7 @@ banner "Configuring Zellij"
 mkdir -p "${HOME}/.config/zellij"
 stow zellij
 
+banner "Configuring Fonts"
+mkdir -p "${HOME}/.local/share/fonts"
+stow fonts
+
