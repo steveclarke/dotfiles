@@ -9,7 +9,7 @@ to place things.
 
 * Repository lives at `~/dotfiles`
 
-## Other applications
+## Applications
 
 * [Stow](http://www.gnu.org/software/stow/) - dotfile management
 * [eza](https://github.com/eza-community/eza) -ls replacement

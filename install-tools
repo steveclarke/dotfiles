@@ -12,6 +12,15 @@ skipping_banner() {
   echo "=== skipping $1 - already installed"
 }
 
+# [[ Stow ]]
+if not_installed stow; then
+  banner "Installing stow"
+  sudo apt update
+  sudo apt install stow
+else
+  skipping_banner "stow"
+fi
+
 # [[ fish ]]
 if not_installed fish; then
   banner "Installing fish"

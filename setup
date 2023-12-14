@@ -2,22 +2,12 @@
 
 DOTFILES_DIR=$HOME/dotfiles
 
-not_installed() {
-  [ -z "$(dpkg -l | awk "/^ii  $1/")" ]
-}
-
 banner() {
   echo "=== $1 "
 }
 
 banner "Installing tools"
 ./install-tools
-
-# Install stow if not already installed
-if not_installed stow; then
-  banner "Installing stow"
-  sudo apt install stow
-fi
 
 banner "Configuring Bash"
 rm ${HOME}/.bash_aliases
