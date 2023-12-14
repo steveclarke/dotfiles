@@ -46,7 +46,7 @@ if status is-interactive
   abbr -a zjcode "zellij --layout ~/.config/zellij/layouts/code.yml"
 
   # Links to functions
-  abbr -a mdc mkdir-cd
+  abbr -a mcd mkdir-cd
 
   # Docker
   abbr -a dc "docker compose"
