@@ -22,3 +22,11 @@ to place things.
 ## Installation
 
 Run ./setup
+
+## Updating
+
+```bash
+cd ~/dotfies
+git pull
+./setup
+```
