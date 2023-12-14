@@ -21,7 +21,11 @@ to place things.
 
 ## Installation
 
-Run ./setup
+```bash
+git clone git@github.com:steveclarke/dotfiles ~/dotfiles
+cd ~/dotfiles
+./setup
+```
 
 ## Updating
 
