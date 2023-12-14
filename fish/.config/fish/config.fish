@@ -23,6 +23,7 @@ if command -q eza
   alias ls "eza --color=always --icons --group-directories-first"
   alias la "eza --color=always --icons --group-directories-first --all"
   alias ll "eza --color=always --icons --group-directories-first --all --long"
+  alias tree "eza --tree"
 else
   echo "Install eza for a better ls experience (https://eza.rocks)"
 end
