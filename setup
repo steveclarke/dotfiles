@@ -2,7 +2,7 @@
 
 DOTFILES_DIR=$HOME/dotfiles
 
-is_installed() {
+not_installed() {
   [ -z "$(dpkg -l | awk "/^ii  $1/")" ]
 }
 
@@ -11,7 +11,7 @@ banner() {
 }
 
 # Install stow if not already installed
-if is_installed stow; then
+if not_installed stow; then
   banner "Installing stow"
   sudo apt install stow
 fi
