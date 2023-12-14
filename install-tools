@@ -77,3 +77,22 @@ if ! is_installed zoxide; then
 else
   skipping_banner "zoxide"
 fi
+
+# [[ direnv ]]
+if ! is_installed direnv; then
+  banner "Installing direnv"
+
+  sudo apt update
+  sudo apt install -y direnv
+else
+  skipping_banner "direnv"
+fi
+
+# [[ asdf ]]
+if ! test -d ~/.asdf; then
+  banner "Installing asdf"
+
+  git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
+else
+  skipping_banner "asdf"
+fi
