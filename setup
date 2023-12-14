@@ -9,13 +9,13 @@ banner() {
 banner "Installing tools"
 ./install-tools
 
-banner "Configuring Bash"
-rm ${HOME}/.bash_aliases
-stow bash
-
 banner "Configuring ~/bin"
 mkdir -p "${HOME}/bin"
 stow bin
+
+banner "Configuring Bash"
+rm ${HOME}/.bash_aliases
+stow bash
 
 banner "Configuring Tmux"
 mkdir -p "${HOME}/.config/tmux"

@@ -49,7 +49,7 @@ fi
 # [[ bat ]]
 if not_installed bat; then
   banner "Installing bat"
-  sud apt update
+  sudo apt update
   sudo apt install -y bat
   ln -s /usr/bin/batcat ~/bin/bat 
 else
