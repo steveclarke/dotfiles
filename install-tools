@@ -15,6 +15,7 @@ skipping_banner() {
 # [[ Stow ]]
 if ! is_installed stow; then
   banner "Installing stow"
+
   sudo apt update
   sudo apt install stow
 else
@@ -55,4 +56,24 @@ if ! is_installed bat; then
   ln -s /usr/bin/batcat ~/bin/bat 
 else
   skipping_banner "bat"
+fi
+
+# [[ fzf ]]
+if ! is_installed fzf; then
+  banner "Installing fzf"
+
+  sudo apt update
+  sudo apt install -y fzf
+else
+  skipping_banner "fzf"
+fi
+
+# [[ zoxide ]]
+if ! is_installed zoxide; then
+  banner "Installing zoxide"
+
+  sudo apt update
+  sudo apt install -y zoxide
+else
+  skipping_banner "zoxide"
 fi
