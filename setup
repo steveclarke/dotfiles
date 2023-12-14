@@ -10,6 +10,9 @@ banner() {
   echo "=== $1 "
 }
 
+banner "Installing tools"
+./install-tools
+
 # Install stow if not already installed
 if not_installed stow; then
   banner "Installing stow"
