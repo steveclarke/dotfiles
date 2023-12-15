@@ -11,8 +11,6 @@ set -gx EDITOR (which nvim)
 set -gx VISUAL $EDITOR
 set -gx SUDO_EDITOR $EDITOR
 
-# Exports
-set -x LESS -rF # -r: raw control chars, -F: quit if one screen
 
 # Abbrs & Aliases
 if status is-interactive
@@ -63,8 +61,6 @@ if status is-interactive
     alias la "eza --color=always --icons --group-directories-first --all"
     alias ll "eza --color=always --icons --group-directories-first --all --long"
     alias tree "eza --tree"
-  else
-    echo "Install eza for a better ls experience (https://eza.rocks)"
   end
 
   abbr -a fkill "ps ax | fzf | awk '{print \$1}' | xargs kill"
