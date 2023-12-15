@@ -69,7 +69,7 @@ if status is-interactive
 
     # Fuzzy find a file and open it in nvim
     abbr -a n nvim
-    abbr -a nf "nvim (fzf)"
+    abbr -a nf nvim-fzf
 
 end
 
