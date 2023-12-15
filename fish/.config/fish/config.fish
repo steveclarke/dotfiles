@@ -62,10 +62,16 @@ if status is-interactive
     alias tree "eza --tree"
   end
 
+  # Fuzzy-find a process and kill it
   abbr -a fkill "ps ax | fzf | awk '{print \$1}' | xargs kill"
   
-  # Generate a random password and select it using fzf
+  # Generate a random password and select it using fuzzy finder
   abbr -a cpass "cpass | fzf | xclip -selection clipboard"
+
+  # Fuzzy find a file and open it in nvim
+  abbr -a n "nvim"
+  abbr -a nf "nvim (fzf)"
+
 end
 
 fish_config theme choose "catppuccin-mocha"
