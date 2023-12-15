@@ -13,6 +13,7 @@ local config = function()
       vue = { "prettierd" },
       lua = { "stylua" },
       markdown = { "markdownlint" },
+      fish = { "fish_indent" },
       -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
     },
 
