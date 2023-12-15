@@ -5,7 +5,7 @@ is_installed() {
 }
 
 banner() {
-  echo "=== $1 "
+  echo "=== Installing $1"
 }
 
 skipping() {
@@ -14,30 +14,37 @@ skipping() {
 
 # [[ Homebrew ]]
 if ! is_installed brew; then
-  banner "Installing Homebrew"
+  banner "Homebrew"
 
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  and cd ~/dotfiles && brew bundle
+  cd ~/dotfiles && brew bundle
 else
   skipping "Homebrew"
 fi
 
 # [[ fish ]]
 if ! is_installed fish; then
-  banner "Installing fish"
+  banner "fish"
 
   sudo apt-add-repository ppa:fish-shell/release-3
-  sudo apt update
-  sudo apt install fish
+  sudo apt update && sudo apt install fish
 else
   skipping "fish"
 fi
 
 # [[ asdf ]]
 if ! test -d ~/.asdf; then
-  banner "Installing asdf"
+  banner "asdf"
 
   git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
 else
   skipping "asdf"
+fi
+
+# [[ xclip ]]
+if ! is_installed xclip; then
+  banner "xclip"
+  sudo apt update && sudo apt install xclip
+else
+  skipping "xclip"
 fi
