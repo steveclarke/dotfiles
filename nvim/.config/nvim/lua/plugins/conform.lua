@@ -14,6 +14,7 @@ local config = function()
       lua = { "stylua" },
       markdown = { "markdownlint" },
       fish = { "fish_indent" },
+      sh = { "shfmt" },
       -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
     },
 
