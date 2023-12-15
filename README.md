@@ -23,6 +23,23 @@ to place things.
 
 ## Installation
 
+### Bootstrapping the Dotfiles Directory
+
+First download and copy the `.dotfilesrc` to $HOME. This will contain settings
+and (possibly) secrets for the target machine.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc -o ~/.dotfilesrc
+```
+
+After downloading you'll want to adjust the settings accordingly for the machine.
+
+Next, run the bootstrap script.
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap)"
+```
+
 ```bash
 git clone git@github.com:steveclarke/dotfiles ~/dotfiles
 cd ~/dotfiles

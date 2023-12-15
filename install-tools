@@ -1,51 +1,59 @@
 #!/usr/bin/env bash
 
 is_installed() {
-  command -v "$1" >/dev/null 2>&1
+	command -v "$1" >/dev/null 2>&1
 }
 
 banner() {
-  echo "=== Installing $1"
+	echo "=== Installing $1"
 }
 
 skipping() {
-  echo "=== skipping $1 - already installed"
+	echo "=== skipping $1 - already installed"
 }
 
 # [[ Homebrew ]]
 if ! is_installed brew; then
-  banner "Homebrew"
+	banner "Homebrew"
 
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  cd ~/dotfiles && brew bundle
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	cd ~/dotfiles && brew bundle
 else
-  echo "Running brew bundle"
-  cd ~/dotfiles && brew bundle
+	echo "Running brew bundle"
+	cd ~/dotfiles && brew bundle
 fi
 
 # [[ fish ]]
 if ! is_installed fish; then
-  banner "fish"
+	banner "fish"
 
-  sudo apt-add-repository ppa:fish-shell/release-3
-  sudo apt update && sudo apt install fish
+	sudo apt-add-repository ppa:fish-shell/release-3
+	sudo apt update && sudo apt install -y fish
 else
-  skipping "fish"
+	skipping "fish"
 fi
 
 # [[ asdf ]]
 if ! test -d ~/.asdf; then
-  banner "asdf"
+	banner "asdf"
 
-  git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
+	git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
 else
-  skipping "asdf"
+	skipping "asdf"
 fi
 
 # [[ xclip ]]
 if ! is_installed xclip; then
-  banner "xclip"
-  sudo apt update && sudo apt install xclip
+	banner "xclip"
+	sudo apt update && sudo apt install -y xclip
 else
-  skipping "xclip"
+	skipping "xclip"
+fi
+
+# [[ stow ]]
+if ! is_installed stow; then
+	banner "stow"
+	sudo apt update && sudo apt install -y stow
+else
+	skipping "stow"
 fi
