@@ -11,12 +11,13 @@ return {
     local lint = require("lint")
 
     lint.linters_by_ft = {
+      markdown = { "markdownlint" },
+      fish = { "fish" },
       -- css = { "stylelint" },
       -- javascript = { "eslint_d" },
       -- json = { "jsonlint" },
       -- less = { "stylelint" },
       -- lua = { "luacheck" },
-      markdown = { "markdownlint" },
       -- ruby = { "standardrb" },
       -- sass = { "stylelint" },
       -- scss = { "stylelint" },
