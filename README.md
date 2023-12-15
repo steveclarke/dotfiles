@@ -40,8 +40,11 @@ Next, run the bootstrap script.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap)"
 ```
 
+### Main Setup Script
+
+Run the `setup` script. This will also be used to update the dotfiles regularly.
+
 ```bash
-git clone git@github.com:steveclarke/dotfiles ~/dotfiles
 cd ~/dotfiles
 ./setup
 ```
