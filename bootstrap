@@ -44,8 +44,7 @@ copy_ssh_keys() {
 configure_ssh() {
 	banner "Configuring SSH"
 
-	echo "Host *" >>~/.ssh/config
-	echo "  IdentityFile ~/.ssh/$DOTFILES_PRIMARY" >>~/.ssh/config
+	echo "IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY" >>~/.ssh/config
 }
 
 clone_git_repo() {
