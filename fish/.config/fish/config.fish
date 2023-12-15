@@ -65,6 +65,8 @@ if status is-interactive
   else
     echo "Install eza for a better ls experience (https://eza.rocks)"
   end
+
+  abbr -a fkill "ps ax | fzf | awk '{print \$1}' | xargs kill"
 end
 
 fish_config theme choose "catppuccin-mocha"
