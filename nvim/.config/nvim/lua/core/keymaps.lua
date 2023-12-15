@@ -61,3 +61,5 @@ keymap.set("n", "<leader>yp", ":copy .<cr>", options({ desc = "Yank and paste li
 keymap.set("n", "<C-d>", ":copy .<cr>", options())
 keymap.set("v", "<leader>yp", ":copy '<,'>.<CR>", options({ desc = "Yank and paste selection" }))
 keymap.set("v", "<C-d>", ":copy '<,'>.<CR>", options())
+
+keymap.set("n", "<leader>qq", ":qa!<CR>", options({ desc = "Quit all without saving" }))
