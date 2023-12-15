@@ -1,7 +1,6 @@
 # Fish Shell
 
 * Place includes in `conf.d` to be automatically included.
-* `abbr`s are in `conf.d/abbrs.fish`.
 
 ## Fuzzy Finder Keybinds
 
