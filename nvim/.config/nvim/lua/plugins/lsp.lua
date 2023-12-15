@@ -114,6 +114,11 @@ local config = function()
     capabilities = capabilities,
   })
 
+  -- Bash
+  lspconfig.bashls.setup({
+    capabilities = capabilities,
+  })
+
   local cmp = require("cmp")
   cmp.setup({
     sources = {
