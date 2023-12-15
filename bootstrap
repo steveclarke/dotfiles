@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+# Check for .dotfilesrc. if it doesn't exist exit with return value 2
+if test -f ~/.dotfilesrc; then
+	source ~/.dotfilesrc
+else
+	echo "ERROR: ~/.dotfilesrc does not exist"
+	exit 2
+fi
+
+banner() {
+	echo "========================================================================"
+	echo " $1"
+	echo "========================================================================"
+}
+
+install_pre_requisites() {
+	banner "Installing pre-requisites"
+	echo "sudo apt update && sudo apt install git curl software-properties-common"
+}
+
+copy_ssh_keys() {
+	banner "Copying SSH keys"
+	# Split the entries by space into an array
+	IFS=' ' read -ra entries <<<"$DOTFILES_SSH_KEYS"
+
+	# Loop through the array and prepend each entry with "~/.ssh/"
+	for entry in "${entries[@]}"; do
+		modified_entries+=("~/.ssh/$entry")
+	done
+
+	# Join the modified entries back into a space-separated string
+	modified_string=$(
+		IFS=' '
+		echo "${modified_entries[*]}"
+	)
+
+	export DOTFILES_SSH_KEYS="$modified_string"
+
+	echo "Copying '$modified_string' from $DOTFILES_SSH_KEYS_HOST"
+	scp -T $DOTFILES_SSH_KEYS_HOST:"$DOTFILES_SSH_KEYS" ~/.ssh
+}
+
+configure_ssh() {
+	banner "Configuring SSH"
+
+	echo "Host *" >>~/.ssh/config
+	echo "  IdentityFile ~/.ssh/$DOTFILES_PRIMARY" >>~/.ssh/config
+}
+
+clone_git_repo() {
+	banner "Cloning git repo"
+
+	if test -d ~/dotfiles; then
+		echo "~/dotfiles already exists"
+	else
+		git clone git@github.com:steveclarke/dotfiles ~/dotfiles
+	fi
+}
+
+# [[ Entry Point ]]
+if tput colors >/dev/null 2>&1 && [[ $(tput colors) -gt 0 ]]; then
+	echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
+	echo -e "\033[0;31m!!!!!!!!! WARNING !!!!!!!!!\033[0m"
+	echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
+else
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	echo "!!!!!!!!! WARNING !!!!!!!!!"
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+fi
+echo -e "This script is designed to boostrap a fresh system and may overwrite existing files."
+echo -e "Are you sure you want to proceed?"
+
+echo -n "Do you want to proceed? (y/N): "
+read answer
+
+# convert answer to lowercase
+answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+
+if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
+	install_pre_requisites
+	copy_ssh_keys
+	configure_ssh
+	clone_git_repo
+else
+	echo "Exiting..."
+fi
