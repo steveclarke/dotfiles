@@ -54,6 +54,10 @@ if status is-interactive
     abbr -a dce "docker compose exec"
     abbr -a dcl "docker compose logs"
 
+    # Git
+    abbr -a gp "git pull"
+    abbr -a gP "git push"
+
     # Eza (ls replacement)
     if command -q eza
         alias ls "eza --color=always --icons --group-directories-first"
