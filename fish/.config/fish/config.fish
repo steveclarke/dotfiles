@@ -2,9 +2,8 @@
 fish_add_path ~/bin
 fish_add_path ~/.local/bin
 
-if command -q cargo
-  fish_add_path ~/.cargo/bin
-end
+# [[ Exports ]]
+set -x LESS -rF # -r: raw control chars, -F: quit if one screen
 
 # Editor et. al.
 set -gx EDITOR (which nvim)
@@ -64,6 +63,9 @@ if status is-interactive
   end
 
   abbr -a fkill "ps ax | fzf | awk '{print \$1}' | xargs kill"
+  
+  # Generate a random password and select it using fzf
+  abbr -a cpass "cpass | fzf | xclip -selection clipboard"
 end
 
 fish_config theme choose "catppuccin-mocha"
