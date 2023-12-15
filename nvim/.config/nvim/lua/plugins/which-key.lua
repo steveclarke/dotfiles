@@ -8,6 +8,7 @@ return {
     which_key.register({ ["<leader>r"] = { name = "reformat commands" } })
     which_key.register({ ["<leader>s"] = { name = "split commands" } })
     which_key.register({ ["<leader>y"] = { name = "yank commands" } })
+    which_key.register({ ["<leader>q"] = { name = "quit commands" } })
     which_key.register({ ["-s"] = { name = "split commands" } })
     which_key.register({ ["-t"] = { name = "tab commands" } })
     which_key.register({ ["-v"] = { name = "vertical commands" } })
