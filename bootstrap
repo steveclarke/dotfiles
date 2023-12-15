@@ -16,7 +16,7 @@ banner() {
 
 install_pre_requisites() {
 	banner "Installing pre-requisites"
-	echo "sudo apt update && sudo apt install git curl software-properties-common"
+    sudo apt update && sudo apt install git curl software-properties-common
 }
 
 copy_ssh_keys() {
