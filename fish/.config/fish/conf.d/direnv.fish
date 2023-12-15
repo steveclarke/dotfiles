@@ -6,6 +6,4 @@
 if status is-interactive && command -q direnv
   direnv hook fish | source
   direnv export fish | source
-else
-  echo "direnv not found. Install with 'apt install direnv'"
 end
