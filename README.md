@@ -7,7 +7,7 @@ to place things.
 
 ## Pre-requisites
 
-* Operating system is debian-derived (e.g. Ubuntu, Pop!_OS)
+* Operating system is Debian-derived (e.g. Ubuntu, Pop!_OS)
 * Repository lives at `~/dotfiles`
 
 ## Applications
