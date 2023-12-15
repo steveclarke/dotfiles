@@ -19,7 +19,8 @@ if ! is_installed brew; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   cd ~/dotfiles && brew bundle
 else
-  skipping "Homebrew"
+  echo "Running brew bundle"
+  cd ~/dotfiles && brew bundle
 fi
 
 # [[ fish ]]
