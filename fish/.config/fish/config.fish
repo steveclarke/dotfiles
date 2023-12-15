@@ -21,6 +21,7 @@ if status is-interactive
     abbr -a gg lazygit
     abbr -a ldo lazydocker
     abbr -a cat bat
+    abbr -a up upgrade-all
 
     # Commonly cd'ed directories 
     abbr -a uapi "cd ~/src/unio-project/unio-api"
