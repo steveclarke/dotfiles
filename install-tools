@@ -8,18 +8,18 @@ banner() {
   echo "=== $1 "
 }
 
-skipping_banner() {
+skipping() {
   echo "=== skipping $1 - already installed"
 }
 
-# [[ Stow ]]
-if ! is_installed stow; then
-  banner "Installing stow"
+# [[ Homebrew ]]
+if ! is_installed brew; then
+  banner "Installing Homebrew"
 
-  sudo apt update
-  sudo apt install stow
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  and cd ~/dotfiles && brew bundle
 else
-  skipping_banner "stow"
+  skipping "Homebrew"
 fi
 
 # [[ fish ]]
@@ -30,62 +30,7 @@ if ! is_installed fish; then
   sudo apt update
   sudo apt install fish
 else
-  skipping_banner "fish"
-fi
-
-# [[ eza ]]
-if ! is_installed eza; then
-  banner "Installing eza"
-
-  sudo mkdir -p /etc/apt/keyrings
-  wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
-  sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
-  sudo apt update
-  sudo apt install -y eza
-else
-  skipping_banner "eza"
-fi
-
-# [[ bat ]]
-if ! is_installed bat; then
-  banner "Installing bat"
-
-  sudo apt update
-  sudo apt install -y bat
-  ln -s /usr/bin/batcat ~/bin/bat 
-else
-  skipping_banner "bat"
-fi
-
-# [[ fzf ]]
-if ! is_installed fzf; then
-  banner "Installing fzf"
-
-  sudo apt update
-  sudo apt install -y fzf
-else
-  skipping_banner "fzf"
-fi
-
-# [[ zoxide ]]
-if ! is_installed zoxide; then
-  banner "Installing zoxide"
-
-  sudo apt update
-  sudo apt install -y zoxide
-else
-  skipping_banner "zoxide"
-fi
-
-# [[ direnv ]]
-if ! is_installed direnv; then
-  banner "Installing direnv"
-
-  sudo apt update
-  sudo apt install -y direnv
-else
-  skipping_banner "direnv"
+  skipping "fish"
 fi
 
 # [[ asdf ]]
@@ -94,5 +39,5 @@ if ! test -d ~/.asdf; then
 
   git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
 else
-  skipping_banner "asdf"
+  skipping "asdf"
 fi
