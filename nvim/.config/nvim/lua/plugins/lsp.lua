@@ -10,6 +10,7 @@ local mason_opts = {
 }
 
 local ensure_installed = {
+  "bashls",
   "cssls",
   "docker_compose_language_service",
   "dockerls",
