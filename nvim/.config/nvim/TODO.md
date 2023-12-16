@@ -19,8 +19,8 @@ Review [Quick config](https://github.com/albingroen/quick.nvim)
 Plugins:
 
 - [x] Surround
+- [x] markdown preview - see notes
 - [ ] Fugitive
-- [ ] markdown preview - see notes
 - [ ] Check out [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [ ] [Octo](https://github.com/pwntester/octo.nvim) - GH Pull Reviews
 
