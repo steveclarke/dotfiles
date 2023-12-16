@@ -16,8 +16,11 @@ skipping() {
 if ! is_installed brew; then
 	banner "Homebrew"
 
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	cd ~/dotfiles && brew bundle
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+	cd ~/dotfiles && \
+  (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/steve/.bashrc && \
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
+  brew bundle
 else
 	echo "Running brew bundle"
 	cd ~/dotfiles && brew bundle
