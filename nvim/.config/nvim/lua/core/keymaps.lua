@@ -31,12 +31,10 @@ keymap.set("v", "<", "<gv", options())
 keymap.set("v", ">", ">gv", options())
 
 -- [[ Splits ]]
-keymap.set("n", "<leader>sv", vim.cmd.vsplit, options({ desc = "Split vertically" }))
-keymap.set("n", "<leader>sh", vim.cmd.split, options({ desc = "Split horizontally" }))
-keymap.set("n", "-ss", ":new<cr>", options({ desc = "Open split with new buffer" }))
-keymap.set("n", "-vv", ":vnew<cr>", options({ desc = "Open vertical split with new buffer" }))
-keymap.set("n", "-tb", ":tabnew %<cr>", options({ desc = "Open current buffer in new tab" }))
-keymap.set("n", "-tt", ":tabnew<cr>", options({ desc = "Open new tab" }))
+keymap.set("n", ",s", ":new<cr>", options({ desc = "Open split with new buffer" }))
+keymap.set("n", ",v", ":vnew<cr>", options({ desc = "Open vertical split with new buffer" }))
+keymap.set("n", ",tb", ":tabnew %<cr>", options({ desc = "Open current buffer in new tab" }))
+keymap.set("n", ",tt", ":tabnew<cr>", options({ desc = "Open new tab" }))
 
 -- Commenting - Ctrl-/ to toggle comments in normal/visual mode.
 keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", options())
