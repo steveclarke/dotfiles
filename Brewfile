@@ -1,7 +1,6 @@
 tap "homebrew/bundle"
 
 brew "bat"
-brew "crystal"
 brew "direnv"
 brew "dos2unix"
 brew "entr"
