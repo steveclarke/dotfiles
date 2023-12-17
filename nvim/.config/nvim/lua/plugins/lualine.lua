@@ -45,6 +45,14 @@ local config = function()
     sections = {
       lualine_a = { "buffers" },
       -- lualine_c = { tip },
+      -- Show @recording messages here because Noice supresses it
+      lualine_x = {
+        {
+          require("noice").api.statusline.mode.get,
+          cond = require("noice").api.statusline.mode.has,
+          color = { fg = "#ff9e64" },
+        },
+      },
     },
   })
 end
