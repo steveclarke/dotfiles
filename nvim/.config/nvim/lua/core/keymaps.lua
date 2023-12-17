@@ -5,7 +5,7 @@ local options = require("utils.core").keymap_options
 keymap.set("n", "<leader>e", "<cmd>Neotree filesystem toggle right<cr>", options({ desc = "Toggle file explorer" }))
 -- TODO: add keymap for opening file explorer in current file's directory
 keymap.set("n", "<leader>ge", "<cmd>Neotree git_status toggle float<cr>", options({ desc = "Toggle git explorer" }))
-keymap.set("n", "<leader>be", "<cmd>Neotree buffers toggle right<cr>", options({ desc = "Toggle buffer explorer" }))
+keymap.set("n", "<leader>be", "<cmd>Neotree buffers toggle float<cr>", options({ desc = "Toggle buffer explorer" }))
 
 -- Move to windows using <ctrl> hjkl
 keymap.set("n", "<C-l>", "<C-w>l", options())
