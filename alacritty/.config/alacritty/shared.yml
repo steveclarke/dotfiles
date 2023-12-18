@@ -18,17 +18,16 @@ window:
 font:
   size: 11
   normal:
-    # family: "SFMono Nerd Font"
-    family: "SFMono Nerd Font"
+    family: "FiraMono Nerd Font"
     style: Regular
   bold:
-    family: "SFMono Nerd Font"
+    family: "FiraMono Nerd Font"
     style: Bold
 
   italic:
-    family: "SFMono Nerd Font"
+    family: "FiraMono Nerd Font"
     style: Italic
 
   bold_italic:
-    family: "SFMono Nerd Font"
+    family: "FiraMono Nerd Font"
     style: Bold Italic
