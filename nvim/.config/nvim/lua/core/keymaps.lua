@@ -65,14 +65,20 @@ vim.keymap.set(
 
 -- Copy the current line or visual selection down
 keymap.set("n", "<leader>yp", ":copy .<cr>", options({ desc = "Yank and paste line" }))
-keymap.set("n", "<C-d>", ":copy .<cr>", options())
 keymap.set("v", "<leader>yp", ":copy '<,'>.<CR>", options({ desc = "Yank and paste selection" }))
-keymap.set("v", "<C-d>", ":copy '<,'>.<CR>", options())
 
 keymap.set("n", "<leader>qq", ":qa!<CR>", options({ desc = "Quit all without saving" }))
 
 -- Persistence (session manager)
-vim.api.nvim_set_keymap("n", "<leader>sr", [[<cmd>lua require("persistence").load({ last = true })<cr>]],
-  options({ desc = "Restore last session" }))
-vim.api.nvim_set_keymap("n", "<leader>sd", [[<cmd>lua require("persistence").load()<cr>]],
-  options({ desc = "Restore session for current directory" }))
+keymap.set(
+  "n",
+  "<leader>sr",
+  [[<cmd>lua require("persistence").load({ last = true })<cr>]],
+  options({ desc = "Restore last session" })
+)
+keymap.set(
+  "n",
+  "<leader>sd",
+  [[<cmd>lua require("persistence").load()<cr>]],
+  options({ desc = "Restore session for current directory" })
+)
