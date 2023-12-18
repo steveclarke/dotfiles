@@ -39,13 +39,11 @@ layout {
 
   tab name="Services" {
       pane name="Docker" start_suspended=true {
-        command "docker"
-        args "compose" "-f" "docker-compose-development.yml" "up"
+        command "bin/services"
       }
       pane split_direction="vertical" {
         pane name="Rails Server" start_suspended=true {
-          command "bundle"
-          args "exec" "rails" "server" 
+          command "bin/dev"
         }
         pane name="App Server" cwd="~/src/unio-project/unio-app-ua740" start_suspended=true{
           command "yarn"
