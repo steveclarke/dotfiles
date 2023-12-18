@@ -43,7 +43,7 @@ local config = function()
       -- component_separators = { left = "", right = "" },
     },
     sections = {
-      lualine_a = { "buffers" },
+      -- lualine_a = { "buffers" },
       -- lualine_c = { tip },
       -- Show @recording messages here because Noice supresses it
       lualine_x = {

@@ -6,7 +6,7 @@ return {
 
     which_key.register({ ["<leader>f"] = { name = "finder/file commands" } })
     which_key.register({ ["<leader>r"] = { name = "reformat commands" } })
-    which_key.register({ ["<leader>s"] = { name = "split commands" } })
+    which_key.register({ ["<leader>s"] = { name = "session commands" } })
     which_key.register({ ["<leader>y"] = { name = "yank commands" } })
     which_key.register({ ["<leader>q"] = { name = "quit commands" } })
     which_key.register({ ["<leader>b"] = { name = "buffer commands" } })

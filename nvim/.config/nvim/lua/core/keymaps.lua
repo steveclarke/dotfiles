@@ -72,3 +72,9 @@ keymap.set("v", "<leader>yp", ":copy '<,'>.<CR>", options({ desc = "Yank and pas
 keymap.set("v", "<C-d>", ":copy '<,'>.<CR>", options())
 
 keymap.set("n", "<leader>qq", ":qa!<CR>", options({ desc = "Quit all without saving" }))
+
+-- Persistence (session manager)
+vim.api.nvim_set_keymap("n", "<leader>sr", [[<cmd>lua require("persistence").load({ last = true })<cr>]],
+  options({ desc = "Restore last session" }))
+vim.api.nvim_set_keymap("n", "<leader>sd", [[<cmd>lua require("persistence").load()<cr>]],
+  options({ desc = "Restore session for current directory" }))
