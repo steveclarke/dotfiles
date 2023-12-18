@@ -42,8 +42,6 @@ keymap.set("v", ">", ">gv", options())
 -- Buffers
 keymap.set("n", "<S-h>", "<cmd>bprevious<cr>", options({ desc = "Prev buffer" }))
 keymap.set("n", "<S-l>", "<cmd>bnext<cr>", options({ desc = "Next buffer" }))
-keymap.set("n", "[b", "<cmd>bprevious<cr>", options({ desc = "Prev buffer" }))
-keymap.set("n", "]b", "<cmd>bnext<cr>", options({ desc = "Next buffer" }))
 keymap.set("n", "<leader>bb", "<cmd>e #<cr>", options({ desc = "Switch to Other Buffer" }))
 keymap.set("n", "<leader>`", "<cmd>e #<cr>", options({ desc = "Switch to Other Buffer" }))
 
