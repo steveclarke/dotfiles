@@ -12,10 +12,29 @@ local config = function()
     autotag = {
       enable = true,
     },
-    event = {
-      "BufReadPre",
-      "BufNewFile",
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true,
+        keymaps = {
+          ["af"] = { query = "@function.outer", desc = "outer function" },
+          ["if"] = { query = "@function.inner", desc = "inner function" },
+          ["aa"] = { query = "@parameter.outer", desc = "outer argument/parameter" },
+          ["ia"] = { query = "@parameter.inner", desc = "inner argument/parameter" },
+          ["ac"] = { query = "@class.outer", desc = "outer class" },
+          ["ic"] = { query = "@class.inner", desc = "inner class" },
+        },
+      },
     },
+    -- incremental_selection = {
+    --   enable = true,
+    --   keymaps = {
+    --     init_selection = "<leader>ss",
+    --     node_incremental = "<leader>si",
+    --     scope_incremental = "<leader>sc",
+    --     node_decremental = "<leader>sd",
+    --   },
+    -- },
     ensure_installed = {
       "bash",
       "css",
@@ -33,20 +52,14 @@ local config = function()
       "yaml",
     },
     auto_install = true,
-    incremental_selection = {
-      enable = true,
-      -- keymaps = {
-      --   init_selection = "<C-space>",
-      --   node_incremental = "<C-space>",
-      --   scope_incremental = false,
-      --   node_decremental = "<bs>",
-      -- },
-    },
   })
 end
 
 return {
   "nvim-treesitter/nvim-treesitter",
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter-textobjects"
+  },
   lazy = false,
   build = ":TSUpdate",
   event = { "BufReadPre", "BufNewFile" },
