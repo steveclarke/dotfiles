@@ -54,7 +54,7 @@ local config = function()
         "hostname",
         "encoding",
         "fileformat",
-        "filetype"
+        "filetype",
       },
     },
   })
