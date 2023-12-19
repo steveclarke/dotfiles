@@ -13,6 +13,14 @@ return {
     filesystem = {
       hijack_netrw_behavior = "open_current",
       follow_current_file = { enabled = true },
+      window = {
+        fuzzy_finder_mappings = {
+          ["<down>"] = "move_cursor_down",
+          ["<C-j>"] = "move_cursor_down",
+          ["<up>"] = "move_cursor_up",
+          ["<C-k>"] = "move_cursor_up",
+        },
+      },
     },
   },
 }
