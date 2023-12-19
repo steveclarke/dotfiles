@@ -56,5 +56,6 @@ return {
     keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>", keymap_options({ desc = "Find keymaps" })),
     keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", keymap_options({ desc = "Find help tags" })),
     keymap.set("n", "<leader>fa", ":Telescope <CR>", keymap_options({ desc = "Find all" })),
+    keymap.set("n", "<leader>fm", ":Telescope marks<CR>", keymap_options({ desc = "Find marks" })),
   },
 }
