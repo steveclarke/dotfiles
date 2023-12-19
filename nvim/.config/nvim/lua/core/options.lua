@@ -87,8 +87,4 @@ opt.inccommand = "split"
 -- So not only is it the most annoying default ever (well aside from the bell in vim)
 -- but it was hell to figure out how to unset it.
 -- See: https://www.reddit.com/r/neovim/comments/sqld76/stop_automatic_newline_continuation_of_comments/
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    vim.opt.formatoptions = vim.opt.formatoptions:remove({ "c", "r", "o" })
-  end,
-})
+vim.api.nvim_create_autocmd("FileType", { command = "set formatoptions-=cro" })
