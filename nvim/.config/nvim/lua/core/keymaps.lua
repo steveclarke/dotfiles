@@ -82,3 +82,6 @@ keymap.set(
   [[<cmd>lua require("persistence").load()<cr>]],
   options({ desc = "Restore session for current directory" })
 )
+
+-- Close all buffers except current
+keymap.set("n", "<leader>bd", "<cmd>BufferLineCloseOthers<cr>", options({ desc = "Close all buffers except current" }))
