@@ -20,6 +20,10 @@ keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", options({ desc = "Decrease win
 keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", options({ desc = "Decrease window width" }))
 keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", options({ desc = "Increase window width" }))
 
+-- Centered Jumps
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
 -- Redo with opposite of undo
 keymap.set("n", "U", "<C-r>", options())
 
