@@ -85,3 +85,6 @@ keymap.set(
 
 -- Close all buffers except current
 keymap.set("n", "<leader>bd", "<cmd>BufferLineCloseOthers<cr>", options({ desc = "Close all buffers except current" }))
+
+keymap.set("n", "<leader><leader>r", [[<cmd>w<cr><cmd>source %<cr>]],
+  options({ desc = "Save and source the current file" }))
