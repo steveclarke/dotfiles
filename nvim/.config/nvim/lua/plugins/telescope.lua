@@ -57,5 +57,8 @@ return {
     keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", keymap_options({ desc = "Find help tags" })),
     keymap.set("n", "<leader>fa", ":Telescope <CR>", keymap_options({ desc = "Find all" })),
     keymap.set("n", "<leader>fm", ":Telescope marks<CR>", keymap_options({ desc = "Find marks" })),
+    keymap.set("n", "<leader>fo", ":Telescope oldfiles<CR>", keymap_options({ desc = "Find previously openfiles" })),
+    keymap.set("n", "<leader>fv", ":Telescope vim_options<CR>", keymap_options({ desc = "Find vim options" })),
+    keymap.set("n", "<leader>fy", ":Telescope filetypes<CR>", keymap_options({ desc = "Find available filetypes" })),
   },
 }
