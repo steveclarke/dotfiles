@@ -15,6 +15,7 @@ local config = function()
       markdown = { "markdownlint" },
       fish = { "fish_indent" },
       sh = { "shfmt" },
+      yaml = { "yamlfmt" },
       -- ruby = { "standardrb" }, --currently broken, see autocmds.lua for workaround
     },
 
