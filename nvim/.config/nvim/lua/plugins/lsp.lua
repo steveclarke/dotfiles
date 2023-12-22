@@ -120,6 +120,16 @@ local config = function()
     capabilities = capabilities,
   })
 
+  -- Ansible
+  lspconfig.ansiblels.setup({
+    capabilities = capabilities,
+  })
+
+  -- YaML
+  lspconfig.yamlls.setup({
+    capabilities = capabilities,
+  })
+
   local cmp = require("cmp")
   cmp.setup({
     sources = {
