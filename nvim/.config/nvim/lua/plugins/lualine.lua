@@ -1,6 +1,13 @@
-local config = function()
-  -- local daily_focus = require("daily-focus")
+local daily_focus_tip = function()
+  local daily_focus = require("daily-focus")
+  local tip = daily_focus.fetch_tip()
+  if tip == "" then
+    return ""
+  end
+  return " " .. tip:gsub("%%", "%%%%")
+end
 
+local config = function()
   require("lualine").setup({
     options = {
       theme = "catppuccin",
@@ -9,7 +16,7 @@ local config = function()
       -- component_separators = { left = "", right = "" },
     },
     sections = {
-      -- lualine_c = { daily_focus.tip },
+      lualine_c = { daily_focus_tip },
       -- Show @recording messages here because Noice supresses it
       lualine_x = {
         {

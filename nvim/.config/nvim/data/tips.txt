@@ -1,6 +1,6 @@
 3>> - indent n lines
 dj - delete down
-gm - move to the middle current line
+gM/gm - move to the middle of current line/screenwidth
 X - delete character before cursor
 H,M,L - move to top, middle, bottom of screen
 >} - indent to end of paragraph
@@ -15,4 +15,5 @@ gv - reselect last visual selection
 :tabnew % - open current file in new tab
 * - search for word under cursor
 gt/gT - next/previous tab
-:only,:tabonly - close all but current buffer/tab
+:only,:tabonly - close all but current window, tab
+:right - align current line to right
