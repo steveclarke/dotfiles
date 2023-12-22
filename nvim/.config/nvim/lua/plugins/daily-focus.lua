@@ -8,6 +8,6 @@ return {
   config = function()
     local daily_focus = require("daily-focus")
     daily_focus.setup({ data_path = "/foo/bar" })
-    vim.print(daily_focus.tip())
+    vim.print(daily_focus.fetch_tip())
   end,
 }
