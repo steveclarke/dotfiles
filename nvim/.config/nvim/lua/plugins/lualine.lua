@@ -1,6 +1,6 @@
 local daily_focus_tip = function()
   local daily_focus = require("daily-focus")
-  local tip = daily_focus.fetch_tip()
+  local tip = daily_focus.current_tip()
   if tip == "" then
     return ""
   end
