@@ -68,7 +68,7 @@ local config = function()
     settings = {
       Lua = {
         diagnostics = {
-          globals = { "vim" },
+          globals = { "vim", "describe", "it", "before_each", "after_each" },
         },
       },
     },

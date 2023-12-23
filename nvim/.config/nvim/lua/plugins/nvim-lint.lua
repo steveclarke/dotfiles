@@ -17,7 +17,7 @@ return {
       -- javascript = { "eslint_d" },
       -- json = { "jsonlint" },
       -- less = { "stylelint" },
-      -- lua = { "luacheck" },
+      lua = { "luacheck" },
       -- ruby = { "standardrb" },
       -- sass = { "stylelint" },
       -- scss = { "stylelint" },
