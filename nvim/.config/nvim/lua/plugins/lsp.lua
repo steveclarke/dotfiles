@@ -30,6 +30,8 @@ local config = function()
   local mason = require("mason")
   local mason_lspconfig = require("mason-lspconfig")
 
+  require("lspconfig.ui.windows").default_options.border = "rounded"
+
   vim.api.nvim_create_autocmd("LspAttach", {
     desc = "Lsp Actions",
     callback = function(event)
