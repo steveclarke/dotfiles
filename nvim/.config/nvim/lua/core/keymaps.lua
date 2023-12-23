@@ -96,3 +96,5 @@ keymap.set(
   [[<cmd>w<cr><cmd>source %<cr>]],
   options({ desc = "Save and source the current file" })
 )
+
+keymap.set("n", ",t", "<Plug>PlenaryTestFile", options({ desc = "Run test file" }))
