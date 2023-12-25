@@ -3,6 +3,7 @@ local keymap_options = require("utils.core").keymap_options
 
 local opts = {
   options = {
+    always_show_bufferline = false,
     offsets = {
       {
         filetype = "neo-tree",
