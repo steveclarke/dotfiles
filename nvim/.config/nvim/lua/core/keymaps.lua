@@ -51,7 +51,9 @@ keymap.set("n", "<leader>`", "<cmd>e #<cr>", options({ desc = "Switch to Other B
 
 -- [[ Splits ]]
 keymap.set("n", ",s", ":new<cr>", options({ desc = "Open split with new buffer" }))
+keymap.set("n", "<leader>-", ":new<cr>", options({ desc = "Open split with new buffer" }))
 keymap.set("n", ",v", ":vnew<cr>", options({ desc = "Open vertical split with new buffer" }))
+keymap.set("n", "<leader>\\", ":vnew<cr>", options({ desc = "Open vertical split with new buffer" }))
 keymap.set("n", ",tb", ":tabnew %<cr>", options({ desc = "Open current buffer in new tab" }))
 keymap.set("n", ",tt", ":tabnew<cr>", options({ desc = "Open new tab" }))
 
