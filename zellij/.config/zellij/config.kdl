@@ -4,16 +4,7 @@ default_shell "fish"
 theme "catppuccin-mocha"
 
 keybinds {
-  normal {
-    unbind "Ctrl h" // was Move, now Alt-v
-    unbind "Ctrl o" // was Session, now Alt-w
-    unbind "Ctrl s" // was Scroll, now Alt-s
-    unbind "Ctrl n" // was Resize, now Alt-z
-    unbind "Ctrl p" // was Pane, now Alt-a
-    unbind "Ctrl t" // was Tab, now Alt-b
-    unbind "Ctrl g" // was Locked, now Alt-g
-    bind "Ctrl e" { SwitchToMode "move"; }
-  }
+  normal {}
 
   locked {
     bind "Alt g" { SwitchToMode "Normal"; }
@@ -37,7 +28,6 @@ keybinds {
 
   session {
     bind "Alt w" { SwitchToMode "Normal"; }
-    unbind "Ctrl s"
     bind "Alt s" { SwitchToMode "scroll"; }
   }
 
@@ -46,7 +36,14 @@ keybinds {
   }
 
   shared_except "locked" {
-    unbind "Ctrl q"
+    unbind "Ctrl h" // was Move, now Alt-v
+    unbind "Ctrl o" // was Session, now Alt-w
+    unbind "Ctrl s" // was Scroll, now Alt-s
+    unbind "Ctrl n" // was Resize, now Alt-z
+    unbind "Ctrl p" // was Pane, now Alt-a
+    unbind "Ctrl t" // was Tab, now Alt-b
+    unbind "Ctrl g" // was Locked, now Alt-g
+    unbind "Ctrl q" // was Quit, now Alt-q
     bind "Alt g" { SwitchToMode "locked"; }
     bind "Alt q" { Quit; }
     bind "Alt t" { NewTab; }
