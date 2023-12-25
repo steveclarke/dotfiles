@@ -18,6 +18,7 @@
   "marks.nvim": { "branch": "master", "commit": "76aca5069c5ce5c0099e30168649e6393e494f26" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "56e435e09f8729af2d41973e81a0db440f8fe9c9" },
   "mason.nvim": { "branch": "main", "commit": "41e75af1f578e55ba050c863587cffde3556ffa6" },
+  "modus-themes.nvim": { "branch": "master", "commit": "3b2c421ee10885e78f0f3330aa73dbb22f8664f5" },
   "monokai-pro.nvim": { "branch": "master", "commit": "6e7ce88ab4ddfcdeac65161d233a43e906940a0c" },
   "neo-tree.nvim": { "branch": "v3.x", "commit": "77d9f484b88fd380386b46ed9206e5374d69d9d8" },
   "neoconf.nvim": { "branch": "main", "commit": "64437787dba70fce50dad7bfbb97d184c5bc340f" },
