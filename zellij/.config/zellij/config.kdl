@@ -5,17 +5,54 @@ theme "catppuccin-mocha"
 
 keybinds {
   normal {
-    unbind "Ctrl h"
+    unbind "Ctrl h" // was Move, now Alt-v
+    unbind "Ctrl o" // was Session, now Alt-w
+    unbind "Ctrl s" // was Scroll, now Alt-s
+    unbind "Ctrl n" // was Resize, now Alt-z
+    unbind "Ctrl p" // was Pane, now Alt-a
+    unbind "Ctrl t" // was Tab, now Alt-b
+    unbind "Ctrl g" // was Locked, now Alt-g
     bind "Ctrl e" { SwitchToMode "move"; }
   }
 
+  locked {
+    bind "Alt g" { SwitchToMode "Normal"; }
+  }
+
   move {
-    bind "Ctrl e" { SwitchToMode "Normal"; }
+    bind "Alt v" { SwitchToMode "Normal"; }
+  }
+
+  pane {
+    bind "Alt a" { SwitchToMode "Normal"; }
+  }
+
+  resize {
+    bind "Alt z" { SwitchToMode "Normal"; }
+  }
+
+  scroll {
+    bind "Alt s" { SwitchToMode "Normal"; }
+  }
+
+  session {
+    bind "Alt w" { SwitchToMode "Normal"; }
+    unbind "Ctrl s"
+    bind "Alt s" { SwitchToMode "scroll"; }
+  }
+
+  tab {
+    bind "Alt b" { SwitchToMode "Normal"; }
   }
 
   shared_except "locked" {
     unbind "Ctrl q"
+    bind "Alt g" { SwitchToMode "locked"; }
     bind "Alt q" { Quit; }
+    bind "Alt t" { NewTab; }
+    bind "Alt d" { NewPane "down";}
+    bind "Alt r" { NewPane "right"; }
+    bind "Alt f" { ToggleFloatingPanes; }
     bind "Alt 1" { GoToTab 1; }
     bind "Alt 2" { GoToTab 2; }
     bind "Alt 3" { GoToTab 3; }
@@ -26,9 +63,29 @@ keybinds {
     bind "Alt 8" { GoToTab 8; }
     bind "Alt 9" { GoToTab 9; }
     bind "Alt 0" { GoToTab 10; }
-    bind "Alt t" { NewTab; }
-    bind "Alt d" { NewPane "down";}
-    bind "Alt r" { NewPane "right"; }
-    bind "Alt f" { ToggleFloatingPanes; }
+  }
+
+  shared_except "move" "locked" {
+    bind "Alt v" { SwitchToMode "move"; }
+  }
+
+  shared_except "pane" "locked" {
+    bind "Alt a" { SwitchToMode "pane"; }
+  }
+
+  shared_except "resize" "locked" {
+    bind "Alt z" { SwitchToMode "resize"; }
+  }
+
+  shared_except "scroll" "locked" {
+    bind "Alt s" { SwitchToMode "scroll"; }
+  }
+
+  shared_except "session" "locked" {
+    bind "Alt w" { SwitchToMode "session"; }
+  }
+
+  shared_except "tab" "locked" {
+    bind "Alt b" { SwitchToMode "tab"; }
   }
 }
