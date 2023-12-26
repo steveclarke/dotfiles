@@ -19,3 +19,4 @@ gt/gT - next/previous tab
 :right - align current line to right
 Ctrl-h,w,u in Insert mode - delete previous character, word, line
 Ctrl-r{register} in Insert mode - insert contents of register
+in Visual mode, press 'o' to go to the other end of highlighted text
