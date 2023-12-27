@@ -21,6 +21,8 @@ if status is-interactive
     abbr -a ldo lazydocker
     abbr -a cat bat
     abbr -a up upgrade-all
+    abbr -a df "df -h -T"
+    abbr -a ncdu "ncdu --color dark"
 
     # Commonly cd'ed directories 
     abbr -a uapi "cd ~/src/unio-project/unio-api"
