@@ -215,7 +215,7 @@ bar {
   status_command i3status
 }
 
-gaps inner 10px
+# gaps inner 10px
 
 # Always show borders, even for apps that don't request them
 for_window [class=.*] border normal 1
