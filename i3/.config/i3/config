@@ -4,8 +4,15 @@
 
 set $mod Mod4
 
-set $terminal alacritty
+set $up k
+set $down j
+set $left h
+set $right l
+
 set $wallpaper ~/Pictures/Wallpapers/3.jpg
+
+set $terminal alacritty
+set $browser google-chrome
 
 set $main-mon "DisplayPort-0"
 set $left-mon "DisplayPort-2"
@@ -32,10 +39,6 @@ exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 # font pango:monospace 8
 font pango:FiraMono Nerd Font 14
 title_align center
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-# font pango:DejaVu Sans Mono 12
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -74,10 +77,10 @@ bindsym $mod+Return exec $terminal
 bindsym $mod+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 # bindsym $mod+d exec --no-startup-id dmenu_run
 # A more modern dmenu replacement is rofi:
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
+bindsym $mod+d exec "rofi -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
@@ -191,7 +194,7 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 # Open a blank container - useful when you don't want a program to take up the entire screen
 bindsym $mod+o exec i3 open
 
-bindsym $mod+Shift+b exec google-chrome
+bindsym $mod+Shift+b exec $browser
 bindsym $mod+Shift+a exec flatpak run com.authy.Authy
 bindsym $mod+Shift+n exec flatpak run md.obsidian.Obsidian
 # bindsym $mod+Shift+s exec flatpak run com.slack.Slack
@@ -226,6 +229,7 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
+  position top
   status_command i3status
 }
 

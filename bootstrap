@@ -16,12 +16,13 @@ banner() {
 
 install_pre_requisites() {
 	banner "Installing pre-requisites"
-    sudo apt update && \
-    sudo apt install -y \
-      git \
-      curl \
-      software-properties-common \
-      build-essential
+	sudo apt update &&
+		sudo apt install -y \
+			git \
+			curl \
+			software-properties-common \
+			build-essential \
+			rofi
 }
 
 copy_ssh_keys() {
