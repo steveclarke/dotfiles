@@ -2,6 +2,8 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+set $mod Mod4
+
 set $terminal alacritty
 set $wallpaper ~/Pictures/Wallpapers/3.jpg
 
@@ -20,12 +22,16 @@ exec_always --no-startup-id picom -b
 # Set wallpaper
 exec_always --no-startup-id feh --bg-scale $wallpaper
 
-set $mod Mod4
+# Change caps-lock to a ctrl key
+exec_always --no-startup-id setxkbmap -option ctrl:nocaps
+
+# exec--no-startup-id i3-msg "workspace $ws5; exec google-chrome https://music.home.avint.net"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 # font pango:monospace 8
 font pango:FiraMono Nerd Font 14
+title_align center
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -132,24 +138,24 @@ bindsym $mod+a focus parent
 set $ws1 "1: Main"
 set $ws2 "2: Development"
 set $ws3 "3: Game"
-set $ws4 "4"
-set $ws5 "5: Productivity"
+set $ws4 "4: Productivity"
+set $ws5 "5: Development Supplementary"
 set $ws6 "6: Database"
-set $ws7 "7"
+set $ws7 "7: Chat"
 set $ws8 "8: Docs"
 set $ws9 "9"
-set $ws10 "10"
+set $ws10 "10: Music"
 
 workspace $ws1 output $main-mon
 workspace $ws2 output $main-mon
 workspace $ws3 output $main-mon
-workspace $ws4 output $main-mon
+workspace $ws4 output $left-mon
 workspace $ws5 output $left-mon
 workspace $ws6 output $left-mon
 workspace $ws7 output $left-mon
 workspace $ws8 output $right-mon
 workspace $ws9 output $right-mon
-workspace $ws10 output $right-mon
+workspace $ws10 output $left-mon
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -181,6 +187,12 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Open a blank container - useful when you don't want a program to take up the entire screen
+bindsym $mod+o exec i3 open
+
+bindsym $mod+Shift+b exec google-chrome
+bindsym $mod+Shift+a exec flatpak run com.authy.Authy
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -220,7 +232,11 @@ bar {
 # Always show borders, even for apps that don't request them
 for_window [class=.*] border normal 1
 
-assign [class="Todoist"] $ws5
-assign [class="Slack"] $ws5
-assign [class="1Password"] $ws5
+# Find application class names using `xprop`
+assign [class="Todoist"] $ws4
+assign [class="Slack"] $ws4
+assign [class="1Password"] $ws4
+assign [class="Spotify"] $ws10
+assign [class="Telegram"] $ws7
+assign [class="whatsapp-desktop-linux"] $ws7
 
