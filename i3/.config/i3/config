@@ -193,6 +193,8 @@ bindsym $mod+o exec i3 open
 
 bindsym $mod+Shift+b exec google-chrome
 bindsym $mod+Shift+a exec flatpak run com.authy.Authy
+bindsym $mod+Shift+n exec flatpak run md.obsidian.Obsidian
+# bindsym $mod+Shift+s exec flatpak run com.slack.Slack
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -239,4 +241,5 @@ assign [class="1Password"] $ws4
 assign [class="Spotify"] $ws10
 assign [class="Telegram"] $ws7
 assign [class="whatsapp-desktop-linux"] $ws7
+assign [class="obsidian"] $ws8
 
