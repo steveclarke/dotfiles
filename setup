@@ -3,7 +3,7 @@
 DOTFILES_DIR=$HOME/dotfiles
 
 banner() {
-  echo "=== $1 "
+	echo "=== $1 "
 }
 
 banner "Installing tools"
@@ -44,3 +44,10 @@ banner "Configuring Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 stow fonts
 
+banner "Configuring i3 Window Manager"
+mkdir -p "${HOME}/.config/i3"
+stow i3
+
+banner "Configuring picom (compositor)"
+mkdir -p "${HOME}/.config/picom"
+stow picom
