@@ -1,0 +1,13 @@
+configuration {
+  display-drun: "Applications";
+  display-window: "Windows";
+  drun-display-format: "{icon} {name}";
+  font: "FiraMono Nerd Font 14";
+  modi: "window,run,drun";
+  show-icons: true;
+}
+
+//@theme "/usr/share/rofi/themes/Paper.rasi"
+@theme "/usr/share/rofi/themes/fancy.rasi"
+
+/* vim: ft=sass
