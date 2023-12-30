@@ -2,8 +2,6 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-exec --no-startup-id $HOME/.config/i3/autostart.sh
-
 include $HOME/.config/i3/gaps.conf
 
 set $mod Mod4
@@ -27,14 +25,17 @@ exec --no-startup-id xrandr --output $left-mon --auto --left-of $main-mon
 exec --no-startup-id xrandr --output $main-mon --auto --primary
 exec --no-startup-id xrandr --output $right-mon --auto --right-of $main-mon
 
+# Polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
 # Compositor
-# exec_always --no-startup-id picom -b
+exec_always --no-startup-id picom -b
 
 # Set wallpaper
-# exec_always --no-startup-id feh --bg-scale $wallpaper
+exec_always --no-startup-id feh --bg-scale $wallpaper
 
 # Change caps-lock to a ctrl key
-# exec_always --no-startup-id setxkbmap -option ctrl:nocaps
+exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 
 # exec--no-startup-id i3-msg "workspace $ws5; exec google-chrome https://music.home.avint.net"
 
@@ -245,12 +246,14 @@ bar {
   # status_command i3status
 }
 
-gaps inner 10
-# gaps top -5
+gaps inner 7
+gaps outer 0
 # smart_gaps inverse_outer
 
 # Always show borders, even for apps that don't request them
-for_window [class=.*] border normal 1
+default_border pixel 5
+# default_floating_border pixel 1
+for_window [class=.*] border normal 5
 
 # Find application class names using `xprop`
 assign [class="Todoist"] $ws4
