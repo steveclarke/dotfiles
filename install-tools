@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ~/.dotfilesrc
+
 is_installed() {
 	command -v "$1" >/dev/null 2>&1
 }
@@ -10,6 +12,10 @@ banner() {
 
 skipping() {
 	echo "=== skipping $1 - already installed"
+}
+
+apt_install() {
+	sudo apt update && sudo apt install -y "$1"
 }
 
 # [[ Homebrew ]]
@@ -34,7 +40,7 @@ if ! is_installed fish; then
 	banner "fish"
 
 	sudo apt-add-repository -y ppa:fish-shell/release-3
-	sudo apt update && sudo apt install -y fish
+	apt_install fish
 else
 	skipping "fish"
 fi
@@ -51,7 +57,7 @@ fi
 # [[ xclip ]]
 if ! is_installed xclip; then
 	banner "xclip"
-	sudo apt update && sudo apt install -y xclip
+	apt_install xclip
 else
 	skipping "xclip"
 fi
@@ -59,26 +65,31 @@ fi
 # [[ stow ]]
 if ! is_installed stow; then
 	banner "stow"
-	sudo apt update && sudo apt install -y stow
+	apt_install stow
 else
 	skipping "stow"
 fi
 
 # [[ i3 Window Manager Requirements ]]
 if [ -n "$DOTFILES_CONFIG_I3" ]; then
-	banner "i3 Requirements"
+	echo "=== checking i3 Requirements"
+
 	if ! is_installed polybar; then
 		banner "polybar"
-		sudo apt update && sudo apt install -y polybar
+		apt_install polybar
+	else
+		skipping "polybar"
 	fi
 	if ! is_installed rofi; then
 		banner "rofi"
-		sudo apt update && sudo apt install -y rofi
+		apt_install rofi
+	else
+		skipping "rofi"
 	fi
 	if ! is_installed picom; then
 		banner "picom"
-		sudo apt update && sudo apt install -y picom
+		apt_install picom
+	else
+		skipping "picom"
 	fi
-else
-	skipping "i3 Requirements"
 fi
