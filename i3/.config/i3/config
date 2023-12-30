@@ -192,12 +192,18 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # Open a blank container - useful when you don't want a program to take up the entire screen
-bindsym $mod+o exec i3 open
+# bindsym $mod+o exec i3 open
 
-bindsym $mod+Shift+b exec $browser
-bindsym $mod+Shift+a exec flatpak run com.authy.Authy
-bindsym $mod+Shift+n exec flatpak run md.obsidian.Obsidian
-# bindsym $mod+Shift+s exec flatpak run com.slack.Slack
+set $mode_open Open: [a]uthy [b]rowser [n]otes 1[p]assword
+bindsym $mod+o mode "$mode_open"
+mode "$mode_open" {
+ bindsym a exec flatpak run com.authy.Authy; mode "default"
+ bindsym b exec $browser; mode "default"
+ bindsym n exec flatpak run md.obsidian.Obsidian; mode "default"
+ bindsym p exec /usr/bin/1password; mode "default"
+ bindsym Return mode "default"
+ bindsym Escape mode "default"
+}
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
