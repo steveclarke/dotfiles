@@ -16,11 +16,14 @@ skipping() {
 if ! is_installed brew; then
 	banner "Homebrew"
 
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
-	cd ~/dotfiles && \
-  (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/steve/.bashrc && \
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
-  brew bundle
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &&
+		cd ~/dotfiles &&
+		(
+			echo
+			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+		) >>/home/steve/.bashrc &&
+		eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" &&
+		brew bundle
 else
 	echo "Running brew bundle"
 	cd ~/dotfiles && brew bundle
@@ -59,4 +62,23 @@ if ! is_installed stow; then
 	sudo apt update && sudo apt install -y stow
 else
 	skipping "stow"
+fi
+
+# [[ i3 Window Manager Requirements ]]
+if [ -n "$DOTFILES_CONFIG_I3" ]; then
+	banner "i3 Requirements"
+	if ! is_installed polybar; then
+		banner "polybar"
+		sudo apt update && sudo apt install -y polybar
+	fi
+	if ! is_installed rofi; then
+		banner "rofi"
+		sudo apt update && sudo apt install -y rofi
+	fi
+	if ! is_installed picom; then
+		banner "picom"
+		sudo apt update && sudo apt install -y picom
+	fi
+else
+	skipping "i3 Requirements"
 fi
