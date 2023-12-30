@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DOTFILES_DIR=$HOME/dotfiles
+source ~/.dotfilesrc
 
 banner() {
 	echo "=== $1 "
@@ -44,10 +45,16 @@ banner "Configuring Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 stow fonts
 
-banner "Configuring i3 Window Manager"
-mkdir -p "${HOME}/.config/i3"
-stow i3
+if [ -n "$DOTFILES_CONFIG_I3" ]; then
+	banner "Configuring i3 Window Manager"
+	mkdir -p "${HOME}/.config/i3"
+	stow i3
 
-banner "Configuring picom (compositor)"
-mkdir -p "${HOME}/.config/picom"
-stow picom
+	banner "Configuring Picom (compositor)"
+	mkdir -p "${HOME}/.config/picom"
+	stow picom
+
+	banner "Configuring Polybar"
+	mkdir -p "${HOME}/.config/polybar"
+	stow polybar
+fi

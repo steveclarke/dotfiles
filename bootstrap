@@ -21,8 +21,7 @@ install_pre_requisites() {
 			git \
 			curl \
 			software-properties-common \
-			build-essential \
-			rofi
+			build-essential
 }
 
 copy_ssh_keys() {
