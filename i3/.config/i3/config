@@ -21,6 +21,9 @@ exec --no-startup-id xrandr --output $main-mon --auto --primary
 exec --no-startup-id xrandr --output $right-mon --auto --right-of $main-mon
 # [[ End Monitor Setup ]]
 
+include colors/catppuccin-mocha.conf
+include conf/theme.conf
+
 include conf/apps.conf
 include conf/gaps.conf
 include conf/keymaps.conf
