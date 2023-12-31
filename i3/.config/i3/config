@@ -54,7 +54,7 @@ exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 exec_always --no-startup-id redshift
 
 # Blank screen after 10 mins 
-exec --no-startup-id xset dpms 600
+exec --no-startup-id xset dpms 600 600 600
 
 # Lock screen after 10 mins
 exec --no-startup-id xautolock -time 10 -locker i3lock

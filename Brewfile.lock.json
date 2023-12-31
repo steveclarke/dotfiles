@@ -1288,6 +1288,50 @@
             }
           }
         }
+      },
+      "ugrep": {
+        "version": "4.4.1",
+        "bottle": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_sonoma": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:8bd56e07f24f27dfc9d3ab88a36d9c448cd9a4c248b91502faded1f500b1dfd2",
+              "sha256": "8bd56e07f24f27dfc9d3ab88a36d9c448cd9a4c248b91502faded1f500b1dfd2"
+            },
+            "arm64_ventura": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:bfeea2840f8196be3b57a5ae962ed1212a2443416981df526221827d07187c4f",
+              "sha256": "bfeea2840f8196be3b57a5ae962ed1212a2443416981df526221827d07187c4f"
+            },
+            "arm64_monterey": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:5b91cb20a1d16200ba48f8f6146fb5396669d9e997d46f8ea98172cc94319f01",
+              "sha256": "5b91cb20a1d16200ba48f8f6146fb5396669d9e997d46f8ea98172cc94319f01"
+            },
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:4f809594a33f006ed92ef1d92ff0ae4259248fde8574b3171410dff018edd029",
+              "sha256": "4f809594a33f006ed92ef1d92ff0ae4259248fde8574b3171410dff018edd029"
+            },
+            "ventura": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:7da551885a5f1401a677eae688b717f2a7a89734ad2d14a875f95ca9caa0cdab",
+              "sha256": "7da551885a5f1401a677eae688b717f2a7a89734ad2d14a875f95ca9caa0cdab"
+            },
+            "monterey": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:43baf0cc8dd4c135bfcc60d76618de203980bd0a246527b1332ae4d18ae39e54",
+              "sha256": "43baf0cc8dd4c135bfcc60d76618de203980bd0a246527b1332ae4d18ae39e54"
+            },
+            "x86_64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:8818df971b8dfdd7a7e312a039de074667fff93ed00a09ad3669854beaab1578",
+              "sha256": "8818df971b8dfdd7a7e312a039de074667fff93ed00a09ad3669854beaab1578"
+            }
+          }
+        }
       }
     }
   },
@@ -1300,7 +1344,7 @@
         "GCC": "11.4.0"
       },
       "Ubuntu 22.04.3 LTS (jammy)": {
-        "HOMEBREW_VERSION": "4.2.1",
+        "HOMEBREW_VERSION": "4.2.1-32-g04d8ae2",
         "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
         "Homebrew/homebrew-core": "api",
         "GCC": "11.4.0"
