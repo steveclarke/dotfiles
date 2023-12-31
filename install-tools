@@ -98,4 +98,10 @@ if [ -n "$DOTFILES_CONFIG_I3" ]; then
 	else
 		skipping "redshift"
 	fi
+	if ! is_installed xautolock; then
+		banner "xautolock"
+		apt_install xautolock
+	else
+		skipping "xautolock"
+	fi
 fi

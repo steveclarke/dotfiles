@@ -53,6 +53,12 @@ exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 # Run redshift to adjust screen temperature
 exec_always --no-startup-id redshift
 
+# Blank screen after 10 mins 
+exec --no-startup-id xset dpms 600
+
+# Lock screen after 10 mins
+exec --no-startup-id xautolock -time 10 -locker i3lock
+
 # exec--no-startup-id i3-msg "workspace $ws5; exec google-chrome https://music.home.avint.net"
 
 # Start XDG autostart .desktop files using dex. See also
