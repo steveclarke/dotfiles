@@ -51,13 +51,13 @@ exec_always --no-startup-id feh --bg-scale $wallpaper
 exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 
 # Run redshift to adjust screen temperature
-exec_always --no-startup-id redshift
+exec --no-startup-id redshift
 
 # Blank screen after 10 mins 
 exec --no-startup-id xset dpms 600 600 60
 
 # Lock screen after 10 mins
-exec --no-startup-id xautolock -time 10 -locker 'i3lock' -detectsleep
+# exec --no-startup-id xautolock -time 10 -locker 'i3lock' -detectsleep
 
 # exec--no-startup-id i3-msg "workspace $ws5; exec google-chrome https://music.home.avint.net"
 
