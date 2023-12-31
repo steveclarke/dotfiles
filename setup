@@ -45,7 +45,7 @@ banner "Configuring Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 stow fonts
 
-if [ -n "$DOTFILES_CONFIG_I3" ]; then
+if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	banner "Configuring i3 Window Manager"
 	mkdir -p "${HOME}/.config/i3"
 	stow i3

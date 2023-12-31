@@ -71,7 +71,7 @@ else
 fi
 
 # [[ i3 Window Manager Requirements ]]
-if [ -n "$DOTFILES_CONFIG_I3" ]; then
+if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	echo "=== checking i3 Requirements"
 
 	if ! is_installed polybar; then
