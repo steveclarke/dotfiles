@@ -48,7 +48,8 @@ module-margin = 1
 separator = |
 separator-foreground = ${colors.disabled}
 
-font-0 = monospace;2
+font-0 = FiraMono Nerd Font;2
+# font-0 = monospace;2
 
 modules-left = xworkspaces xwindow
 modules-right = filesystem pulseaudio xkeyboard memory cpu wlan eth date
@@ -163,8 +164,8 @@ label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
 type = internal/date
 interval = 1
 
-date = %I:%M%P
-date-alt = %Y-%m-%d %I:%M:%S%P
+date= %Y-%m-%d %I:%M:%S%P
+date-alt = %I:%M%P
 
 label = %date%
 label-foreground = ${colors.primary}
