@@ -92,4 +92,10 @@ if [ -n "$DOTFILES_CONFIG_I3" ]; then
 	else
 		skipping "picom"
 	fi
+	if ! is_installed redshift; then
+		banner "redshift"
+		apt_install redshift
+	else
+		skipping "redshift"
+	fi
 fi
