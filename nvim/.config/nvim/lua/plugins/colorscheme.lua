@@ -21,6 +21,17 @@ return {
       vim.cmd.colorscheme("catppuccin")
     end,
   },
+
+  {
+    "maxmx03/dracula.nvim",
+    priority = 1000,
+    lazy = false,
+    config = function()
+      -- local dracula = require("dracula")
+      -- dracula.setup()
+      -- vim.cmd.colorscheme("dracula")
+    end,
+  },
   {
     "miikanissi/modus-themes.nvim",
     priority = 1000,
