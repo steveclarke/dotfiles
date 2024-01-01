@@ -1,7 +1,8 @@
 default_shell "fish"
-// pane_frames false
+pane_frames false
 
-theme "catppuccin-mocha"
+// theme "catppuccin-mocha"
+theme "dracula"
 
 keybinds {
   normal {}

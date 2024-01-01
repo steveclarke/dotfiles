@@ -1,4 +1,3 @@
----
 # Note: This file is for imports only. Main configuration is in `shared.yml`
 # and local machine overrides go in `local.yml` if it exists.
 import:
@@ -7,3 +6,4 @@ import:
   # override those in the shared.yml file.
   - ~/.config/alacritty/local.yml
   - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
+  # - ~/.config/alacritty/themes/dracula.yml
