@@ -38,6 +38,10 @@ bar {
 }
 
 # [[ Autostarts ]]
+
+# Set mouse speed
+exec --no-startup-id xinput set-prop "Logitech G203 Prodigy Gaming Mouse" "libinput Accel Speed" -0.4
+
 # Polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
