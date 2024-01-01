@@ -1,4 +1,3 @@
----
 # shell:
 #   program: /bin/bash
 #   args:
@@ -6,6 +5,7 @@
 #     - -c
 #     - "zellij"
 window:
+  opacity: 0.90
   # dimensions:
   #   columns: 124
   #   lines: 35
@@ -23,11 +23,9 @@ font:
   bold:
     family: "FiraMono Nerd Font"
     style: Bold
-
   italic:
     family: "FiraMono Nerd Font"
     style: Italic
-
   bold_italic:
     family: "FiraMono Nerd Font"
     style: Bold Italic
