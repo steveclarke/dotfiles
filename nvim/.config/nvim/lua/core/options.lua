@@ -71,6 +71,7 @@ opt.encoding = "UTF-8"
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldenable = false
+opt.foldlevel = 99
 
 -- Allow the block to expand into lines where there are no characters
 opt.virtualedit = "block"
