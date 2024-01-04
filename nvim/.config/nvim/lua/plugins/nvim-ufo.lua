@@ -4,6 +4,6 @@ return {
   dependencies = {
     "kevinhwang91/promise-async",
   },
-  enabled = false,
+  enabled = true,
   opts = {},
 }
