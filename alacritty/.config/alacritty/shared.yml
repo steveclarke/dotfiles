@@ -5,7 +5,7 @@
 #     - -c
 #     - "zellij"
 window:
-  opacity: 0.90
+  opacity: 0.99
   # dimensions:
   #   columns: 124
   #   lines: 35
