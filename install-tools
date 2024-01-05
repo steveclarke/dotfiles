@@ -110,4 +110,10 @@ if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	else
 		skipping "numlockx"
 	fi
+	if ! is_installed playerctl; then
+		banner "playerctl"
+		apt_install playerctl
+	else
+		skipping "playerctl"
+	fi
 fi
