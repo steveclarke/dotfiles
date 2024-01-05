@@ -104,4 +104,10 @@ if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	else
 		skipping "xautolock"
 	fi
+	if ! is_installed numlockx; then
+		banner "numlockx"
+		apt_install numlockx
+	else
+		skipping "numlockx"
+	fi
 fi
