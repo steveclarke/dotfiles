@@ -52,8 +52,9 @@ font-0 = FiraMono Nerd Font;2
 # font-0 = monospace;2
 
 modules-left = xworkspaces xwindow
+modules-center = date
 # modules-right = filesystem pulseaudio xkeyboard memory cpu wlan eth date
-modules-right = pulseaudio filesystem  memory cpu wlan eth date
+modules-right = playerctl pulseaudio filesystem  memory cpu wlan eth
 
 cursor-click = pointer
 cursor-scroll = ns-resize
@@ -170,6 +171,16 @@ date-alt = %I:%M%P
 
 label = %date%
 label-foreground = ${colors.primary}
+
+[module/playerctl]
+type = custom/script
+exec = playerctl metadata --format "󰎆 {{ title }} - {{ artist }}"
+exec-if = playerctl status
+tail = true
+click-left = playerctl play-pause
+click-right = playerctl next
+click-middle = playerctl previous
+interval = 1
 
 [settings]
 screenchange-reload = true
