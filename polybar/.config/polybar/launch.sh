@@ -8,4 +8,4 @@ polybar-msg cmd quit
 # 	MONITOR=$m polybar --reload example &
 # done
 
-polybar --reload example &
+polybar --reload main &
