@@ -35,6 +35,7 @@ if status is-interactive
     abbr -a --set-cursor dotf "cd ~/dotfiles/fish/.config/fish/%"
     abbr -a --set-cursor dotn "cd ~/dotfiles/nvim/.config/nvim/%"
     abbr -a --set-cursor dotz "cd ~/dotfiles/zellij/.config/zellij/%"
+    abbr -a --set-cursor doti "cd ~/dotfiles/i3/.config/i3/%"
     abbr -a dotup "cd ~/dotfiles && git pull && ./setup && cd -"
 
     # Zellij
