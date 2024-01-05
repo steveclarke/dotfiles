@@ -57,7 +57,7 @@ bar {
 # [[ Autostarts ]]
 
 # Set mouse speed
-exec --no-startup-id xinput set-prop "Logitech G203 Prodigy Gaming Mouse" "libinput Accel Speed" -0.4
+exec --no-startup-id xinput set-prop "Logitech G203 Prodigy Gaming Mouse" "libinput Accel Speed" -0.7
 
 # Polybar
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
@@ -75,7 +75,7 @@ exec_always --no-startup-id setxkbmap -option ctrl:nocaps
 exec --no-startup-id redshift
 
 # Blank screen after 10 mins 
-exec --no-startup-id xset dpms 600 600 60
+exec --no-startup-id xset dpms 600 600 600
 
 # Lock screen after 10 mins
 # exec --no-startup-id xautolock -time 10 -locker 'i3lock' -detectsleep
@@ -91,7 +91,7 @@ exec --no-startup-id dex --autostart --environment i3
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
