@@ -37,7 +37,7 @@ bar {
   position top
   tray_output $left-mon
   tray_padding 5
-  strip_workspace_numbers yes
+  # strip_workspace_numbers yes
   binding_mode_indicator yes
 
   # Dracula
