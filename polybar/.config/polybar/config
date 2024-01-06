@@ -76,10 +76,9 @@ monitor = ${env:MONITOR:DisplayPort-2}
 inherit = bar/base
 
 modules-center = time
-modules-left = xworkspaces
-modules-right = systray
+modules-right = xworkspaces
 
-tray-position = right
+tray-position = left
 tray-padding = 4
 
 [bar/right]
