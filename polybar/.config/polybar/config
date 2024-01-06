@@ -86,8 +86,9 @@ monitor = ${env:MONITOR:DisplayPort-1}
 
 inherit = bar/base
 
-modules-center = time
 modules-left = xworkspaces
+modules-center = time
+modules-right = playerctl pulseaudio
 
 # Not supported on stock polybar 3.5.x installed on Ubuntu 22.04
 # Supported as of polybar 3.7.0
