@@ -25,19 +25,17 @@ secondary = #ffb86c
 alert = #ff5555
 disabled = #6272a4
 
-[bar/main]
+[bar/base]
 width = 100%
-height = 24pt
-radius = 6
-
-; dpi = 96
+height = 28pt
+# radius = 6
 
 background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3pt
 
-border-size = 4pt
+# border-size = 4pt
 border-color = #00000000
 
 padding-left = 0
@@ -51,11 +49,6 @@ separator-foreground = ${colors.disabled}
 font-0 = FiraMono Nerd Font;2
 # font-0 = monospace;2
 
-modules-left = xworkspaces
-# modules-left = xworkspaces xwindow
-modules-center = date
-modules-right = playerctl pulseaudio filesystem memory cpu 
-
 cursor-click = pointer
 cursor-scroll = ns-resize
 
@@ -67,14 +60,48 @@ enable-ipc = true
 
 ; override-redirect = true
 
-[module/systray]
-type = internal/tray
+[bar/main]
+monitor = ${env:MONITOR:DisplayPort-0}
 
-format-margin = 8pt
-tray-spacing = 16pt
+inherit = bar/base
+
+modules-left = xworkspaces
+# modules-left = xworkspaces xwindow
+modules-center = date
+modules-right = playerctl pulseaudio filesystem memory cpu 
+
+[bar/left]
+monitor = ${env:MONITOR:DisplayPort-2}
+
+inherit = bar/base
+
+modules-center = time
+modules-left = xworkspaces
+modules-right = systray
+
+tray-position = right
+tray-padding = 4
+
+[bar/right]
+monitor = ${env:MONITOR:DisplayPort-1}
+
+inherit = bar/base
+
+modules-center = time
+modules-left = xworkspaces
+
+# Not supported on stock polybar 3.5.x installed on Ubuntu 22.04
+# Supported as of polybar 3.7.0
+# [module/systray]
+# type = internal/tray
+#
+# format-margin = 8pt
+# tray-spacing = 16pt
 
 [module/xworkspaces]
 type = internal/xworkspaces
+
+pin-workspaces = true
 
 label-active = %name%
 label-active-background = ${colors.background-alt}
@@ -170,6 +197,16 @@ interval = 1
 
 date= %m-%d-%Y %I:%M%P
 date-alt = %I:%M%P
+
+label = %date%
+label-foreground = ${colors.primary}
+
+[module/time]
+type = internal/date
+interval = 1
+
+date = %I:%M%P
+date-alt= %m-%d-%Y %I:%M%P
 
 label = %date%
 label-foreground = ${colors.primary}
