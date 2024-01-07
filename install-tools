@@ -117,3 +117,13 @@ if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 		skipping "playerctl"
 	fi
 fi
+
+# [[ csvlens (CSV Viewer) ]]
+if is_installed cargo; then
+	if ! is_installed csvlens; then
+		banner "csvlens"
+		cargo install csvlens
+	else
+		skipping "csvlens"
+	fi
+fi
