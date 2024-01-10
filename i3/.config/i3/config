@@ -17,9 +17,6 @@ set $left-mon "DisplayPort-2"
 set $right-mon "DisplayPort-1"
 
 # Configure monitor layout (used arandr to determine this)
-# exec --no-startup-id xrandr --output $left-mon --auto --left-of $main-mon
-# exec --no-startup-id xrandr --output $main-mon --auto --primary
-# exec --no-startup-id xrandr --output $right-mon --auto --right-of $main-mon
 exec --no-startup-id xrandr --output $left-mon --mode 2560x1440 --rate 143.91 --left-of $main-mon
 exec --no-startup-id xrandr --output $main-mon --mode 2560x1440 --rate 143.91 --primary
 exec --no-startup-id xrandr --output $right-mon --mode 2560x1440 --rate 143.91 --right-of $main-mon
