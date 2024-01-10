@@ -1290,45 +1290,45 @@
         }
       },
       "ugrep": {
-        "version": "4.5.1",
+        "version": "4.5.1_1",
         "bottle": {
           "rebuild": 0,
           "root_url": "https://ghcr.io/v2/homebrew/core",
           "files": {
             "arm64_sonoma": {
               "cellar": "/opt/homebrew/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:87e17bc53321b105edd492a179a4091ee7494b96ecc491d51c441082a2e11b20",
-              "sha256": "87e17bc53321b105edd492a179a4091ee7494b96ecc491d51c441082a2e11b20"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:a9a15764049203466cb3baed0119944d42b66a3b6fdd34d56fd559e2ee424f4f",
+              "sha256": "a9a15764049203466cb3baed0119944d42b66a3b6fdd34d56fd559e2ee424f4f"
             },
             "arm64_ventura": {
               "cellar": "/opt/homebrew/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:98ae036367df17c3213f24a993c83aa94ff0521e2a1bae77fb742ee7f8788c7a",
-              "sha256": "98ae036367df17c3213f24a993c83aa94ff0521e2a1bae77fb742ee7f8788c7a"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:bf6a46d02dfff7dd03915e14cf041e902916bd23f28b7256638f233656901554",
+              "sha256": "bf6a46d02dfff7dd03915e14cf041e902916bd23f28b7256638f233656901554"
             },
             "arm64_monterey": {
               "cellar": "/opt/homebrew/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:3770dee24972ab58db21ac34df7d3d77692995e32f4cc815586cc8bda7034e28",
-              "sha256": "3770dee24972ab58db21ac34df7d3d77692995e32f4cc815586cc8bda7034e28"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:ca693b15e5792179ff14bb538b2d92d49ff400a34cfeb1fb066cf0b9871010ae",
+              "sha256": "ca693b15e5792179ff14bb538b2d92d49ff400a34cfeb1fb066cf0b9871010ae"
             },
             "sonoma": {
               "cellar": "/usr/local/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:e468a96a7ca47a81afb4f2c21a077ca5d873831c23473faa2a3c0eb4bb359749",
-              "sha256": "e468a96a7ca47a81afb4f2c21a077ca5d873831c23473faa2a3c0eb4bb359749"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:44bcb29b4e3c5aca63f6c471550353b79b84cf2c850fb7fd0f0c5ce80b306d38",
+              "sha256": "44bcb29b4e3c5aca63f6c471550353b79b84cf2c850fb7fd0f0c5ce80b306d38"
             },
             "ventura": {
               "cellar": "/usr/local/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:00a0cf33706d451ba0620576833a09026ce9d060d8a2148c4eafd997d23b6c57",
-              "sha256": "00a0cf33706d451ba0620576833a09026ce9d060d8a2148c4eafd997d23b6c57"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:8c72f65ae8f7f5f47f1df159241a9a2dc706afeb70e8354fdced5c8e5c043e0d",
+              "sha256": "8c72f65ae8f7f5f47f1df159241a9a2dc706afeb70e8354fdced5c8e5c043e0d"
             },
             "monterey": {
               "cellar": "/usr/local/Cellar",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:830a1f7747754b1246815c39993c37558e0a0f9dd65c41a538a1b31583c926de",
-              "sha256": "830a1f7747754b1246815c39993c37558e0a0f9dd65c41a538a1b31583c926de"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:9b77002d4005aa82e36d5896d9bd45e3c041ee44dc3ea9d2edc0fa96aca861a4",
+              "sha256": "9b77002d4005aa82e36d5896d9bd45e3c041ee44dc3ea9d2edc0fa96aca861a4"
             },
             "x86_64_linux": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:71f3a8dd8452a426ad57adacdd9eafb4452669bf11767896b134a29d997d1551",
-              "sha256": "71f3a8dd8452a426ad57adacdd9eafb4452669bf11767896b134a29d997d1551"
+              "url": "https://ghcr.io/v2/homebrew/core/ugrep/blobs/sha256:b6c8dab059ec38f97afd9d5c87fd01545712f5fc5b0e252f4419313afa700f19",
+              "sha256": "b6c8dab059ec38f97afd9d5c87fd01545712f5fc5b0e252f4419313afa700f19"
             }
           }
         }
@@ -1436,7 +1436,7 @@
   "system": {
     "linux": {
       "Pop!_OS 22.04 LTS (jammy)": {
-        "HOMEBREW_VERSION": "4.2.2",
+        "HOMEBREW_VERSION": "4.2.3",
         "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
         "Homebrew/homebrew-core": "api",
         "GCC": "11.4.0"
