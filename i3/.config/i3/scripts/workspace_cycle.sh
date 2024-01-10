@@ -10,9 +10,9 @@ group_number=$1
 
 # Define the workspace groups
 declare -A workspace_groups
-workspace_groups[1]="1:Main 2:Dev 3:Game"
+workspace_groups[1]="1:Main 2:Dev 3:Game 10:Misc"
 workspace_groups[2]="4:Prod 5:DevL 6:DB"
-workspace_groups[3]="7:DevR 8:Chat 9:Music 10"
+workspace_groups[3]="7:DevR 8:Chat 9:Music"
 
 # Check if the provided group number is valid
 if [ -z "${workspace_groups[$group_number]}" ]; then
