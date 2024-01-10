@@ -23,6 +23,15 @@ return {
   },
 
   {
+    "yorik1984/newpaper.nvim",
+    priority = 1000,
+    lazy = false,
+    config = function()
+      -- vim.cmd.colorscheme("newpaper")
+    end,
+  },
+
+  {
     "maxmx03/dracula.nvim",
     priority = 1000,
     lazy = false,
@@ -32,10 +41,12 @@ return {
       -- vim.cmd.colorscheme("dracula")
     end,
   },
+
   {
     "miikanissi/modus-themes.nvim",
     priority = 1000,
   },
+
   {
     "bluz71/vim-nightfly-guicolors",
     priority = 1000,
@@ -44,6 +55,7 @@ return {
       -- vim.cmd.colorscheme("nightfly")
     end,
   },
+
   {
     "folke/tokyonight.nvim",
     priority = 1000,
@@ -60,6 +72,7 @@ return {
       -- vim.cmd.colorscheme("tokyonight")
     end,
   },
+
   {
     "loctvl842/monokai-pro.nvim",
     priority = 1000,
@@ -76,6 +89,7 @@ return {
       -- vim.cmd.colorscheme("monokai-pro")
     end,
   },
+
   {
     "EdenEast/nightfox.nvim",
     lazy = false,
