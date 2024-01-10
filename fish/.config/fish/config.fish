@@ -66,6 +66,9 @@ if status is-interactive
     abbr -a gp "git pull"
     abbr -a gP "git push"
 
+    # Ranger
+    abbr -a r ranger
+
     # Eza (ls replacement)
     if command -q eza
         alias ls "eza --color=always --icons --group-directories-first"
