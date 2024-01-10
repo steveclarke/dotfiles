@@ -221,6 +221,12 @@ click-right = playerctl next
 click-middle = playerctl previous
 interval = 1
 
+[module/popup-calendar]
+type = custom/script
+exec = $HOME/.config/polybar/scripts/popup-calendar.sh
+interval = 5
+click-left = $HOME/.config/polybar/scripts/popup-calendar.sh --popup &
+
 [settings]
 screenchange-reload = true
 pseudo-transparency = true

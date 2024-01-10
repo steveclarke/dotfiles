@@ -116,6 +116,12 @@ if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	else
 		skipping "playerctl"
 	fi
+	if ! is_installed yad; then
+		banner "yad"
+		apt_install yad
+	else
+		skipping "yad"
+	fi
 fi
 
 # [[ csvlens (CSV Viewer) ]]
