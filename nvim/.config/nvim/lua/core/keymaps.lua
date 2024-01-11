@@ -1,7 +1,9 @@
 local keymap = vim.keymap
 local options = require("utils.core").keymap_options
 
--- File explorer
+-- ╔═════════════════════════════════════════════════════════╗
+-- ║                      File Explorer                      ║
+-- ╚═════════════════════════════════════════════════════════╝
 keymap.set("n", "<leader>e", "<cmd>Neotree filesystem toggle left<cr>", options({ desc = "Toggle file explorer" }))
 keymap.set("n", ",e", "<cmd>Neotree filesystem focus left<cr>", options({ desc = "Focus file explorer" }))
 -- TODO: add keymap for opening file explorer in current file's directory
@@ -47,7 +49,9 @@ keymap.set("v", ">", ">gv", options())
 -- Note: other buffer keymaps are defined in Bufferline plugin config.
 keymap.set("n", "<leader>bb", "<cmd>e #<cr>", options({ desc = "Switch to Other Buffer" }))
 
--- [[ Splits ]]
+-- ╔═════════════════════════════════════════════════════════╗
+-- ║                         Splits                          ║
+-- ╚═════════════════════════════════════════════════════════╝
 keymap.set("n", ",s", ":new<cr>", options({ desc = "Open split with new buffer" }))
 keymap.set("n", "<leader>-", ":new<cr>", options({ desc = "Open split with new buffer" }))
 keymap.set("n", ",v", ":vnew<cr>", options({ desc = "Open vertical split with new buffer" }))
@@ -74,7 +78,9 @@ vim.keymap.set("v", "\\\\", "<cmd>VisualDuplicate +1<cr>", options({ desc = "Dup
 
 keymap.set("n", "<leader>qq", ":qa!<CR>", options({ desc = "Quit all without saving" }))
 
--- Persistence (session manager)
+-- ╔═════════════════════════════════════════════════════════╗
+-- ║              Persistence (session manager)              ║
+-- ╚═════════════════════════════════════════════════════════╝
 keymap.set(
   "n",
   "<leader>sr",
@@ -95,4 +101,11 @@ keymap.set(
   options({ desc = "Save and source the current file" })
 )
 
-keymap.set("n", ",t", "<Plug>PlenaryTestFile", options({ desc = "Run test file" }))
+-- ╔═════════════════════════════════════════════════════════╗
+-- ║                       Comment Box                       ║
+-- ╚═════════════════════════════════════════════════════════╝
+keymap.set("n", "<leader>cb", "<cmd>CBlcbox7<cr>", options({ desc = "Comment box" }))
+keymap.set("n", "<leader>cl", "<cmd>CBllline6<cr>", options({ desc = "Comment line with text" }))
+keymap.set("n", "<leader>ci", "<cmd>CBline<cr>", options({ desc = "Comment line" }))
+keymap.set("n", "<leader>cd", "<cmd>CBd<cr>", options({ desc = "Delete comment box/line" }))
+keymap.set("n", "<leader>cy", "<cmd>CBy<cr>", options({ desc = "Yank text in comment box/line" }))
