@@ -20,3 +20,5 @@ gt/gT - next/previous tab
 Ctrl-h,w,u in Insert mode - delete previous character, word, line
 Ctrl-r{register} in Insert mode - insert contents of register
 in Visual mode, press 'o' to go to the other end of highlighted text
+:$ - move to end of file
+In command mode, Ctrl-v[ESC] inserts a literal escape character
