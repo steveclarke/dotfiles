@@ -17,7 +17,7 @@ return {
   "nvimdev/dashboard-nvim",
   event = "VimEnter",
   dependencies = {
-    "nvim-tree/nvim-web-devicons"
+    "nvim-tree/nvim-web-devicons",
   },
   config = function()
     require("dashboard").setup({
@@ -40,9 +40,21 @@ return {
         footer = function()
           local stats = require("lazy").stats()
           local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-          return { "⚡ Neovim loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms .. "ms" }
+          local version_info = vim.version()
+          local version_str = string.format("v%d.%d.%d", version_info.major, version_info.minor, version_info.patch)
+          return {
+            "⚡ Neovim "
+              .. version_str
+              .. " loaded "
+              .. stats.loaded
+              .. "/"
+              .. stats.count
+              .. " plugins in "
+              .. ms
+              .. "ms",
+          }
         end,
-      }
+      },
     })
-  end
+  end,
 }
