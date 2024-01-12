@@ -16,26 +16,26 @@ local config = function()
       },
     },
     pickers = {
-      find_files = {
-        theme = "dropdown",
-        previewer = true,
-      },
-      buffers = {
-        theme = "dropdown",
-        previewer = true,
-      },
-      live_grep = {
-        theme = "dropdown",
-        previewer = true,
-      },
-      keymaps = {
-        theme = "dropdown",
-        previewer = true,
-      },
-      help_tags = {
-        theme = "dropdown",
-        previewer = true,
-      },
+      -- find_files = {
+      --   theme = "dropdown",
+      --   previewer = true,
+      -- },
+      -- buffers = {
+      --   theme = "dropdown",
+      --   previewer = true,
+      -- },
+      -- live_grep = {
+      --   theme = "dropdown",
+      --   previewer = true,
+      -- },
+      -- keymaps = {
+      --   theme = "dropdown",
+      --   previewer = true,
+      -- },
+      -- help_tags = {
+      --   theme = "dropdown",
+      --   previewer = true,
+      -- },
     },
   })
 end
