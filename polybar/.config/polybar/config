@@ -195,7 +195,7 @@ label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
 type = internal/date
 interval = 1
 
-date= %m-%d-%Y %I:%M%P
+date= %A %m-%d-%Y %I:%M%P
 date-alt = %I:%M%P
 
 label = %date%
