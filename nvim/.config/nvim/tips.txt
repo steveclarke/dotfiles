@@ -24,4 +24,7 @@ in Visual mode, press 'o' to go to the other end of highlighted text
 In command mode, <C-v>[ESC] inserts a literal escape character
 @: - repeat last command
 <C-r><C-w> - insert word under cursor
+q:, q/ - command-line window
+<C-f> in command line to open in window
+:read !{cmd} - insert output of command
 :argdo, :bufdo execute commands across all args, buffers
