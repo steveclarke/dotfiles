@@ -67,7 +67,7 @@ inherit = bar/base
 
 modules-left = xworkspaces
 # modules-left = xworkspaces xwindow
-modules-center = date
+modules-center = date notification-status
 modules-right = playerctl pulseaudio filesystem memory cpu 
 
 [bar/left]
@@ -226,6 +226,13 @@ type = custom/script
 exec = $HOME/.config/polybar/scripts/popup-calendar.sh
 interval = 5
 click-left = $HOME/.config/polybar/scripts/popup-calendar.sh --popup &
+
+[module/notification-status]
+type = custom/script
+exec = $HOME/.config/polybar/scripts/notification-status.sh
+interval = 5
+label-foreground = ${colors.primary}
+click-left = $HOME/.config/polybar/scripts/notification-status.sh --toggle &
 
 [settings]
 screenchange-reload = true
