@@ -28,3 +28,10 @@ q:, q/ - command-line window
 <C-f> in command line to open in window
 :read !{cmd} - insert output of command
 :argdo, :bufdo execute commands across all arglist, buffers
+yss, ySS - surround current line with something
+dst - delete surrounding tag
+ysiwf - surround inner word with function
+surround t, f, i - surround tag, function, insert (custom left/right)
+<C-g> - in normal mode, show file info
+:ls, :args - list buffers, arguments
+:lcd %:h - change working directory to current file's directory
