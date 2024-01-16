@@ -35,3 +35,5 @@ surround t, f, i - surround tag, function, insert (custom left/right)
 <C-g> - in normal mode, show file info
 :ls, :args - list buffers, arguments
 :lcd %:h - change working directory to current file's directory
+gP - paste yanked block after selected block
+
