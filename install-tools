@@ -132,4 +132,11 @@ if is_installed cargo; then
 	else
 		skipping "csvlens"
 	fi
+
+	if ! is_installed dot-http; then
+		banner "dot-http"
+		cargo install dot-http
+	else
+		skipping "dot-http"
+	fi
 fi
