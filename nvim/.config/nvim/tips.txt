@@ -35,5 +35,10 @@ surround t, f, i - surround tag, function, insert (custom left/right)
 <C-g> - in normal mode, show file info
 :ls, :args - list buffers, arguments
 :lcd %:h - change working directory to current file's directory
-gP - paste yanked block after selected block
-
+gP - copy block of text down
+xp - transpose characters
+"_ - black hole register
+"0 - yank register (only yanked text gets placed here)
+"A - append to 'a' register
+"= - expression register
+When changing text in visual mode, the modified text is placed in the unnamed register
