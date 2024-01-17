@@ -71,11 +71,6 @@ vim.keymap.set(
   options({ desc = "Reformat code" })
 )
 
-vim.keymap.set("n", "||", "<cmd>LineDuplicate -1<cr>", options({ desc = "Duplicate line up" }))
-vim.keymap.set("n", "\\\\", "<cmd>LineDuplicate +1<cr>", options({ desc = "Duplicate line down" }))
-vim.keymap.set("v", "||", "<cmd>VisualDuplicate -1<cr>", options({ desc = "Duplicate selection up" }))
-vim.keymap.set("v", "\\\\", "<cmd>VisualDuplicate +1<cr>", options({ desc = "Duplicate selection down" }))
-
 keymap.set("n", "<leader>qq", ":qa!<CR>", options({ desc = "Quit all without saving" }))
 
 -- ╔═════════════════════════════════════════════════════════╗

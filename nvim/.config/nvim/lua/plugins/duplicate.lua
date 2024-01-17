@@ -1,3 +1,0 @@
-return {
-  "hinell/duplicate.nvim",
-}
