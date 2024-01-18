@@ -36,7 +36,8 @@ return {
       lsp_doc_border = false, -- add a border to hover docs and signature help
     },
     messages = {
-      -- view = "mini",
+      enabled = false,
+      view = "notify",
     },
     popupmenu = {
       -- enabled = false,
