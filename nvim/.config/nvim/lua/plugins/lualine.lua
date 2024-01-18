@@ -19,11 +19,11 @@ local config = function()
       lualine_c = { daily_focus_tip },
       -- Show @recording messages here because Noice supresses it
       lualine_x = {
-        {
-          require("noice").api.statusline.mode.get,
-          cond = require("noice").api.statusline.mode.has,
-          color = { fg = "#ff9e64" },
-        },
+        -- {
+        --   require("noice").api.statusline.mode.get,
+        --   cond = require("noice").api.statusline.mode.has,
+        --   color = { fg = "#ff9e64" },
+        -- },
         "hostname",
         "encoding",
         "fileformat",
