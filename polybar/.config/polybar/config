@@ -213,7 +213,8 @@ label-foreground = ${colors.primary}
 
 [module/playerctl]
 type = custom/script
-exec = playerctl metadata --format "󰎆 {{ title }} - {{ artist }}"
+# exec = playerctl metadata --format "󰎆 {{ title }} - {{ artist }}"
+exec = playerctl metadata --format "󰎆 {{ title }} - {{ artist }}" | awk -F' - ' '{title = substr($1, 1, 25); artist = substr($2, 1, 25); if (length($1) > 25) title = title "..."; if (length($2) > 25) artist = artist "..."; print title " - " artist}'
 exec-if = playerctl status
 tail = true
 click-left = playerctl play-pause
