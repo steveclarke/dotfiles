@@ -53,3 +53,10 @@ qA - append to macro a
 <C-r>=i<CR> - insert result of expression, 77i.e. contents of "let i=1"
 :put a - put contents of register a below current line
 Edit a macro by pasting the contents of the register, editing, then yanking back into the register
+/\Cfoo - force case-sensitive search
+{operator}gn - search the last used search pattern and visually select it. e.g. `cgn`
+\v - very magic, e.g. /\vfoo|bar. Makes regexes more like ruby.
+\V - very nomagic, e.g. /\Vfoo|bar. search for text vebatim/literally.
+/<CR> - repeat last search
+/foo/e - move to end of match. :h search-offset for more info
+/foo/+1 - move to first line after match
