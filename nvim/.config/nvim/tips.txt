@@ -23,6 +23,7 @@ in Visual mode, press 'o' to go to the other end of highlighted text
 :$ - move to end of file
 In command mode, <C-v>[ESC] inserts a literal escape character
 @: - repeat last command
+@@ - repeat last macro
 <C-r><C-w> - insert word under cursor
 q:, q/ - command-line window
 <C-f> in command line to open in window
@@ -42,3 +43,13 @@ xp - transpose characters
 "A - append to 'a' register
 "= - expression register
 When changing text in visual mode, the modified text is placed in the unnamed register
+g[u,U,~]{motion} - uppercase text
+:normal @a - execute macro a once for each line in the selection
+:new, :vnew - open new window
+qA - append to macro a
+:edit! - reload file, discarding changes
+:wall - write all buffers
+:wnext - same as :write, :next
+<C-r>=i<CR> - insert result of expression, 77i.e. contents of "let i=1"
+:put a - put contents of register a below current line
+Edit a macro by pasting the contents of the register, editing, then yanking back into the register
