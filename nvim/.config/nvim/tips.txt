@@ -60,3 +60,5 @@ Edit a macro by pasting the contents of the register, editing, then yanking back
 /<CR> - repeat last search
 /foo/e - move to end of match. :h search-offset for more info
 /foo/+1 - move to first line after match
+:%s///gn - count number of matches
+:vimgrep //g % - count number of matches. Uses quickfix list.
