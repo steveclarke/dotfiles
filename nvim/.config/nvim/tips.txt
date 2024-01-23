@@ -62,3 +62,8 @@ Edit a macro by pasting the contents of the register, editing, then yanking back
 /foo/+1 - move to first line after match
 :%s///gn - count number of matches
 :vimgrep //g % - count number of matches. Uses quickfix list.
+:helpgrep - search help files. Uses quickfix list (i.e. :cnext, :cprev)
+<C-r>/ - insert contents of search register
+In replacement field \= evaluates an expression. e.g. :%s/foo/\=@0
+g& - repeat last substitution
+
