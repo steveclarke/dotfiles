@@ -28,7 +28,7 @@ In command mode, <C-v>[ESC] inserts a literal escape character
 q:, q/ - command-line window
 <C-f> in command line to open in window
 :read !{cmd} - insert output of command
-:argdo, :bufdo execute commands across all arglist, buffers
+:argdo, :bufdo, :cdo execute commands across all arglist, buffers, quickfix list
 yss, ySS - surround current line with something
 dst - delete surrounding tag
 ysiwf - surround inner word with function
