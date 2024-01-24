@@ -66,4 +66,5 @@ Edit a macro by pasting the contents of the register, editing, then yanking back
 <C-r>/ - insert contents of search register
 In replacement field \= evaluates an expression. e.g. :%s/foo/\=@0
 g& - repeat last substitution
-
+g~{motion} - toggle case of {motion} text
+g~~ - toggle case of current line
