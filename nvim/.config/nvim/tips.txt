@@ -72,3 +72,7 @@ g~~ - toggle case of current line
 /utils\ze.core - match utils in "utils.core", but only up to .core
 :global /foo - execute command on all lines that match pattern. default {cmd} is :print
 qaq - clear register a
+vi( - select contents of parentheses
+:.+1,/}/-1 sort - sort from current line +1 to line before next closing brace
+:colder - view a previous quickfix list
+:vim foo.bar +10 - open file foo.bar at line 10

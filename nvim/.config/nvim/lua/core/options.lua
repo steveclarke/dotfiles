@@ -89,3 +89,8 @@ opt.inccommand = "split"
 -- but it was hell to figure out how to unset it.
 -- See: https://www.reddit.com/r/neovim/comments/sqld76/stop_automatic_newline_continuation_of_comments/
 vim.api.nvim_create_autocmd("FileType", { command = "set formatoptions-=cro" })
+
+-- Use ripgrep if available
+if vim.fn.executable("rg") == 1 then
+  opt.grepprg = "rg --vimgrep --no-heading --smart-case"
+end
