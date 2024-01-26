@@ -50,6 +50,7 @@ if status is-interactive
     abbr -a zjcode "zellij --layout ~/.config/zellij/layouts/code.yml"
     # abbr -a zju "zellij --layout ~/.config/zellij/layouts/unio.yml --session 'unio-$(date +%F)'"
     abbr -a zju "zellij --layout ~/.config/zellij/layouts/unio.yml"
+    abbr -a zjc "zellij --layout ~/.config/zellij/layouts/connon.yml"
 
     # Links to functions
     abbr -a mcd mkdir-cd

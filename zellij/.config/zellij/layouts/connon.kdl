@@ -1,0 +1,58 @@
+layout {
+  cwd "~/src/connon/connon-cloud-api"
+
+  default_tab_template {
+      pane size=1 borderless=true {
+        plugin location="zellij:tab-bar"
+      }
+    
+      children
+
+      pane size=2 borderless=true {
+        plugin location="zellij:status-bar"
+      }
+  }
+
+  tab name="API" focus=true {
+    pane split_direction="vertical" {
+      pane  name="Code" size="75%" {
+        command "nvim"
+      }
+      pane {
+        pane name="Console" {}
+      }
+    }
+  }
+
+  tab name="App" cwd="~/src/connon/connon-connect" {
+    pane split_direction="vertical" {
+      pane  name="Code" {
+        command "nvim"
+      }
+    }
+  }
+
+  tab name="Services" {
+      pane name="Docker" start_suspended=true {
+        command "bin/services"
+      }
+      pane split_direction="vertical" {
+        pane name="Rails Server" start_suspended=true {
+          command "bin/dev"
+        }
+        pane name="App Server" cwd="~/src/connon/connon-connect" start_suspended=true {
+          command "npm"
+          args "run" "dev"
+        }
+      }
+  }
+
+  tab name="Git" split_direction="vertical" {
+    pane name="API" {
+      command "lazygit"
+    }
+    pane name="App" cwd="~/src/connon/connon-connect" {
+      command "lazygit"
+    }
+  }
+}
