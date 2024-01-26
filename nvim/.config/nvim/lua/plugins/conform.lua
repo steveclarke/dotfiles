@@ -1,16 +1,15 @@
 -- :ConformInfo to view configured and available formatters, as well as log file
-
 local config = function()
   local conform = require("conform")
 
   conform.setup({
     formatters_by_ft = {
-      javascript = { "prettierd" },
-      typescript = { "prettierd" },
+      javascript = { "prettierd", "eslint_d" },
+      typescript = { "prettierd", "eslint_d" },
       javascriptreact = { "prettierd" },
       typescriptreact = { "prettierd" },
       json = { "prettierd" },
-      vue = { "prettierd" },
+      vue = { "prettierd", "eslint_d" },
       lua = { "stylua" },
       markdown = { "markdownlint" },
       fish = { "fish_indent" },

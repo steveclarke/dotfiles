@@ -94,3 +94,6 @@ vim.api.nvim_create_autocmd("FileType", { command = "set formatoptions-=cro" })
 if vim.fn.executable("rg") == 1 then
   opt.grepprg = "rg --vimgrep --no-heading --smart-case"
 end
+
+-- Allow loading from a local .exrc, .nvimrc, .nvim.lua
+opt.exrc = true
