@@ -1,7 +1,7 @@
 tap "homebrew/bundle"
 
 brew "bat"
-berw "ctags"
+brew "ctags"
 brew "deno"
 brew "direnv"
 brew "dos2unix"
