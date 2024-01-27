@@ -29,8 +29,8 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 -- Redo with opposite of undo
 keymap.set("n", "U", "<C-r>", options())
 
--- Clear search highlight
-keymap.set("n", "<leader>/", "<cmd>noh<CR>", options({ desc = "Clear search highlights" }))
+-- Toggle search highlights
+keymap.set("n", "<leader>/", "<cmd>set hlsearch!<CR>", options({ desc = "Toggle search highlights" }))
 
 -- Move current line / block with <alt> u/i ala vscode.
 -- Note: not using Alt-j/k because they're used by Zellij
