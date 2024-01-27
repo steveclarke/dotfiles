@@ -22,8 +22,7 @@ gt/gT - next/previous tab
 in Visual mode, press 'o' to go to the other end of highlighted text
 :$ - move to end of file
 In command mode, <C-v>[ESC] inserts a literal escape character
-@: - repeat last command
-@@ - repeat last macro
+@:, @@ - repeat last command, repeat last macro
 <C-r><C-w> - insert word under cursor
 q:, q/ - command-line window
 <C-f> in command line to open in window
@@ -81,3 +80,4 @@ vi( - select contents of parentheses
 <C-x><C-l> - complete line (insert mode)
 4_ - move down 4 lines to first non-blank character. No count given = move to first non-blank character
 yssf - surround current line with function
+cc - delete current line and enter insert mode
