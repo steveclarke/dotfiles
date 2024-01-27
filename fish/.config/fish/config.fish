@@ -79,7 +79,7 @@ if status is-interactive
     if command -q eza
         alias ls "eza --color=always --icons --group-directories-first"
         alias la "eza --color=always --icons --group-directories-first --all"
-        alias ll "eza --color=always --icons --group-directories-first --all --long"
+        alias lla "eza --color=always --icons --group-directories-first --all --long"
         alias tree "eza --tree"
     end
 
