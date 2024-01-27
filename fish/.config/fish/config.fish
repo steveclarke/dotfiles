@@ -1,16 +1,21 @@
-# Path
+# ─[ Path ]───────────────────────────────────────────────────────────────
 fish_add_path ~/bin
 fish_add_path ~/.local/bin
 
-# [[ Exports ]]
+# ─[ Exports ]────────────────────────────────────────────────────────────
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
 
-# Editor et. al.
+# ─[ Editor et. al. ]─────────────────────────────────────────────────────
 set -gx EDITOR (which nvim)
 set -gx VISUAL $EDITOR
 set -gx SUDO_EDITOR $EDITOR
 
-# Abbrs & Aliases
+# ─[ Secrets ]────────────────────────────────────────────────────────────
+if test -f ~/.config/fish/secrets.fish
+    source ~/.config/fish/secrets.fish
+end
+
+# ─[ Abbrs & Aliases ]────────────────────────────────────────────────────
 if status is-interactive
     abbr -a ff clear
     abbr -a upgrade "sudo nala upgrade"
