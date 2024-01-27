@@ -70,8 +70,8 @@ exec_always --no-startup-id picom -b
 exec_always --no-startup-id feh --bg-scale $wallpaper
 
 # Change caps-lock to a ctrl key
-# exec_always --no-startup-id setxkbmap -option ctrl:nocaps
-exec_always --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id setxkbmap -option ctrl:nocaps
+# exec_always --no-startup-id setxkbmap -option caps:escape
 
 # Run redshift to adjust screen temperature
 exec --no-startup-id redshift
