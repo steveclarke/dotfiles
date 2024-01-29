@@ -1,5 +1,6 @@
 tap "homebrew/bundle"
 
+brew "aichat"
 brew "bat"
 brew "ctags"
 brew "deno"
