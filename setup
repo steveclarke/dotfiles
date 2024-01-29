@@ -45,6 +45,10 @@ banner "Configuring Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 stow fonts
 
+banner "Configuring Idea"
+rm ${HOME}/.ideavimrc
+stow idea
+
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	banner "Configuring i3 Window Manager"
 	mkdir -p "${HOME}/.config/i3"

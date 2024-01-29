@@ -1,0 +1,263 @@
+" https://gist.github.com/steveclarke/ba73c6b2e198f14f1b729ad6825c04ca
+
+" Leader is <space>
+let mapleader = ' '
+nnoremap <Space> <Nop>
+" nobody wants that bell!
+set visualbell
+set incsearch
+set hlsearch
+" Case insensitive searching unless /C or capitilization is used in search
+set ignorecase
+set smartcase
+" Min number of lines above and below cursor
+set scrolloff=5
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" IdeaVim Config
+" Creation of global mark will trigger creation of IDE's bookmark and vice versa.
+" Note - you must use global marks like `A` to access IDE's bookmark.
+set ideamarks
+" https://github.com/JetBrains/ideavim/wiki/%22ideajoin%22-examples
+set ideajoin
+set surround
+set commentary
+" https://github.com/AlexPl292/IdeaVim-EasyMotion#supported-commands
+" default <leader><leader>f<char> to jump to char"
+set easymotion
+"map <leader>E <Plug>(easymotion-s)
+"map <leader>e <Plug>(easymotion-f)
+set highlightedyank
+set matchit
+
+set NERDTree
+
+" Third party plugins
+"set sneak " Beware, this plugin causes conflict with Surround's visual mode S mapping
+"" Which-key
+set which-key
+set notimeout
+"set timeoutlen=5000
+"let g:WhichKey_ShowVimActions = 'true'
+let g:WhichKey_ShowTypedSequence = 'true'
+" Use system clipboard
+set clipboard+=unnamed
+set clipboard+=ideaput
+" Disable IdeaVim in dialogs and singleline fields
+" https://github.com/JetBrains/ideavim/wiki/%22set%22-commands
+set ideavimsupport=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Keymaps
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" inoremap jj <Esc>
+
+" Move cursor up/down by 10 lines
+let g:WhichKeyDesc_10_lines_down = 'J Cursor 10 lines down'
+nnoremap <S-j> 10j
+let g:WhichKeyDesc_10_lines_up = 'K Cursor 10 lines up'
+nnoremap <S-k> 10k
+
+" Move lines up/down
+let g:WhichKeyDesc_move_line_up = '<A-Up> Move Line Up'
+map <A-Up> <Action>(MoveLineUp)
+let g:WhichKeyDesc_move_line_down = '<A-Down> Move Line Down'
+map <A-Down> <Action>(MoveLineDown)
+
+vnoremap < <gv
+" Allow continued indenting
+vnoremap > >gv
+
+" Redo with opposite of undo
+let g:WhichKeyDesc_redo = 'U Redo'
+map U <C-R>
+
+
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+"" :actionlist to view all available actions. Enable "Track Action Ids" to see
+"" the action id after each action
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" \ mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"\r"
+let g:WhichKeyDesc_reformat = '\r Reformat Code'
+map \r <Action>(ReformatCode)
+"\b"
+let g:WhichKeyDesc_toggle_line_breakpoint = '\b Toggle Line Breakpoint'
+map \b <Action>(ToggleLineBreakpoint)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" <leader> mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:WhichKeyDesc_clear_highlight = '<leader>/ Toggle search highlight'
+nnoremap <leader>/ :set hlsearch!<CR>
+
+"" A
+let g:WhichKeyDesc_context_actions = '<leader>a Show Context Actions'
+map <leader>a <Action>(ShowIntentionActions)
+"" B
+let g:WhichKeyDesc_goto_declaration = '<leader>b Goto Declaration'
+map <leader>b <Action>(GotoDeclaration)
+"" C
+"ca"
+let g:WhichKeyDesc_close_all = '<leader>ca Close All'
+map <leader>ca <Action>(CloseAllEditors)
+"cc"
+let g:WhichKeyDesc_comment = '<leader>cc Toggle Comment'
+map <leader>cc <Action>(CommentByLineComment)
+"co"
+let g:WhichKeyDesc_close_all_but_active = '<leader>co Close All But Active'
+map <leader>co <Action>(CloseAllEditorsButActive)
+"" D
+"dc"
+let g:WhichKeyDesc_open_console = '<leader>dc Open DB Console'
+map <leader>dc <Action>(Jdbc.OpenConsole.New.Generate)
+"dd"
+let g:WhichKeyDesc_duplicate = '<leader>dd Duplicate'
+map <leader>dd <Action>(EditorDuplicate)
+"" F
+"fa"
+let g:WhichKeyDesc_go_to_action = '<leader>fa Go To Action'
+map <leader>fa <Action>(GotoAction)
+"fc
+let g:WhichKeyDesc_go_to_class = '<leader>fc Go To Class'
+map <leader>fc <Action>(GotoClass)
+"fd"
+let g:WhichKeyDesc_goto_database_object = '<leader>fd Go To Database Object'
+map <leader>fd <Action>(GotoDatabaseObject)
+"ff"
+let g:WhichKeyDesc_goto_file = '<leader>ff Go To File'
+map <leader>ff <Action>(GotoFile)
+"fp"
+let g:WhichKeyDesc_find_in_path = '<leader>fp Fin In Path'
+map <leader>fp <Action>(FindInPath)
+"fu"
+let g:WhichKeyDesc_find_usages = '<leader>fu Find Usages'
+map <leader>fu <Action>(FindUsages)
+"" G
+"ge"
+let g:WhichKeyDesc_generate = '<leader>ge Show Generate Popup'
+map <leader>ge <Action>(Generate)
+"gr"
+let g:WhichKeyDesc_generate_from_ruby = '<leader>gr Generate Ruby Type Signatures'
+map <Leader>gr <Action>(rbs.generate.from.ruby)
+"" H
+"h"
+let g:WhichKeyDesc_previous_tab = '<leader>h Previous Tab'
+map <leader>h <Action>(PreviousTab)
+"" J
+let g:WhichKeyDesc_join_lines = '<leader>j Join Lines'
+nnoremap <leader>j J
+"" L
+"l"
+let g:WhichKeyDesc_next_tab = '<leader>l Next Tab'
+map <leader>l <Action>(NextTab)
+"" R
+"rc"
+let g:WhichKeyDesc_choose_run_configuration = '<leader>rc Choose Run Configuration'
+map <leader>rc <Action>(ChooseRunConfiguration)
+"rd"
+let g:WhichKeyDesc_debug = '<leader>rd Debug'
+map <leader>rd <Action>(DebugClass)
+"re"
+let g:WhichKeyDesc_refactor = '<leader>re Refactor'
+map <leader>re <Action>(Refactorings.QuickListPopupAction)
+"rf"
+let g:WhichKeyDesc_recent_files = '<leader>rf Recent Files'
+mmp <leader>rf <Action>(RecentFiles)
+"rl"
+let g:WhichKeyDesc_recent_locations = '<leader>rl Recent Locations'
+map <leader>rl <Action>(RecentLocations)
+"rn"
+let g:WhichKeyDesc_rename_element = '<leader>rn Rename Element'
+map <leader>rn <Action>(RenameElement)
+"rp"
+let g:WhichKeyDesc_replace = '<leader>rp Find and Replace'
+map <leader>rp <Action>(Replace)
+"rr"
+let g:WhichKeyDesc_execute = '<leader>rr Run'
+map <leader>rr <Action>(RunClass)
+"" S
+"sa"
+let g:WhichKeyDesc_select_all = '<leader>sa select all'
+map <leader>sa <action>($SelectAll)
+"sb"
+let g:WhichKeyDesc_new_scratch_buffer = '<leader>sb new scratch buffer'
+map <leader>sb <action>(NewScratchBuffer)
+"sc"
+let g:WhichKeyDesc_scratch_change_language = '<leader>sc change scratch language'
+map <leader>sc <action>(Scratch.ChangeLanguage)
+"sd"
+let g:WhichKeyDesc_split_down = '<leader>sd split and move down'
+map <leader>sd <action>(MoveTabDown)
+"sf"
+let g:WhichKeyDesc_new_scratch_file = '<leader>sf new scratch file'
+map <leader>sf <action>(NewScratchFile)
+"si"
+let g:WhichKeyDesc_select_in = '<leader>si select in'
+map <leader>si <action>(SelectIn)
+"sn"
+let g:WhichKeyDesc_edit_in_new_window = '<leader>sn edit in new window'
+mp <leader>sn <action>(EditSourceInNewWindow)
+"so"
+let g:WhichKeyDesc_split_other = '<leader>so move editor to opposite tab group'
+map <leader>so <action>(MoveEditorToOppositeTabGroup)
+"sr"
+let g:WhichKeyDesc_split_right = '<leader>sr split and move right'
+map <leader>sr <action>(MoveTabRight)
+"ss"
+let g:WhichKeyDesc_scratch_show_files_popup = '<leader>ss show scratch files popup'
+map <leader>ss <action>(Scratch.ShowFilesPopup)
+"su"
+let g:WhichKeyDesc_show_usages = '<leader>su show usages'
+map <leader>su <action>(ShowUsages)
+"sw"
+let g:WhichKeyDesc_surround_with = '<leader>sw surround with'
+map <leader>sw <action>(SurroundWith)
+
+"" T
+"tt"
+let g:WhichKeyDesc_terminal = '<leader>tt Terminal'
+map <leader>tt <Action>(ActivateTerminalToolWindow)
+"tr"
+let g:WhichKeyDesc_goto_related = '<leader>tr Go To Related'
+map <leader>tr <Action>(GotoRelated)
+"ts"
+let g:WhichKeyDesc_services = '<leader>ts Services'
+map <leader>ts <Action>(ActivateServicesToolWindow)
+"" V
+"vh"
+let g:WhichKeyDesc_show_file_history = '<leader>vh Show VCS File History'
+map <leader>vh <Action>(Vcs.ShowTabbedFileHistory)
+"vv"
+let g:WhichKeyDesc_show_vcs_quick_list = '<leader>vv Show VCS Quick List'
+map <leader>vv <Action>(Vcs.QuickListPopupAction)
+"" W
+"w"
+"let g:WhichKeyDesc_hide_all_windows = '<leader>w Hide All Panels'
+"map <leader>w <Action>(HideAllWindows)
+
+"" Window navigation
+let g:WhichKeyDesc_window_left = '<C-l> Window Left'
+nnoremap <C-l> <C-w>l
+let g:WhichKeyDesc_window_right = '<C-h> Window Left'
+nnoremap <C-h> <C-w>h
+let g:WhichKeyDesc_window_down = '<C-j> Window Down'
+nnoremap <C-j> <C-w>j
+let g:WhichKeyDesc_window_up = '<C-k> Window Up'
+nnoremap <C-k> <C-w>k
+"" https://github.com/abrookins/WrapToColumn
+"" https://youtrack.jetbrains.com/issue/VIM-186
+vmap gq <Action>(com.andrewbrookins.idea.wrap.WrapAction)
+"map <tab> <Action>(PreviousTab)
+"map <s-tab> <Action>(NextTab)
+
+nnoremap <S-h> :bprevious<CR>
+nnoremap <S-l> :bnext<CR>
+" Find more examples here: https://jb.gg/share-ideavimrc
