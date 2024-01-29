@@ -49,7 +49,7 @@ return {
   lazy = false,
   config = config,
   keys = {
-    keymap.set("n", "<C-p>", ":Telescope git_files<CR>", keymap_options({ desc = "Find files (Git-aware)" })),
+    -- keymap.set("n", "<C-p>", ":Telescope git_files<CR>", keymap_options({ desc = "Find files (Git-aware)" })),
     keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", keymap_options({ desc = "Find files" })),
     keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", keymap_options({ desc = "Find buffers" })),
     keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", keymap_options({ desc = "Find in files (grep)" })),
