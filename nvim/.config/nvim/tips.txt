@@ -81,3 +81,4 @@ vi( - select contents of parentheses
 4_ - move down 4 lines to first non-blank character. No count given = move to first non-blank character
 yssf - surround current line with function
 cc - delete current line and enter insert mode
+<C-w><C-^> - open window with alternate file
