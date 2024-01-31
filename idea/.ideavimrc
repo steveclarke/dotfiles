@@ -2,8 +2,7 @@
 
 " Leader is <space>
 let mapleader = ' '
-nnoremap <Space> <Nop>
-" nobody wants that bell!
+nnoremap <Space> <Nop> " nobody wants that bell!
 set visualbell
 set incsearch
 set hlsearch
@@ -36,6 +35,7 @@ set NERDTree
 "" Which-key
 set which-key
 set notimeout
+
 "set timeoutlen=5000
 "let g:WhichKey_ShowVimActions = 'true'
 let g:WhichKey_ShowTypedSequence = 'true'
@@ -46,6 +46,8 @@ set clipboard+=ideaput
 " https://github.com/JetBrains/ideavim/wiki/%22set%22-commands
 set ideavimsupport=
 
+set formatoptions=crql
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Keymaps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -55,6 +57,7 @@ set ideavimsupport=
 " Move cursor up/down by 10 lines
 let g:WhichKeyDesc_10_lines_down = 'J Cursor 10 lines down'
 nnoremap <S-j> 10j
+
 let g:WhichKeyDesc_10_lines_up = 'K Cursor 10 lines up'
 nnoremap <S-k> 10k
 
@@ -258,6 +261,8 @@ vmap gq <Action>(com.andrewbrookins.idea.wrap.WrapAction)
 "map <tab> <Action>(PreviousTab)
 "map <s-tab> <Action>(NextTab)
 
-nnoremap <S-h> :bprevious<CR>
-nnoremap <S-l> :bnext<CR>
+"nnoremap <S-h> :bprevious<CR>
+"nnoremap <S-l> :bnext<CR>
+map <S-h> <Action>(PreviousTab)
+map <S-l> <Action>(NextTab)
 " Find more examples here: https://jb.gg/share-ideavimrc
