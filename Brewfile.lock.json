@@ -1572,6 +1572,50 @@
             }
           }
         }
+      },
+      "aichat": {
+        "version": "0.12.0",
+        "bottle": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_sonoma": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:ea478e61c8770403e805d66f23eba181580982c4e68bf90ef1bb3d9fea926806",
+              "sha256": "ea478e61c8770403e805d66f23eba181580982c4e68bf90ef1bb3d9fea926806"
+            },
+            "arm64_ventura": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:32122f5a79087cc63afe4d2139a3f6784026b2a5cb92cc2dc54f9d4db73f5712",
+              "sha256": "32122f5a79087cc63afe4d2139a3f6784026b2a5cb92cc2dc54f9d4db73f5712"
+            },
+            "arm64_monterey": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:f5aef2c3bc8818d0b2ab55b7d0b06dfc46e4da0127290fd2208f7e2e50705037",
+              "sha256": "f5aef2c3bc8818d0b2ab55b7d0b06dfc46e4da0127290fd2208f7e2e50705037"
+            },
+            "sonoma": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:14157e5ac5ca4d0c98e5e7ddeef60319f2b6570b875ee6aa50e41af9ed5c2647",
+              "sha256": "14157e5ac5ca4d0c98e5e7ddeef60319f2b6570b875ee6aa50e41af9ed5c2647"
+            },
+            "ventura": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:565d32356bc9a6ffdfa01e227fbca929e9f57c48eeaa97d310bbae7ff739729d",
+              "sha256": "565d32356bc9a6ffdfa01e227fbca929e9f57c48eeaa97d310bbae7ff739729d"
+            },
+            "monterey": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:575540f6fe45d6c72554e9b579b31359517472f1c2e2858e20424758258c182e",
+              "sha256": "575540f6fe45d6c72554e9b579b31359517472f1c2e2858e20424758258c182e"
+            },
+            "x86_64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/aichat/blobs/sha256:9a19989c054e99fabf3f8cde26cff6aa11fb577a5cb5864753ff8b63dcf69cf2",
+              "sha256": "9a19989c054e99fabf3f8cde26cff6aa11fb577a5cb5864753ff8b63dcf69cf2"
+            }
+          }
+        }
       }
     }
   },
