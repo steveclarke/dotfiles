@@ -82,3 +82,6 @@ vi( - select contents of parentheses
 yssf - surround current line with function
 cc - delete current line and enter insert mode
 <C-w><C-^> - open window with alternate file
+d/foo<CR> - delete to "foo". Works with any motion. 
+<C-t>, <C-d> - indent/deindent line in insert mode
+zz - center screen on cursor
