@@ -85,3 +85,5 @@ cc - delete current line and enter insert mode
 d/foo<CR> - delete to "foo". Works with any motion. 
 <C-t>, <C-d> - indent/deindent line in insert mode
 zz - center screen on cursor
+g& - repeat last substitution, with flags, on file
+:set {option}& - reset option to default
