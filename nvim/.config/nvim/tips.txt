@@ -87,3 +87,5 @@ d/foo<CR> - delete to "foo". Works with any motion.
 zz - center screen on cursor
 g& - repeat last substitution, with flags, on file
 :set {option}& - reset option to default
+/\v<foo> - search for "foo" on a word boundary
+g* - search for word under cursor, ignoring word boundaries
