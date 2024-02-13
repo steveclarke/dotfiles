@@ -18,14 +18,18 @@ window:
 font:
   size: 11
   normal:
-    family: "FiraMono Nerd Font"
+    family: "JetBrainsMono NF"
+    # family: "FiraMono Nerd Font"
     style: Regular
   bold:
-    family: "FiraMono Nerd Font"
+    family: "JetBrainsMono NF"
+    # family: "FiraMono Nerd Font"
     style: Bold
   italic:
-    family: "FiraMono Nerd Font"
+    family: "JetBrainsMono NF"
+    # family: "FiraMono Nerd Font"
     style: Italic
   bold_italic:
-    family: "FiraMono Nerd Font"
+    family: "JetBrainsMono NF"
+    # family: "FiraMono Nerd Font"
     style: Bold Italic
