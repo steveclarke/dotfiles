@@ -92,3 +92,5 @@ g* - search for word under cursor, ignoring word boundaries
 yssb - surround current line with braces
 cib - change inner brackets (parentheses) - equivalent to ci(
 yib - yank inner brackets
+R - enter replace mode
+[I - show choosable list of all words under cursor
