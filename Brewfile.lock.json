@@ -1608,6 +1608,8 @@
         }
       },
       "puma/puma/puma-dev": {
+        "version": "0.18.3",
+        "bottle": false
       },
       "atuin": {
         "version": "18.0.2",
@@ -1670,7 +1672,7 @@
         "GCC": "11.4.0"
       },
       "Ubuntu 22.04.4 LTS (jammy)": {
-        "HOMEBREW_VERSION": "4.2.10-33-gf138059",
+        "HOMEBREW_VERSION": "4.2.10-44-gfb09997",
         "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
         "Homebrew/homebrew-core": "api",
         "GCC": "11.4.0"
