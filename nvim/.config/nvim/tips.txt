@@ -94,3 +94,4 @@ cib - change inner brackets (parentheses) - equivalent to ci(
 yib - yank inner brackets
 R - enter replace mode
 [I - show choosable list of all words under cursor
+g; - go to last edit (uses '.)
