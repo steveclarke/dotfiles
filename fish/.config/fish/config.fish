@@ -95,7 +95,11 @@ if status is-interactive
 
 end
 
-fish_config theme choose catppuccin-mocha
+if is-jetbrains-ide
+    echo "Not setting a fish shell color scheme since we are in a JetBrains IDE"
+else
+    fish_config theme choose catppuccin-mocha
+end
 
 # Disable default banner
 set fish_greeting
