@@ -96,7 +96,7 @@ if status is-interactive
 end
 
 if is-jetbrains-ide
-    echo "Not setting a fish shell color scheme since we are in a JetBrains IDE"
+    # echo "Not setting a fish shell color scheme since we are in a JetBrains IDE"
 else
     fish_config theme choose catppuccin-mocha
 end
