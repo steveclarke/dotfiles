@@ -49,6 +49,10 @@ banner "Configuring Idea"
 rm ${HOME}/.ideavimrc
 stow idea
 
+banner "Configuring Just"
+rm ${HOME}/justfile
+stow just
+
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	banner "Configuring i3 Window Manager"
 	mkdir -p "${HOME}/.config/i3"

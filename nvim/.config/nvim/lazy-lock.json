@@ -50,6 +50,7 @@
   "telescope.nvim": { "branch": "master", "commit": "d90956833d7c27e73c621a61f20b29fdb7122709" },
   "todo-comments.nvim": { "branch": "main", "commit": "833d8dd8b07eeda37a09e99460f72a02616935cb" },
   "tokyonight.nvim": { "branch": "main", "commit": "610179f7f12db3d08540b6cc61434db2eaecbcff" },
+  "tree-sitter-just": { "branch": "main", "commit": "51aa99ca89aca7817fd8f103f97fed7920d95464" },
   "unimpaired.nvim": { "branch": "main", "commit": "9490f0b05370c3009a22ee04ef4818e52e8b1af4" },
   "vim-bbye": { "branch": "master", "commit": "25ef93ac5a87526111f43e5110675032dbcacf56" },
   "vim-nightfly-guicolors": { "branch": "master", "commit": "56fe47bd16272d9644fd9946a2596fa2c3905c35" },

@@ -1,0 +1,5 @@
+set shell := ["fish", "-c"]
+
+up:
+  fish -c "upgrade-all"
+  
