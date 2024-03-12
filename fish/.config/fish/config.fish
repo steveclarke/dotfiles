@@ -4,6 +4,7 @@ fish_add_path ~/.local/bin
 
 # ─[ Exports ]────────────────────────────────────────────────────────────
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
+set -x RUBY_YJIT_ENABLE 1
 
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
 set -gx EDITOR (which nvim)
@@ -97,6 +98,7 @@ end
 
 if is-jetbrains-ide
     # echo "Not setting a fish shell color scheme since we are in a JetBrains IDE"
+    fish_config theme choose "fish default"
 else
     fish_config theme choose catppuccin-mocha
 end

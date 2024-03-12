@@ -53,7 +53,7 @@ set formatoptions=crql
 "" Keymaps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" inoremap jj <Esc>
+inoremap jj <Esc>
 
 " Move cursor up/down by 10 lines
 "let g:WhichKeyDesc_10_lines_down = 'J Cursor 10 lines down'
