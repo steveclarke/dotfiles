@@ -29,6 +29,7 @@ if status is-interactive
     abbr -a up upgrade-all
     abbr -a df "df -h -T"
     abbr -a ncdu "ncdu --color dark"
+    abbr -a be bundle exec
 
     # Commonly cd'ed directories 
     abbr -a uapi "cd ~/src/unio-project/unio-api"
