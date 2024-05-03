@@ -25,6 +25,22 @@ require("lazy").setup({
   },
 }, lazy_opts)
 
+
+-- <leader> key
+vim.g.mapleader = " "
+
+-- Open config with <leader>i
+vim.cmd("nmap <leader>i :e ~/.config/nvim/init-vscode.lua<cr>")
+
+-- Save file
+vim.cmd("nmap <leader>s :w<cr>")
+
+vim.opt.clipboard = "unnamedplus"
+
+-- search ignoring case
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
 local keymap = vim.keymap
 
 -- Redo with opposite of undo
@@ -38,7 +54,19 @@ keymap.set("n", "U", "<C-r>")
 -- keymap.set("v", "<A-u>", "<cmd>m '>+1<cr>gv=gv")
 -- keymap.set("v", "<A-i>", "<cmd>m '<-2<cr>gv=gv")
 
+-- Clear search highlighting
+keymap.set("n", "<leader><space>", "<cmd>nohlsearch<cr>")
+
 -- Better indenting
 keymap.set("v", "<", "<gv")
 keymap.set("v", ">", ">gv")
 
+-- Highlight on yank
+local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = highlight_group,
+  pattern = "*",
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
