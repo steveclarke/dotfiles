@@ -1,0 +1,3 @@
+- [ ] Configure keymaps
+- [ ] Configure plugins
+  - neotree

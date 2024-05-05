@@ -1,5 +1,10 @@
 local vscode = vim.g.vscode
 
+-- <leader> key is <space>
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+vim.keymap.set("n", "<space>", "<nop>")
+
 --
 -- [[ PLUGINS ]]
 --
@@ -19,31 +24,7 @@ vim.opt.rtp:prepend(lazypath)
 local lazy_opts = {
   ui = { border = "rounded" }
 }
--- NOTE: Add enabled = not vscode to skip loading a plugin if in vscode
-require("lazy").setup({
-  {
-    "kylechui/nvim-surround",
-    version = "*",
-    config = function()
-      require("nvim-surround").setup({})
-    end
-  },
-  {
-    "catppuccin/nvim",
-    enable = not vscode,
-    name = "catppuccin",
-    priority = 1000,
-    config = function()
-      require("catppuccin").setup({ })
-      vim.cmd.colorscheme("catppuccin")
-    end
-  }
-}, lazy_opts)
-
--- <leader> key is <space>
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-vim.keymap.set("n", "<space>", "<nop>")
+require("lazy").setup("plugins", lazy_opts)
 
 -- Open init.lua with <leader>i
 vim.cmd("nmap <leader>i :e ~/.config/nvim/init.lua<cr>")
@@ -87,6 +68,50 @@ if not vscode then
 
   -- highlight the current line
   vim.opt.cursorline = true
+
+  -- add more space in the command line for displaying messages
+  -- opt.cmdheight = 1
+
+  vim.opt.errorbells = false
+  vim.opt.swapfile = false
+  vim.opt.backup = false
+  vim.opt.mouse:append("a")
+  vim.opt.encoding = "UTF-8"
+
+  -- scrolloff
+  vim.opt.scrolloff = 10
+  vim.opt.sidescrolloff = 8
+
+  -- folding
+  vim.opt.foldmethod = "expr"
+  vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+  vim.opt.foldenable = false
+  vim.opt.foldlevel = 99
+
+  -- Allow the block to expand into lines where there are no characters
+  vim.opt.virtualedit = "block"
+
+  -- Show partial off-screen substitute results in a preview window
+  -- i.e. :%s/foo/bar results will show in preview window, so that
+  -- if substitutions are spread through the fille we can see them
+  -- consolidated before accepting the change.
+  vim.opt.inccommand = "split"
+
+  -- Use ripgrep if available
+  if vim.fn.executable("rg") == 1 then
+    vim.opt.grepprg = "rg --vimgrep --no-heading --smart-case"
+  end
+
+  -- Allow loading from a local .exrc, .nvimrc, .nvim.lua
+  vim.opt.exrc = true
+
+  -- Don't automatically add comment on newline above/below.
+  -- Has to be done in an autocmd because Neovim sets it in
+  -- after/ftplugin/lua.lua So not only is it the most annoying default ever
+  -- (well aside from the bell in vim) but it was hell to figure out how to
+  -- unset it.
+  -- See: https://www.reddit.com/r/neovim/comments/sqld76/stop_automatic_newline_continuation_of_comments/
+  vim.api.nvim_create_autocmd("FileType", { command = "set formatoptions-=cro" })
 end
 
 --
