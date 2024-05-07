@@ -1,4 +1,5 @@
 {
   "catppuccin": { "branch": "main", "commit": "6af91673ceccbd6e073b66c439e7fce239f72d24" },
-  "nvim-surround": { "branch": "main", "commit": "6d0dc3dbb557bcc6a024969da461df4ba803fc48" }
+  "nvim-surround": { "branch": "main", "commit": "6d0dc3dbb557bcc6a024969da461df4ba803fc48" },
+  "vscode-multi-cursor.nvim": { "branch": "main", "commit": "a0af78cf5e5a6f2d55e37e7907a3d1b096bbaa4d" }
 }
