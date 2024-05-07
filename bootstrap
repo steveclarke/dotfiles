@@ -5,7 +5,7 @@ set -e pipefail
 
 # Check for .dotfilesrc. if it doesn't exist exit with return value 2
 if test -f ~/.dotfilesrc; then
-	source ~/.dotfilesrc
+	source "$HOME"/.dotfilesrc
 else
 	echo "ERROR: ~/.dotfilesrc does not exist"
 	exit 2
@@ -29,7 +29,7 @@ install_pre_requisites() {
 
 copy_ssh_keys() {
 	banner "Copying SSH keys"
-	rsync -avz --files-from=<(printf "%s\n" ${DOTFILES_SSH_KEYS// /$'\n'}) "${DOTFILES_SSH_KEYS_HOST}:.ssh/" "${HOME}/.ssh"
+	rsync -avz --files-from=<(printf "%s\n" "${DOTFILES_SSH_KEYS// /$'\n'}") "${DOTFILES_SSH_KEYS_HOST}:.ssh/" "${HOME}/.ssh"
 }
 
 configure_ssh() {
@@ -42,7 +42,7 @@ clone_git_repo() {
 	banner "Cloning git repo"
 
 	if test -d ~/dotfiles; then
-		echo "~/dotfiles already exists"
+		echo "${HOME}/dotfiles already exists"
 	else
 		git clone git@github.com:steveclarke/dotfiles ~/dotfiles
 	fi
