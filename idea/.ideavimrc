@@ -21,18 +21,21 @@ set ideamarks
 set ideajoin
 set surround
 set commentary
+
 " https://github.com/AlexPl292/IdeaVim-EasyMotion#supported-commands
 " default <leader><leader>f<char> to jump to char"
 set easymotion
-"map <leader>E <Plug>(easymotion-s)
-"map <leader>e <Plug>(easymotion-f)
+map <leader>E <Plug>(easymotion-s)
+map <leader>e <Plug>(easymotion-f)
+
 set highlightedyank
 set matchit
 
 set NERDTree
 
 " Third party plugins
-"set sneak " Beware, this plugin causes conflict with Surround's visual mode S mapping
+set sneak " Beware, this plugin causes conflict with Surround's visual mode S mapping
+
 "" Which-key
 set which-key
 set notimeout
@@ -40,9 +43,11 @@ set notimeout
 "set timeoutlen=5000
 "let g:WhichKey_ShowVimActions = 'true'
 let g:WhichKey_ShowTypedSequence = 'true'
+
 " Use system clipboard
 set clipboard+=unnamed
 set clipboard+=ideaput
+
 " Disable IdeaVim in dialogs and singleline fields
 " https://github.com/JetBrains/ideavim/wiki/%22set%22-commands
 set ideavimsupport=
