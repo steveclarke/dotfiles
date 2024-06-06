@@ -27,7 +27,7 @@ local lazy_opts = {
 require("lazy").setup("plugins", lazy_opts)
 
 -- Open init.lua with <leader>i
-vim.cmd("nmap <leader>i :e ~/.config/nvim/init.lua<cr>")
+-- vim.cmd("nmap <leader>i :e ~/.config/nvim/init.lua<cr>")
 
 --
 -- [[ OPTIONS ]]
