@@ -1,9 +1,0 @@
-# Note: This file is for imports only. Main configuration is in `shared.yml`
-# and local machine overrides go in `local.yml` if it exists.
-import:
-  - ~/.config/alacritty/shared.yml
-  # Create a local.yml file for any overrides. Options added to this will
-  # override those in the shared.yml file.
-  - ~/.config/alacritty/local.yml
-  - ~/.config/alacritty/themes/catppuccin/catppuccin-mocha.yml
-  # - ~/.config/alacritty/themes/dracula.yml
