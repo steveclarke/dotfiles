@@ -1,0 +1,4 @@
+{
+  "catppuccin": { "branch": "main", "commit": "894efb557728e532aa98b98029d16907a214ec05" },
+  "nvim-surround": { "branch": "main", "commit": "687ea2f33955df0042bf228853a82696265e7e2d" }
+}
