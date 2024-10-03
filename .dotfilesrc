@@ -2,4 +2,6 @@ export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77
 export DOTFILES_SSH_KEYS="sevenview2020.pub sevenview2020 sevenview.pub sevenview"
 export DOTFILES_SSH_KEYS_PRIMARY=sevenview2020
 export DOTFILES_CONFIG_I3=false
+export DOTFILES_GIT_USER_NAME=Steve Clarke
+export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
 
