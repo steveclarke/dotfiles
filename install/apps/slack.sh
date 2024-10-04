@@ -1,11 +1,12 @@
-flatpak install -y flathub com.slack.Slack
+# flatpak install -y flathub com.slack.Slack
+sudo snap install slack
 
 autostart_dir="$HOME/.config/autostart"
 
 cat <<EOL > "$autostart_dir"/slack.desktop
 [Desktop Entry]
 Type=Application
-Exec=flatpak run com.slack.Slack
+Exec=slack
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
