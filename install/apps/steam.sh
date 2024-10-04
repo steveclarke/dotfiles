@@ -3,10 +3,10 @@
 # Enable 32-bit support for Steam
 sudo dpkg --add-architecture i386
 
-cd /tmp
+cd /tmp || exit
 wget https://cdn.akamai.steamstatic.com/client/installer/steam.deb 
 sudo apt install -y ./steam.deb
 rm steam.deb
-cd -
+cd - || exit
 
 
