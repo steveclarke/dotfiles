@@ -1,6 +1,7 @@
 # ─[ Path ]───────────────────────────────────────────────────────────────
 fish_add_path ~/bin
 fish_add_path ~/.local/bin
+fish_add_path ~/.local/share/dotfiles/bin
 
 # ─[ Exports ]────────────────────────────────────────────────────────────
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
@@ -25,25 +26,23 @@ if status is-interactive
     abbr -a lg lazygit
     abbr -a gg lazygit
     abbr -a ldo lazydocker
-    abbr -a cat bat
+    # abbr -a cat bat
     abbr -a up upgrade-all
     abbr -a df "df -h -T"
     abbr -a ncdu "ncdu --color dark"
     abbr -a be bundle exec
 
     # Commonly cd'ed directories 
-    abbr -a uapi "cd ~/src/unio-project/unio-api"
-    abbr -a uapp "cd ~/src/unio-project/unio-app-ua740"
     abbr -a --set-cursor src "cd ~/src/%"
     abbr -a --set-cursor sand "cd ~/src/sandbox/%"
 
     # Dotfiles
-    abbr -a --set-cursor dot "cd ~/dotfiles/%"
-    abbr -a --set-cursor dotf "cd ~/dotfiles/fish/.config/fish/%"
-    abbr -a --set-cursor dotn "cd ~/dotfiles/nvim/.config/nvim/%"
-    abbr -a --set-cursor dotz "cd ~/dotfiles/zellij/.config/zellij/%"
-    abbr -a --set-cursor doti "cd ~/dotfiles/i3/.config/i3/%"
-    abbr -a dotup "cd ~/dotfiles && git pull && ./setup && cd -"
+    # abbr -a --set-cursor dot "cd ~/dotfiles/%"
+    # abbr -a --set-cursor dotf "cd ~/dotfiles/fish/.config/fish/%"
+    # abbr -a --set-cursor dotn "cd ~/dotfiles/nvim/.config/nvim/%"
+    # abbr -a --set-cursor dotz "cd ~/dotfiles/zellij/.config/zellij/%"
+    # abbr -a --set-cursor doti "cd ~/dotfiles/i3/.config/i3/%"
+    # abbr -a dotup "cd ~/dotfiles && git pull && ./setup && cd -"
 
     # Zellij
     abbr -a zj zellij
@@ -56,8 +55,8 @@ if status is-interactive
     # Layouts
     abbr -a zjcode "zellij --layout ~/.config/zellij/layouts/code.yml"
     # abbr -a zju "zellij --layout ~/.config/zellij/layouts/unio.yml --session 'unio-$(date +%F)'"
-    abbr -a zju "zellij --layout ~/.config/zellij/layouts/unio.yml"
-    abbr -a zjc "zellij --layout ~/.config/zellij/layouts/connon.yml"
+    # abbr -a zju "zellij --layout ~/.config/zellij/layouts/unio.yml"
+    # abbr -a zjc "zellij --layout ~/.config/zellij/layouts/connon.yml"
 
     # Links to functions
     abbr -a mcd mkdir-cd
