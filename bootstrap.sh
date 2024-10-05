@@ -41,10 +41,10 @@ configure_ssh() {
 clone_git_repo() {
 	banner "Cloning git repo"
 
-	if test -d ~/dotfiles; then
-		echo "${HOME}/dotfiles already exists"
+	if test -d "${DOTFILES_INSTALL_DIR}"; then
+		echo "${DOTFILES_INSTALL_DIR} already exists"
 	else
-		git clone git@github.com:steveclarke/dotfiles ~/dotfiles
+		git clone git@github.com:steveclarke/dotfiles "${DOTFILES_INSTALL_DIR}"
 	fi
 }
 
@@ -62,7 +62,7 @@ echo -e "This script is designed to boostrap a fresh system and may overwrite ex
 echo -e "Are you sure you want to proceed?"
 
 echo -n "Do you want to proceed? (y/N): "
-read answer
+read -r answer
 
 # convert answer to lowercase
 answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
