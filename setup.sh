@@ -15,7 +15,7 @@ mkdir -p "${HOME}/bin"
 stow bin
 
 banner "Configuring Bash"
-rm ${HOME}/.bash_aliases
+rm "${HOME}"/.bash_aliases
 stow bash
 
 banner "Configuring Tmux"
