@@ -1,8 +1,17 @@
-# This is the temporary holding place for the new core install experience.
+#!/usr/bin/env bash
 
-source ~/.dotfilesrc
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
-bash "$DOTFILES_INSTALL_DIR"/install/prereq.sh
-bash "$DOTFILES_INSTALL_DIR"/install/cli.sh
-bash "$DOTFILES_INSTALL_DIR"/install/apps.sh
-bash "$DOTFILES_INSTALL_DIR"/install/desktop-entries.sh
+# banner "Installing tools"
+# bash install-tools.sh
+
+# Install prerequisites
+bash "${DOTFILES_DIR}"/install/prereq.sh
+
+# Stow configs
+bash "${DOTFILES_DIR}"/configs/stow.sh
+
+# bash "$DOTFILES_DIR"/install/cli.sh
+# bash "$DOTFILES_DIR"/install/apps.sh
+# bash "$DOTFILES_DIR"/install/desktop-entries.sh

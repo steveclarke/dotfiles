@@ -18,12 +18,14 @@ apt_install() {
 	sudo apt update && sudo apt install -y "$1"
 }
 
+bash "${DOTFILES_DIR}/install/prereq.sh"
+
 # [[ Homebrew ]]
 if ! is_installed brew; then
 	banner "Homebrew"
 
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &&
-		cd "${DOTFILES_INSTALL_DIR}" &&
+		cd "${DOTFILES_DIR}" &&
 		(
 			echo
 			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'

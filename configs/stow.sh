@@ -1,19 +1,15 @@
-#!/usr/bin/env bash
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
-source ~/.dotfilesrc
-
-banner() {
-	echo "=== $1 "
+config_banner() {
+  banner "Configuring $1"
 }
 
 do_stow() {
-	stow -t "${HOME}" "$1"
+	stow -t "${HOME}" "${DOTFILES_DIR}"/configs/"$1"
 }
 
-banner "Installing tools"
-bash install-tools.sh
-
-banner "Configuring ~/bin"
+config_banner "Configuring ~/bin"
 mkdir -p "${HOME}/bin"
 do_stow bin
 

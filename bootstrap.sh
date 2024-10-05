@@ -40,10 +40,10 @@ configure_ssh() {
 clone_git_repo() {
 	banner "Cloning git repo"
 
-	if test -d "${DOTFILES_INSTALL_DIR}"; then
-		echo "${DOTFILES_INSTALL_DIR} already exists"
+	if test -d "${DOTFILES_DIR}"; then
+		echo "${DOTFILES_DIR} already exists"
 	else
-		git clone git@github.com:steveclarke/dotfiles "${DOTFILES_INSTALL_DIR}"
+		git clone git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
 	fi
 }
 
