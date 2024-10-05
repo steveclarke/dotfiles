@@ -3,9 +3,6 @@
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
-# banner "Installing tools"
-# bash install-tools.sh
-
 # Install prerequisites
 bash "${DOTFILES_DIR}"/install/prereq.sh
 

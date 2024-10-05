@@ -1,3 +1,46 @@
 #!/usr/bin/env bash
 
-echo "TODO: Implement dotfiles"
+set -e -o pipefail
+
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/dotfiles.sh
+
+# Show usage if no command is provided
+if [ $# -eq 0 ]; then
+  echo "Usage: dotfiles [command]"
+  echo "Commands:"
+  echo "  stow: Update config files using stow"
+  echo "  brew: Run \`brew bundle\` to install/update packages"
+  echo "  update: Run stow and brew"
+  exit 1
+fi
+
+run_stow () {
+  echo "Stowing dotfiles"
+  bash "${DOTFILES_DIR}"/configs/stow.sh
+}
+
+run_brew () {
+  echo "Running brew bundle"
+  cd "${DOTFILES_DIR}" || exit
+  brew bundle
+  cd - || exit
+}
+
+# check the command and run appropriate function
+case $1 in
+  update)
+    run_stow
+    run_brew
+    ;;
+  stow)
+    run_stow
+    ;;
+  brew)
+    run_brew
+   ;;
+  *)
+    echo "Invalid command"
+    exit 1
+    ;;
+esac
