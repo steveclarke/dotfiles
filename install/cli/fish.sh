@@ -1,12 +1,6 @@
-source "${HOME}"/.dotfilesrc
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+sudo apt-add-repository -y ppa:fish-shell/release-3
+sudo apt update
+sudo apt install -y fish
 
-if ! is_installed fish; then
-	installing_banner "fish"
-
-	sudo apt-add-repository -y ppa:fish-shell/release-3
-  sudo apt update
-	apt_install fish
-else
-	skipping "fish"
-fi
+# Set fish as the default shell
+chsh -s /usr/bin/fish
