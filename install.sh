@@ -2,7 +2,7 @@
 
 source ~/.dotfilesrc
 
-bash "$DOTFILES_INSTALL_DIR"/prereq.sh
-bash "$DOTFILES_INSTALL_DIR"/cli.sh
-bash "$DOTFILES_INSTALL_DIR"/apps.sh
-bash "$DOTFILES_INSTALL_DIR"/desktop-entries.sh
+bash "$DOTFILES_INSTALL_DIR"/install/prereq.sh
+bash "$DOTFILES_INSTALL_DIR"/install/cli.sh
+bash "$DOTFILES_INSTALL_DIR"/install/apps.sh
+bash "$DOTFILES_INSTALL_DIR"/install/desktop-entries.sh
