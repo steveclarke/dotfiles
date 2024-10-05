@@ -9,8 +9,8 @@
 sudo mkdir -p /etc/systemd/resolved.conf.d
 
 # Create the override file with DNSStubListener=no
-echo "[Resolve]" | sudo tee /etc/systemd/resolved.conf.d/override.conf > /dev/null
-echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf.d/override.conf > /dev/null
+echo "[Resolve]" | sudo tee /etc/systemd/resolved.conf.d/no-dns-stub-listener.conf > /dev/null
+echo "DNSStubListener=no" | sudo tee -a /etc/systemd/resolved.conf.d/no-dns-stub-listener.conf > /dev/null
 
 # Restart systemd-resolved to apply the changes
 echo "Restarting systemd-resolved..."
