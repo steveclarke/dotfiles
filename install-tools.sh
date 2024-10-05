@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-# [[ xclip ]]
-if ! is_installed xclip; then
-	banner "xclip"
-	apt_install xclip
-else
-	skipping "xclip"
-fi
-
 # [[ i3 Window Manager Requirements ]]
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	echo "=== checking i3 Requirements"
@@ -60,21 +52,4 @@ if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	else
 		skipping "yad"
 	fi
-fi
-
-# [[ csvlens (CSV Viewer) ]]
-if is_installed cargo; then
-	if ! is_installed csvlens; then
-		banner "csvlens"
-		cargo install csvlens
-	else
-		skipping "csvlens"
-	fi
-
-	# if ! is_installed dot-http; then
-	# 	banner "dot-http"
-	# 	cargo install dot-http
-	# else
-	# 	skipping "dot-http"
-	# fi
 fi
