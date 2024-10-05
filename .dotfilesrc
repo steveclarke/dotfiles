@@ -1,5 +1,5 @@
 # Core
-export DOTFILES_INSTALL_DIR=${HOME}/.local/share/dotfiles
+export DOTFILES_DIR=${HOME}/.local/share/dotfiles
 
 # SSH 
 export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77

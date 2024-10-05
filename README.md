@@ -50,11 +50,11 @@ Next, run the bootstrap script.
 
 ### Main Setup Script
 
-Run the `setup.sh` script. This will also be used to update the dotfiles regularly.
+Run the `install.sh` script. This will also be used to update the dotfiles regularly.
 
 ```bash
 cd ~/.local/share/dotfiles
-bash setup.sh
+bash install.sh
 ```
 
 ## Updating
@@ -62,5 +62,5 @@ bash setup.sh
 ```bash
 cd ~/.local/share/dotfiles
 git pull
-bash setup.sh
+bash install.sh
 ```
