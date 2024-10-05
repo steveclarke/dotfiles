@@ -17,7 +17,7 @@ banner() {
 }
 
 install_pre_requisites() {
-	banner "Installing pre-requisites"
+	banner "Installing bootstrap pre-requisites"
 	sudo apt update &&
 		sudo apt install -y \
 			git \

@@ -6,7 +6,7 @@ config_banner() {
 }
 
 do_stow() {
-	stow -t "${HOME}" "${DOTFILES_DIR}"/configs/"$1"
+	stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
 }
 
 config_banner "Configuring ~/bin"
