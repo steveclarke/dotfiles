@@ -1,75 +1,11 @@
 #!/usr/bin/env bash
 
-source ~/.dotfilesrc
-
-is_installed() {
-	command -v "$1" >/dev/null 2>&1
-}
-
-banner() {
-	echo "=== Installing $1"
-}
-
-skipping() {
-	echo "=== skipping $1 - already installed"
-}
-
-apt_install() {
-	sudo apt update && sudo apt install -y "$1"
-}
-
-bash "${DOTFILES_DIR}/install/prereq.sh"
-
-# [[ Homebrew ]]
-if ! is_installed brew; then
-	banner "Homebrew"
-
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &&
-		cd "${DOTFILES_DIR}" &&
-		(
-			echo
-			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-		) >>/home/steve/.bashrc &&
-		eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" &&
-		brew bundle
-else
-	echo "Running brew bundle"
-	cd ~/dotfiles && brew bundle
-fi
-
-# [[ fish ]]
-if ! is_installed fish; then
-	banner "fish"
-
-	sudo apt-add-repository -y ppa:fish-shell/release-3
-	apt_install fish
-else
-	skipping "fish"
-fi
-
-# [[ asdf ]]
-if ! test -d ~/.asdf; then
-	banner "asdf"
-
-	git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
-else
-	skipping "asdf"
-fi
-
 # [[ xclip ]]
 if ! is_installed xclip; then
 	banner "xclip"
 	apt_install xclip
 else
 	skipping "xclip"
-fi
-
-# [[ stow ]]
-if ! is_installed stow; then
-	banner "stow"
-	apt_install stow
-else
-	skipping "stow"
 fi
 
 # [[ i3 Window Manager Requirements ]]
