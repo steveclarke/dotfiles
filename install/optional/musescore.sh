@@ -1,1 +1,1 @@
-sudo snap install musescore
+flatpak install -y flathub org.musescore.MuseScore
