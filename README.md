@@ -8,7 +8,7 @@ lots of assumptions about where I like to place things.
 
 * Operating system is Debian-derived (e.g. Ubuntu, Pop!_OS)
 * Repository lives at `~/.local/share/dotfiles` (unless otherwise specified in
-3  `.dotfilesrc`)
+  `.dotfilesrc`)
 
 ## General Organisation
 
@@ -24,7 +24,7 @@ lots of assumptions about where I like to place things.
    * `desktop-entries` - `.desktop` files for applications. Mainly acts as a
      wrapper for web apps.
    * `optional` - scripts to install optional software. These must be run manually.
-* `setups` - scripts to configure things that can't be configured via dotfiles.
+* `setups` - scripts to configure things that can't be configured via stow.
 
 
 ## Installation
@@ -59,8 +59,22 @@ bash install.sh
 
 ## Updating
 
+Use `git` to update the dotfiles from the repository.
+
 ```bash
-cd ~/.local/share/dotfiles
 git pull
-bash install.sh
 ```
+
+To update the stowed dotfiles and Homebrew packages you can use the `dotfiles`
+script in the `bin` directory (added to path automatically).
+
+
+```bash
+dotfiles stow # re-runs stow on the `configs` directory, updating symlinks
+dotfiles brew # Runs `brew bundle` to install and update Homebrew packages
+dotfiles update # runs both stow and brew
+
+```
+New items added to the `install` directory should be manually run after initial
+installation. In general you should run `bash install/**/[name].sh` to run
+any of the install scripts.
