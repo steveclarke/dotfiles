@@ -1,6 +1,6 @@
 # TODO
 
-- [x] Move stow folders into /configs
-- [ ] Break setup script into separate files
-- [ ] Rename setup to install.sh
-
+- [ ] Create a `dotfiles` bin that has the following commands:
+  - [ ] `dotfiles install` - installs the dotfiles
+  - [ ] `dotfiles brew` - runs brew bundle
+  - [ ] `dotfiles stow` - updates the stow symlinks
