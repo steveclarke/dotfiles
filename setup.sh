@@ -6,66 +6,70 @@ banner() {
 	echo "=== $1 "
 }
 
+do_stow() {
+	stow -t "${HOME}" "$1"
+}
+
 banner "Installing tools"
 bash install-tools.sh
 
 banner "Configuring ~/bin"
 mkdir -p "${HOME}/bin"
-stow bin
+do_stow bin
 
 banner "Configuring Bash"
 rm "${HOME}"/.bash_aliases
-stow bash
+do_stow bash
 
 banner "Configuring Tmux"
 mkdir -p "${HOME}/.config/tmux"
-stow tmux
+do_stow tmux
 
 banner "Configuring Alacritty"
 mkdir -p "${HOME}/.config/alacritty"
-stow alacritty
+do_stow alacritty
 
 banner "Configuring Fish shell"
 mkdir -p "${HOME}/.config/fish"
-stow fish
+do_stow fish
 
 banner "Configuring Ruby"
-stow ruby
+do_stow ruby
 
 banner "Configuring Neovim"
 mkdir -p "${HOME}/.config/nvim"
-stow nvim
+do_stow nvim
 
 banner "Configuring Zellij"
 mkdir -p "${HOME}/.config/zellij"
-stow zellij
+do_stow zellij
 
 banner "Configuring Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
-stow fonts
+do_stow fonts
 
 banner "Configuring Idea"
-rm ${HOME}/.ideavimrc
-stow idea
+rm "${HOME}"/.ideavimrc
+do_stow idea
 
 banner "Configuring Just"
-rm ${HOME}/justfile
-stow just
+rm "${HOME}"/justfile
+do_stow just
 
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
 	banner "Configuring i3 Window Manager"
 	mkdir -p "${HOME}/.config/i3"
-	stow i3
+	do_stow i3
 
 	banner "Configuring Picom (compositor)"
 	mkdir -p "${HOME}/.config/picom"
-	stow picom
+	do_stow picom
 
 	banner "Configuring Polybar"
 	mkdir -p "${HOME}/.config/polybar"
-	stow polybar
+	do_stow polybar
 
 	banner "Configuring Rofi"
 	mkdir -p "${HOME}/.config/rofi"
-	stow rofi
+	do_stow rofi
 fi
