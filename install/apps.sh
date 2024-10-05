@@ -1,4 +1,4 @@
-source ~/.dotfilesrc
+source "${HOME}"/.dotfilesrc
 
 # Ensure computer doesn't go to sleep or lock while installing
 gsettings set org.gnome.desktop.screensaver lock-enabled false
