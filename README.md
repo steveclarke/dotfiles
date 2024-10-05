@@ -23,6 +23,7 @@ lots of assumptions about where I like to place things.
    * `apps` - GUI applications
    * `desktop-entries` - `.desktop` files for applications. Mainly acts as a
      wrapper for web apps.
+   * `optional` - scripts to install optional software. These must be run manually.
 * `setups` - scripts to configure things that can't be configured via dotfiles.
 
 
