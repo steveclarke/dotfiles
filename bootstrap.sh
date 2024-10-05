@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-set -o
-set -e pipefail
+set -e -o pipefail
 
 # Check for .dotfilesrc. if it doesn't exist exit with return value 2
 if test -f ~/.dotfilesrc; then

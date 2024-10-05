@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-DOTFILES_DIR=$HOME/dotfiles
 source ~/.dotfilesrc
 
 banner() {
@@ -8,7 +7,7 @@ banner() {
 }
 
 banner "Installing tools"
-./install-tools
+bash install-tools.sh
 
 banner "Configuring ~/bin"
 mkdir -p "${HOME}/bin"

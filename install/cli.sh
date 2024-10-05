@@ -1,2 +1,4 @@
-for installer in ~/dotfiles/install/cli/*.sh; do source $installer; done
 
+source ~/.dotfilesrc
+
+for installer in "${DOTFILES_INSTALL_DIR}"/install/cli/*.sh; do source $installer; done

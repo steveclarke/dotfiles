@@ -1,9 +1,11 @@
+source ~/.dotfilesrc
+
 # Ensure computer doesn't go to sleep or lock while installing
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.desktop.session idle-delay 0
 
 # Run desktop installers
-for installer in ~/dotfiles/install/apps/*.sh; do source $installer; done
+for installer in "${DOTFILES_INSTALL_DIR}"/install/apps/*.sh; do source $installer; done
 
 # Revert to normal idle and lock settings
 gsettings set org.gnome.desktop.screensaver lock-enabled true

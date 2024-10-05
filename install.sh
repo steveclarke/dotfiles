@@ -1,6 +1,8 @@
 # This is the temporary holding place for the new core install experience.
 
-sh ~/dotfiles/install/prereq.sh
-sh ~/dotfiles/install/desktop.sh
-sh ~/dotfiles/install/cli.sh
-sh ~/dotfiles/install/desktop-entries.sh
+source ~/.dotfilesrc
+
+bash "$DOTFILES_INSTALL_DIR"/prereq.sh
+bash "$DOTFILES_INSTALL_DIR"/cli.sh
+bash "$DOTFILES_INSTALL_DIR"/apps.sh
+bash "$DOTFILES_INSTALL_DIR"/desktop-entries.sh

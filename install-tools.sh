@@ -23,7 +23,7 @@ if ! is_installed brew; then
 	banner "Homebrew"
 
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &&
-		cd ~/dotfiles &&
+		cd "${DOTFILES_INSTALL_DIR}" &&
 		(
 			echo
 			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'

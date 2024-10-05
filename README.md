@@ -34,7 +34,8 @@ First download and copy the `.dotfilesrc` to $HOME. This will contain settings
 and (possibly) secrets for the target machine.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc -o ~/.dotfilesrc
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
+
 ```
 
 After downloading you'll want to adjust the settings accordingly for the machine.
@@ -42,7 +43,8 @@ After downloading you'll want to adjust the settings accordingly for the machine
 Next, run the bootstrap script.
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
+/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
+
 ```
 
 ### Main Setup Script
@@ -51,7 +53,7 @@ Run the `setup.sh` script. This will also be used to update the dotfiles regular
 
 ```bash
 cd ~/.local/share/dotfiles
-sh setup.sh
+bash setup.sh
 ```
 
 ## Updating
@@ -59,5 +61,5 @@ sh setup.sh
 ```bash
 cd ~/.local/share/dotfiles
 git pull
-sh setup.sh
+bash setup.sh
 ```
