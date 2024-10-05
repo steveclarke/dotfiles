@@ -45,11 +45,15 @@ mkdir -p "${HOME}/.local/share/fonts"
 do_stow fonts
 
 banner "Configuring Idea"
-rm "${HOME}"/.ideavimrc
+if [ -f "${HOME}"/.ideavimrc ]; then
+  rm "${HOME}"/.ideavimrc
+fi
 do_stow idea
 
 banner "Configuring Just"
-rm "${HOME}"/justfile
+if [ -f "${HOME}"/justfile ]; then
+  rm "${HOME}"/justfile
+fi
 do_stow just
 
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
