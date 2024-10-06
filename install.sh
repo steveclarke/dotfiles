@@ -16,6 +16,8 @@ install () {
 
   # Run setups
   for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
+
+  echo "You're all set! You should now reboot the system."
 }
 
 # [[ Entry Point ]]
