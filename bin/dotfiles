@@ -17,7 +17,7 @@ fi
 
 run_stow () {
   echo "Stowing dotfiles"
-  bash "${DOTFILES_DIR}"/configs/stow.sh
+  source "${DOTFILES_DIR}"/configs/stow.sh
 }
 
 run_brew () {

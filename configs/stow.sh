@@ -9,67 +9,67 @@ do_stow() {
 	stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
 }
 
-config_banner "Configuring ~/bin"
+config_banner "${HOME}/bin"
 mkdir -p "${HOME}/bin"
 do_stow bin
 
-banner "Configuring Bash"
+config_banner "Bash"
 rm "${HOME}"/.bash_aliases
 do_stow bash
 
-banner "Configuring Tmux"
+config_banner "Tmux"
 mkdir -p "${HOME}/.config/tmux"
 do_stow tmux
 
-banner "Configuring Alacritty"
+config_banner "Alacritty"
 mkdir -p "${HOME}/.config/alacritty"
 do_stow alacritty
 
-banner "Configuring Fish shell"
+config_banner "Fish shell"
 mkdir -p "${HOME}/.config/fish"
 do_stow fish
 
-banner "Configuring Ruby"
+config_banner "Ruby"
 do_stow ruby
 
-banner "Configuring Neovim"
+config_banner "Neovim"
 mkdir -p "${HOME}/.config/nvim"
 do_stow nvim
 
-banner "Configuring Zellij"
+config_banner "Zellij"
 mkdir -p "${HOME}/.config/zellij"
 do_stow zellij
 
-banner "Configuring Fonts"
+config_banner "Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 do_stow fonts
 
-banner "Configuring Idea"
+config_banner "Idea"
 if [ -f "${HOME}"/.ideavimrc ]; then
   rm "${HOME}"/.ideavimrc
 fi
 do_stow idea
 
-banner "Configuring Just"
+config_banner "Just"
 if [ -f "${HOME}"/justfile ]; then
   rm "${HOME}"/justfile
 fi
 do_stow just
 
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-	banner "Configuring i3 Window Manager"
+	config_banner "i3 Window Manager"
 	mkdir -p "${HOME}/.config/i3"
 	do_stow i3
 
-	banner "Configuring Picom (compositor)"
+	config_banner "Picom (compositor)"
 	mkdir -p "${HOME}/.config/picom"
 	do_stow picom
 
-	banner "Configuring Polybar"
+	config_banner "Polybar"
 	mkdir -p "${HOME}/.config/polybar"
 	do_stow polybar
 
-	banner "Configuring Rofi"
+	config_banner "Rofi"
 	mkdir -p "${HOME}/.config/rofi"
 	do_stow rofi
 fi

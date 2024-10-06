@@ -5,14 +5,17 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
 install () {
   # Install prerequisites
-  bash "${DOTFILES_DIR}"/install/prereq.sh
+  source "${DOTFILES_DIR}"/install/prereq.sh
 
   # Stow configs
-  bash "${DOTFILES_DIR}"/configs/stow.sh
+  source "${DOTFILES_DIR}"/configs/stow.sh
 
-  bash "$DOTFILES_DIR"/install/cli.sh
-  bash "$DOTFILES_DIR"/install/apps.sh
-  bash "$DOTFILES_DIR"/install/desktop-entries.sh
+  source "$DOTFILES_DIR"/install/cli.sh
+  source "$DOTFILES_DIR"/install/apps.sh
+  source "$DOTFILES_DIR"/install/desktop-entries.sh
+
+  # Run setups
+  for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
 }
 
 # [[ Entry Point ]]
