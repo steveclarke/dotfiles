@@ -1,8 +1,8 @@
-install_file="${HOME}/Downloads/FileZilla_Pro_3.67.1_x86_64-linux-gnu.tar.xz"
+install_file=$(find "${HOME}/Downloads" -name "FileZilla_Pro_*.tar.xz")
 destination_dir="/opt/FileZilla3"
 
 if [ ! -f "${install_file}" ]; then
-  echo "File not found! ${install_file}"
+  echo "Installer file not found! ${install_file}"
   exit 1
 fi
 
@@ -23,3 +23,5 @@ cp ${destination_dir}/share/applications/filezilla.desktop ~/.local/share/applic
 # Update the exec and icon paths
 sed -i 's|Exec=filezilla|Exec=/opt/FileZilla3/bin/filezilla|g' ~/.local/share/applications/filezilla.desktop
 sed -i 's|Icon=filezilla|Icon=/opt/FileZilla3/share/icons/hicolor/scalable/apps/filezilla_pro.svg|g' ~/.local/share/applications/filezilla.desktop
+
+echo "FileZilla Pro installed to ${destination_dir}"
