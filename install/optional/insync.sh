@@ -1,6 +1,6 @@
 # https://help.insynchq.com/en/articles/2352071-linux-installation-guide#method-1-via-the-apt-repository
-installer_file=$(find "${HOME}/Downloads" -name "insync_*.deb")
-fileman_installer_file=$(find "${HOME}/Downloads" -name "insync-nautilus_*.deb")
+installer_file=$(find "${HOME}/Downloads" -name "insync_*.deb" -maxdepth 1)
+fileman_installer_file=$(find "${HOME}/Downloads" -name "insync-nautilus_*.deb" -maxdepth 1)
 
 if [ ! -f "${installer_file}" ]; then
   echo "Installer file not found! ${installer_file}"

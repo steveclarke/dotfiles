@@ -1,4 +1,4 @@
-install_file=$(find "${HOME}/Downloads" -name "FileZilla_Pro_*.tar.xz")
+install_file=$(find "${HOME}/Downloads" -name "FileZilla_Pro_*.tar.xz" -maxdepth 1)
 destination_dir="/opt/FileZilla3"
 
 if [ ! -f "${install_file}" ]; then
