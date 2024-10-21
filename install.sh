@@ -11,8 +11,13 @@ install () {
   source "${DOTFILES_DIR}"/configs/stow.sh
 
   source "$DOTFILES_DIR"/install/cli.sh
-  source "$DOTFILES_DIR"/install/apps.sh
-  source "$DOTFILES_DIR"/install/desktop-entries.sh
+
+  if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
+    source "$DOTFILES_DIR"/install/apps.sh
+    source "$DOTFILES_DIR"/install/desktop-entries.sh
+  else
+    echo "Skipping GUI apps installation."
+  fi
 
   # Run setups
   for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
