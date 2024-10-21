@@ -11,3 +11,5 @@ export DOTFILES_GIT_USER_NAME=Steve Clarke
 export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
 
 export DOTFILES_CONFIG_I3=false
+
+export DOTFILES_INSTALL_GUI=false
