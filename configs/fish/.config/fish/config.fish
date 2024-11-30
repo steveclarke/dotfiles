@@ -8,7 +8,7 @@ set -x LESS -rF # -r: raw control chars, -F: quit if one screen
 set -x RUBY_YJIT_ENABLE 1
 
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
-set -gx EDITOR (which nvim)
+set -gx EDITOR (which vim)
 set -gx VISUAL $EDITOR
 set -gx SUDO_EDITOR $EDITOR
 
