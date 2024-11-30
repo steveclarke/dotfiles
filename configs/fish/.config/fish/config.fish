@@ -9,7 +9,11 @@ set -x RUBY_YJIT_ENABLE 1
 
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
 set -gx EDITOR (which vim)
-set -gx VISUAL $EDITOR
+if test -n "$DISPLAY" && command -q code
+    set -gx VISUAL "code --wait"
+else
+    set -gx VISUAL $EDITOR
+end
 set -gx SUDO_EDITOR $EDITOR
 
 # ─[ Secrets ]────────────────────────────────────────────────────────────
