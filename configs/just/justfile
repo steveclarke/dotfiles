@@ -1,5 +1,6 @@
 set shell := ["fish", "-c"]
 
+# Upgrade all packages across different packaging systems
 up:
   fish -c "upgrade-all"
   
