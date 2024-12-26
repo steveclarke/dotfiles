@@ -11,3 +11,11 @@ if test -f ~/.local/bin/mise
         mise activate fish --shims | source
     end
 end
+
+# The equivalent for .bashrc is:
+#
+# if [ "$VSCODE_RESOLVING_ENVIRONMENT" = "1"]; then
+#   eval "$(mise activate bash --shims)"
+# else
+#   eval "$(mise activate bash)"
+# fi
