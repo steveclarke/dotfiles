@@ -7,6 +7,9 @@ fish_add_path ~/.local/share/dotfiles/bin
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
 set -x RUBY_YJIT_ENABLE 1
 
+# Use the `bass` plugin to source bash scripts
+bass source ~/.dotfilesrc
+
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
 set -gx EDITOR (which vim)
 if test -n "$DISPLAY" && command -q code
@@ -41,12 +44,10 @@ if status is-interactive
     abbr -a --set-cursor sand "cd ~/src/sandbox/%"
 
     # Dotfiles
-    # abbr -a --set-cursor dot "cd ~/dotfiles/%"
-    # abbr -a --set-cursor dotf "cd ~/dotfiles/fish/.config/fish/%"
-    # abbr -a --set-cursor dotn "cd ~/dotfiles/nvim/.config/nvim/%"
-    # abbr -a --set-cursor dotz "cd ~/dotfiles/zellij/.config/zellij/%"
-    # abbr -a --set-cursor doti "cd ~/dotfiles/i3/.config/i3/%"
-    # abbr -a dotup "cd ~/dotfiles && git pull && ./setup && cd -"
+    abbr -a --set-cursor dot "cd $DOTFILES_DIR/%"
+    abbr -a --set-cursor dotf "cd $DOTFILES_DIR/configs/fish/.config/fish/%"
+    abbr -a --set-cursor dotn "cd $DOTFILES_DIR/configs/nvim/.config/nvim/%"
+    abbr -a --set-cursor dotz "cd $DOTFILES_DIR/configs/zellij/.config/zellij/%"
 
     # Zellij
     abbr -a zj zellij
