@@ -39,6 +39,9 @@ brew "the_silver_searcher"
 brew "tldr"
 brew "tmux"
 brew "tree"
+# https://github.com/alexpasmantier/television
+# Fuzzy finder
+brew "television"
 brew "ugrep"
 brew "wget"
 brew "zellij"
