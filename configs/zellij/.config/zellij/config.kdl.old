@@ -1,0 +1,89 @@
+default_shell "fish"
+// pane_frames false
+
+// theme "catppuccin-mocha"
+theme "dracula"
+
+keybinds {
+  normal {}
+
+  locked {
+    bind "Alt g" { SwitchToMode "Normal"; }
+  }
+
+  move {
+    bind "Alt v" { SwitchToMode "Normal"; }
+  }
+
+  pane {
+    bind "Alt a" { SwitchToMode "Normal"; }
+  }
+
+  resize {
+    bind "Alt z" { SwitchToMode "Normal"; }
+  }
+
+  scroll {
+    bind "Alt s" { SwitchToMode "Normal"; }
+  }
+
+  session {
+    bind "Alt w" { SwitchToMode "Normal"; }
+    bind "Alt s" { SwitchToMode "scroll"; }
+  }
+
+  tab {
+    bind "Alt b" { SwitchToMode "Normal"; }
+  }
+
+  shared_except "locked" {
+    unbind "Ctrl h" // was Move, now Alt-v
+    unbind "Ctrl o" // was Session, now Alt-w
+    unbind "Ctrl s" // was Scroll, now Alt-s
+    unbind "Ctrl n" // was Resize, now Alt-z
+    unbind "Ctrl p" // was Pane, now Alt-a
+    unbind "Ctrl t" // was Tab, now Alt-b
+    unbind "Ctrl g" // was Locked, now Alt-g
+    unbind "Ctrl q" // was Quit, now Alt-q
+    bind "Alt g" { SwitchToMode "locked"; }
+    bind "Alt q" { Quit; }
+    bind "Alt t" { NewTab; }
+    bind "Alt d" { NewPane "down";}
+    bind "Alt r" { NewPane "right"; }
+    bind "Alt f" { ToggleFloatingPanes; }
+    bind "Alt 1" { GoToTab 1; }
+    bind "Alt 2" { GoToTab 2; }
+    bind "Alt 3" { GoToTab 3; }
+    bind "Alt 4" { GoToTab 4; }
+    bind "Alt 5" { GoToTab 5; }
+    bind "Alt 6" { GoToTab 6; }
+    bind "Alt 7" { GoToTab 7; }
+    bind "Alt 8" { GoToTab 8; }
+    bind "Alt 9" { GoToTab 9; }
+    bind "Alt 0" { GoToTab 10; }
+  }
+
+  shared_except "move" "locked" {
+    bind "Alt v" { SwitchToMode "move"; }
+  }
+
+  shared_except "pane" "locked" {
+    bind "Alt a" { SwitchToMode "pane"; }
+  }
+
+  shared_except "resize" "locked" {
+    bind "Alt z" { SwitchToMode "resize"; }
+  }
+
+  shared_except "scroll" "locked" {
+    bind "Alt s" { SwitchToMode "scroll"; }
+  }
+
+  shared_except "session" "locked" {
+    bind "Alt w" { SwitchToMode "session"; }
+  }
+
+  shared_except "tab" "locked" {
+    bind "Alt b" { SwitchToMode "tab"; }
+  }
+}
