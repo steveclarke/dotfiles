@@ -10,7 +10,7 @@ fish_add_path ~/.local/share/dotfiles/bin
 # path additions.
 if test -f ~/.local/bin/mise
     # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
-    if test "$VSCODE_RESOLVING_ENVIRONMENT" = "1"
+    if test "$VSCODE_RESOLVING_ENVIRONMENT" = 1
         mise activate fish --shims | source
     else if status is-interactive
         mise activate fish | source
@@ -62,6 +62,7 @@ if status is-interactive
     # Dotfiles
     abbr -a --set-cursor dot "cd $DOTFILES_DIR/%"
     abbr -a --set-cursor dotf "cd $DOTFILES_DIR/configs/fish/.config/fish/%"
+    abbr -a --set-cursor dotg "cd $DOTFILES_DIR/configs/ghostty/.config/ghostty/%"
     abbr -a --set-cursor dotn "cd $DOTFILES_DIR/configs/nvim/.config/nvim/%"
     abbr -a --set-cursor dotz "cd $DOTFILES_DIR/configs/zellij/.config/zellij/%"
 
