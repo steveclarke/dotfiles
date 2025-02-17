@@ -10,7 +10,7 @@
 # end
 
 # Automatically open and exit Zellij when using Alacritty.
-if set -q ALACRITTY_WINDOW_ID || test $TERM_PROGRAM = ghostty
+if set -q ALACRITTY_WINDOW_ID
     set ZELLIJ_AUTO_EXIT true
     eval (zellij setup --generate-auto-start fish | string collect)
 end
