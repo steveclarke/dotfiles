@@ -6,7 +6,7 @@ config_banner() {
 }
 
 do_stow() {
-	stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
+  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
 }
 
 config_banner "${HOME}/bin"
@@ -24,6 +24,10 @@ do_stow tmux
 config_banner "Alacritty"
 mkdir -p "${HOME}/.config/alacritty"
 do_stow alacritty
+
+config_banner "Ghostty"
+mkdir -p "${HOME}/.config/ghostty"
+do_stow ghostty
 
 config_banner "Fish shell"
 mkdir -p "${HOME}/.config/fish"
@@ -57,19 +61,19 @@ fi
 do_stow just
 
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-	config_banner "i3 Window Manager"
-	mkdir -p "${HOME}/.config/i3"
-	do_stow i3
+  config_banner "i3 Window Manager"
+  mkdir -p "${HOME}/.config/i3"
+  do_stow i3
 
-	config_banner "Picom (compositor)"
-	mkdir -p "${HOME}/.config/picom"
-	do_stow picom
+  config_banner "Picom (compositor)"
+  mkdir -p "${HOME}/.config/picom"
+  do_stow picom
 
-	config_banner "Polybar"
-	mkdir -p "${HOME}/.config/polybar"
-	do_stow polybar
+  config_banner "Polybar"
+  mkdir -p "${HOME}/.config/polybar"
+  do_stow polybar
 
-	config_banner "Rofi"
-	mkdir -p "${HOME}/.config/rofi"
-	do_stow rofi
+  config_banner "Rofi"
+  mkdir -p "${HOME}/.config/rofi"
+  do_stow rofi
 fi
