@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <server-name>"
+  exit 1
+fi
+
+SERVER_NAME="$1"
+
+# Run the command
+infocmp -x | ssh "$SERVER_NAME" -- tic -x -
