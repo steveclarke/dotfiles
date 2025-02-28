@@ -3,17 +3,19 @@
 
 # Note: I had to move this to config.fish because it suddenly stopped working on
 # 2025-02-14 from conf.d/mise.fish in VSCode.
+# Note: As of 2025-02-28, this is moved back here from config.fish because it
+# looks like it was a temp issue with VSCode.
 
-# if test -f ~/.local/bin/mise
-#     # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
-#     if test "$VSCODE_RESOLVING_ENVIRONMENT" = "1"
-#         mise activate fish --shims | source
-#     else if status is-interactive
-#         mise activate fish | source
-#     else
-#         mise activate fish --shims | source
-#     end
-# end
+if test -f ~/.local/bin/mise
+    # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
+    if test "$VSCODE_RESOLVING_ENVIRONMENT" = "1"
+        mise activate fish --shims | source
+    else if status is-interactive
+        mise activate fish | source
+    else
+        mise activate fish --shims | source
+    end
+end
 
 # The equivalent for .bashrc is:
 #

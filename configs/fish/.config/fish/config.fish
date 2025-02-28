@@ -8,16 +8,18 @@ fish_add_path ~/.local/share/dotfiles/bin
 # 2025-02-14 from conf.d/mise.fish in VSCode. I'm not sure why. Even placing
 # it at the end of this file didn't work. I had to move it to the top, after the
 # path additions.
-if test -f ~/.local/bin/mise
-    # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
-    if test "$VSCODE_RESOLVING_ENVIRONMENT" = 1
-        mise activate fish --shims | source
-    else if status is-interactive
-        mise activate fish | source
-    else
-        mise activate fish --shims | source
-    end
-end
+# Note: As of 2025-02-28, this is no longer needed and mise is initialized in
+# ~/.config/fish/functions/mise.fish
+# if test -f ~/.local/bin/mise
+#     # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
+#     if test "$VSCODE_RESOLVING_ENVIRONMENT" = 1
+#         mise activate fish --shims | source
+#     else if status is-interactive
+#         mise activate fish | source
+#     else
+#         mise activate fish --shims | source
+#     end
+# end
 
 # ─[ Exports ]────────────────────────────────────────────────────────────
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
@@ -127,3 +129,10 @@ end
 # Disable default banner
 set fish_greeting
 # alias fish_greeting colortest
+
+# pnpm
+set -gx PNPM_HOME "/home/steve/.local/share/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
