@@ -4,25 +4,70 @@
 # Based on: https://gist.github.com/evgenyneu/5c5c37ca68886bf1bea38026f60603b6
 
 # Configuration variables
-CURSOR_URL="https://downloader.cursor.sh/linux/appImage/x64"
 ICON_URL="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/cursor.png"
-APPIMAGE_PATH="/opt/cursor.appimage"
-ICON_PATH="/opt/cursor.png"
+CURSOR_DIR="/opt/cursor"
+APPIMAGE_PATH="$CURSOR_DIR/cursor.appimage"
+ICON_PATH="$CURSOR_DIR/cursor.png"
 DESKTOP_ENTRY_PATH="/usr/share/applications/cursor.desktop"
 
-# Check if already installed
-check_installation() {
-    if [ -f "$APPIMAGE_PATH" ]; then
-        echo "Cursor AI IDE is already installed."
+# Old installation paths
+OLD_APPIMAGE_PATH="/opt/cursor.appimage"
+OLD_ICON_PATH="/opt/cursor.png"
+
+# Get the actual user's home directory, even when run with sudo
+get_user_home() {
+    if [ -n "$SUDO_USER" ]; then
+        USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+    else
+        USER_HOME=$HOME
+    fi
+    echo "$USER_HOME"
+}
+
+# Find downloaded Cursor AppImage
+find_cursor_appimage() {
+    USER_HOME=$(get_user_home)
+    DOWNLOADS_DIR="$USER_HOME/Downloads"
+    
+    echo "Looking for Cursor AppImage in $DOWNLOADS_DIR..."
+    CURSOR_APPIMAGE=$(find "$DOWNLOADS_DIR" -maxdepth 1 -name "Cursor*.AppImage" -type f -print -quit 2>/dev/null)
+    
+    if [ -z "$CURSOR_APPIMAGE" ]; then
+        echo "Error: Could not find Cursor AppImage in $DOWNLOADS_DIR"
+        echo "Please download the latest version from https://cursor.sh/download"
+        echo "After downloading, run this script again."
         return 1
     fi
+    
+    echo "Found Cursor AppImage: $CURSOR_APPIMAGE"
+    return 0
+}
+
+# Check installation status
+check_installation() {
+    # Check for old installation location
+    if [ -f "$OLD_APPIMAGE_PATH" ]; then
+        echo "Found Cursor AI IDE at old location: $OLD_APPIMAGE_PATH"
+        echo "Will migrate to the new directory structure at $CURSOR_DIR"
+        return 2
+    fi
+    
+    # Check for current installation location
+    if [ -f "$APPIMAGE_PATH" ]; then
+        echo "Cursor AI IDE is already installed at: $APPIMAGE_PATH"
+        echo "Will update to the latest version."
+        return 1
+    fi
+    
+    # No installation found
+    echo "No existing Cursor installation found. Will perform a fresh install."
     return 0
 }
 
 # Check for sudo privileges
 check_sudo() {
     if [ "$(id -u)" -ne 0 ]; then
-        echo "This script needs sudo privileges to install Cursor AI."
+        echo "This script needs sudo privileges to install/update Cursor AI."
         echo "Please run with: sudo $0"
         return 1
     fi
@@ -41,15 +86,33 @@ install_dependencies() {
     return 0
 }
 
-# Download Cursor AppImage and icon
-download_files() {
-    echo "Downloading Cursor AppImage..."
-    if ! curl -L "$CURSOR_URL" -o "$APPIMAGE_PATH"; then
-        echo "Failed to download Cursor AppImage. Please check your internet connection."
-        return 1
+# Migrate from old installation location if needed
+migrate_old_installation() {
+    if [ -f "$OLD_APPIMAGE_PATH" ]; then
+        echo "Migrating Cursor from old location..."
+        mkdir -p "$CURSOR_DIR"
+        
+        # Move the old AppImage and icon if they exist
+        mv "$OLD_APPIMAGE_PATH" "$APPIMAGE_PATH" 2>/dev/null
+        chmod +x "$APPIMAGE_PATH"
+        
+        if [ -f "$OLD_ICON_PATH" ]; then
+            mv "$OLD_ICON_PATH" "$ICON_PATH" 2>/dev/null
+        fi
+        
+        echo "Migration complete."
     fi
-    chmod +x "$APPIMAGE_PATH"
+}
 
+# Install Cursor from downloaded AppImage
+install_cursor() {
+    echo "Installing Cursor AppImage to $CURSOR_DIR..."
+    mkdir -p "$CURSOR_DIR"
+    
+    # Copy the AppImage to the installation directory
+    cp "$CURSOR_APPIMAGE" "$APPIMAGE_PATH"
+    chmod +x "$APPIMAGE_PATH"
+    
     echo "Downloading Cursor icon..."
     curl -L "$ICON_URL" -o "$ICON_PATH" || {
         echo "Failed to download Cursor icon, but continuing installation."
@@ -59,63 +122,46 @@ download_files() {
 
 # Create desktop entry
 create_desktop_entry() {
-    echo "Creating .desktop entry for Cursor..."
+    echo "Creating/updating .desktop entry for Cursor..."
     cat > "$DESKTOP_ENTRY_PATH" <<EOL
 [Desktop Entry]
 Name=Cursor AI IDE
-Exec=$APPIMAGE_PATH --no-sandbox
+Exec=$APPIMAGE_PATH --no-sandbox --class=Cursor %F
 Icon=$ICON_PATH
 Type=Application
-Categories=Development;
+Categories=Development;IDE;
+StartupWMClass=Cursor
+MimeType=text/plain;inode/directory;
 EOL
-    return 0
-}
-
-# Add shell aliases
-add_shell_aliases() {
-    # Bash alias
-    if [ -f "$HOME/.bashrc" ]; then
-        echo "Adding cursor alias to .bashrc..."
-        cat >> "$HOME/.bashrc" <<EOL
-
-# Cursor alias
-function cursor() {
-    $APPIMAGE_PATH --no-sandbox "\${@}" > /dev/null 2>&1 & disown
-}
-EOL
-        echo "Alias added. To use it in this terminal session, run: source $HOME/.bashrc"
-    else
-        echo "Could not find .bashrc file. Cursor can still be launched from the application menu."
-    fi
-
-    # Fish shell alias
-    FISH_CONFIG="$HOME/.config/fish/config.fish"
-    if [ -f "$FISH_CONFIG" ]; then
-        echo "Adding cursor alias to fish config..."
-        cat >> "$FISH_CONFIG" <<EOL
-
-# Cursor alias
-function cursor
-    $APPIMAGE_PATH --no-sandbox \$argv > /dev/null 2>&1 & disown
-end
-EOL
-        echo "Fish alias added. To use it in this terminal session, run: source $FISH_CONFIG"
-    fi
     return 0
 }
 
 # Main installation function
 installCursor() {
-    echo "Installing Cursor AI IDE..."
+    echo "Installing/Updating Cursor AI IDE..."
     
-    check_installation || return 0
     check_sudo || return 1
     install_dependencies || return 1
-    download_files || return 1
-    create_desktop_entry
-    add_shell_aliases
     
-    echo "Cursor AI IDE installation complete. You can find it in your application menu."
+    # Find Cursor AppImage in Downloads directory
+    find_cursor_appimage || return 1
+    
+    # Get installation status
+    check_installation
+    INSTALL_STATUS=$?
+    
+    if [ $INSTALL_STATUS -eq 2 ]; then
+        # Migrate old installation
+        migrate_old_installation
+    else
+        # Install or update from downloaded AppImage
+        install_cursor || return 1
+    fi
+    
+    create_desktop_entry
+    
+    echo "Cursor AI IDE installation/update complete. You can find it in your application menu."
+    echo "You can launch it from the application menu or by running: $APPIMAGE_PATH"
     return 0
 }
 
