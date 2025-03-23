@@ -10,10 +10,6 @@ APPIMAGE_PATH="$CURSOR_DIR/cursor.appimage"
 ICON_PATH="$CURSOR_DIR/cursor.png"
 DESKTOP_ENTRY_PATH="/usr/share/applications/cursor.desktop"
 
-# Old installation paths
-OLD_APPIMAGE_PATH="/opt/cursor.appimage"
-OLD_ICON_PATH="/opt/cursor.png"
-
 # Get the actual user's home directory, even when run with sudo
 get_user_home() {
     if [ -n "$SUDO_USER" ]; then
@@ -45,13 +41,6 @@ find_cursor_appimage() {
 
 # Check installation status
 check_installation() {
-    # Check for old installation location
-    if [ -f "$OLD_APPIMAGE_PATH" ]; then
-        echo "Found Cursor AI IDE at old location: $OLD_APPIMAGE_PATH"
-        echo "Will migrate to the new directory structure at $CURSOR_DIR"
-        return 2
-    fi
-    
     # Check for current installation location
     if [ -f "$APPIMAGE_PATH" ]; then
         echo "Cursor AI IDE is already installed at: $APPIMAGE_PATH"
@@ -86,24 +75,6 @@ install_dependencies() {
     return 0
 }
 
-# Migrate from old installation location if needed
-migrate_old_installation() {
-    if [ -f "$OLD_APPIMAGE_PATH" ]; then
-        echo "Migrating Cursor from old location..."
-        mkdir -p "$CURSOR_DIR"
-        
-        # Move the old AppImage and icon if they exist
-        mv "$OLD_APPIMAGE_PATH" "$APPIMAGE_PATH" 2>/dev/null
-        chmod +x "$APPIMAGE_PATH"
-        
-        if [ -f "$OLD_ICON_PATH" ]; then
-            mv "$OLD_ICON_PATH" "$ICON_PATH" 2>/dev/null
-        fi
-        
-        echo "Migration complete."
-    fi
-}
-
 # Install Cursor from downloaded AppImage
 install_cursor() {
     echo "Installing Cursor AppImage to $CURSOR_DIR..."
@@ -131,6 +102,7 @@ Icon=$ICON_PATH
 Type=Application
 Categories=Development;IDE;
 StartupWMClass=Cursor
+StartupNotify=true
 MimeType=text/plain;inode/directory;
 EOL
     return 0
@@ -148,15 +120,9 @@ installCursor() {
     
     # Get installation status
     check_installation
-    INSTALL_STATUS=$?
     
-    if [ $INSTALL_STATUS -eq 2 ]; then
-        # Migrate old installation
-        migrate_old_installation
-    else
-        # Install or update from downloaded AppImage
-        install_cursor || return 1
-    fi
+    # Install or update from downloaded AppImage
+    install_cursor || return 1
     
     create_desktop_entry
     
