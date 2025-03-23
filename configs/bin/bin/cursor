@@ -1,12 +1,12 @@
 #!/bin/bash
-# Check if the Cursor AppImage is installed in /opt
-if [ ! -f /opt/cursor.appimage ]; then
-  echo "Error: Cursor AppImage not found in /opt."
+# Check if the Cursor AppImage is installed in /opt/cursor
+if [ ! -f /opt/cursor/cursor.appimage ]; then
+  echo "Error: Cursor AppImage not found in /opt/cursor."
   echo "Please install Cursor using the install script found in install/optional/cursor.sh."
   exit 1
 fi
 
-# Launch Cursor in the background with no sandbox.
- /opt/cursor.appimage --no-sandbox "$@" &> /dev/null &
- disown
+# Launch Cursor in the background with no sandbox and specify the app class
+/opt/cursor/cursor.appimage --no-sandbox --class=Cursor "$@" &> /dev/null &
+disown
 
