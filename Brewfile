@@ -1,5 +1,3 @@
-tap "homebrew/bundle"
-
 brew "aichat"
 brew "atuin"
 brew "bat"
