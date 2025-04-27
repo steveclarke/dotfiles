@@ -1,3 +1,4 @@
+brew "act"
 brew "aichat"
 brew "atuin"
 brew "bat"
