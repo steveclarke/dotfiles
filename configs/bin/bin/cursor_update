@@ -1,14 +1,52 @@
 #!/bin/bash
 
-# Find Cursor* file in Downloads directory
-CURSOR_FILE=$(find /home/steve/Downloads -maxdepth 1 -name "Cursor*" | sort -r | head -n 1)
+# Parse command line arguments
+LOCAL_INSTALL=false
 
-if [ -z "$CURSOR_FILE" ]; then
-    echo "No Cursor file found in /home/steve/Downloads"
-    exit 1
+usage() {
+  echo "Usage: cursor_update [-l|--local]"
+  echo "Options:"
+  echo "  -l, --local    Install from local download in ~/Downloads"
+  echo "  -h, --help     Display this help message"
+  echo ""
+  echo "Default: Downloads and installs the latest version of Cursor"
+  exit 1
+}
+
+for arg in "$@"; do
+  case $arg in
+    -l|--local)
+      LOCAL_INSTALL=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+if [ "$LOCAL_INSTALL" = true ]; then
+  echo "Installing from local download..."
+  
+  # Find Cursor* file in Downloads directory
+  CURSOR_FILE=$(find /home/steve/Downloads -maxdepth 1 -name "Cursor*" | sort -r | head -n 1)
+
+  if [ -z "$CURSOR_FILE" ]; then
+      echo "No Cursor file found in /home/steve/Downloads"
+      exit 1
+  fi
+
+  echo "Found Cursor file: $CURSOR_FILE"
+else
+  # Create temporary directory for download
+  cd /tmp || exit
+
+  echo "Downloading latest Cursor version..."
+  curl -L "https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable" | jq -r '.downloadUrl' | xargs curl -L -o cursor.appimage
 fi
-
-echo "Found Cursor file: $CURSOR_FILE"
 
 # Create directory if it doesn't exist
 if [ ! -d "/opt/cursor" ]; then
@@ -16,9 +54,14 @@ if [ ! -d "/opt/cursor" ]; then
     sudo mkdir -p /opt/cursor
 fi
 
-# Copy file to destination
-echo "Copying to /opt/cursor/cursor.appimage..."
-sudo cp "$CURSOR_FILE" /opt/cursor/cursor.appimage
+# Copy/move file to destination
+if [ "$LOCAL_INSTALL" = true ]; then
+    echo "Copying to /opt/cursor/cursor.appimage..."
+    sudo cp "$CURSOR_FILE" /opt/cursor/cursor.appimage
+else
+    echo "Installing to /opt/cursor/cursor.appimage..."
+    sudo mv cursor.appimage /opt/cursor/cursor.appimage
+fi
 
 # Make executable
 echo "Making executable..."
