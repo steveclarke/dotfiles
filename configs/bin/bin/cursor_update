@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Find Cursor* file in Downloads directory
+CURSOR_FILE=$(find /home/steve/Downloads -maxdepth 1 -name "Cursor*" | sort -r | head -n 1)
+
+if [ -z "$CURSOR_FILE" ]; then
+    echo "No Cursor file found in /home/steve/Downloads"
+    exit 1
+fi
+
+echo "Found Cursor file: $CURSOR_FILE"
+
+# Create directory if it doesn't exist
+if [ ! -d "/opt/cursor" ]; then
+    echo "Creating /opt/cursor directory..."
+    sudo mkdir -p /opt/cursor
+fi
+
+# Copy file to destination
+echo "Copying to /opt/cursor/cursor.appimage..."
+sudo cp "$CURSOR_FILE" /opt/cursor/cursor.appimage
+
+# Make executable
+echo "Making executable..."
+sudo chmod +x /opt/cursor/cursor.appimage
+
+echo "Update complete!"
