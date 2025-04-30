@@ -13,8 +13,8 @@ sudo bash -c "cat > $DESKTOP_FILE" <<EOL
 [Desktop Entry]
 Name=Cursor
 Comment=AI-powered code editor
-Exec=/opt/cursor.appimage --no-sandbox
-Icon=/home/$USER/.local/share/omakub/applications/icons/cursor.png
+Exec=/opt/cursor.appimage --no-sandbox --ozone-platform=wayland
+Icon=/opt/cursor/cursor.png
 Type=Application
 Categories=Development;IDE;
 EOL
