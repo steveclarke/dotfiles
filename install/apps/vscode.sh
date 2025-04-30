@@ -9,3 +9,7 @@ sudo apt install -y apt-transport-https
 sudo apt update
 sudo apt install -y code
 
+
+echo "To enable wayland, copy /usr/share/applications/code.desktop to .local/share/applications/code.desktop"
+echo "and change the Exec line to:"
+echo "Exec=env --ozone-platform=wayland %F"

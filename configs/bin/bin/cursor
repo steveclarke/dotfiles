@@ -7,6 +7,6 @@ if [ ! -f /opt/cursor/cursor.appimage ]; then
 fi
 
 # Launch Cursor in the background with no sandbox and specify the app class
-/opt/cursor/cursor.appimage --no-sandbox --class=Cursor "$@" &> /dev/null &
+/opt/cursor/cursor.appimage --no-sandbox --ozone-platform=wayland "$@" &> /dev/null &
 disown
 
