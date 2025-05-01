@@ -1,1 +1,1 @@
-sudo snap install bruno
+flatpak install flathub com.usebruno.Bruno
