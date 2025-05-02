@@ -21,7 +21,7 @@ sudo bash -c "cat > $DESKTOP_FILE" <<EOL
 [Desktop Entry]
 Name=Cursor
 Comment=AI-powered code editor
-Exec=/opt/cursor/cursor.appimage --ozone-platform=wayland %F
+Exec=/opt/cursor/cursor.appimage --no-sandbox --ozone-platform=wayland %F
 Icon=/opt/cursor/cursor.png
 Type=Application
 Categories=Development;IDE;
