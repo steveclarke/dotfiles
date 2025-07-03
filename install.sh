@@ -20,6 +20,9 @@ install () {
     # Install packages via Homebrew
     source "${DOTFILES_DIR}"/install/macos/brew.sh
     
+    # Configure fish shell as default
+    source "${DOTFILES_DIR}"/install/macos/fish.sh
+    
     # Run macOS-specific setups
     for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
       [[ -f $setup ]] && source "$setup"
