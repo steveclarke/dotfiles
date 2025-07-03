@@ -8,6 +8,13 @@ banner() {
 	echo "=== $1"
 }
 
+# Bootstrap-specific banner with decorative formatting
+bootstrap_banner() {
+	echo "========================================================================"
+	echo " $1"
+	echo "========================================================================"
+}
+
 installing_banner() {
   banner "Installing $1"
 }
@@ -52,4 +59,144 @@ config_banner() {
 
 do_stow() {
   stow -d "${DOTFILES_DIR}/configs" -t "${HOME}" "$1"
+}
+
+# Bootstrap-specific shared functions
+check_dotfilesrc() {
+	if test -f ~/.dotfilesrc; then
+		source "$HOME"/.dotfilesrc
+	else
+		echo "ERROR: ~/.dotfilesrc does not exist"
+		if is_macos; then
+			echo "Please download and configure it first:"
+			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.macos"
+		fi
+		exit 2
+	fi
+}
+
+copy_ssh_keys() {
+	bootstrap_banner "Copying SSH keys"
+	
+	# Create .ssh directory if it doesn't exist
+	mkdir -p "${HOME}/.ssh"
+	chmod 700 "${HOME}/.ssh"
+	
+	# Copy SSH keys from remote host
+	rsync -avz --files-from=<(printf "%s\n" "${DOTFILES_SSH_KEYS// /$'\n'}") "${DOTFILES_SSH_KEYS_HOST}:.ssh/" "${HOME}/.ssh"
+	
+	# Set proper permissions
+	if is_macos; then
+		chmod 600 "${HOME}/.ssh/"*
+		chmod 644 "${HOME}/.ssh/"*.pub
+	else
+		chmod 600 "${HOME}/.ssh/"*
+	fi
+}
+
+configure_ssh() {
+	bootstrap_banner "Configuring SSH"
+	
+	# Create SSH config if it doesn't exist
+	if [ ! -f "${HOME}/.ssh/config" ]; then
+		touch "${HOME}/.ssh/config"
+		chmod 600 "${HOME}/.ssh/config"
+	fi
+	
+	# Add identity file to SSH config
+	echo "IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY" >> "${HOME}/.ssh/config"
+}
+
+clone_git_repo() {
+	bootstrap_banner "Cloning git repo"
+
+	if test -d "${DOTFILES_DIR}"; then
+		echo "${DOTFILES_DIR} already exists"
+	else
+		if is_macos; then
+			mkdir -p "$(dirname "${DOTFILES_DIR}")"
+		fi
+		git clone git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
+	fi
+}
+
+bootstrap_warning() {
+	if tput colors >/dev/null 2>&1 && [[ $(tput colors) -gt 0 ]]; then
+		echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
+		echo -e "\033[0;31m!!!!!!!!! WARNING !!!!!!!!!\033[0m"
+		echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
+	else
+		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+		echo "!!!!!!!!! WARNING !!!!!!!!!"
+		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	fi
+	
+	if is_macos; then
+		echo -e "This script is designed to bootstrap a fresh macOS system and may overwrite existing files."
+	else
+		echo -e "This script is designed to boostrap a fresh system and may overwrite existing files."
+	fi
+	echo -e "Are you sure you want to proceed?"
+}
+
+bootstrap_confirm() {
+	echo -n "Do you want to proceed? (y/N): "
+	read -r answer
+	
+	# convert answer to lowercase
+	answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+	
+	if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
+		return 0
+	else
+		echo "Exiting..."
+		return 1
+	fi
+}
+
+install_linux_prerequisites() {
+	bootstrap_banner "Installing bootstrap pre-requisites"
+	sudo apt update &&
+		sudo apt install -y \
+			git \
+			curl \
+			software-properties-common \
+			build-essential
+}
+
+install_macos_prerequisites() {
+	bootstrap_banner "Installing bootstrap pre-requisites"
+	
+	# Install Xcode Command Line Tools if not already installed
+	if ! xcode-select -p &>/dev/null; then
+		echo "Installing Xcode Command Line Tools..."
+		xcode-select --install
+		echo "Please complete the Xcode Command Line Tools installation and re-run this script."
+		exit 1
+	fi
+	
+	# Install Homebrew if not already installed
+	if ! command -v brew &>/dev/null; then
+		echo "Installing Homebrew..."
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		
+		# Add Homebrew to PATH for current session
+		eval "$(/opt/homebrew/bin/brew shellenv)"
+		
+		# Also add to shell profile for future sessions
+		echo "eval \"\$(/opt/homebrew/bin/brew shellenv)\"" >> "${HOME}/.zprofile"
+	fi
+	
+	# Install git if not already available
+	if ! command -v git &>/dev/null; then
+		echo "Installing git..."
+		brew install git
+	fi
+}
+
+run_installation() {
+	bootstrap_banner "Running dotfiles installation"
+	
+	cd "${DOTFILES_DIR}" || exit 1
+	bash install.sh
 }
