@@ -1,0 +1,25 @@
+# macOS dotfiles configuration template
+# Copy this file to ~/.dotfilesrc and adjust settings for your machine
+
+# Core
+export DOTFILES_DIR=${HOME}/.local/share/dotfiles
+
+# SSH Configuration
+# Set these to match your SSH key setup
+export DOTFILES_SSH_KEYS_HOST=user@your-server.com
+export DOTFILES_SSH_KEYS="your-key.pub your-key"
+export DOTFILES_SSH_KEYS_PRIMARY=your-key
+
+# Git Configuration
+# Set your Git user information
+export DOTFILES_GIT_USER_NAME="Your Name"
+export DOTFILES_GIT_USER_EMAIL="your-email@domain.com"
+
+# macOS-specific settings
+# Note: i3 window manager is Linux-only, so not included here
+# GUI applications are installed by default on macOS
+export DOTFILES_INSTALL_GUI=true
+
+# Optional: Add any macOS-specific environment variables here
+# export HOMEBREW_NO_ANALYTICS=1
+# export HOMEBREW_NO_INSECURE_REDIRECT=1 

@@ -3,26 +3,58 @@
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
+# Detect OS at start
+detect_os
+
 install () {
-  # Install prerequisites
-  source "${DOTFILES_DIR}"/install/prereq.sh
-
-  # Stow configs
-  source "${DOTFILES_DIR}"/configs/stow.sh
-
-  source "$DOTFILES_DIR"/install/cli.sh
-
-  if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
-    source "$DOTFILES_DIR"/install/apps.sh
-    source "$DOTFILES_DIR"/install/desktop-entries.sh
+  if is_macos; then
+    # macOS installation flow
+    banner "Starting macOS installation"
+    
+    # Install macOS prerequisites
+    source "${DOTFILES_DIR}"/install/macos/prereq.sh
+    
+    # Stow configs
+    source "${DOTFILES_DIR}"/configs/stow.sh
+    
+    # Install packages via Homebrew
+    source "${DOTFILES_DIR}"/install/macos/brew.sh
+    
+    # Run macOS-specific setups
+    for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
+      [[ -f $setup ]] && source "$setup"
+    done
+    
+    # Run cross-platform setups
+    for setup in "${DOTFILES_DIR}"/setups/*.sh; do
+      [[ -f $setup ]] && source "$setup"
+    done
+    
+    echo "macOS installation complete! Consider restarting to apply system changes."
   else
-    echo "Skipping GUI apps installation."
+    # Linux installation flow (existing logic)
+    banner "Starting Linux installation"
+    
+    # Install prerequisites
+    source "${DOTFILES_DIR}"/install/prereq.sh
+
+    # Stow configs
+    source "${DOTFILES_DIR}"/configs/stow.sh
+
+    source "$DOTFILES_DIR"/install/cli.sh
+
+    if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
+      source "$DOTFILES_DIR"/install/apps.sh
+      source "$DOTFILES_DIR"/install/desktop-entries.sh
+    else
+      echo "Skipping GUI apps installation."
+    fi
+
+    # Run setups
+    for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
+
+    echo "Linux installation complete! You should now reboot the system."
   fi
-
-  # Run setups
-  for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
-
-  echo "You're all set! You should now reboot the system."
 }
 
 # [[ Entry Point ]]

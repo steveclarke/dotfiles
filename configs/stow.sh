@@ -9,6 +9,7 @@ do_stow() {
   stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
 }
 
+# Cross-platform configurations
 config_banner "${HOME}/bin"
 mkdir -p "${HOME}/bin"
 do_stow bin
@@ -60,20 +61,30 @@ if [ -f "${HOME}"/justfile ]; then
 fi
 do_stow just
 
-if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-  config_banner "i3 Window Manager"
-  mkdir -p "${HOME}/.config/i3"
-  do_stow i3
+# Linux-specific configurations
+if is_linux; then
+  if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
+    config_banner "i3 Window Manager"
+    mkdir -p "${HOME}/.config/i3"
+    do_stow i3
 
-  config_banner "Picom (compositor)"
-  mkdir -p "${HOME}/.config/picom"
-  do_stow picom
+    config_banner "Picom (compositor)"
+    mkdir -p "${HOME}/.config/picom"
+    do_stow picom
 
-  config_banner "Polybar"
-  mkdir -p "${HOME}/.config/polybar"
-  do_stow polybar
+    config_banner "Polybar"
+    mkdir -p "${HOME}/.config/polybar"
+    do_stow polybar
 
-  config_banner "Rofi"
-  mkdir -p "${HOME}/.config/rofi"
-  do_stow rofi
+    config_banner "Rofi"
+    mkdir -p "${HOME}/.config/rofi"
+    do_stow rofi
+  fi
+fi
+
+# macOS-specific configurations
+if is_macos; then
+  # Add macOS-specific configurations here if needed
+  # For now, all existing configurations should work cross-platform
+  echo "macOS-specific configurations would go here"
 fi
