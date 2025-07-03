@@ -35,10 +35,9 @@ run_brew () {
     fi
     
     # Run macOS-specific Brewfile if it exists
-    if [[ -f "${DOTFILES_DIR}/mac/Brewfile" ]]; then
-      echo "Installing macOS packages from mac/Brewfile"
-      cd "${DOTFILES_DIR}/mac" || exit
-      brew bundle --file=Brewfile
+    if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
+      echo "Installing macOS packages from Brewfile.macos"
+      brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
     fi
     
     cd - || exit
