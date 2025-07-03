@@ -97,7 +97,7 @@ The installation script will:
 1. Install Homebrew if not already installed
 2. Install GNU Stow for configuration management
 3. Install CLI tools from the main Brewfile
-4. Install GUI applications from the mac/Brewfile
+4. Install GUI applications from the Brewfile.macos
 5. Configure system preferences via macOS defaults
 6. Set up shell configurations and dotfiles
 

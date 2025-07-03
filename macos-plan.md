@@ -8,7 +8,7 @@ This document outlines the strategy for extending the dotfiles system to support
 
 **Goals**:
 - Maintain existing Linux functionality without breaking changes
-- Leverage existing `mac/Brewfile` for macOS package management
+- Leverage existing `Brewfile.macos` for macOS package management
 - Minimize code duplication between platforms
 - Provide seamless experience for both Linux and macOS users
 
@@ -194,8 +194,8 @@ run_brew() {
   brew bundle
   
   # Run macOS-specific Brewfile if on macOS
-  if is_macos && [[ -f "${DOTFILES_DIR}/mac/Brewfile" ]]; then
-    cd "${DOTFILES_DIR}/mac" || exit
+if is_macos && [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
+    cd "${DOTFILES_DIR}/macos" || exit
     brew bundle
   fi
   
@@ -243,11 +243,11 @@ echo "System preferences updated. Some changes may require a restart."
 ```
 # Current structure:
 Brewfile              # CLI tools for Linux compatibility
-mac/Brewfile          # macOS-specific packages
+Brewfile.macos        # macOS-specific packages
 
 # Proposed structure:
 Brewfile              # Cross-platform CLI tools
-mac/Brewfile          # macOS-specific casks and tools
+Brewfile.macos        # macOS-specific casks and tools
 ```
 
 ### 5.2 Update Root Brewfile
@@ -264,7 +264,7 @@ brew "tmux"
 # ... other CLI tools
 ```
 
-Keep macOS-specific applications in `mac/Brewfile`:
+Keep macOS-specific applications in `Brewfile.macos`:
 ```ruby
 # macOS-specific applications
 cask "1password"
