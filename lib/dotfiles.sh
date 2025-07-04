@@ -53,6 +53,18 @@ macos_defaults() {
   defaults write "$@"
 }
 
+# Sudo credential caching helper
+cache_sudo_credentials() {
+  if is_macos; then
+    echo "Caching sudo credentials for package installation..."
+    sudo -v
+    
+    # Keep sudo timestamp refreshed in background (for long installations)
+    # This will refresh the timestamp every 60 seconds until the script exits
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+  fi
+}
+
 config_banner() {
   banner "Configuring $1"
 }

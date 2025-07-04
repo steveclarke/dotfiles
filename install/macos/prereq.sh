@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
+# Cache sudo credentials for installations that may require it
+cache_sudo_credentials
+
 # Install Xcode Command Line Tools
 if ! xcode-select -p &>/dev/null; then
   installing_banner "Xcode Command Line Tools"

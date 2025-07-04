@@ -26,6 +26,10 @@ run_stow () {
 run_brew () {
   if is_macos; then
     echo "Running brew bundle (macOS)"
+    
+    # Cache sudo credentials for packages that may require it
+    cache_sudo_credentials
+    
     cd "${DOTFILES_DIR}" || exit
     
     # Always run main Brewfile for CLI tools

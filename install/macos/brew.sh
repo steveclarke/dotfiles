@@ -6,6 +6,9 @@ if ! is_installed brew; then
   exit 1
 fi
 
+# Cache sudo credentials for packages that may require it
+cache_sudo_credentials
+
 # Install CLI packages from main Brewfile
 installing_banner "Homebrew CLI packages"
 if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
