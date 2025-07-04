@@ -69,7 +69,7 @@ check_dotfilesrc() {
 		echo "ERROR: ~/.dotfilesrc does not exist"
 		if is_macos; then
 			echo "Please download and configure it first:"
-			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.macos"
+			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.macos"
 		fi
 		exit 2
 	fi
@@ -116,7 +116,7 @@ clone_git_repo() {
 		if is_macos; then
 			mkdir -p "$(dirname "${DOTFILES_DIR}")"
 		fi
-		git clone git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
+		git clone -b feature/macos git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
 	fi
 }
 
