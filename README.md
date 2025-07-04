@@ -43,7 +43,7 @@ First download and copy the `.dotfilesrc` to $HOME. This will contain settings
 and (possibly) secrets for the target machine.
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template
 ```
 
 After downloading you'll want to adjust the settings accordingly for the machine.
@@ -78,7 +78,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.

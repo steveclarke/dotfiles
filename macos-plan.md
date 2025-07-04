@@ -440,7 +440,7 @@ fi
 # Copy .dotfilesrc if it doesn't exist
 if [[ ! -f "${HOME}/.dotfilesrc" ]]; then
   echo "Creating .dotfilesrc configuration..."
-  cp "${DOTFILES_DIR}/.dotfilesrc.macos" "${HOME}/.dotfilesrc"
+  	cp "${DOTFILES_DIR}/.dotfilesrc.template" "${HOME}/.dotfilesrc"
   echo "Please edit ~/.dotfilesrc to configure your preferences."
 fi
 
