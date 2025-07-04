@@ -79,9 +79,11 @@ check_dotfilesrc() {
 		source "$HOME"/.dotfilesrc
 	else
 		echo "ERROR: ~/.dotfilesrc does not exist"
+		echo "Please download and configure it first:"
 		if is_macos; then
-			echo "Please download and configure it first:"
-			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.macos"
+			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template"
+		else
+			echo "wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template"
 		fi
 		exit 2
 	fi
