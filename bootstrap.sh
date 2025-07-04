@@ -18,12 +18,29 @@ banner() {
 
 install_pre_requisites() {
 	banner "Installing bootstrap pre-requisites"
-	sudo apt update &&
-		sudo apt install -y \
-			git \
-			curl \
-			software-properties-common \
-			build-essential
+	
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		# macOS
+		# Check if Xcode Command Line Tools are installed
+		if ! xcode-select -p &> /dev/null; then
+			echo "Installing Xcode Command Line Tools (includes git)..."
+			xcode-select --install
+			echo "Please wait for the Xcode Command Line Tools installation to complete,"
+			echo "then run this script again."
+			exit 0
+		fi
+		
+		echo "Xcode Command Line Tools are installed (git is now available)"
+		# curl is available by default on macOS, git is now available via Xcode tools
+	else
+		# Linux (Debian-based)
+		sudo apt update &&
+			sudo apt install -y \
+				git \
+				curl \
+				software-properties-common \
+				build-essential
+	fi
 }
 
 copy_ssh_keys() {
