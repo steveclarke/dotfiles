@@ -50,7 +50,7 @@ sudo apt update && sudo apt install -y git curl
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -60,7 +60,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone -b feature/macos https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
@@ -88,7 +88,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -98,7 +98,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone -b feature/macos https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```

@@ -81,9 +81,9 @@ check_dotfilesrc() {
 		echo "ERROR: ~/.dotfilesrc does not exist"
 		echo "Please download and configure it first:"
 		if is_macos; then
-			echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template"
+			    echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template"
 		else
-			echo "wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template"
+			    echo "wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template"
 		fi
 		exit 2
 	fi
@@ -188,7 +188,7 @@ clone_git_repo() {
 		if is_macos; then
 			mkdir -p "$(dirname "${DOTFILES_DIR}")"
 		fi
-		git clone -b feature/macos git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
+		    git clone git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
 	fi
 }
 
