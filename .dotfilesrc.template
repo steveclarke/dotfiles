@@ -6,21 +6,19 @@ export DOTFILES_DIR=${HOME}/.local/share/dotfiles
 
 # SSH Configuration
 # Set these to match your SSH key setup
-export DOTFILES_SSH_KEYS_HOST=user@your-server.com
-export DOTFILES_SSH_KEYS="your-key.pub your-key"
-export DOTFILES_SSH_KEYS_PRIMARY=your-key
+export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77
+export DOTFILES_SSH_KEYS="sevenview2020.pub sevenview2020 sevenview.pub sevenview"
+export DOTFILES_SSH_KEYS_PRIMARY=sevenview2020
 
 # Git Configuration
 # Set your Git user information
-export DOTFILES_GIT_USER_NAME="Your Name"
-export DOTFILES_GIT_USER_EMAIL="your-email@domain.com"
+export DOTFILES_GIT_USER_NAME=Steve Clarke
+export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
+
+# GUI applications (set to true to install GUI apps on both macOS and Linux)
+export DOTFILES_INSTALL_GUI=true
 
 # Platform-specific settings
-# Linux: i3 window manager (set to true if you want i3 installed)
-export DOTFILES_CONFIG_I3=false
-
-# GUI applications (macOS installs GUI apps by default, Linux requires explicit opt-in)
-export DOTFILES_INSTALL_GUI=true
 
 # Optional: Platform-specific environment variables
 # macOS:
@@ -28,4 +26,7 @@ export DOTFILES_INSTALL_GUI=true
 # export HOMEBREW_NO_INSECURE_REDIRECT=1
 
 # Linux:
+# polybar (set to true if you want polybar installed)
 # export DOTFILES_CONFIG_POLYBAR=true 
+# i3 window manager (set to true if you want i3 installed)
+# export DOTFILES_CONFIG_I3=false
