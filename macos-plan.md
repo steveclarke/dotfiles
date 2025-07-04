@@ -430,7 +430,7 @@ mkdir -p "${DOTFILES_DIR}"
 # Clone the repository if it doesn't exist
 if [[ ! -d "${DOTFILES_DIR}/.git" ]]; then
   echo "Cloning dotfiles repository..."
-  git clone https://github.com/steveclarke/dotfiles.git "${DOTFILES_DIR}"
+  git clone -b feature/macos https://github.com/steveclarke/dotfiles.git "${DOTFILES_DIR}"
 else
   echo "Repository already exists, pulling latest changes..."
   cd "${DOTFILES_DIR}"
@@ -485,7 +485,7 @@ echo "You may need to restart your terminal or run 'source ~/.zshrc' to apply sh
 ### Linux (Unchanged)
 ```bash
 # Bootstrap
-/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
+/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/bootstrap.sh)"
 
 # Install
 cd ~/.local/share/dotfiles
@@ -495,7 +495,7 @@ bash install.sh
 ### macOS (New)
 ```bash
 # Bootstrap  
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap-macos.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/bootstrap-macos.sh)"
 
 # Install
 cd ~/.local/share/dotfiles

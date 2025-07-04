@@ -43,7 +43,7 @@ First download and copy the `.dotfilesrc` to $HOME. This will contain settings
 and (possibly) secrets for the target machine.
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc
 ```
 
 After downloading you'll want to adjust the settings accordingly for the machine.
@@ -51,7 +51,7 @@ After downloading you'll want to adjust the settings accordingly for the machine
 Next, run the bootstrap script.
 
 ```bash
-/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
+/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/bootstrap.sh)"
 ```
 
 #### Main Setup Script
@@ -78,7 +78,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc
 ```
 
 After downloading, adjust the settings for your machine.
@@ -88,7 +88,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/macos https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
