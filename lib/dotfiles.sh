@@ -94,15 +94,56 @@ copy_ssh_keys() {
 	mkdir -p "${HOME}/.ssh"
 	chmod 700 "${HOME}/.ssh"
 	
-	# Copy SSH keys from remote host
-	rsync -avz --files-from=<(printf "%s\n" "${DOTFILES_SSH_KEYS// /$'\n'}") "${DOTFILES_SSH_KEYS_HOST}:.ssh/" "${HOME}/.ssh"
+	# Check if SSH keys already exist locally
+	local keys_exist=true
+	for key in ${DOTFILES_SSH_KEYS}; do
+		if [[ ! -f "${HOME}/.ssh/${key}" ]]; then
+			keys_exist=false
+			break
+		fi
+	done
 	
-	# Set proper permissions
-	if is_macos; then
-		chmod 600 "${HOME}/.ssh/"*
-		chmod 644 "${HOME}/.ssh/"*.pub
+	if [[ "$keys_exist" == "true" ]]; then
+		echo "SSH keys already exist locally, skipping copy"
+		return 0
+	fi
+	
+	# Test if remote host is reachable
+	echo "Testing connection to ${DOTFILES_SSH_KEYS_HOST}..."
+	if ssh -o ConnectTimeout=5 -o BatchMode=yes "${DOTFILES_SSH_KEYS_HOST}" 'exit 0' 2>/dev/null; then
+		echo "Remote host is reachable, copying SSH keys..."
+		# Copy each SSH key individually for better error handling
+		for key in ${DOTFILES_SSH_KEYS}; do
+			echo "Copying ${key}..."
+			if scp "${DOTFILES_SSH_KEYS_HOST}:.ssh/${key}" "${HOME}/.ssh/${key}" 2>/dev/null; then
+				echo "✓ ${key} copied successfully"
+			else
+				echo "⚠ Failed to copy ${key} (may not exist on remote host)"
+			fi
+		done
+		
+		# Set proper permissions
+		echo "Setting SSH key permissions..."
+		if is_macos; then
+			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
+			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
+		else
+			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
+			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
+		fi
+		echo "SSH keys processing complete"
 	else
-		chmod 600 "${HOME}/.ssh/"*
+		echo "WARNING: Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
+		echo "SSH keys will need to be copied manually to ${HOME}/.ssh/"
+		echo "Required keys: ${DOTFILES_SSH_KEYS}"
+		echo ""
+		echo "You can either:"
+		echo "1. Copy the keys manually to ${HOME}/.ssh/"
+		echo "2. Update DOTFILES_SSH_KEYS_HOST in ~/.dotfilesrc to a reachable host"
+		echo "3. Skip SSH key copying if you'll set them up differently"
+		echo ""
+		echo "Press Enter to continue without copying SSH keys, or Ctrl+C to abort..."
+		read -r
 	fi
 }
 
