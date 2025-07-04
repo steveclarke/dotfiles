@@ -37,31 +37,41 @@ lots of assumptions about where I like to place things.
 
 ### Linux Installation
 
-#### Bootstrapping the Dotfiles Directory
+#### Prerequisites
 
-First download and copy the `.dotfilesrc` to $HOME. This will contain settings
-and (possibly) secrets for the target machine.
+Ensure you have `git` and `curl` installed:
+
+```bash
+sudo apt update && sudo apt install -y git curl
+```
+
+#### Setup
+
+Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
 wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/.dotfilesrc.template
 ```
 
-After downloading you'll want to adjust the settings accordingly for the machine.
+After downloading, adjust the settings for your machine.
 
-Next, run the bootstrap script.
+#### Clone and Install
 
-```bash
-/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/feature/macos/bootstrap.sh)"
-```
-
-#### Main Setup Script
-
-Run the `install.sh` script. This will also be used to update the dotfiles regularly.
+Clone the repository and run the installation:
 
 ```bash
+git clone -b feature/macos https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
+
+The installation script will:
+1. Install system prerequisites and build tools
+2. Install GNU Stow for configuration management
+3. Install CLI tools via package managers
+4. Install GUI applications (if DOTFILES_INSTALL_GUI=true)
+5. Configure SSH keys and settings (if configured)
+6. Set up shell configurations and dotfiles
 
 ### macOS Installation
 
@@ -73,7 +83,7 @@ First, install Xcode Command Line Tools if not already installed:
 xcode-select --install
 ```
 
-#### Bootstrapping the Dotfiles Directory
+#### Setup
 
 Download and copy the `.dotfilesrc` to $HOME:
 
@@ -97,9 +107,10 @@ The installation script will:
 1. Install Homebrew if not already installed
 2. Install GNU Stow for configuration management
 3. Install CLI tools from the main Brewfile
-4. Install GUI applications from the Brewfile.macos
-5. Configure system preferences via macOS defaults
-6. Set up shell configurations and dotfiles
+4. Install GUI applications from the Brewfile.macos (if DOTFILES_INSTALL_GUI=true)
+5. Configure SSH keys and settings (if configured)
+6. Configure system preferences via macOS defaults
+7. Set up shell configurations and dotfiles
 
 ## Updating
 
