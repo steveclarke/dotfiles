@@ -6,7 +6,7 @@ lots of assumptions about where I like to place things.
 
 ## Pre-requisites
 
-* Operating system is Debian-derived (e.g. Ubuntu, Pop!_OS)
+* Operating system is Debian-derived (e.g. Ubuntu, Pop!_OS) or macOS
 * Repository lives at `~/.local/share/dotfiles` (unless otherwise specified in
   `.dotfilesrc`)
 
@@ -34,18 +34,28 @@ lots of assumptions about where I like to place things.
 First download and copy the `.dotfilesrc` to $HOME. This will contain settings
 and (possibly) secrets for the target machine.
 
+**For Ubuntu/Debian (using wget):**
 ```bash
 wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
+```
 
+**For macOS (using curl):**
+```bash
+curl -sL -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
 ```
 
 After downloading you'll want to adjust the settings accordingly for the machine.
 
 Next, run the bootstrap script.
 
+**For Ubuntu/Debian (using wget):**
 ```bash
 /bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
+```
 
+**For macOS (using curl):**
+```bash
+/bin/bash -c "$(curl -sL https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
 ```
 
 ### Main Setup Script
