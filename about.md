@@ -24,9 +24,4 @@ Both Linux and macOS follow the same unified process:
 - **Linux**: Debian-derived distributions (Ubuntu, Pop!_OS, etc.)
 - **macOS**: macOS 10.15 (Catalina) or later
 
-## Deprecated Scripts
 
-- **`bootstrap.sh`** - ⚠️ **DEPRECATED** - Legacy Linux bootstrap script (use unified `install.sh` instead)
-- **`bootstrap-macos.sh`** - ⚠️ **DEPRECATED** - Legacy macOS bootstrap script (use unified `install.sh` instead)
-
-These scripts are kept for backwards compatibility but will be removed in a future version.
