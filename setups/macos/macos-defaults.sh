@@ -221,6 +221,18 @@ defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
+# Show the ~/Library folder
+# Makes the hidden Library folder visible in user directory
+chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
+
+# Disable the warning before emptying the Trash
+# Removes confirmation dialog when emptying trash
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
+
+# NOTE: To add the Delete button to Finder toolbar, do this manually:
+# View > Customize Toolbar > Drag the Delete button to your toolbar
+# There's no simple defaults command for this specific customization
+
 # COMMENTED OUT: Use list view in all Finder windows by default
 # This would make all Finder windows show files in detailed list format with columns
 # System default: macOS uses icon view by default for new Finder windows
