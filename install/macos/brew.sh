@@ -19,14 +19,18 @@ else
   echo "WARNING: No Brewfile found in ${DOTFILES_DIR}"
 fi
 
-# Install GUI applications from Brewfile.macos
-installing_banner "Homebrew GUI applications"
-if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
-  cd "${DOTFILES_DIR}" || exit
-  brew bundle --file=Brewfile.macos
-  cd - || exit
+# Install GUI applications from Brewfile.macos only if DOTFILES_INSTALL_GUI is true
+if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
+  installing_banner "Homebrew GUI applications"
+  if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
+    cd "${DOTFILES_DIR}" || exit
+    brew bundle --file=Brewfile.macos
+    cd - || exit
+  else
+    echo "WARNING: No Brewfile.macos found in ${DOTFILES_DIR}"
+  fi
 else
-  echo "WARNING: No Brewfile.macos found in ${DOTFILES_DIR}"
+  echo "Skipping GUI applications (DOTFILES_INSTALL_GUI not set to true)"
 fi
 
 echo "Homebrew package installation complete!" 
