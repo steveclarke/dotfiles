@@ -110,12 +110,29 @@ copy_ssh_keys() {
 	
 	# Test if remote host is reachable
 	echo "Testing connection to ${DOTFILES_SSH_KEYS_HOST}..."
+	
+	# First try key-based authentication (no password prompt)
 	if ssh -o ConnectTimeout=5 -o BatchMode=yes "${DOTFILES_SSH_KEYS_HOST}" 'exit 0' 2>/dev/null; then
-		echo "Remote host is reachable, copying SSH keys..."
+		echo "✅ Remote host reachable (key-based auth), copying SSH keys..."
+		copy_method="key-based"
+	else
+		# Try regular connection (may prompt for password)
+		echo "🔑 Key-based auth failed, testing password authentication..."
+		echo "You may be prompted for a password..."
+		if ssh -o ConnectTimeout=5 "${DOTFILES_SSH_KEYS_HOST}" 'exit 0'; then
+			echo "✅ Remote host reachable (password auth), copying SSH keys..."
+			copy_method="password"
+		else
+			echo "❌ Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
+			copy_method="failed"
+		fi
+	fi
+	
+	if [[ "$copy_method" != "failed" ]]; then
 		# Copy each SSH key individually for better error handling
 		for key in ${DOTFILES_SSH_KEYS}; do
 			echo "Copying ${key}..."
-			if scp "${DOTFILES_SSH_KEYS_HOST}:.ssh/${key}" "${HOME}/.ssh/${key}" 2>/dev/null; then
+			if scp "${DOTFILES_SSH_KEYS_HOST}:.ssh/${key}" "${HOME}/.ssh/${key}"; then
 				echo "✓ ${key} copied successfully"
 			else
 				echo "⚠ Failed to copy ${key} (may not exist on remote host)"
