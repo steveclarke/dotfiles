@@ -4,11 +4,17 @@ This is a collection of my config files to help me get each of my computers
 quickly bootstrapped. It's a work in progress and is specifically tweaked with
 lots of assumptions about where I like to place things.
 
+## Supported Platforms
+
+* **Linux**: Debian-derived distributions (e.g. Ubuntu, Pop!_OS)
+* **macOS**: macOS 10.15 (Catalina) or later
+
 ## Pre-requisites
 
-* Operating system is Debian-derived (e.g. Ubuntu, Pop!_OS)
 * Repository lives at `~/.local/share/dotfiles` (unless otherwise specified in
   `.dotfilesrc`)
+* **Linux**: Debian-derived operating system
+* **macOS**: macOS 10.15 or later with Xcode Command Line Tools
 
 ## General Organisation
 
@@ -29,33 +35,82 @@ lots of assumptions about where I like to place things.
 
 ## Installation
 
-### Bootstrapping the Dotfiles Directory
+### Linux Installation
 
-First download and copy the `.dotfilesrc` to $HOME. This will contain settings
-and (possibly) secrets for the target machine.
+#### Prerequisites
+
+Ensure you have `git` and `curl` installed:
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc
-
+sudo apt update && sudo apt install -y git curl
 ```
 
-After downloading you'll want to adjust the settings accordingly for the machine.
+#### Setup
 
-Next, run the bootstrap script.
+Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/steveclarke/dotfiles/master/bootstrap.sh)"
-
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
 ```
 
-### Main Setup Script
+After downloading, adjust the settings for your machine.
 
-Run the `install.sh` script. This will also be used to update the dotfiles regularly.
+#### Clone and Install
+
+Clone the repository and run the installation:
 
 ```bash
+git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
+
+The installation script will:
+1. Install system prerequisites and build tools
+2. Install GNU Stow for configuration management
+3. Install CLI tools via package managers
+4. Install GUI applications (if DOTFILES_INSTALL_GUI=true)
+5. Configure SSH keys and settings (if configured)
+6. Set up shell configurations and dotfiles
+
+### macOS Installation
+
+#### Prerequisites
+
+First, install Xcode Command Line Tools if not already installed:
+
+```bash
+xcode-select --install
+```
+
+#### Setup
+
+Download and copy the `.dotfilesrc` to $HOME:
+
+```bash
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+```
+
+After downloading, adjust the settings for your machine.
+
+#### Clone and Install
+
+Clone the repository and run the installation:
+
+```bash
+git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+cd ~/.local/share/dotfiles
+bash install.sh
+```
+
+The installation script will:
+1. Install Homebrew if not already installed
+2. Install GNU Stow for configuration management
+3. Install CLI tools from the main Brewfile
+4. Install GUI applications from the Brewfile.macos (if DOTFILES_INSTALL_GUI=true)
+5. Configure SSH keys and settings (if configured)
+6. Configure system preferences via macOS defaults
+7. Set up shell configurations and dotfiles
 
 ## Updating
 

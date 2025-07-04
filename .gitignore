@@ -3,3 +3,6 @@
 *.swo
 Brewfile.lock.json
 repomix*
+
+# Personal configuration files
+.dotfilesrc

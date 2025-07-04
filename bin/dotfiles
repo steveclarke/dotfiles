@@ -5,6 +5,9 @@ set -e -o pipefail
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
+# Detect OS
+detect_os
+
 # Show usage if no command is provided
 if [ $# -eq 0 ]; then
   echo "Usage: dotfiles [command]"
@@ -21,10 +24,33 @@ run_stow () {
 }
 
 run_brew () {
-  echo "Running brew bundle"
-  cd "${DOTFILES_DIR}" || exit
-  brew bundle
-  cd - || exit
+  if is_macos; then
+    echo "Running brew bundle (macOS)"
+    
+    # Cache sudo credentials for packages that may require it
+    cache_sudo_credentials
+    
+    cd "${DOTFILES_DIR}" || exit
+    
+    # Always run main Brewfile for CLI tools
+    if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
+      echo "Installing CLI packages from main Brewfile"
+      brew bundle --file=Brewfile
+    fi
+    
+    # Run macOS-specific Brewfile if it exists
+    if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
+      echo "Installing macOS packages from Brewfile.macos"
+      brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
+    fi
+    
+    cd - || exit
+  else
+    echo "Running brew bundle (Linux)"
+    cd "${DOTFILES_DIR}" || exit
+    brew bundle
+    cd - || exit
+  fi
 }
 
 # check the command and run appropriate function
