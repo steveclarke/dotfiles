@@ -28,7 +28,7 @@ install () {
       [[ -f $setup ]] && source "$setup"
     done
     
-    # Run cross-platform setups
+    # Run cross-platform setups (scripts that work on both Linux and macOS)
     for setup in "${DOTFILES_DIR}"/setups/*.sh; do
       [[ -f $setup ]] && source "$setup"
     done
@@ -49,12 +49,17 @@ install () {
     if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
       source "$DOTFILES_DIR"/install/apps.sh
       source "$DOTFILES_DIR"/install/desktop-entries.sh
-    else
-      echo "Skipping GUI apps installation."
     fi
 
-    # Run setups
-    for installer in "${DOTFILES_DIR}"/setups/*.sh; do source $installer; done
+    # Run cross-platform setups
+    for setup in "${DOTFILES_DIR}"/setups/*.sh; do 
+      [[ -f $setup ]] && source "$setup"
+    done
+    
+    # Run Linux-specific setups
+    for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do 
+      [[ -f $setup ]] && source "$setup"
+    done
 
     echo "Linux installation complete! You should now reboot the system."
   fi
