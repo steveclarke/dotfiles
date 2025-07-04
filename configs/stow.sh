@@ -15,7 +15,7 @@ mkdir -p "${HOME}/bin"
 do_stow bin
 
 config_banner "Bash"
-rm "${HOME}"/.bash_aliases
+rm -f "${HOME}"/.bash_aliases
 do_stow bash
 
 config_banner "Tmux"
@@ -51,13 +51,13 @@ do_stow fonts
 
 config_banner "Idea"
 if [ -f "${HOME}"/.ideavimrc ]; then
-  rm "${HOME}"/.ideavimrc
+  rm -f "${HOME}"/.ideavimrc
 fi
 do_stow idea
 
 config_banner "Just"
 if [ -f "${HOME}"/justfile ]; then
-  rm "${HOME}"/justfile
+  rm -f "${HOME}"/justfile
 fi
 do_stow just
 
