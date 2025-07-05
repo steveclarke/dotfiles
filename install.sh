@@ -25,11 +25,13 @@ install () {
     
     # Run macOS-specific setups
     for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
     # Run cross-platform setups (scripts that work on both Linux and macOS)
     for setup in "${DOTFILES_DIR}"/setups/*.sh; do
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
@@ -53,11 +55,13 @@ install () {
 
     # Run cross-platform setups
     for setup in "${DOTFILES_DIR}"/setups/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
     # Run Linux-specific setups
     for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
 
