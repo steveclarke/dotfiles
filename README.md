@@ -60,7 +60,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
@@ -98,7 +98,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
