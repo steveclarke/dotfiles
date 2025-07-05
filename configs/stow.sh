@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
@@ -61,30 +63,13 @@ if [ -f "${HOME}"/justfile ]; then
 fi
 do_stow just
 
-# Linux-specific configurations
+# Platform-specific configurations
 if is_linux; then
-  if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-    config_banner "i3 Window Manager"
-    mkdir -p "${HOME}/.config/i3"
-    do_stow i3
-
-    config_banner "Picom (compositor)"
-    mkdir -p "${HOME}/.config/picom"
-    do_stow picom
-
-    config_banner "Polybar"
-    mkdir -p "${HOME}/.config/polybar"
-    do_stow polybar
-
-    config_banner "Rofi"
-    mkdir -p "${HOME}/.config/rofi"
-    do_stow rofi
-  fi
+  banner "Applying Linux-specific configurations"
+  source "${DOTFILES_DIR}"/configs/linux/stow-linux.sh
 fi
 
-# macOS-specific configurations
 if is_macos; then
-  # Add macOS-specific configurations here if needed
-  # For now, all existing configurations should work cross-platform
-  echo "macOS-specific configurations would go here"
+  banner "Applying macOS-specific configurations"
+  source "${DOTFILES_DIR}"/configs/macos/stow-macos.sh
 fi
