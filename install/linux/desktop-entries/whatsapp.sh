@@ -6,7 +6,7 @@ Comment=WhatsApp Messenger
 Exec=google-chrome --app="https://web.whatsapp.com" --name=WhatsApp --class=Whatsapp
 Terminal=false
 Type=Application
-Icon=/home/$USER/dotfiles/install/desktop-entries/icons/WhatsApp.png
+Icon=/home/$USER/dotfiles/install/linux/desktop-entries/icons/WhatsApp.png
 Categories=GTK;
 MimeType=text/html;text/xml;application/xhtml_xml;
 StartupNotify=true

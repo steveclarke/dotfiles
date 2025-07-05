@@ -2,7 +2,7 @@
 # Check if the Cursor AppImage is installed in /opt/cursor
 if [ ! -f /opt/cursor/cursor.appimage ]; then
   echo "Error: Cursor AppImage not found in /opt/cursor."
-  echo "Please install Cursor using the install script found in install/optional/cursor.sh."
+  echo "Please install Cursor using the install script found in install/linux/optional/cursor.sh."
   exit 1
 fi
 

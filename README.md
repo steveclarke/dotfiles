@@ -133,6 +133,6 @@ dotfiles update # runs both stow and brew
 New items added to the `install` directory should be manually run after initial
 installation. In general you should run `bash install/**/[name].sh` to run
 any of the install scripts. You can also install optional software found in the
-`install/optional` directory,
+`install/linux/optional` directory,
 
-e.g. `bash install/optional/steam.sh` to install Emacs.
+e.g. `bash install/linux/optional/steam.sh` to install Steam.

@@ -39,16 +39,16 @@ install () {
     banner "Starting Linux installation"
     
     # Install prerequisites
-    source "${DOTFILES_DIR}"/install/prereq.sh
+    source "${DOTFILES_DIR}"/install/linux/prereq.sh
 
     # Stow configs
     source "${DOTFILES_DIR}"/configs/stow.sh
 
-    source "$DOTFILES_DIR"/install/cli.sh
+    source "$DOTFILES_DIR"/install/linux/cli.sh
 
     if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
-      source "$DOTFILES_DIR"/install/apps.sh
-      source "$DOTFILES_DIR"/install/desktop-entries.sh
+      source "$DOTFILES_DIR"/install/linux/apps.sh
+      source "$DOTFILES_DIR"/install/linux/desktop-entries.sh
     fi
 
     # Run cross-platform setups
