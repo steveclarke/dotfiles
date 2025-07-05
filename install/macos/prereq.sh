@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/macos.sh
 
 # Cache sudo credentials for installations that may require it
 cache_sudo_credentials

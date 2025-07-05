@@ -50,7 +50,7 @@ sudo apt update && sudo apt install -y git curl
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -60,7 +60,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
@@ -88,7 +88,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -98,7 +98,7 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
 bash install.sh
 ```
@@ -133,6 +133,6 @@ dotfiles update # runs both stow and brew
 New items added to the `install` directory should be manually run after initial
 installation. In general you should run `bash install/**/[name].sh` to run
 any of the install scripts. You can also install optional software found in the
-`install/optional` directory,
+`install/linux/optional` directory,
 
-e.g. `bash install/optional/steam.sh` to install Emacs.
+e.g. `bash install/linux/optional/steam.sh` to install Steam.

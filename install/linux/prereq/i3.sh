@@ -1,5 +1,5 @@
 source "${HOME}"/.dotfilesrc
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/linux.sh
 
 # i3 Window Manager Requirements
 

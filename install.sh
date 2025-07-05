@@ -25,11 +25,13 @@ install () {
     
     # Run macOS-specific setups
     for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
     # Run cross-platform setups (scripts that work on both Linux and macOS)
     for setup in "${DOTFILES_DIR}"/setups/*.sh; do
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
@@ -39,25 +41,27 @@ install () {
     banner "Starting Linux installation"
     
     # Install prerequisites
-    source "${DOTFILES_DIR}"/install/prereq.sh
+    source "${DOTFILES_DIR}"/install/linux/prereq.sh
 
     # Stow configs
     source "${DOTFILES_DIR}"/configs/stow.sh
 
-    source "$DOTFILES_DIR"/install/cli.sh
+    source "$DOTFILES_DIR"/install/linux/cli.sh
 
     if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
-      source "$DOTFILES_DIR"/install/apps.sh
-      source "$DOTFILES_DIR"/install/desktop-entries.sh
+      source "$DOTFILES_DIR"/install/linux/apps.sh
+      source "$DOTFILES_DIR"/install/linux/desktop-entries.sh
     fi
 
     # Run cross-platform setups
     for setup in "${DOTFILES_DIR}"/setups/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
     
     # Run Linux-specific setups
     for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do 
+      # shellcheck disable=SC1090
       [[ -f $setup ]] && source "$setup"
     done
 

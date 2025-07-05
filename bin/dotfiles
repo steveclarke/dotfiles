@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 source "${HOME}"/.dotfilesrc
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/macos.sh
 
 # Detect OS
 detect_os

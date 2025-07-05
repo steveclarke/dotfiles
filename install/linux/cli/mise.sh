@@ -1,7 +1,7 @@
 # https://mise.jdx.dev/getting-started.html
 
 # Note: Ensure Ruby dependencies are installed before running `mise use ruby@latest`.
-# See script in `install/prereq/ruby.sh`
+# See script in `install/linux/prereq/ruby.sh`
 
 curl https://mise.run | sh
 
