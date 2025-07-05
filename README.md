@@ -50,7 +50,7 @@ sudo apt update && sudo apt install -y git curl
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -88,7 +88,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
