@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/bootstrap.sh
 
 # SSH Setup - handles SSH key copying and configuration
 # This replaces the SSH functionality previously in bootstrap.sh
