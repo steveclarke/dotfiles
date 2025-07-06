@@ -16,8 +16,7 @@ source "${DOTFILES_DIR}"/lib/macos.sh
 # Note: config_banner and do_stow functions are available from sourced libraries
 
 # macOS-specific configurations
-# Currently no macOS-specific configurations
-# Add them here as needed in the future
+# Note: Fonts are handled by install/macos/fonts.sh (macOS doesn't support symlinked fonts)
 
 # Example for future macOS-specific configs:
 # if [ "${DOTFILES_CONFIG_MACOS_SPECIFIC^^}" = "TRUE" ]; then

@@ -36,6 +36,7 @@ show_help() {
   echo "  install [platform]  - Run full installation (linux/macos, auto-detects if not specified)"
   echo "  config             - Update configuration files using stow"
   echo "  stow               - Alias for config command"
+  echo "  fonts              - Install fonts (copies on macOS, symlinks on Linux)"
   echo "  brew               - Install/update packages using Homebrew"
   echo "  update             - Update both config and packages"
   echo "  doctor             - Check system health and dependencies"
@@ -49,6 +50,7 @@ show_help() {
   echo "  dotfiles install          # Install for current platform"
   echo "  dotfiles install linux    # Force Linux installation"
   echo "  dotfiles config           # Update config files"
+  echo "  dotfiles fonts            # Install fonts"
   echo "  dotfiles doctor           # Check system health"
   echo "  dotfiles validate         # Run comprehensive validation"
   echo "  dotfiles test dependencies # Test all script dependencies"
@@ -73,6 +75,9 @@ case "${1:-help}" in
     ;;
   config|stow)
     run_config
+    ;;
+  fonts)
+    run_fonts
     ;;
   brew)
     run_brew

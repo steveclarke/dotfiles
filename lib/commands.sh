@@ -146,6 +146,33 @@ run_doctor() {
   fi
 }
 
+run_fonts() {
+  echo "🔤 Installing fonts..."
+  
+  if is_macos; then
+    # Run macOS font installation script
+    source "${DOTFILES_DIR}/install/macos/fonts.sh"
+  elif is_linux; then
+    # Run Linux font stow (symlink) installation
+    config_banner "Fonts"
+    mkdir -p "${HOME}/.local/share/fonts"
+    do_stow fonts
+    
+    # Update font cache
+    if is_installed fc-cache; then
+      echo "🔄 Updating font cache..."
+      fc-cache -f
+    fi
+    
+    echo "✅ Fonts installed successfully"
+  else
+    echo "❌ Unsupported platform for font installation"
+    exit 1
+  fi
+  
+  echo "💡 Tip: You may need to restart applications to see the new fonts"
+}
+
 run_clean() {
   echo "🧹 Cleaning temporary files and caches..."
   

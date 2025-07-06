@@ -38,6 +38,9 @@ install () {
     # Install packages via Homebrew
     source "${DOTFILES_DIR}"/install/macos/brew.sh
     
+    # Install fonts (macOS doesn't support symlinked fonts)
+    source "${DOTFILES_DIR}"/install/macos/fonts.sh
+    
     # Configure fish shell as default
     source "${DOTFILES_DIR}"/install/macos/fish.sh
     

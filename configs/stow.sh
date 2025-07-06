@@ -51,9 +51,7 @@ config_banner "Zellij"
 mkdir -p "${HOME}/.config/zellij"
 do_stow zellij
 
-config_banner "Fonts"
-mkdir -p "${HOME}/.local/share/fonts"
-do_stow fonts
+
 
 config_banner "Idea"
 if [ -f "${HOME}"/.ideavimrc ]; then
