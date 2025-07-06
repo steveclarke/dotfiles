@@ -46,6 +46,16 @@ show_help() {
   echo "  clean              - Clean up temporary files and caches"
   echo "  help               - Show this help message"
   echo ""
+  echo "Package Management Commands:"
+  echo "  pkg install <package>     - Install package using unified package management"
+  echo "  pkg install-bulk <pkg1> <pkg2> ... - Install multiple packages"
+  echo "  pkg remove <package>      - Remove package"
+  echo "  pkg list                  - Show installed packages"
+  echo "  pkg search <package>      - Search for package"
+  echo "  pkg info                  - Show package manager information"
+  echo "  pkg managers              - List available package managers"
+  echo "  pkg conflicts <package>   - Check package conflicts"
+  echo ""
   echo "Logging Commands:"
   echo "  logs               - Show recent log entries"
   echo "  logs tail          - Follow log file in real-time"
@@ -65,6 +75,9 @@ show_help() {
   echo "  dotfiles test dependencies # Test all script dependencies"
   echo "  dotfiles test basic       # Quick dependency test"
   echo "  dotfiles clean            # Clean temporary files"
+  echo "  dotfiles pkg install curl # Install curl using unified package management"
+  echo "  dotfiles pkg install-bulk git curl wget # Install multiple packages"
+  echo "  dotfiles pkg info         # Show package manager information"
   echo "  dotfiles logs             # Show recent logs"
   echo "  dotfiles logs tail        # Follow logs in real-time"
   echo "  dotfiles debug on         # Enable debug mode"
@@ -76,6 +89,182 @@ show_help() {
   echo "  DOTFILES_DEBUG           - Enable debug mode (0/1)"
   echo "  DOTFILES_LOG_LEVEL       - Set logging level (DEBUG/INFO/WARN/ERROR)"
   echo "  DOTFILES_LOG_FILE        - Set log file path"
+}
+
+# Package management command functions
+run_pkg() {
+  local action="${1:-help}"
+  shift || true
+  
+  case "$action" in
+    install)
+      if [[ $# -eq 0 ]]; then
+        log_error "Package name required for install command"
+        echo "Usage: dotfiles pkg install <package> [manager] [options]"
+        exit 1
+      fi
+      
+      local package="$1"
+      local manager="${2:-auto}"
+      local options="${3:-}"
+      
+      log_info "Installing package: $package"
+      if install_package "$package" "$manager" "$options"; then
+        log_success "Package $package installed successfully"
+      else
+        log_error "Failed to install package $package"
+        exit 1
+      fi
+      ;;
+    install-bulk)
+      if [[ $# -eq 0 ]]; then
+        log_error "At least one package name required for install-bulk command"
+        echo "Usage: dotfiles pkg install-bulk <package1> <package2> ..."
+        exit 1
+      fi
+      
+      log_info "Installing multiple packages: $*"
+      if install_packages "$@"; then
+        log_success "All packages installed successfully"
+      else
+        log_error "Some packages failed to install"
+        exit 1
+      fi
+      ;;
+    remove)
+      if [[ $# -eq 0 ]]; then
+        log_error "Package name required for remove command"
+        echo "Usage: dotfiles pkg remove <package> [manager]"
+        exit 1
+      fi
+      
+      local package="$1"
+      local manager="${2:-auto}"
+      
+      log_info "Removing package: $package"
+      if remove_package "$package" "$manager"; then
+        log_success "Package $package removed successfully"
+      else
+        log_error "Failed to remove package $package"
+        exit 1
+      fi
+      ;;
+    list)
+      log_info "Listing installed packages"
+      
+      local managers
+      mapfile -t managers < <(detect_package_managers)
+      
+      for mgr in "${managers[@]}"; do
+        if [[ "$mgr" == "manual" ]]; then
+          continue
+        fi
+        
+        log_info "Packages installed via $mgr:"
+        case "$mgr" in
+          "apt")
+            dpkg -l | grep "^ii" | awk '{print "  " $2}' || true
+            ;;
+          "brew")
+            brew list | sed 's/^/  /' || true
+            ;;
+          "snap")
+            snap list | tail -n +2 | awk '{print "  " $1}' || true
+            ;;
+          "flatpak")
+            flatpak list --app | awk '{print "  " $1}' || true
+            ;;
+        esac
+        echo
+      done
+      ;;
+    search)
+      if [[ $# -eq 0 ]]; then
+        log_error "Package name required for search command"
+        echo "Usage: dotfiles pkg search <package>"
+        exit 1
+      fi
+      
+      local package="$1"
+      log_info "Searching for package: $package"
+      
+      local managers
+      mapfile -t managers < <(detect_package_managers)
+      
+      for mgr in "${managers[@]}"; do
+        if [[ "$mgr" == "manual" ]]; then
+          continue
+        fi
+        
+        log_info "Searching in $mgr:"
+        case "$mgr" in
+          "apt")
+            apt search "$package" 2>/dev/null | head -10 || true
+            ;;
+          "brew")
+            brew search "$package" 2>/dev/null | head -10 || true
+            ;;
+          "snap")
+            snap find "$package" 2>/dev/null | head -10 || true
+            ;;
+          "flatpak")
+            flatpak search "$package" 2>/dev/null | head -10 || true
+            ;;
+        esac
+        echo
+      done
+      ;;
+    info)
+      show_package_manager_info
+      ;;
+    managers)
+      log_info "Available package managers:"
+      local managers
+      mapfile -t managers < <(detect_package_managers)
+      
+      for mgr in "${managers[@]}"; do
+        local cmd="${PACKAGE_MANAGER_COMMANDS[$mgr]}"
+        local priority="${PACKAGE_MANAGER_PRIORITY[$mgr]}"
+        
+        if [[ "$mgr" == "manual" ]]; then
+          echo "  $mgr (priority: $priority) - Custom installation functions"
+        else
+          echo "  $mgr (priority: $priority) - Command: $cmd"
+        fi
+      done
+      ;;
+    conflicts)
+      if [[ $# -eq 0 ]]; then
+        log_error "Package name required for conflicts command"
+        echo "Usage: dotfiles pkg conflicts <package> [conflict_list]"
+        exit 1
+      fi
+      
+      local package="$1"
+      local conflicts="${2:-}"
+      
+      log_info "Checking conflicts for package: $package"
+      if check_package_conflicts "$package" "$conflicts"; then
+        log_success "No conflicts found for $package"
+      else
+        log_error "Conflicts detected for $package"
+        exit 1
+      fi
+      ;;
+    help|*)
+      log_error "Invalid package command: $action"
+      echo "Available package commands:"
+      echo "  dotfiles pkg install <package>     # Install package"
+      echo "  dotfiles pkg install-bulk <pkg1> <pkg2> # Install multiple packages"
+      echo "  dotfiles pkg remove <package>      # Remove package"
+      echo "  dotfiles pkg list                  # Show installed packages"
+      echo "  dotfiles pkg search <package>      # Search for package"
+      echo "  dotfiles pkg info                  # Show package manager information"
+      echo "  dotfiles pkg managers              # List available package managers"
+      echo "  dotfiles pkg conflicts <package>   # Check package conflicts"
+      exit 1
+      ;;
+  esac
 }
 
 # Logging command functions
@@ -242,6 +431,10 @@ case "${1:-help}" in
     ;;
   clean)
     run_clean
+    ;;
+  # Package management commands
+  pkg)
+    run_pkg "${@:2}"
     ;;
   # Logging commands
   logs)

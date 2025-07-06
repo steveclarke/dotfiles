@@ -5,29 +5,35 @@ DOTFILES_LOG_LEVEL="${DOTFILES_LOG_LEVEL:-INFO}"
 DOTFILES_LOG_FILE="${DOTFILES_LOG_FILE:-${HOME}/.dotfiles.log}"
 DOTFILES_DEBUG="${DOTFILES_DEBUG:-0}"
 
-# ANSI Color Codes
-readonly COLOR_RED='\033[0;31m'
-readonly COLOR_GREEN='\033[0;32m'
-readonly COLOR_YELLOW='\033[1;33m'
-readonly COLOR_BLUE='\033[0;34m'
-readonly COLOR_PURPLE='\033[0;35m'
-readonly COLOR_CYAN='\033[0;36m'
-readonly COLOR_WHITE='\033[1;37m'
-readonly COLOR_RESET='\033[0m'
+# ANSI Color Codes (define only if not already set)
+if [[ -z "${COLOR_RED:-}" ]]; then
+    readonly COLOR_RED='\033[0;31m'
+    readonly COLOR_GREEN='\033[0;32m'
+    readonly COLOR_YELLOW='\033[1;33m'
+    readonly COLOR_BLUE='\033[0;34m'
+    readonly COLOR_PURPLE='\033[0;35m'
+    readonly COLOR_CYAN='\033[0;36m'
+    readonly COLOR_WHITE='\033[1;37m'
+    readonly COLOR_RESET='\033[0m'
+fi
 
-# Emoji symbols for better visual feedback
-readonly EMOJI_ERROR='❌'
-readonly EMOJI_WARNING='⚠️'
-readonly EMOJI_INFO='ℹ️'
-readonly EMOJI_DEBUG='🔍'
-readonly EMOJI_SUCCESS='✅'
-readonly EMOJI_ARROW='➡️'
+# Emoji symbols for better visual feedback (define only if not already set)
+if [[ -z "${EMOJI_ERROR:-}" ]]; then
+    readonly EMOJI_ERROR='❌'
+    readonly EMOJI_WARNING='⚠️'
+    readonly EMOJI_INFO='ℹ️'
+    readonly EMOJI_DEBUG='🔍'
+    readonly EMOJI_SUCCESS='✅'
+    readonly EMOJI_ARROW='➡️'
+fi
 
-# Log levels (numeric values for comparison)
-readonly LOG_LEVEL_DEBUG=10
-readonly LOG_LEVEL_INFO=20
-readonly LOG_LEVEL_WARN=30
-readonly LOG_LEVEL_ERROR=40
+# Log levels (numeric values for comparison) (define only if not already set)
+if [[ -z "${LOG_LEVEL_DEBUG:-}" ]]; then
+    readonly LOG_LEVEL_DEBUG=10
+    readonly LOG_LEVEL_INFO=20
+    readonly LOG_LEVEL_WARN=30
+    readonly LOG_LEVEL_ERROR=40
+fi
 
 # Convert log level name to numeric value
 get_log_level_value() {

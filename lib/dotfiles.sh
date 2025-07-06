@@ -3,6 +3,9 @@
 # Source logging and error handling functions
 source "${DOTFILES_DIR}/lib/logging.sh"
 
+# Source unified package management system
+source "${DOTFILES_DIR}/lib/package-management.sh"
+
 # Set up error handling for all scripts using this library
 setup_error_handling
 
@@ -39,11 +42,11 @@ detect_os() {
 }
 
 is_macos() {
-  [[ "$DOTFILES_OS" == "macos" ]]
+  [[ "${DOTFILES_OS:-}" == "macos" ]]
 }
 
 is_linux() {
-  [[ "$DOTFILES_OS" == "linux" ]]
+  [[ "${DOTFILES_OS:-}" == "linux" ]]
 }
 
 config_banner() {
@@ -68,30 +71,68 @@ validate_environment() {
   log_debug "Environment validation complete"
 }
 
-# Enhanced installation wrapper
+# Enhanced installation wrapper using unified package management
 safe_install() {
   local package_name="$1"
-  local install_function="$2"
+  local preferred_manager="${2:-auto}"
+  local options="${3:-}"
+  local manual_install_function="${4:-}"
   
-  log_info "Attempting to install $package_name"
+  log_info "Attempting to install $package_name using unified package management"
   
-  if is_installed "$package_name"; then
-    log_warn "$package_name is already installed"
+  # Use the new unified package installation system
+  if install_package "$package_name" "$preferred_manager" "$options" "$manual_install_function"; then
+    log_success "$package_name installation completed successfully"
     return 0
-  fi
-  
-  if [[ -n "$install_function" ]] && declare -f "$install_function" > /dev/null; then
-    log_debug "Calling install function: $install_function"
-    "$install_function"
-    log_success "$package_name installed successfully"
   else
-    log_error "Install function '$install_function' not found for $package_name"
+    log_error "Failed to install $package_name"
     return 1
   fi
 }
 
+# Backward compatibility function - enhanced to use unified package management
+install_package_compat() {
+  local package="$1"
+  local preferred_manager="${2:-auto}"
+  
+  if is_package_installed "$package"; then
+    log_warn "$package is already installed"
+    return 0
+  fi
+  
+  log_info "Installing $package using unified package management"
+  install_package "$package" "$preferred_manager"
+}
+
+# Enhanced bulk package installation
+install_multiple_packages() {
+  local packages=("$@")
+  
+  log_banner "Installing Multiple Packages"
+  log_info "Packages to install: ${packages[*]}"
+  
+  # Use the unified package management system
+  install_packages "${packages[@]}"
+}
+
+# Package manager detection wrapper
+get_available_package_managers() {
+  detect_package_managers
+}
+
+# Package conflict checking wrapper
+check_conflicts() {
+  local package="$1"
+  local conflicts="${2:-}"
+  
+  if [[ -n "$conflicts" ]]; then
+    log_info "Checking package conflicts for $package"
+    check_package_conflicts "$package" "$conflicts"
+  fi
+}
+
 # Auto-initialize environment when sourced
-if [[ -z "$DOTFILES_OS" ]]; then
+if [[ -z "${DOTFILES_OS:-}" ]]; then
   detect_os
 fi
 
@@ -102,3 +143,8 @@ fi
 
 # Show debug info if enabled
 debug_env
+
+# Show package manager info in debug mode
+if [[ "$DOTFILES_DEBUG" == "1" ]]; then
+  show_package_manager_info
+fi
