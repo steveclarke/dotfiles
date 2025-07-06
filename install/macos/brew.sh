@@ -12,6 +12,13 @@ set -euo pipefail
 # Source required libraries
 source "${DOTFILES_DIR}"/lib/macos.sh
 
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("brew")
+SCRIPT_DEPENDS_PLATFORM=("macos")
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR" "DOTFILES_INSTALL_GUI")
+SCRIPT_DEPENDS_FILES=("/opt/homebrew/bin/brew")
+SCRIPT_DEPENDS_MINIMUM_VERSION=("brew:3.0")
+
 if ! is_installed brew; then
   echo "ERROR: Homebrew not installed. Run prereq first."
   exit 1

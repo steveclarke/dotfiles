@@ -177,17 +177,60 @@ If you're updating from an older version:
 
 For complete migration details, see `docs/CHANGELOG.md`.
 
+## Dependency Management
+
+This repository includes a comprehensive dependency management system that validates system requirements and script dependencies before installation:
+
+### Quick Health Check
+```bash
+# Check system health and dependencies
+./bin/dotfiles doctor
+
+# Run comprehensive system validation
+./bin/dotfiles validate
+
+# Test dependency declarations in scripts
+./bin/dotfiles test dependencies
+
+# Quick single-script dependency test
+./bin/dotfiles test basic
+```
+
+### Features
+- **Platform Compatibility**: Validates Linux/macOS/distro compatibility
+- **Command Validation**: Ensures required tools are available
+- **Package Checking**: Verifies system packages are installed
+- **Conflict Detection**: Detects conflicting packages (e.g., snap vs apt)
+- **Version Requirements**: Validates minimum version requirements
+- **Environment Validation**: Checks required environment variables
+
+### For Script Authors
+Scripts can declare their dependencies using standardized arrays:
+
+```bash
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("git" "curl" "stow")     # Required commands
+SCRIPT_DEPENDS_PLATFORM=("linux")                 # Required platform
+SCRIPT_DEPENDS_DISTRO=("ubuntu")                  # Required distribution
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")               # Required env vars
+```
+
+For complete documentation, see **`docs/dependency-management.md`**.
+
 ## Contributing
 
 When contributing to this repository:
 
 1. Follow the platform-specific organization structure
 2. Update appropriate library files (`lib/`) for shared functions
-3. Add documentation for significant changes
-4. Test on both Linux and macOS when applicable
+3. Add dependency declarations to new scripts (see `docs/dependency-management.md`)
+4. Add documentation for significant changes
+5. Test on both Linux and macOS when applicable
 
 ## Documentation
 
 - **`docs/CHANGELOG.md`** - Detailed change history and migration information
+- **`docs/dependency-management.md`** - Comprehensive dependency management guide
+- **`docs/script-header-template.md`** - Standard script header template
 - **`docs/TODO.md`** - Project todo items and future improvements
 - **`README.md`** - This file, general usage and installation guide

@@ -1,6 +1,15 @@
 # Install Visual Studio Code
 # Reference: https://code.visualstudio.com/docs/setup/linux
 
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("wget" "gpg" "apt")
+SCRIPT_DEPENDS_PACKAGES=("apt-transport-https")
+SCRIPT_DEPENDS_PLATFORM=("linux")
+SCRIPT_DEPENDS_DISTRO=("ubuntu")
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")
+SCRIPT_DEPENDS_DIRS=("/etc/apt/keyrings" "/etc/apt/sources.list.d")
+SCRIPT_DEPENDS_MINIMUM_VERSION=("wget:1.0" "gpg:2.0")
+
 if ! is_installed code; then
   installing_banner "Visual Studio Code"
   

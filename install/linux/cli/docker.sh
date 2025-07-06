@@ -1,6 +1,16 @@
 # Install Docker Engine
 # Reference: https://docs.docker.com/engine/install/ubuntu/
 
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("wget" "apt" "usermod" "tee")
+SCRIPT_DEPENDS_PACKAGES=("ca-certificates" "curl" "wget")
+SCRIPT_DEPENDS_PLATFORM=("linux")
+SCRIPT_DEPENDS_DISTRO=("ubuntu")
+SCRIPT_DEPENDS_ENV=("USER" "DOTFILES_DIR")
+SCRIPT_DEPENDS_DIRS=("/etc/apt/keyrings" "/etc/apt/sources.list.d")
+SCRIPT_DEPENDS_CONFLICTS=("snap:docker")
+SCRIPT_DEPENDS_MINIMUM_VERSION=("wget:1.0" "curl:7.0")
+
 if ! is_installed docker; then
   installing_banner "Docker Engine"
   

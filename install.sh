@@ -13,6 +13,14 @@ set -euo pipefail
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("stow" "git")
+SCRIPT_DEPENDS_PLATFORM=("linux" "macos")
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR" "HOME" "DOTFILES_INSTALL_GUI")
+SCRIPT_DEPENDS_FILES=("${HOME}/.dotfilesrc")
+SCRIPT_DEPENDS_DIRS=("${DOTFILES_DIR}/lib" "${DOTFILES_DIR}/install" "${DOTFILES_DIR}/configs")
+SCRIPT_DEPENDS_MINIMUM_VERSION=("git:2.0" "stow:2.0")
+
 # Detect OS at start
 detect_os
 

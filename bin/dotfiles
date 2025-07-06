@@ -12,6 +12,7 @@ set -euo pipefail
 # Source required libraries
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/dependencies.sh
 
 # Detect OS
 detect_os
@@ -22,6 +23,9 @@ if is_macos; then
 elif is_linux; then
     source "${DOTFILES_DIR}"/lib/linux.sh
 fi
+
+# Source command implementations
+source "${DOTFILES_DIR}"/lib/commands.sh
 
 show_help() {
   echo "🔧 Dotfiles Management Utility"
@@ -35,6 +39,9 @@ show_help() {
   echo "  brew               - Install/update packages using Homebrew"
   echo "  update             - Update both config and packages"
   echo "  doctor             - Check system health and dependencies"
+  echo "  validate           - Run comprehensive system validation"
+  echo "  test dependencies  - Test dependency declarations in scripts"
+  echo "  test basic         - Simple dependency validation test"
   echo "  clean              - Clean up temporary files and caches"
   echo "  help               - Show this help message"
   echo ""
@@ -43,6 +50,9 @@ show_help() {
   echo "  dotfiles install linux    # Force Linux installation"
   echo "  dotfiles config           # Update config files"
   echo "  dotfiles doctor           # Check system health"
+  echo "  dotfiles validate         # Run comprehensive validation"
+  echo "  dotfiles test dependencies # Test all script dependencies"
+  echo "  dotfiles test basic       # Quick dependency test"
   echo "  dotfiles clean            # Clean temporary files"
   echo ""
   echo "Environment Variables:"
@@ -55,226 +65,6 @@ if [ $# -eq 0 ]; then
   show_help
   exit 1
 fi
-
-run_install() {
-  local platform="${1:-auto}"
-  
-  if [[ "$platform" == "auto" ]]; then
-    if is_macos; then
-      platform="macos"
-    elif is_linux; then
-      platform="linux"
-    else
-      echo "❌ Unable to detect platform. Please specify: linux or macos"
-      exit 1
-    fi
-  fi
-  
-  case "$platform" in
-    linux)
-      if ! is_linux; then
-        echo "❌ Cannot install Linux dotfiles on non-Linux system"
-        exit 1
-      fi
-      echo "🐧 Starting Linux installation..."
-      source "${DOTFILES_DIR}"/install.sh
-      ;;
-    macos)
-      if ! is_macos; then
-        echo "❌ Cannot install macOS dotfiles on non-macOS system"
-        exit 1
-      fi
-      echo "🍎 Starting macOS installation..."
-      source "${DOTFILES_DIR}"/install.sh
-      ;;
-    *)
-      echo "❌ Invalid platform: $platform"
-      echo "Supported platforms: linux, macos"
-      exit 1
-      ;;
-  esac
-}
-
-run_config() {
-  echo "⚙️  Updating configuration files..."
-  source "${DOTFILES_DIR}"/configs/stow.sh
-  echo "✅ Configuration files updated!"
-}
-
-run_brew() {
-  if is_macos; then
-    echo "🍺 Running brew bundle (macOS)"
-    
-    # Cache sudo credentials for packages that may require it
-    cache_sudo_credentials
-    
-    cd "${DOTFILES_DIR}" || exit
-    
-    # Always run main Brewfile for CLI tools
-    if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
-      echo "📦 Installing CLI packages from main Brewfile"
-      brew bundle --file=Brewfile
-    fi
-    
-    # Run macOS-specific Brewfile if it exists
-    if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
-      echo "🍎 Installing macOS packages from Brewfile.macos"
-      brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
-    fi
-    
-    cd - || exit
-  else
-    echo "🍺 Running brew bundle (Linux)"
-    cd "${DOTFILES_DIR}" || exit
-    brew bundle
-    cd - || exit
-  fi
-  echo "✅ Package installation complete!"
-}
-
-run_update() {
-  echo "🔄 Updating dotfiles..."
-  run_config
-  run_brew
-  echo "✅ Update complete!"
-}
-
-run_doctor() {
-  echo "🩺 Running system health check..."
-  echo ""
-  
-  local issues=0
-  
-  # Check dotfiles directory
-  if [[ ! -d "$DOTFILES_DIR" ]]; then
-    echo "❌ DOTFILES_DIR not found: $DOTFILES_DIR"
-    ((issues++))
-  else
-    echo "✅ DOTFILES_DIR exists: $DOTFILES_DIR"
-  fi
-  
-  # Check .dotfilesrc
-  if [[ ! -f "${HOME}/.dotfilesrc" ]]; then
-    echo "❌ .dotfilesrc not found in home directory"
-    ((issues++))
-  else
-    echo "✅ .dotfilesrc found"
-  fi
-  
-  # Check stow installation
-  if is_installed stow; then
-    echo "✅ stow is installed"
-  else
-    echo "❌ stow is not installed"
-    ((issues++))
-  fi
-  
-  # Check platform-specific tools
-  if is_macos; then
-    if is_installed brew; then
-      echo "✅ Homebrew is installed"
-    else
-      echo "❌ Homebrew is not installed"
-      ((issues++))
-    fi
-  elif is_linux; then
-    if is_installed apt; then
-      echo "✅ apt package manager is available"
-    else
-      echo "⚠️  apt package manager not found (expected on Ubuntu/Debian)"
-    fi
-    
-    if is_installed snap; then
-      echo "✅ snap package manager is available"
-    else
-      echo "⚠️  snap package manager not found"
-    fi
-  fi
-  
-  # Check git configuration
-  if is_installed git; then
-    echo "✅ git is installed"
-    if git config --global user.name >/dev/null 2>&1; then
-      echo "✅ git user.name is configured"
-    else
-      echo "⚠️  git user.name not configured"
-    fi
-    if git config --global user.email >/dev/null 2>&1; then
-      echo "✅ git user.email is configured"
-    else
-      echo "⚠️  git user.email not configured"
-    fi
-  else
-    echo "❌ git is not installed"
-    ((issues++))
-  fi
-  
-  # Check shell
-  if [[ "$SHELL" == *"fish"* ]]; then
-    echo "✅ fish shell is set as default"
-  else
-    echo "⚠️  fish shell is not set as default (current: $SHELL)"
-  fi
-  
-  echo ""
-  if [[ $issues -eq 0 ]]; then
-    echo "🎉 System health check passed! No critical issues found."
-  else
-    echo "⚠️  Found $issues critical issue(s). Consider running 'dotfiles install' to fix."
-  fi
-  
-  echo ""
-  echo "💡 Tip: Run 'dotfiles install' to install missing dependencies"
-  echo "💡 Tip: Run 'dotfiles config' to update configuration files"
-}
-
-run_clean() {
-  echo "🧹 Cleaning temporary files and caches..."
-  
-  local cleaned=0
-  
-  # Clean common temporary directories
-  for dir in "${HOME}/.cache/dotfiles" "${DOTFILES_DIR}/.tmp" "${DOTFILES_DIR}/tmp"; do
-    if [[ -d "$dir" ]]; then
-      echo "🗑️  Removing $dir"
-      rm -rf "$dir"
-      ((cleaned++))
-    fi
-  done
-  
-  # Clean common temporary files
-  for file in "${DOTFILES_DIR}/.install-state" "${DOTFILES_DIR}/install.log" "${HOME}/.dotfiles-install.log"; do
-    if [[ -f "$file" ]]; then
-      echo "🗑️  Removing $file"
-      rm -f "$file"
-      ((cleaned++))
-    fi
-  done
-  
-  # Clean Homebrew cache if on macOS
-  if is_macos && is_installed brew; then
-    echo "🍺 Cleaning Homebrew cache..."
-    brew cleanup
-    ((cleaned++))
-  fi
-  
-  # Clean apt cache if on Linux
-  if is_linux && is_installed apt; then
-    echo "📦 Cleaning apt cache..."
-    sudo apt autoremove -y
-    sudo apt autoclean
-    ((cleaned++))
-  fi
-  
-  echo ""
-  if [[ $cleaned -eq 0 ]]; then
-    echo "✨ No temporary files found to clean"
-  else
-    echo "✅ Cleaned $cleaned item(s)"
-  fi
-  
-  echo "💡 Tip: Run 'dotfiles doctor' to check system health"
-}
 
 # Check the command and run appropriate function
 case "${1:-help}" in
@@ -292,6 +82,36 @@ case "${1:-help}" in
     ;;
   doctor)
     run_doctor
+    ;;
+  validate)
+    run_validate
+    ;;
+  test)
+    case "${2:-}" in
+      dependencies|deps)
+        run_test_deps
+        ;;
+      basic|simple)
+        run_test_simple
+        ;;
+      *)
+        echo "❌ Invalid test command: ${2:-}"
+        echo ""
+        echo "Available test commands:"
+        echo "  dotfiles test dependencies  # Test dependency declarations in scripts"
+        echo "  dotfiles test basic         # Simple dependency validation test"
+        exit 1
+        ;;
+    esac
+    ;;
+  # Backward compatibility aliases
+  test-deps)
+    echo "⚠️  Command 'test-deps' is deprecated. Use 'dotfiles test dependencies' instead."
+    run_test_deps
+    ;;
+  test-simple)
+    echo "⚠️  Command 'test-simple' is deprecated. Use 'dotfiles test basic' instead."
+    run_test_simple
     ;;
   clean)
     run_clean
