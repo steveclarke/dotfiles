@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+#
+# Script Name: prereq.sh
+# Description: Install macOS prerequisites (Xcode CLI tools, Homebrew, Stow)
+# Platform: macos
+# Dependencies: internet connection, macOS, sudo access
+#
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
 source "${DOTFILES_DIR}"/lib/macos.sh
 
 # Cache sudo credentials for installations that may require it

@@ -121,3 +121,86 @@ bash -n configs/stow.sh
 - Unified package management (Phase 11)
 - Installation progress tracking (Phase 12)
 - Enhanced utility commands (Phase 8) 
+
+## Phase 7: Script Consistency and Standards (In Progress)
+
+### 7.1 Script Header Standardization ✅ COMPLETED
+- **Created**: `docs/script-header-template.md` - Standard template for all bash scripts
+- **Standardized headers** for key scripts with:
+  - Consistent shebang (`#!/usr/bin/env bash`)
+  - Script metadata (name, description, platform, dependencies)
+  - Error handling (`set -euo pipefail`)
+  - Proper library sourcing
+  - Clear documentation
+
+### 7.2 Updated Scripts (11 scripts standardized) ✅ COMPLETED
+- **Main Scripts**:
+  - `install.sh` - Main installation script with cross-platform support
+  - `bin/dotfiles` - Utility script for managing dotfiles
+  - `configs/stow.sh` - Cross-platform configuration stowing
+  - `configs/linux/stow-linux.sh` - Linux-specific configs
+  - `configs/macos/stow-macos.sh` - macOS-specific configs
+
+- **Installation Scripts**:
+  - `install/linux/prereq.sh` - Linux prerequisites aggregator
+  - `install/linux/cli.sh` - Linux CLI tools aggregator
+  - `install/linux/apps.sh` - Linux GUI apps aggregator
+  - `install/macos/prereq.sh` - macOS prerequisites
+  - `install/macos/brew.sh` - Homebrew package installation
+  - `install/macos/fish.sh` - Fish shell configuration
+
+- **Setup Scripts**:
+  - `setups/ssh.sh` - SSH key and configuration setup
+
+### 7.3 Dependency Function Standardization ✅ COMPLETED
+- **Updated prerequisite scripts** to use `apt_install` function:
+  - `install/linux/prereq/stow.sh` - Now uses `apt_install stow`
+  - `install/linux/prereq/1-libs.sh` - Organized by categories with `apt_install`
+  - `install/linux/prereq/i3.sh` - Now uses `apt_install` for i3 tools
+  - `install/linux/cli/fish.sh` - Added proper dependency checking with `is_installed`
+
+- **Standardized individual installation scripts**:
+  - `install/linux/apps/vscode.sh` - VS Code with repository setup and Wayland notes
+  - `install/linux/apps/chrome.sh` - Google Chrome with proper temp directory handling
+  - `install/linux/cli/docker.sh` - Docker Engine with complete configuration
+
+### 7.4 Error Handling Improvements ✅ COMPLETED
+- **Added `set -euo pipefail`** to all main scripts:
+  - Exit on error (`-e`)
+  - Exit on undefined variables (`-u`) 
+  - Exit on pipe failures (`-o pipefail`)
+- **Improved safety** for script sourcing with file existence checks
+- **Consistent error messaging** for missing dependencies
+
+### 7.5 Library Sourcing Optimization ✅ COMPLETED
+- **Platform-specific sourcing**:
+  - Linux scripts source `lib/linux.sh`
+  - macOS scripts source `lib/macos.sh`
+  - Cross-platform scripts source `lib/dotfiles.sh` and `lib/bootstrap.sh` as needed
+- **Removed duplicate function definitions** (config_banner, do_stow now in libraries)
+
+### 7.6 Installation Script Patterns ✅ COMPLETED
+- **Consistent pattern** for all installation scripts:
+  - Check if already installed with `is_installed`
+  - Display progress with `installing_banner` or `skipping`
+  - Use standardized `apt_install` function
+  - Proper error handling and cleanup
+  - Clear success messages and user guidance
+- **Enhanced documentation** with reference links and clear comments
+- **Improved user experience** with emoji indicators and helpful tips
+
+### Testing ✅ COMPLETED
+- ✅ All updated scripts pass syntax validation (`bash -n`)
+- ✅ Scripts follow consistent patterns and use library functions
+- ✅ Error handling works correctly with `set -euo pipefail`
+- 🔄 Ready for integration testing (Phase 7.7)
+
+### Phase 7 Summary
+**Total scripts standardized**: 15+ scripts across main installation, configuration, and individual app installers
+**Key improvements**:
+- Consistent headers and documentation
+- Reliable error handling
+- Standardized library usage
+- Better user feedback and guidance
+- Safer temporary file handling
+- Platform-specific optimizations

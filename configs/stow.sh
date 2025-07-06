@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
+#
+# Script Name: stow.sh
+# Description: Stow cross-platform configuration files using GNU Stow
+# Platform: cross-platform
+# Dependencies: .dotfilesrc, stow, platform-specific configs
+#
 
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
-config_banner() {
-  banner "Configuring $1"
-}
-
-do_stow() {
-  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
-}
+# Note: config_banner and do_stow functions are already defined in lib/dotfiles.sh
 
 # Cross-platform configurations
 config_banner "${HOME}/bin"

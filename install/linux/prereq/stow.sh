@@ -1,1 +1,2 @@
-sudo apt install -y stow
+# Install GNU Stow for configuration management
+apt_install stow

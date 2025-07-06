@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
+#
+# Script Name: stow-linux.sh
+# Description: Stow Linux-specific configuration files (i3, polybar, rofi, etc.)
+# Platform: linux
+# Dependencies: .dotfilesrc, stow, i3, polybar, rofi
+#
 
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
 source "${HOME}"/.dotfilesrc
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/linux.sh
 
-config_banner() {
-  banner "Configuring $1"
-}
-
-do_stow() {
-  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
-}
+# Note: config_banner and do_stow functions are available from sourced libraries
 
 # Linux-specific configurations
 if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then

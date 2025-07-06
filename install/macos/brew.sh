@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+#
+# Script Name: brew.sh
+# Description: Install Homebrew packages from Brewfile and Brewfile.macos
+# Platform: macos
+# Dependencies: Homebrew, Brewfile, .dotfilesrc
+#
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
 source "${DOTFILES_DIR}"/lib/macos.sh
 
 if ! is_installed brew; then

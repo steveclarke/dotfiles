@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
+#
+# Script Name: install.sh
+# Description: Main installation script for dotfiles across Linux and macOS
+# Platform: cross-platform
+# Dependencies: .dotfilesrc, stow, platform-specific package managers
+#
 
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 

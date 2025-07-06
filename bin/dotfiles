@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
+#
+# Script Name: dotfiles
+# Description: Utility script for managing dotfiles installation and updates
+# Platform: cross-platform
+# Dependencies: .dotfilesrc, stow, brew (macOS), platform-specific libraries
+#
 
-set -e -o pipefail
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
 
+# Source required libraries
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/macos.sh
 
