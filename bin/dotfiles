@@ -46,6 +46,15 @@ show_help() {
   echo "  clean              - Clean up temporary files and caches"
   echo "  help               - Show this help message"
   echo ""
+  echo "Logging Commands:"
+  echo "  logs               - Show recent log entries"
+  echo "  logs tail          - Follow log file in real-time"
+  echo "  logs clear         - Clear log file"
+  echo "  debug on           - Enable debug mode"
+  echo "  debug off          - Disable debug mode"
+  echo "  debug status       - Show debug status"
+  echo "  log-level [level]  - Set logging level (DEBUG/INFO/WARN/ERROR)"
+  echo ""
   echo "Examples:"
   echo "  dotfiles install          # Install for current platform"
   echo "  dotfiles install linux    # Force Linux installation"
@@ -56,10 +65,123 @@ show_help() {
   echo "  dotfiles test dependencies # Test all script dependencies"
   echo "  dotfiles test basic       # Quick dependency test"
   echo "  dotfiles clean            # Clean temporary files"
+  echo "  dotfiles logs             # Show recent logs"
+  echo "  dotfiles logs tail        # Follow logs in real-time"
+  echo "  dotfiles debug on         # Enable debug mode"
+  echo "  dotfiles log-level DEBUG  # Set debug logging level"
   echo ""
   echo "Environment Variables:"
   echo "  DOTFILES_INSTALL_GUI     - Set to 'TRUE' for GUI applications (Linux only)"
   echo "  DOTFILES_DIR             - Path to dotfiles directory"
+  echo "  DOTFILES_DEBUG           - Enable debug mode (0/1)"
+  echo "  DOTFILES_LOG_LEVEL       - Set logging level (DEBUG/INFO/WARN/ERROR)"
+  echo "  DOTFILES_LOG_FILE        - Set log file path"
+}
+
+# Logging command functions
+run_logs() {
+  local action="${1:-show}"
+  
+  case "$action" in
+    show)
+      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
+        log_info "Showing recent log entries from: $DOTFILES_LOG_FILE"
+        echo "=== Recent Log Entries ==="
+        tail -50 "$DOTFILES_LOG_FILE"
+      else
+        log_warn "No log file found at: $DOTFILES_LOG_FILE"
+      fi
+      ;;
+    tail)
+      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
+        log_info "Following log file: $DOTFILES_LOG_FILE (Press Ctrl+C to stop)"
+        tail -f "$DOTFILES_LOG_FILE"
+      else
+        log_warn "No log file found at: $DOTFILES_LOG_FILE"
+      fi
+      ;;
+    clear)
+      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
+        > "$DOTFILES_LOG_FILE"
+        log_info "Log file cleared: $DOTFILES_LOG_FILE"
+      else
+        log_warn "No log file found at: $DOTFILES_LOG_FILE"
+      fi
+      ;;
+    *)
+      log_error "Invalid logs command: $action"
+      echo "Available logs commands:"
+      echo "  dotfiles logs       # Show recent entries"
+      echo "  dotfiles logs tail  # Follow log file"
+      echo "  dotfiles logs clear # Clear log file"
+      exit 1
+      ;;
+  esac
+}
+
+run_debug() {
+  local action="${1:-status}"
+  
+  case "$action" in
+    on)
+      export DOTFILES_DEBUG=1
+      echo "export DOTFILES_DEBUG=1" >> "${HOME}/.dotfilesrc"
+      log_success "Debug mode enabled"
+      log_info "Debug mode will remain enabled across sessions"
+      ;;
+    off)
+      export DOTFILES_DEBUG=0
+      # Remove debug setting from .dotfilesrc
+      if [[ -f "${HOME}/.dotfilesrc" ]]; then
+        grep -v "export DOTFILES_DEBUG=" "${HOME}/.dotfilesrc" > "${HOME}/.dotfilesrc.tmp" || true
+        mv "${HOME}/.dotfilesrc.tmp" "${HOME}/.dotfilesrc"
+      fi
+      log_success "Debug mode disabled"
+      ;;
+    status)
+      log_info "Debug Status Information"
+      echo "  DOTFILES_DEBUG: ${DOTFILES_DEBUG:-0}"
+      echo "  DOTFILES_LOG_LEVEL: ${DOTFILES_LOG_LEVEL:-INFO}"
+      echo "  DOTFILES_LOG_FILE: ${DOTFILES_LOG_FILE:-Not set}"
+      echo "  Debug mode: $([[ "${DOTFILES_DEBUG:-0}" == "1" ]] && echo "ENABLED" || echo "DISABLED")"
+      ;;
+    *)
+      log_error "Invalid debug command: $action"
+      echo "Available debug commands:"
+      echo "  dotfiles debug on      # Enable debug mode"
+      echo "  dotfiles debug off     # Disable debug mode"
+      echo "  dotfiles debug status  # Show debug status"
+      exit 1
+      ;;
+  esac
+}
+
+run_log_level() {
+  local level="${1:-}"
+  
+  if [[ -z "$level" ]]; then
+    log_info "Current log level: $DOTFILES_LOG_LEVEL"
+    log_info "Available levels: DEBUG, INFO, WARN, ERROR"
+    return 0
+  fi
+  
+  case "${level^^}" in
+    DEBUG|INFO|WARN|ERROR)
+      export DOTFILES_LOG_LEVEL="${level^^}"
+      # Update .dotfilesrc
+      if [[ -f "${HOME}/.dotfilesrc" ]]; then
+        grep -v "export DOTFILES_LOG_LEVEL=" "${HOME}/.dotfilesrc" > "${HOME}/.dotfilesrc.tmp" || true
+        echo "export DOTFILES_LOG_LEVEL=${level^^}" >> "${HOME}/.dotfilesrc.tmp"
+        mv "${HOME}/.dotfilesrc.tmp" "${HOME}/.dotfilesrc"
+      fi
+      log_success "Log level set to: ${level^^}"
+      ;;
+    *)
+      log_error "Invalid log level: $level"
+      log_info "Available levels: DEBUG, INFO, WARN, ERROR"
+      exit 1
+      ;;
+  esac
 }
 
 # Show usage if no command is provided
@@ -120,6 +242,16 @@ case "${1:-help}" in
     ;;
   clean)
     run_clean
+    ;;
+  # Logging commands
+  logs)
+    run_logs "${2:-show}"
+    ;;
+  debug)
+    run_debug "${2:-status}"
+    ;;
+  log-level)
+    run_log_level "${2:-}"
     ;;
   help|--help|-h)
     show_help
