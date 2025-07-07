@@ -18,7 +18,12 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Cross-platform configurations
 config_banner "${HOME}/bin"
 mkdir -p "${HOME}/bin"
-do_stow bin
+if is_linux; then
+  do_stow bin
+else
+  # macOS: stow bin but exclude Linux-only binaries
+  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}" bin --ignore="cpass$" --ignore="cursor$"
+fi
 
 config_banner "Bash"
 rm -f "${HOME}"/.bash_aliases
