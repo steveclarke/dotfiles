@@ -363,6 +363,8 @@ dotfiles install resume
 
 ## Environment Variables
 
+Configure these in your `~/.dotfilesrc` file:
+
 - `DOTFILES_DEBUG` - Enable debug mode (0/1)
 - `DOTFILES_LOG_LEVEL` - Set logging level (DEBUG/INFO/WARN/ERROR)
 - `DOTFILES_LOG_FILE` - Set log file path (default: `${DOTFILES_DIR}/logs/dotfiles.log`)

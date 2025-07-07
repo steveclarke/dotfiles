@@ -18,6 +18,14 @@ export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
 # GUI applications (set to true to install GUI apps on both macOS and Linux)
 export DOTFILES_INSTALL_GUI=true
 
+# Logging and Debug Configuration
+# Enable debug mode for verbose output (0/1)
+export DOTFILES_DEBUG=0
+# Set minimum log level (DEBUG/INFO/WARN/ERROR)
+export DOTFILES_LOG_LEVEL=INFO
+# Set log file path (default: ${DOTFILES_DIR}/logs/dotfiles.log)
+# export DOTFILES_LOG_FILE=${DOTFILES_DIR}/logs/dotfiles.log
+
 # Platform-specific settings
 
 # Optional: Platform-specific environment variables

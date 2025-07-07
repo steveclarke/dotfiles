@@ -50,11 +50,22 @@ log_debug "This is a debug message (only shown in debug mode)"
 log_banner "Installing Docker Engine"
 
 # Progress tracking
-progress_start 5 "Docker Installation"
-progress_step "Installing prerequisites"
-progress_step "Downloading packages"
+progress_start 5 "Docker Installation"    # 5 = total number of steps expected
+progress_step "Installing prerequisites"   # Step 1/5 (20%)
+progress_step "Downloading packages"       # Step 2/5 (40%)
+progress_step "Configuring service"        # Step 3/5 (60%)
+progress_step "Starting service"           # Step 4/5 (80%)
+progress_step "Verifying installation"     # Step 5/5 (100%)
 progress_complete
 ```
+
+#### Progress Tracking Functions
+
+- **`progress_start <total_steps> "<description>"`** - Initialize progress tracking
+  - `total_steps`: Number of steps expected (used for percentage calculation)
+  - `description`: Description of the overall operation
+- **`progress_step "<step_description>"`** - Mark completion of a step and show progress
+- **`progress_complete`** - Mark the entire operation as complete
 
 ### Error Handling Setup
 
@@ -80,6 +91,8 @@ dotfiles debug on
 ## Configuration
 
 ### Environment Variables
+
+Configure these in your `~/.dotfilesrc` file:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -154,18 +167,7 @@ When errors occur, the system provides:
 - **Structured format** for easy parsing
 - **Session tracking** with start/end markers
 
-### Validation Helpers
 
-```bash
-# Validate environment variables
-validate_required_vars "VAR1" "VAR2" "VAR3"
-
-# Validate commands exist
-validate_commands "git" "curl" "wget"
-
-# Show debug environment info
-debug_env
-```
 
 ## Integration Guide
 
@@ -220,8 +222,10 @@ validate_commands "required_command"
 
 3. **Use progress tracking for long operations**
    ```bash
-   progress_start 5 "Complex Installation"
-   # ... steps ...
+   progress_start 5 "Complex Installation"  # 5 = total steps expected
+   progress_step "Step 1 description"       # 1/5 (20%)
+   progress_step "Step 2 description"       # 2/5 (40%)
+   # ... more steps ...
    progress_complete
    ```
 
