@@ -45,6 +45,9 @@ config_banner "Fish shell"
 mkdir -p "${HOME}/.config/fish"
 do_stow fish
 
+config_banner "Zsh shell"
+do_stow zsh
+
 config_banner "Ruby"
 do_stow ruby
 
