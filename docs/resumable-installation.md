@@ -353,7 +353,7 @@ dotfiles install resume
 
 ### Log Files
 
-- `~/.dotfiles.log` - Installation and error logs
+- `logs/dotfiles.log` - Installation and error logs (within dotfiles directory)
 - Debug information available via `dotfiles logs`
 
 ### Configuration
@@ -365,8 +365,7 @@ dotfiles install resume
 
 - `DOTFILES_DEBUG` - Enable debug mode (0/1)
 - `DOTFILES_LOG_LEVEL` - Set logging level (DEBUG/INFO/WARN/ERROR)
-- `DOTFILES_LOG_FILE` - Set log file path
-- `DOTFILES_INSTALL_GUI` - Enable GUI application installation (TRUE/FALSE)
+- `DOTFILES_LOG_FILE` - Set log file path (default: `${DOTFILES_DIR}/logs/dotfiles.log`)
 
 ## Conclusion
 

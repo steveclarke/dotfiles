@@ -84,7 +84,7 @@ dotfiles debug on
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DOTFILES_LOG_LEVEL` | `INFO` | Minimum log level to display (DEBUG/INFO/WARN/ERROR) |
-| `DOTFILES_LOG_FILE` | `~/.dotfiles.log` | Path to log file |
+| `DOTFILES_LOG_FILE` | `${DOTFILES_DIR}/logs/dotfiles.log` | Path to log file |
 | `DOTFILES_DEBUG` | `0` | Enable debug mode (0/1) |
 
 ### Log Levels

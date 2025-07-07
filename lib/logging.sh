@@ -2,7 +2,7 @@
 
 # Logging Configuration
 DOTFILES_LOG_LEVEL="${DOTFILES_LOG_LEVEL:-INFO}"
-DOTFILES_LOG_FILE="${DOTFILES_LOG_FILE:-${HOME}/.dotfiles.log}"
+DOTFILES_LOG_FILE="${DOTFILES_LOG_FILE:-${DOTFILES_DIR:-${HOME}/.local/share/dotfiles}/logs/dotfiles.log}"
 DOTFILES_DEBUG="${DOTFILES_DEBUG:-0}"
 
 # ANSI Color Codes (define only if not already set)
