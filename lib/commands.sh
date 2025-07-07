@@ -221,6 +221,83 @@ run_clean() {
   echo "💡 Tip: Run 'dotfiles doctor' to check system health"
 }
 
+# Installation state management commands
+run_install_status() {
+  echo "📊 Installation Status"
+  echo ""
+  
+  if [[ -f "$INSTALL_STATE_FILE" ]]; then
+    show_installation_progress
+    echo ""
+    
+    # Show recent installation sessions
+    echo "Recent Installation Sessions:"
+    grep "^session_" "$INSTALL_STATE_FILE" | tail -5 | while IFS=: read -r session_type operation timestamp session_id; do
+      echo "  $session_type: $operation at $timestamp (session: $session_id)"
+    done
+    
+    # Show any failed steps
+    echo ""
+    list_failed_steps
+  else
+    echo "ℹ️  No installation state file found. Run 'dotfiles install' to begin."
+  fi
+}
+
+run_install_reset() {
+  local confirmation="${1:-}"
+  
+  if [[ "$confirmation" == "confirm" ]]; then
+    reset_installation_state "confirm"
+  else
+    reset_installation_state
+  fi
+}
+
+run_install_resume() {
+  echo "🔄 Resuming installation from last checkpoint..."
+  
+  # Initialize state tracking
+  init_installation_state "resume"
+  
+  # Show current progress
+  show_installation_progress
+  
+  # Resume the installation
+  if is_macos; then
+    echo "🍎 Resuming macOS installation..."
+    source "${DOTFILES_DIR}"/install.sh
+  else
+    echo "🐧 Resuming Linux installation..."
+    source "${DOTFILES_DIR}"/install.sh
+  fi
+}
+
+run_install_steps() {
+  echo "📋 Installation Steps"
+  echo ""
+  
+  if [[ -f "$INSTALL_STATE_FILE" ]]; then
+    echo "Installation steps and their status:"
+    while IFS=: read -r step_id status timestamp session_id rest; do
+      # Skip comment lines and session entries
+      if [[ "$step_id" != "session_start" && "$step_id" != "session_end" && ! "$step_id" =~ ^#.* ]]; then
+        local status_emoji
+        case "$status" in
+          completed) status_emoji="✅" ;;
+          failed) status_emoji="❌" ;;
+          skipped) status_emoji="⏭️" ;;
+          in_progress) status_emoji="⏳" ;;
+          *) status_emoji="⏸️" ;;
+        esac
+        echo "  $status_emoji $step_id - $status ($timestamp)"
+      fi
+    done < "$INSTALL_STATE_FILE"
+  else
+    echo "ℹ️  No installation state file found. Run 'dotfiles install' to begin."
+  fi
+}
+
 run_validate() {
   echo "🔍 Running comprehensive system validation..."
   echo ""

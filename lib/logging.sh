@@ -348,5 +348,40 @@ init_logging() {
     log_debug "Logging initialized - Level: $DOTFILES_LOG_LEVEL, File: $DOTFILES_LOG_FILE"
 }
 
+# Installation progress logging (enhanced with state tracking)
+log_installation_step() {
+    local step_id="$1"
+    local step_description="$2"
+    
+    # Show progress with state tracking integration
+    if command -v get_installation_progress >/dev/null 2>&1; then
+        local progress
+        progress=$(get_installation_progress)
+        read -r total completed failed skipped pending <<< "$progress"
+        
+        if [[ $total -gt 0 ]]; then
+            local percentage=$((completed * 100 / total))
+            log_info "Step ($((completed + 1))/$total - $percentage%): $step_description"
+        else
+            log_info "Step: $step_description"
+        fi
+    else
+        log_info "Step: $step_description"
+    fi
+}
+
+# Enhanced installation banner with progress
+log_installation_banner() {
+    local message="$1"
+    local show_progress="${2:-true}"
+    
+    log_banner "$message"
+    
+    # Show progress if state tracking is available
+    if [[ "$show_progress" == "true" ]] && command -v show_installation_progress >/dev/null 2>&1; then
+        show_installation_progress
+    fi
+}
+
 # Auto-initialize logging when sourced
 init_logging 

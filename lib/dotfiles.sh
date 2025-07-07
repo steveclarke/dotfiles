@@ -6,6 +6,9 @@ source "${DOTFILES_DIR}/lib/logging.sh"
 # Source unified package management system
 source "${DOTFILES_DIR}/lib/package-management.sh"
 
+# Source installation state tracking system
+source "${DOTFILES_DIR}/lib/installation-state.sh"
+
 # Set up error handling for all scripts using this library
 setup_error_handling
 

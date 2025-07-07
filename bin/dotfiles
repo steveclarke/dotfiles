@@ -46,6 +46,12 @@ show_help() {
   echo "  clean              - Clean up temporary files and caches"
   echo "  help               - Show this help message"
   echo ""
+  echo "Installation State Commands:"
+  echo "  install status     - Show installation progress and status"
+  echo "  install resume     - Resume interrupted installation"
+  echo "  install reset      - Reset installation state (restart from beginning)"
+  echo "  install steps      - Show all installation steps and their status"
+  echo ""
   echo "Package Management Commands:"
   echo "  pkg install <package>     - Install package using unified package management"
   echo "  pkg install-bulk <pkg1> <pkg2> ... - Install multiple packages"
@@ -68,6 +74,9 @@ show_help() {
   echo "Examples:"
   echo "  dotfiles install          # Install for current platform"
   echo "  dotfiles install linux    # Force Linux installation"
+  echo "  dotfiles install status   # Show installation progress"
+  echo "  dotfiles install resume   # Resume interrupted installation"
+  echo "  dotfiles install reset    # Reset installation state"
   echo "  dotfiles config           # Update config files"
   echo "  dotfiles fonts            # Install fonts"
   echo "  dotfiles doctor           # Check system health"
@@ -382,7 +391,23 @@ fi
 # Check the command and run appropriate function
 case "${1:-help}" in
   install)
-    run_install "${2:-auto}"
+    case "${2:-auto}" in
+      status)
+        run_install_status
+        ;;
+      resume)
+        run_install_resume
+        ;;
+      reset)
+        run_install_reset "${3:-}"
+        ;;
+      steps)
+        run_install_steps
+        ;;
+      *)
+        run_install "${2:-auto}"
+        ;;
+    esac
     ;;
   config|stow)
     run_config
