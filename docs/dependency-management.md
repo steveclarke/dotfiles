@@ -32,17 +32,6 @@ SCRIPT_DEPENDS_PLATFORM=("linux")                       # Required platform
 SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")                     # Required env vars
 ```
 
-### Test Dependency Declarations
-```bash
-# Check which scripts have dependency declarations
-./bin/dotfiles test dependencies
-# or
-./bin/dotfiles test deps
-
-# Validate specific script's dependencies
-./bin/dotfiles test script <script-path>
-```
-
 ## Dependency Declaration Format
 
 Scripts declare their dependencies using special arrays at the top of the file. Here are all available dependency types:
@@ -130,7 +119,7 @@ validate_system
 ```bash
 # Check dependency declaration coverage
 ./bin/dotfiles test dependencies
-./bin/dotfiles test deps
+# (or use the short alias: ./bin/dotfiles test deps)
 
 # Validate specific script's dependencies
 ./bin/dotfiles test script <script-path>
