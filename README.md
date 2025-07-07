@@ -156,6 +156,16 @@ any of the install scripts. You can also install optional software found in the
 
 e.g. `bash install/linux/optional/steam.sh` to install Steam.
 
+## Shell Auto-Completion
+
+The `dotfiles` command includes comprehensive auto-completion support for all major shells:
+
+- **Bash**: Auto-completion for commands, subcommands, and options
+- **Zsh**: Tab completion with detailed command descriptions  
+- **Fish**: Intelligent completion with contextual help
+
+Auto-completion is automatically enabled when you run `dotfiles config` (or `dotfiles stow`) to install the shell configurations.
+
 ## Recent Restructuring
 
 This repository has undergone significant restructuring to improve organization and cross-platform support:

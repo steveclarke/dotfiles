@@ -5,9 +5,15 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/dotfiles/bin:$PATH"
 source ~/.dotfilesrc
 
 # ─[ Completions ]────────────────────────────────────────────────────────
-# Add custom completions to fpath
-fpath=(~/.config/zsh/completions $fpath)
-autoload -U compinit && compinit
+# Load custom completions
+if [[ -f ~/.config/bash/completions/dotfiles ]]; then
+    source ~/.config/bash/completions/dotfiles
+fi
+
+# ─[ Aliases ]────────────────────────────────────────────────────────────
+if [[ -f ~/.bash_aliases ]]; then
+    source ~/.bash_aliases
+fi
 
 # ─[ Exports ]────────────────────────────────────────────────────────────
 export LESS=-rF
@@ -18,22 +24,4 @@ if [[ -n "$DISPLAY" ]] && command -v code &> /dev/null; then
 else
     export VISUAL=$EDITOR
 fi
-export SUDO_EDITOR=$EDITOR
-
-# ─[ Aliases ]────────────────────────────────────────────────────────────
-alias ff=clear
-alias upgrade="sudo nala upgrade"
-alias gg=lazygit
-alias lg=lazygit
-alias s="cd $HOME/src"
-alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
-alias vim=nvim
-alias z=zellij
-
-# ─[ Eza (ls replacement) ]───────────────────────────────────────────────
-if command -v eza &> /dev/null; then
-    alias ls="eza --color=always --icons --group-directories-first"
-    alias la="eza --color=always --icons --group-directories-first --all"
-    alias lla="eza --color=always --icons --group-directories-first --all --long"
-    alias tree="eza --tree"
-fi
+export SUDO_EDITOR=$EDITOR 

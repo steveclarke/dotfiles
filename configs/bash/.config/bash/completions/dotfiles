@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Bash completion for dotfiles command
+
+_dotfiles_completion() {
+    local cur prev words cword
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    words=("${COMP_WORDS[@]}")
+    cword=${COMP_CWORD}
+
+    # Top-level commands
+    local commands="install config stow fonts brew update doctor validate test clean pkg logs debug log-level help"
+    
+    # Subcommands for each main command
+    local install_commands="status resume reset steps linux macos"
+    local test_commands="dependencies script"
+    local pkg_commands="install install-bulk remove list search info managers conflicts"
+    local logs_commands="show tail clear"
+    local debug_commands="on off status"
+    local log_levels="DEBUG INFO WARN ERROR"
+
+    case $cword in
+        1)
+            # Complete main commands
+            COMPREPLY=($(compgen -W "$commands" -- "$cur"))
+            ;;
+        2)
+            # Complete subcommands based on the main command
+            case $prev in
+                install)
+                    COMPREPLY=($(compgen -W "$install_commands" -- "$cur"))
+                    ;;
+                test)
+                    COMPREPLY=($(compgen -W "$test_commands" -- "$cur"))
+                    ;;
+                pkg)
+                    COMPREPLY=($(compgen -W "$pkg_commands" -- "$cur"))
+                    ;;
+                logs)
+                    COMPREPLY=($(compgen -W "$logs_commands" -- "$cur"))
+                    ;;
+                debug)
+                    COMPREPLY=($(compgen -W "$debug_commands" -- "$cur"))
+                    ;;
+                log-level)
+                    COMPREPLY=($(compgen -W "$log_levels" -- "$cur"))
+                    ;;
+            esac
+            ;;
+        3)
+            # Complete third-level arguments
+            case "${words[1]}" in
+                test)
+                    if [[ "$prev" == "script" ]]; then
+                        # Complete with script files from install directories
+                        local script_files
+                        script_files=$(find "${DOTFILES_DIR:-$HOME/.dotfiles}/install" -name "*.sh" -type f 2>/dev/null | sed 's|.*/||' | sed 's|\.sh$||')
+                        COMPREPLY=($(compgen -W "$script_files" -- "$cur"))
+                    fi
+                    ;;
+                pkg)
+                    case "$prev" in
+                        install|remove|search|conflicts)
+                            # Could complete with known package names, but this would require
+                            # querying package managers which might be slow
+                            COMPREPLY=()
+                            ;;
+                        install-bulk)
+                            # Allow multiple package names
+                            COMPREPLY=()
+                            ;;
+                    esac
+                    ;;
+                install)
+                    if [[ "$prev" == "reset" ]]; then
+                        COMPREPLY=($(compgen -W "confirm" -- "$cur"))
+                    fi
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+complete -F _dotfiles_completion dotfiles 
