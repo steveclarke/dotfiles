@@ -351,7 +351,7 @@ Enable debug output for troubleshooting:
 
 ```bash
 # Enable debug mode
-export DEBUG=1
+export DOTFILES_DEBUG=1
 
 # Run validation with debug output
 ./bin/dotfiles validate

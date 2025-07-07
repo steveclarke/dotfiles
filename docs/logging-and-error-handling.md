@@ -13,11 +13,11 @@ The dotfiles repository now includes a comprehensive logging and error handling 
 
 ### Core Components
 
-1. **`lib/logging.sh`** - Main logging library with 350+ lines of functionality
-2. **`lib/dotfiles.sh`** - Updated to integrate logging throughout the system
-3. **`bin/dotfiles`** - Enhanced utility with logging commands
-4. **Installation scripts** - Updated to use new logging functions
-
+1. **`lib/logging.sh`** - Main logging library
+2. **`lib/dotfiles.sh`** - integrates logging throughout the system
+3. **`bin/dotfiles`** - Utility with logging commands
+4. **Installation scripts** - Use logging functions
+u
 ### Key Features
 
 - **Color-coded output** with emoji indicators for better visibility
