@@ -17,6 +17,6 @@ source "${DOTFILES_DIR}"/lib/linux.sh
 for installer in "${DOTFILES_DIR}"/install/linux/cli/*.sh; do 
     if [[ -f "$installer" ]]; then
         # shellcheck disable=SC1090
-        source "$installer"
+        bash "$installer"
     fi
 done
