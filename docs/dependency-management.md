@@ -39,8 +39,8 @@ SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")                     # Required env vars
 # or
 ./bin/dotfiles test deps
 
-# Validate a single script's dependencies
-./bin/dotfiles test basic
+# Validate specific script's dependencies
+./bin/dotfiles test script <script-path>
 ```
 
 ## Dependency Declaration Format
@@ -132,8 +132,8 @@ validate_system
 ./bin/dotfiles test dependencies
 ./bin/dotfiles test deps
 
-# Validate a single script's dependencies
-./bin/dotfiles test basic
+# Validate specific script's dependencies
+./bin/dotfiles test script <script-path>
 
 # Manual validation of specific scripts
 source lib/dependencies.sh
@@ -386,7 +386,7 @@ validate_env_var "HOME"
 
 3. **Test specific scripts**:
    ```bash
-   ./bin/dotfiles test basic
+   ./bin/dotfiles test script <script-path>
    ./bin/dotfiles test dependencies
    ```
 
@@ -440,7 +440,7 @@ The dependency management system provides robust validation and compatibility ch
 All dependency testing and validation functionality is integrated directly into the main `dotfiles` utility. There are no separate scripts to maintain - everything is accessible through the unified command interface:
 
 - `dotfiles test dependencies` - Dependency declaration coverage testing
-- `dotfiles test basic` - Single script dependency validation  
+- `dotfiles test script <script>` - Validate specific script's dependencies  
 - `dotfiles validate` - Comprehensive system validation
 - `dotfiles doctor` - Enhanced health checking
 

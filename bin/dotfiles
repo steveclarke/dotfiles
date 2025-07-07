@@ -42,7 +42,7 @@ show_help() {
   echo "  doctor             - Check system health and dependencies"
   echo "  validate           - Run comprehensive system validation"
   echo "  test dependencies  - Test dependency declarations in scripts"
-  echo "  test basic         - Simple dependency validation test"
+  echo "  test script <script> - Validate specific script's dependencies"
   echo "  clean              - Clean up temporary files and caches"
   echo "  help               - Show this help message"
   echo ""
@@ -82,7 +82,7 @@ show_help() {
   echo "  dotfiles doctor           # Check system health"
   echo "  dotfiles validate         # Run comprehensive validation"
   echo "  dotfiles test dependencies # Test all script dependencies"
-  echo "  dotfiles test basic       # Quick dependency test"
+  echo "  dotfiles test script <script> # Test specific script's dependencies"
   echo "  dotfiles clean            # Clean temporary files"
   echo "  dotfiles pkg install curl # Install curl using unified package management"
   echo "  dotfiles pkg install-bulk git curl wget # Install multiple packages"
@@ -432,15 +432,19 @@ case "${1:-help}" in
       dependencies|deps)
         run_test_deps
         ;;
+      script)
+        run_test_simple "${3:-}"
+        ;;
       basic|simple)
-        run_test_simple
+        echo "⚠️  Command 'test ${2:-}' is deprecated. Use 'dotfiles test script <script>' instead."
+        run_test_simple "${3:-}"
         ;;
       *)
         echo "❌ Invalid test command: ${2:-}"
         echo ""
         echo "Available test commands:"
         echo "  dotfiles test dependencies  # Test dependency declarations in scripts"
-        echo "  dotfiles test basic         # Simple dependency validation test"
+        echo "  dotfiles test script <script> # Validate specific script's dependencies"
         exit 1
         ;;
     esac
@@ -451,7 +455,7 @@ case "${1:-help}" in
     run_test_deps
     ;;
   test-simple)
-    echo "⚠️  Command 'test-simple' is deprecated. Use 'dotfiles test basic' instead."
+    echo "⚠️  Command 'test-simple' is deprecated. Use 'dotfiles test script <script>' instead."
     run_test_simple
     ;;
   clean)

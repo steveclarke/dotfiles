@@ -398,40 +398,62 @@ run_test_deps() {
   echo "✅ Multiple scripts now have dependency declarations"
   echo "⚠️  This helps ensure reliable installations"
   echo ""
-  echo "💡 Tip: Run 'dotfiles test basic' to validate a single script's dependencies"
+  echo "💡 Tip: Run 'dotfiles test script <script>' to validate specific script dependencies"
   echo "💡 Tip: Run 'dotfiles validate' for comprehensive system validation"
   echo "💡 Tip: See 'docs/dependency-management.md' for detailed documentation"
 }
 
 run_test_simple() {
-  echo "🧪 Simple Dependency Validation Test"
-  echo "====================================="
+  local script_path="$1"
+  
+  echo "🧪 Script Dependency Validation"
+  echo "==============================="
   echo ""
   
-  # Test one key script based on platform
-  local test_script
-  if is_linux; then
-    test_script="install/linux/prereq/stow.sh"
-  elif is_macos; then
-    test_script="install/macos/brew.sh"
-  else
-    test_script="install.sh"
+  # If no script specified, show usage
+  if [[ -z "$script_path" ]]; then
+    echo "Usage: dotfiles test script <script-path>"
+    echo ""
+    echo "Examples:"
+    echo "  dotfiles test script install/linux/prereq/stow.sh"
+    echo "  dotfiles test script install.sh"
+    echo "  dotfiles test script install/linux/apps/vscode.sh"
+    echo ""
+    echo "💡 Tip: Run 'dotfiles test dependencies' for comprehensive dependency testing"
+    echo "💡 Tip: Run 'dotfiles validate' for full system validation"
+    return 1
   fi
   
-  echo "🔍 Testing: $test_script"
+  # Resolve relative path
+  local full_path
+  if [[ "$script_path" == /* ]]; then
+    full_path="$script_path"
+  else
+    full_path="${DOTFILES_DIR}/${script_path}"
+  fi
+  
+  # Check if script exists
+  if [[ ! -f "$full_path" ]]; then
+    echo "❌ Script not found: $script_path"
+    echo ""
+    echo "💡 Tip: Paths are relative to DOTFILES_DIR ($DOTFILES_DIR)"
+    return 1
+  fi
+  
+  echo "🔍 Testing: $script_path"
   echo "---"
   
-  if validate_dependencies "${DOTFILES_DIR}/${test_script}"; then
-    echo "✅ $test_script validation - PASSED"
+  if validate_dependencies "$full_path"; then
+    echo "✅ $script_path validation - PASSED"
     echo ""
-    echo "🎉 Simple test completed successfully!"
+    echo "🎉 Script validation completed successfully!"
     echo ""
     echo "💡 Tip: Run 'dotfiles test dependencies' for comprehensive dependency testing"
     echo "💡 Tip: Run 'dotfiles validate' for full system validation"
   else
-    echo "❌ $test_script validation - FAILED"
+    echo "❌ $script_path validation - FAILED"
     echo ""
-    echo "⚠️  Simple test found issues."
+    echo "⚠️  Script validation found issues."
     echo ""
     echo "💡 Tip: Run 'dotfiles validate' to check your system setup"
     echo "💡 Tip: See 'docs/dependency-management.md' for troubleshooting"

@@ -192,8 +192,8 @@ This repository includes a comprehensive dependency management system that valid
 # Test dependency declarations in scripts
 ./bin/dotfiles test dependencies
 
-# Quick single-script dependency test
-./bin/dotfiles test basic
+# Test specific script's dependencies
+./bin/dotfiles test script <script-path>
 ```
 
 ### Features
