@@ -50,7 +50,7 @@ run_install() {
 
 run_config() {
   echo "⚙️  Updating configuration files..."
-  bash "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
   echo "✅ Configuration files updated!"
 }
 

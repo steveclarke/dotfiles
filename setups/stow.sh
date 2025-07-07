@@ -73,10 +73,10 @@ do_stow just
 # Platform-specific configurations
 if is_linux; then
   banner "Applying Linux-specific configurations"
-  bash "${DOTFILES_DIR}"/configs/linux/stow-linux.sh
+  bash "${DOTFILES_DIR}"/setups/linux/stow-linux.sh
 fi
 
 if is_macos; then
   banner "Applying macOS-specific configurations"
-  bash "${DOTFILES_DIR}"/configs/macos/stow-macos.sh
+  bash "${DOTFILES_DIR}"/setups/macos/stow-macos.sh
 fi

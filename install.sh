@@ -30,7 +30,7 @@ run_macos_prereq() {
 }
 
 run_macos_stow() {
-  bash "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
 }
 
 run_macos_brew() {
@@ -64,7 +64,7 @@ run_linux_prereq() {
 }
 
 run_linux_stow() {
-  bash "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
 }
 
 run_linux_cli() {
