@@ -5,6 +5,10 @@ DOTFILES_LOG_LEVEL="${DOTFILES_LOG_LEVEL:-INFO}"
 DOTFILES_LOG_FILE="${DOTFILES_LOG_FILE:-${DOTFILES_DIR:-${HOME}/.local/share/dotfiles}/logs/dotfiles.log}"
 DOTFILES_DEBUG="${DOTFILES_DEBUG:-0}"
 
+# Dry-run mode configuration
+DRY_RUN="${DRY_RUN:-false}"
+DRY_RUN_LOG_PREFIX="[DRY-RUN] "
+
 # ANSI Color Codes (define only if not already set)
 if [[ -z "${COLOR_RED:-}" ]]; then
     readonly COLOR_RED='\033[0;31m'
@@ -14,6 +18,7 @@ if [[ -z "${COLOR_RED:-}" ]]; then
     readonly COLOR_PURPLE='\033[0;35m'
     readonly COLOR_CYAN='\033[0;36m'
     readonly COLOR_WHITE='\033[1;37m'
+    readonly COLOR_ORANGE='\033[0;33m'
     readonly COLOR_RESET='\033[0m'
 fi
 
@@ -25,6 +30,8 @@ if [[ -z "${EMOJI_ERROR:-}" ]]; then
     readonly EMOJI_DEBUG='🔍'
     readonly EMOJI_SUCCESS='✅'
     readonly EMOJI_ARROW='➡️'
+    readonly EMOJI_DRY_RUN='🧪'
+    readonly EMOJI_SIMULATE='🎭'
 fi
 
 # Log levels (numeric values for comparison) (define only if not already set)
@@ -34,6 +41,64 @@ if [[ -z "${LOG_LEVEL_DEBUG:-}" ]]; then
     readonly LOG_LEVEL_WARN=30
     readonly LOG_LEVEL_ERROR=40
 fi
+
+# Parse command line arguments for dry-run and other options
+parse_script_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --dry-run|--dryrun|-n)
+                export DRY_RUN=true
+                log_info "Dry-run mode enabled - no actual changes will be made"
+                shift
+                ;;
+            --debug|-d)
+                export DOTFILES_DEBUG=1
+                log_info "Debug mode enabled"
+                shift
+                ;;
+            --verbose|-v)
+                export DOTFILES_LOG_LEVEL=DEBUG
+                log_info "Verbose logging enabled"
+                shift
+                ;;
+            --quiet|-q)
+                export DOTFILES_LOG_LEVEL=ERROR
+                shift
+                ;;
+            --help|-h)
+                show_script_help
+                exit 0
+                ;;
+            *)
+                # Unknown option, pass it through
+                shift
+                ;;
+        esac
+    done
+}
+
+# Show help for script with dry-run options
+show_script_help() {
+    local script_name="${0##*/}"
+    echo "Usage: $script_name [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --dry-run, -n     Simulate operations without making actual changes"
+    echo "  --debug, -d       Enable debug output"
+    echo "  --verbose, -v     Enable verbose logging"
+    echo "  --quiet, -q       Show only errors"
+    echo "  --help, -h        Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $script_name --dry-run    # Test what would be done"
+    echo "  $script_name --debug      # Run with detailed output"
+    echo "  $script_name --verbose    # Show all log messages"
+}
+
+# Check if script is running in dry-run mode
+is_dry_run() {
+    [[ "$DRY_RUN" == "true" ]]
+}
 
 # Convert log level name to numeric value
 get_log_level_value() {
@@ -69,7 +134,7 @@ get_script_context() {
     echo "[${script_name}:${line_number}]"
 }
 
-# Core logging function
+# Core logging function with dry-run support
 _log() {
     local level="$1"
     local message="$2"
@@ -91,12 +156,18 @@ _log() {
     local context
     context=$(get_script_context)
     
+    # Add dry-run prefix if in dry-run mode
+    local prefix=""
+    if is_dry_run; then
+        prefix="$DRY_RUN_LOG_PREFIX"
+    fi
+    
     # Format the message
     local formatted_msg
     if supports_color; then
-        formatted_msg="${color}${emoji} [${level}] ${message}${COLOR_RESET}"
+        formatted_msg="${color}${emoji} [${level}] ${prefix}${message}${COLOR_RESET}"
     else
-        formatted_msg="${emoji} [${level}] ${message}"
+        formatted_msg="${emoji} [${level}] ${prefix}${message}"
     fi
     
     # Output to console
@@ -104,7 +175,7 @@ _log() {
     
     # Log to file if specified
     if [[ -n "$DOTFILES_LOG_FILE" ]]; then
-        echo "$timestamp $context [$level] $message" >> "$DOTFILES_LOG_FILE"
+        echo "$timestamp $context [$level] ${prefix}$message" >> "$DOTFILES_LOG_FILE"
     fi
 }
 
@@ -131,15 +202,37 @@ log_error() {
     _log "ERROR" "$1" "$EMOJI_ERROR" "$COLOR_RED"
 }
 
-# Enhanced banner functions with logging
+# Dry-run specific logging functions
+log_dry_run() {
+    local action="$1"
+    if is_dry_run; then
+        _log "INFO" "Would $action" "$EMOJI_DRY_RUN" "$COLOR_ORANGE"
+    fi
+}
+
+log_simulate() {
+    local operation="$1"
+    _log "INFO" "Simulating: $operation" "$EMOJI_SIMULATE" "$COLOR_ORANGE"
+}
+
+# Enhanced banner functions with dry-run indication
 log_banner() {
     local message="$1"
     local border="========================================================================"
     
+    # Add dry-run indicator to banner
+    if is_dry_run; then
+        message="$message (DRY-RUN MODE)"
+    fi
+    
     if supports_color; then
-        echo -e "${COLOR_CYAN}${border}${COLOR_RESET}" >&2
-        echo -e "${COLOR_CYAN} $message${COLOR_RESET}" >&2
-        echo -e "${COLOR_CYAN}${border}${COLOR_RESET}" >&2
+        local banner_color="$COLOR_CYAN"
+        if is_dry_run; then
+            banner_color="$COLOR_ORANGE"
+        fi
+        echo -e "${banner_color}${border}${COLOR_RESET}" >&2
+        echo -e "${banner_color} $message${COLOR_RESET}" >&2
+        echo -e "${banner_color}${border}${COLOR_RESET}" >&2
     else
         echo "$border" >&2
         echo " $message" >&2
@@ -148,7 +241,11 @@ log_banner() {
     
     # Log to file
     if [[ -n "$DOTFILES_LOG_FILE" ]]; then
-        echo "$(get_timestamp) $(get_script_context) [BANNER] $message" >> "$DOTFILES_LOG_FILE"
+        local prefix=""
+        if is_dry_run; then
+            prefix="$DRY_RUN_LOG_PREFIX"
+        fi
+        echo "$(get_timestamp) $(get_script_context) [BANNER] ${prefix}$message" >> "$DOTFILES_LOG_FILE"
     fi
 }
 
@@ -156,15 +253,29 @@ log_step() {
     local step="$1"
     local message="$2"
     
+    # Add dry-run indication to step
+    local step_message="Step $step: $message"
+    if is_dry_run; then
+        step_message="Step $step: $message (simulated)"
+    fi
+    
     if supports_color; then
-        echo -e "${COLOR_WHITE}${EMOJI_ARROW} Step $step: $message${COLOR_RESET}" >&2
+        local step_color="$COLOR_WHITE"
+        if is_dry_run; then
+            step_color="$COLOR_ORANGE"
+        fi
+        echo -e "${step_color}${EMOJI_ARROW} $step_message${COLOR_RESET}" >&2
     else
-        echo "${EMOJI_ARROW} Step $step: $message" >&2
+        echo "${EMOJI_ARROW} $step_message" >&2
     fi
     
     # Log to file
     if [[ -n "$DOTFILES_LOG_FILE" ]]; then
-        echo "$(get_timestamp) $(get_script_context) [STEP] $step: $message" >> "$DOTFILES_LOG_FILE"
+        local prefix=""
+        if is_dry_run; then
+            prefix="$DRY_RUN_LOG_PREFIX"
+        fi
+        echo "$(get_timestamp) $(get_script_context) [STEP] ${prefix}$step: $message" >> "$DOTFILES_LOG_FILE"
     fi
 }
 
@@ -182,6 +293,11 @@ handle_error() {
     error_msg+="\n  Function: $function_name"
     error_msg+="\n  Line: $line_number"
     error_msg+="\n  Command: $command"
+    
+    # Add dry-run context
+    if is_dry_run; then
+        error_msg+="\n  Mode: DRY-RUN (error during simulation)"
+    fi
     
     # Add environment information
     error_msg+="\n  Working Directory: $(pwd)"
@@ -201,7 +317,7 @@ handle_error() {
         fi
         
         log_debug "Environment variables:"
-        env | grep -E '^(DOTFILES|PATH|HOME|USER)' | while read -r var; do
+        env | grep -E '^(DOTFILES|PATH|HOME|USER|DRY_RUN)' | while read -r var; do
             log_debug "  $var"
         done
     fi
@@ -213,6 +329,9 @@ handle_error() {
     log_info "  3. Check file permissions and paths"
     log_info "  4. Run with DOTFILES_DEBUG=1 for more details"
     log_info "  5. Check the log file: $DOTFILES_LOG_FILE"
+    if is_dry_run; then
+        log_info "  6. Try running without --dry-run to see actual behavior"
+    fi
     
     # Exit with the original error code
     exit $exit_code
@@ -232,7 +351,7 @@ setup_error_handling() {
     log_debug "Error handling initialized for ${BASH_SOURCE[1]##*/}"
 }
 
-# Progress tracking functions
+# Progress tracking functions with dry-run support
 progress_start() {
     local total_steps="$1"
     local description="$2"
@@ -241,7 +360,12 @@ progress_start() {
     export DOTFILES_PROGRESS_CURRENT=0
     export DOTFILES_PROGRESS_DESC="$description"
     
-    log_info "Starting: $description (0/$total_steps)"
+    local mode_desc="$description"
+    if is_dry_run; then
+        mode_desc="$description (simulation)"
+    fi
+    
+    log_info "Starting: $mode_desc (0/$total_steps)"
 }
 
 progress_step() {
@@ -250,18 +374,47 @@ progress_step() {
     ((DOTFILES_PROGRESS_CURRENT++))
     
     local percentage=$((DOTFILES_PROGRESS_CURRENT * 100 / DOTFILES_PROGRESS_TOTAL))
-    log_info "Progress: $step_description ($DOTFILES_PROGRESS_CURRENT/$DOTFILES_PROGRESS_TOTAL - $percentage%)"
+    
+    local mode_desc="$step_description"
+    if is_dry_run; then
+        mode_desc="$step_description (simulated)"
+    fi
+    
+    log_info "Progress: $mode_desc ($DOTFILES_PROGRESS_CURRENT/$DOTFILES_PROGRESS_TOTAL - $percentage%)"
 }
 
 progress_complete() {
-    log_success "Completed: $DOTFILES_PROGRESS_DESC ($DOTFILES_PROGRESS_TOTAL/$DOTFILES_PROGRESS_TOTAL - 100%)"
+    local mode_desc="$DOTFILES_PROGRESS_DESC"
+    if is_dry_run; then
+        mode_desc="$DOTFILES_PROGRESS_DESC (simulation completed)"
+    fi
+    
+    log_success "Completed: $mode_desc ($DOTFILES_PROGRESS_TOTAL/$DOTFILES_PROGRESS_TOTAL - 100%)"
     unset DOTFILES_PROGRESS_TOTAL DOTFILES_PROGRESS_CURRENT DOTFILES_PROGRESS_DESC
+}
+
+# Show dry-run mode information
+show_dry_run_info() {
+    if is_dry_run; then
+        log_banner "DRY-RUN MODE ACTIVE"
+        log_warn "This is a simulation - no actual changes will be made"
+        log_info "Dry-run mode will:"
+        log_info "  • Show what operations would be performed"
+        log_info "  • Validate dependencies and prerequisites"
+        log_info "  • Check file and directory existence"
+        log_info "  • Simulate package installations"
+        log_info "  • Display configuration changes that would be made"
+        log_info ""
+        log_info "To perform actual changes, run the script without --dry-run"
+        echo ""
+    fi
 }
 
 # Debugging helpers
 debug_env() {
     if [[ "$DOTFILES_DEBUG" == "1" ]]; then
         log_debug "=== Environment Debug Information ==="
+        log_debug "DRY_RUN: $DRY_RUN"
         log_debug "DOTFILES_DIR: ${DOTFILES_DIR:-'Not set'}"
         log_debug "DOTFILES_OS: ${DOTFILES_OS:-'Not set'}"
         log_debug "DOTFILES_LOG_LEVEL: $DOTFILES_LOG_LEVEL"
@@ -312,6 +465,10 @@ validate_commands() {
         for cmd in "${missing[@]}"; do
             log_info "  $cmd"
         done
+        if is_dry_run; then
+            log_warn "In dry-run mode - continuing simulation despite missing commands"
+            return 0
+        fi
         exit 1
     fi
 }
@@ -324,31 +481,17 @@ rotate_log() {
         
         # Rotate if larger than 10MB
         if [[ $log_size -gt 10485760 ]]; then
-            mv "$DOTFILES_LOG_FILE" "${DOTFILES_LOG_FILE}.old"
-            log_info "Log file rotated: ${DOTFILES_LOG_FILE}.old"
+            if is_dry_run; then
+                log_dry_run "rotate log file: ${DOTFILES_LOG_FILE} -> ${DOTFILES_LOG_FILE}.old"
+            else
+                mv "$DOTFILES_LOG_FILE" "${DOTFILES_LOG_FILE}.old"
+                log_info "Log file rotated: ${DOTFILES_LOG_FILE}.old"
+            fi
         fi
     fi
 }
 
-# Initialize logging
-init_logging() {
-    # Create log directory if it doesn't exist
-    local log_dir
-    log_dir=$(dirname "$DOTFILES_LOG_FILE")
-    mkdir -p "$log_dir" 2>/dev/null || true
-    
-    # Rotate log if needed
-    rotate_log
-    
-    # Log session start
-    if [[ -n "$DOTFILES_LOG_FILE" ]]; then
-        echo "$(get_timestamp) [INIT] Logging session started" >> "$DOTFILES_LOG_FILE"
-    fi
-    
-    log_debug "Logging initialized - Level: $DOTFILES_LOG_LEVEL, File: $DOTFILES_LOG_FILE"
-}
-
-# Installation progress logging (enhanced with state tracking)
+# Enhanced installation progress logging (enhanced with state tracking)
 log_installation_step() {
     local step_id="$1"
     local step_description="$2"
@@ -361,7 +504,11 @@ log_installation_step() {
         
         if [[ $total -gt 0 ]]; then
             local percentage=$((completed * 100 / total))
-            log_info "Step ($((completed + 1))/$total - $percentage%): $step_description"
+            local mode_desc="$step_description"
+            if is_dry_run; then
+                mode_desc="$step_description (simulated)"
+            fi
+            log_info "Step ($((completed + 1))/$total - $percentage%): $mode_desc"
         else
             log_info "Step: $step_description"
         fi
@@ -381,6 +528,38 @@ log_installation_banner() {
     if [[ "$show_progress" == "true" ]] && command -v show_installation_progress >/dev/null 2>&1; then
         show_installation_progress
     fi
+}
+
+# Initialize logging
+init_logging() {
+    # Create log directory if it doesn't exist
+    local log_dir
+    log_dir=$(dirname "$DOTFILES_LOG_FILE")
+    
+    if is_dry_run; then
+        log_dry_run "create log directory: $log_dir"
+    else
+        mkdir -p "$log_dir" 2>/dev/null || true
+    fi
+    
+    # Rotate log if needed
+    rotate_log
+    
+    # Log session start
+    if [[ -n "$DOTFILES_LOG_FILE" ]]; then
+        local prefix=""
+        if is_dry_run; then
+            prefix="$DRY_RUN_LOG_PREFIX"
+        fi
+        
+        if is_dry_run; then
+            log_dry_run "write to log file: $DOTFILES_LOG_FILE"
+        else
+            echo "$(get_timestamp) [INIT] ${prefix}Logging session started" >> "$DOTFILES_LOG_FILE"
+        fi
+    fi
+    
+    log_debug "Logging initialized - Level: $DOTFILES_LOG_LEVEL, File: $DOTFILES_LOG_FILE, Dry-run: $DRY_RUN"
 }
 
 # Auto-initialize logging when sourced

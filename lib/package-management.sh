@@ -25,6 +25,25 @@ declare -A PACKAGE_MANAGER_COMMANDS=(
 # Package availability cache to avoid repeated checks
 declare -A PACKAGE_AVAILABILITY_CACHE=()
 
+# Dry-run simulation data
+declare -A DRY_RUN_INSTALLED_PACKAGES=()
+
+# Safe execution wrapper for dry-run mode
+safe_execute() {
+    local description="$1"
+    shift
+    local command=("$@")
+    
+    if is_dry_run; then
+        log_dry_run "$description"
+        log_simulate "${command[*]}"
+        return 0
+    else
+        log_debug "Executing: ${command[*]}"
+        "${command[@]}"
+    fi
+}
+
 # Detect available package managers on the system
 detect_package_managers() {
     local available_managers=()
@@ -43,12 +62,20 @@ detect_package_managers() {
             log_debug "✓ $manager package manager detected"
         else
             log_debug "✗ $manager package manager not found"
+            if is_dry_run; then
+                log_debug "  (In dry-run: would check for installation method)"
+            fi
         fi
     done
     
     if [[ ${#available_managers[@]} -eq 0 ]]; then
-        log_error "No package managers found on system"
-        return 1
+        if is_dry_run; then
+            log_warn "No package managers found - simulating with apt"
+            available_managers=("apt")
+        else
+            log_error "No package managers found on system"
+            return 1
+        fi
     fi
     
     # Sort by priority (highest first)
@@ -71,6 +98,34 @@ check_package_availability() {
     fi
     
     log_debug "Checking availability of $package in $manager"
+    
+    if is_dry_run; then
+        # In dry-run mode, simulate availability checks
+        log_simulate "check $package availability in $manager"
+        
+        # Simulate common packages being available
+        local common_packages=("curl" "wget" "git" "vim" "htop" "build-essential" "stow" "flatpak" "zsh" "fish")
+        local available=false
+        
+        for common in "${common_packages[@]}"; do
+            if [[ "$package" == "$common" ]]; then
+                available=true
+                break
+            fi
+        done
+        
+        # Cache the simulated result
+        if $available; then
+            PACKAGE_AVAILABILITY_CACHE[$cache_key]="available"
+            log_debug "✓ $package simulated as available in $manager"
+        else
+            PACKAGE_AVAILABILITY_CACHE[$cache_key]="unavailable"
+            log_debug "✗ $package simulated as not available in $manager"
+        fi
+        
+        $available
+        return $?
+    fi
     
     local available=false
     
@@ -121,6 +176,50 @@ install_with_manager() {
     
     log_info "Installing $package using $manager"
     
+    if is_dry_run; then
+        log_simulate "package installation: $package via $manager"
+        
+        # Simulate the installation command
+        case "$manager" in
+            "apt")
+                if [[ -n "$options" ]]; then
+                    log_dry_run "execute: sudo apt install -y $options \"$package\""
+                else
+                    log_dry_run "execute: sudo apt install -y \"$package\""
+                fi
+                ;;
+            "brew")
+                if [[ -n "$options" ]]; then
+                    log_dry_run "execute: brew install $options \"$package\""
+                else
+                    log_dry_run "execute: brew install \"$package\""
+                fi
+                ;;
+            "snap")
+                if [[ -n "$options" ]]; then
+                    log_dry_run "execute: sudo snap install $options \"$package\""
+                else
+                    log_dry_run "execute: sudo snap install \"$package\""
+                fi
+                ;;
+            "flatpak")
+                if [[ -n "$options" ]]; then
+                    log_dry_run "execute: flatpak install -y $options \"$package\""
+                else
+                    log_dry_run "execute: flatpak install -y flathub \"$package\""
+                fi
+                ;;
+            "manual")
+                log_dry_run "execute: manual installation function for $package"
+                ;;
+        esac
+        
+        # Mark as "installed" in simulation
+        DRY_RUN_INSTALLED_PACKAGES["$package"]="$manager"
+        log_success "Simulated: $package installed via $manager"
+        return 0
+    fi
+    
     case "$manager" in
         "apt")
             if [[ -n "$options" ]]; then
@@ -168,10 +267,22 @@ is_package_installed() {
     
     log_debug "Checking if $package is installed"
     
+    # Check dry-run simulation data first
+    if is_dry_run && [[ -n "${DRY_RUN_INSTALLED_PACKAGES[$package]:-}" ]]; then
+        log_debug "✓ $package found in dry-run simulation (via ${DRY_RUN_INSTALLED_PACKAGES[$package]})"
+        return 0
+    fi
+    
     # First try generic command check (works for most packages)
     if command -v "$package" >/dev/null 2>&1; then
         log_debug "✓ $package found in PATH"
         return 0
+    fi
+    
+    # In dry-run mode, don't perform actual system checks for missing packages
+    if is_dry_run; then
+        log_debug "✗ $package not found (dry-run mode - not checking system packages)"
+        return 1
     fi
     
     # If manager is specified, check with that manager
@@ -253,8 +364,15 @@ install_package() {
     mapfile -t managers < <(detect_package_managers)
     
     if [[ ${#managers[@]} -eq 0 ]]; then
-        log_error "No package managers available"
-        return 1
+        if is_dry_run; then
+            log_warn "No package managers available - simulating installation"
+            log_simulate "install $package with simulated package manager"
+            DRY_RUN_INSTALLED_PACKAGES["$package"]="simulated"
+            return 0
+        else
+            log_error "No package managers available"
+            return 1
+        fi
     fi
     
     # If preferred manager is specified, try it first
@@ -270,7 +388,7 @@ install_package() {
             fi
         done
         
-        if $preferred_available; then
+        if $preferred_available || is_dry_run; then
             if check_package_availability "$package" "$preferred_manager"; then
                 log_info "Installing $package with preferred manager: $preferred_manager"
                 if install_with_manager "$package" "$preferred_manager" "$options"; then
@@ -314,11 +432,20 @@ install_package() {
     # Try manual installation if function is provided
     if [[ -n "$manual_install_function" ]] && declare -f "$manual_install_function" >/dev/null; then
         log_info "Attempting manual installation using function: $manual_install_function"
-        if "$manual_install_function"; then
-            log_success "$package installed successfully using manual installation"
+        
+        if is_dry_run; then
+            log_simulate "manual installation: $manual_install_function"
+            log_dry_run "execute: $manual_install_function"
+            DRY_RUN_INSTALLED_PACKAGES["$package"]="manual:$manual_install_function"
+            log_success "Simulated: $package installed via manual function"
             return 0
         else
-            log_error "Manual installation of $package failed"
+            if "$manual_install_function"; then
+                log_success "$package installed successfully using manual installation"
+                return 0
+            else
+                log_error "Manual installation of $package failed"
+            fi
         fi
     fi
     
@@ -326,6 +453,11 @@ install_package() {
     log_error "Failed to install $package with any available method"
     log_info "Available package managers tried: ${managers[*]}"
     log_info "Consider installing $package manually or checking package name"
+    
+    if is_dry_run; then
+        log_warn "In dry-run mode: simulating failure but continuing"
+        return 1
+    fi
     
     return 1
 }
@@ -359,6 +491,11 @@ install_packages() {
         log_warn "Some packages failed to install (${#failed_packages[@]}/${#packages[@]} failed)"
         log_info "Failed packages: ${failed_packages[*]}"
         log_info "Successfully installed: $success_count packages"
+        
+        if is_dry_run; then
+            log_info "(Note: In dry-run mode - no actual failures occurred)"
+        fi
+        
         return 1
     fi
 }
@@ -388,6 +525,12 @@ check_package_conflicts() {
                 log_error "Package conflict detected: $conflict_package ($conflict_manager) conflicts with $package"
                 log_info "Please remove $conflict_package before installing $package"
                 log_info "Command: remove_package $conflict_package $conflict_manager"
+                
+                if is_dry_run; then
+                    log_warn "In dry-run mode: conflict detected but continuing simulation"
+                    return 0
+                fi
+                
                 return 1
             fi
         else
@@ -395,6 +538,12 @@ check_package_conflicts() {
             if is_package_installed "$conflict"; then
                 log_error "Package conflict detected: $conflict conflicts with $package"
                 log_info "Please remove $conflict before installing $package"
+                
+                if is_dry_run; then
+                    log_warn "In dry-run mode: conflict detected but continuing simulation"
+                    return 0
+                fi
+                
                 return 1
             fi
         fi
@@ -413,6 +562,37 @@ remove_package() {
     
     if ! is_package_installed "$package" "$manager"; then
         log_warn "$package is not installed"
+        return 0
+    fi
+    
+    if is_dry_run; then
+        log_simulate "package removal: $package"
+        
+        # Remove from simulation data if present
+        if [[ -n "${DRY_RUN_INSTALLED_PACKAGES[$package]:-}" ]]; then
+            unset DRY_RUN_INSTALLED_PACKAGES["$package"]
+            log_dry_run "remove $package from simulation data"
+        fi
+        
+        # Show what removal command would be executed
+        if [[ "$manager" != "auto" ]]; then
+            case "$manager" in
+                "apt")
+                    log_dry_run "execute: sudo apt remove -y \"$package\""
+                    ;;
+                "brew")
+                    log_dry_run "execute: brew uninstall \"$package\""
+                    ;;
+                "snap")
+                    log_dry_run "execute: sudo snap remove \"$package\""
+                    ;;
+                "flatpak")
+                    log_dry_run "execute: flatpak uninstall -y \"$package\""
+                    ;;
+            esac
+        fi
+        
+        log_success "Simulated: $package removed"
         return 0
     fi
     
@@ -470,20 +650,24 @@ show_package_manager_info() {
             log_info "  $manager (priority: $priority) - Custom installation functions"
         else
             local version=""
-            case "$manager" in
-                "apt")
-                    version=$(apt --version 2>/dev/null | head -1 || echo "unknown")
-                    ;;
-                "brew")
-                    version=$(brew --version 2>/dev/null | head -1 || echo "unknown")
-                    ;;
-                "snap")
-                    version=$(snap version 2>/dev/null | head -1 || echo "unknown")
-                    ;;
-                "flatpak")
-                    version=$(flatpak --version 2>/dev/null || echo "unknown")
-                    ;;
-            esac
+            if is_dry_run; then
+                version="(simulated version)"
+            else
+                case "$manager" in
+                    "apt")
+                        version=$(apt --version 2>/dev/null | head -1 || echo "unknown")
+                        ;;
+                    "brew")
+                        version=$(brew --version 2>/dev/null | head -1 || echo "unknown")
+                        ;;
+                    "snap")
+                        version=$(snap version 2>/dev/null | head -1 || echo "unknown")
+                        ;;
+                    "flatpak")
+                        version=$(flatpak --version 2>/dev/null || echo "unknown")
+                        ;;
+                esac
+            fi
             log_info "  $manager (priority: $priority) - $version"
         fi
     done
@@ -492,11 +676,45 @@ show_package_manager_info() {
     local cache_size=${#PACKAGE_AVAILABILITY_CACHE[@]}
     log_info "Package availability cache: $cache_size entries"
     
+    # Show dry-run simulation data
+    if is_dry_run; then
+        local sim_count=${#DRY_RUN_INSTALLED_PACKAGES[@]}
+        log_info "Dry-run simulated packages: $sim_count installed"
+        
+        if [[ $sim_count -gt 0 ]]; then
+            log_debug "Simulated installed packages:"
+            for pkg in "${!DRY_RUN_INSTALLED_PACKAGES[@]}"; do
+                log_debug "  $pkg (via ${DRY_RUN_INSTALLED_PACKAGES[$pkg]})"
+            done
+        fi
+    fi
+    
     if [[ "$DOTFILES_DEBUG" == "1" && $cache_size -gt 0 ]]; then
         log_debug "Cache contents:"
         for key in "${!PACKAGE_AVAILABILITY_CACHE[@]}"; do
             log_debug "  $key: ${PACKAGE_AVAILABILITY_CACHE[$key]}"
         done
+    fi
+}
+
+# Show dry-run simulation summary
+show_dry_run_summary() {
+    if is_dry_run; then
+        log_banner "Dry-Run Simulation Summary"
+        
+        local sim_count=${#DRY_RUN_INSTALLED_PACKAGES[@]}
+        
+        if [[ $sim_count -gt 0 ]]; then
+            log_info "Packages that would be installed ($sim_count):"
+            for pkg in "${!DRY_RUN_INSTALLED_PACKAGES[@]}"; do
+                log_info "  • $pkg (via ${DRY_RUN_INSTALLED_PACKAGES[$pkg]})"
+            done
+        else
+            log_info "No packages would be installed"
+        fi
+        
+        log_info ""
+        log_info "To perform actual installation, run the script without --dry-run"
     fi
 }
 

@@ -27,461 +27,264 @@ fi
 # Source command implementations
 source "${DOTFILES_DIR}"/lib/commands.sh
 
+# Parse global arguments before command processing
+parse_global_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --dry-run|--dryrun|-n)
+                export DRY_RUN=true
+                shift
+                ;;
+            --debug|-d)
+                export DOTFILES_DEBUG=1
+                shift
+                ;;
+            --verbose|-v)
+                export DOTFILES_LOG_LEVEL=DEBUG
+                shift
+                ;;
+            --quiet|-q)
+                export DOTFILES_LOG_LEVEL=ERROR
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                # Unknown option, pass it through
+                break
+                ;;
+        esac
+    done
+    
+    # Return remaining arguments
+    echo "$@"
+}
+
+# Enhanced help with dry-run information
 show_help() {
-  echo "🔧 Dotfiles Management Utility"
-  echo ""
-  echo "Usage: dotfiles [command] [options]"
-  echo ""
-  echo "Commands:"
-  echo "  install [platform]  - Run full installation (linux/macos, auto-detects if not specified)"
-  echo "  config             - Update configuration files using stow"
-  echo "  stow               - Alias for config command"
-  echo "  fonts              - Install fonts (copies on macOS, symlinks on Linux)"
-  echo "  brew               - Install/update packages using Homebrew"
-  echo "  update             - Update both config and packages"
-  echo "  doctor             - Check system health and dependencies"
-  echo "  validate           - Run comprehensive system validation"
-  echo "  test dependencies  - Test dependency declarations in scripts"
-  echo "  test script <script> - Validate specific script's dependencies"
-  echo "  clean              - Clean up temporary files and caches"
-  echo "  help               - Show this help message"
-  echo ""
-  echo "Installation State Commands:"
-  echo "  install status     - Show installation progress and status"
-  echo "  install resume     - Resume interrupted installation"
-  echo "  install reset      - Reset installation state (restart from beginning)"
-  echo "  install steps      - Show all installation steps and their status"
-  echo ""
-  echo "Package Management Commands:"
-  echo "  pkg install <package>     - Install package using unified package management"
-  echo "  pkg install-bulk <pkg1> <pkg2> ... - Install multiple packages"
-  echo "  pkg remove <package>      - Remove package"
-  echo "  pkg list                  - Show installed packages"
-  echo "  pkg search <package>      - Search for package"
-  echo "  pkg info                  - Show package manager information"
-  echo "  pkg managers              - List available package managers"
-  echo "  pkg conflicts <package>   - Check package conflicts"
-  echo ""
-  echo "Logging Commands:"
-  echo "  logs               - Show recent log entries"
-  echo "  logs tail          - Follow log file in real-time"
-  echo "  logs clear         - Clear log file"
-  echo "  debug on           - Enable debug mode"
-  echo "  debug off          - Disable debug mode"
-  echo "  debug status       - Show debug status"
-  echo "  log-level [level]  - Set logging level (DEBUG/INFO/WARN/ERROR)"
-  echo ""
-  echo "Examples:"
-  echo "  dotfiles install          # Install for current platform"
-  echo "  dotfiles install linux    # Force Linux installation"
-  echo "  dotfiles install status   # Show installation progress"
-  echo "  dotfiles install resume   # Resume interrupted installation"
-  echo "  dotfiles install reset    # Reset installation state"
-  echo "  dotfiles config           # Update config files"
-  echo "  dotfiles fonts            # Install fonts"
-  echo "  dotfiles doctor           # Check system health"
-  echo "  dotfiles validate         # Run comprehensive validation"
-  echo "  dotfiles test dependencies # Test all script dependencies"
-  echo "  dotfiles test script <script> # Test specific script's dependencies"
-  echo "  dotfiles clean            # Clean temporary files"
-  echo "  dotfiles pkg install curl # Install curl using unified package management"
-  echo "  dotfiles pkg install-bulk git curl wget # Install multiple packages"
-  echo "  dotfiles pkg info         # Show package manager information"
-  echo "  dotfiles logs             # Show recent logs"
-  echo "  dotfiles logs tail        # Follow logs in real-time"
-  echo "  dotfiles debug on         # Enable debug mode"
-  echo "  dotfiles log-level DEBUG  # Set debug logging level"
-  echo ""
-  echo "Environment Variables:"
-  echo "  DOTFILES_INSTALL_GUI     - Set to 'TRUE' for GUI applications (Linux only)"
-  echo "  DOTFILES_DIR             - Path to dotfiles directory"
-  echo "  DOTFILES_DEBUG           - Enable debug mode (0/1)"
-  echo "  DOTFILES_LOG_LEVEL       - Set logging level (DEBUG/INFO/WARN/ERROR)"
-  echo "  DOTFILES_LOG_FILE        - Set log file path"
+    cat << 'EOF'
+Dotfiles Management System
+
+USAGE:
+    dotfiles [GLOBAL_OPTIONS] <command> [COMMAND_OPTIONS] [args...]
+
+GLOBAL OPTIONS:
+    --dry-run, -n     Simulate operations without making actual changes
+    --debug, -d       Enable debug output
+    --verbose, -v     Enable verbose logging  
+    --quiet, -q       Show only errors
+    --help, -h        Show this help message
+
+COMMANDS:
+    config            Update configuration files only (using stow)
+    brew              Update packages only (using brew bundle) 
+    update            Run both config and package updates (convenience command)
+    
+    install           Interactive installation wizard
+    status            Show dotfiles system status
+    version           Show version information
+    
+    test <script>     Test a script in dry-run mode
+    validate          Validate dotfiles system configuration
+
+EXAMPLES:
+    dotfiles config                    # Update configuration files
+    dotfiles brew                      # Update packages  
+    dotfiles update                    # Update both config and packages
+    dotfiles --dry-run update          # Simulate full update
+    dotfiles test install/linux/prereq/1-libs.sh  # Test script safely
+    dotfiles --debug config           # Update config with debug output
+
+DRY-RUN MODE:
+    Use --dry-run with any command to see what would be done without making changes.
+    This is especially useful for:
+    • Testing scripts before running them
+    • Validating configuration changes
+    • Understanding what packages would be installed
+    • Debugging installation issues
+
+For more information, visit: https://github.com/your-username/dotfiles
+EOF
 }
 
-# Package management command functions
-run_pkg() {
-  local action="${1:-help}"
-  shift || true
-  
-  case "$action" in
-    install)
-      if [[ $# -eq 0 ]]; then
-        log_error "Package name required for install command"
-        echo "Usage: dotfiles pkg install <package> [manager] [options]"
-        exit 1
-      fi
-      
-      local package="$1"
-      local manager="${2:-auto}"
-      local options="${3:-}"
-      
-      log_info "Installing package: $package"
-      if install_package "$package" "$manager" "$options"; then
-        log_success "Package $package installed successfully"
-      else
-        log_error "Failed to install package $package"
-        exit 1
-      fi
-      ;;
-    install-bulk)
-      if [[ $# -eq 0 ]]; then
-        log_error "At least one package name required for install-bulk command"
-        echo "Usage: dotfiles pkg install-bulk <package1> <package2> ..."
-        exit 1
-      fi
-      
-      log_info "Installing multiple packages: $*"
-      if install_packages "$@"; then
-        log_success "All packages installed successfully"
-      else
-        log_error "Some packages failed to install"
-        exit 1
-      fi
-      ;;
-    remove)
-      if [[ $# -eq 0 ]]; then
-        log_error "Package name required for remove command"
-        echo "Usage: dotfiles pkg remove <package> [manager]"
-        exit 1
-      fi
-      
-      local package="$1"
-      local manager="${2:-auto}"
-      
-      log_info "Removing package: $package"
-      if remove_package "$package" "$manager"; then
-        log_success "Package $package removed successfully"
-      else
-        log_error "Failed to remove package $package"
-        exit 1
-      fi
-      ;;
-    list)
-      log_info "Listing installed packages"
-      
-      local managers
-      mapfile -t managers < <(detect_package_managers)
-      
-      for mgr in "${managers[@]}"; do
-        if [[ "$mgr" == "manual" ]]; then
-          continue
-        fi
-        
-        log_info "Packages installed via $mgr:"
-        case "$mgr" in
-          "apt")
-            dpkg -l | grep "^ii" | awk '{print "  " $2}' || true
-            ;;
-          "brew")
-            brew list | sed 's/^/  /' || true
-            ;;
-          "snap")
-            snap list | tail -n +2 | awk '{print "  " $1}' || true
-            ;;
-          "flatpak")
-            flatpak list --app | awk '{print "  " $1}' || true
-            ;;
-        esac
-        echo
-      done
-      ;;
-    search)
-      if [[ $# -eq 0 ]]; then
-        log_error "Package name required for search command"
-        echo "Usage: dotfiles pkg search <package>"
-        exit 1
-      fi
-      
-      local package="$1"
-      log_info "Searching for package: $package"
-      
-      local managers
-      mapfile -t managers < <(detect_package_managers)
-      
-      for mgr in "${managers[@]}"; do
-        if [[ "$mgr" == "manual" ]]; then
-          continue
-        fi
-        
-        log_info "Searching in $mgr:"
-        case "$mgr" in
-          "apt")
-            apt search "$package" 2>/dev/null | head -10 || true
-            ;;
-          "brew")
-            brew search "$package" 2>/dev/null | head -10 || true
-            ;;
-          "snap")
-            snap find "$package" 2>/dev/null | head -10 || true
-            ;;
-          "flatpak")
-            flatpak search "$package" 2>/dev/null | head -10 || true
-            ;;
-        esac
-        echo
-      done
-      ;;
-    info)
-      show_package_manager_info
-      ;;
-    managers)
-      log_info "Available package managers:"
-      local managers
-      mapfile -t managers < <(detect_package_managers)
-      
-      for mgr in "${managers[@]}"; do
-        local cmd="${PACKAGE_MANAGER_COMMANDS[$mgr]}"
-        local priority="${PACKAGE_MANAGER_PRIORITY[$mgr]}"
-        
-        if [[ "$mgr" == "manual" ]]; then
-          echo "  $mgr (priority: $priority) - Custom installation functions"
+# Test command - run any script in dry-run mode
+test_script() {
+    local script_path="$1"
+    
+    if [[ ! -f "$script_path" ]]; then
+        # Try relative to DOTFILES_DIR
+        if [[ -f "${DOTFILES_DIR}/${script_path}" ]]; then
+            script_path="${DOTFILES_DIR}/${script_path}"
         else
-          echo "  $mgr (priority: $priority) - Command: $cmd"
+            log_error "Script not found: $script_path"
+            exit 1
         fi
-      done
-      ;;
-    conflicts)
-      if [[ $# -eq 0 ]]; then
-        log_error "Package name required for conflicts command"
-        echo "Usage: dotfiles pkg conflicts <package> [conflict_list]"
-        exit 1
-      fi
-      
-      local package="$1"
-      local conflicts="${2:-}"
-      
-      log_info "Checking conflicts for package: $package"
-      if check_package_conflicts "$package" "$conflicts"; then
-        log_success "No conflicts found for $package"
-      else
-        log_error "Conflicts detected for $package"
-        exit 1
-      fi
-      ;;
-    help|*)
-      log_error "Invalid package command: $action"
-      echo "Available package commands:"
-      echo "  dotfiles pkg install <package>     # Install package"
-      echo "  dotfiles pkg install-bulk <pkg1> <pkg2> # Install multiple packages"
-      echo "  dotfiles pkg remove <package>      # Remove package"
-      echo "  dotfiles pkg list                  # Show installed packages"
-      echo "  dotfiles pkg search <package>      # Search for package"
-      echo "  dotfiles pkg info                  # Show package manager information"
-      echo "  dotfiles pkg managers              # List available package managers"
-      echo "  dotfiles pkg conflicts <package>   # Check package conflicts"
-      exit 1
-      ;;
-  esac
-}
-
-# Logging command functions
-run_logs() {
-  local action="${1:-show}"
-  
-  case "$action" in
-    show)
-      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
-        log_info "Showing recent log entries from: $DOTFILES_LOG_FILE"
-        echo "=== Recent Log Entries ==="
-        tail -50 "$DOTFILES_LOG_FILE"
-      else
-        log_warn "No log file found at: $DOTFILES_LOG_FILE"
-      fi
-      ;;
-    tail)
-      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
-        log_info "Following log file: $DOTFILES_LOG_FILE (Press Ctrl+C to stop)"
-        tail -f "$DOTFILES_LOG_FILE"
-      else
-        log_warn "No log file found at: $DOTFILES_LOG_FILE"
-      fi
-      ;;
-    clear)
-      if [[ -f "$DOTFILES_LOG_FILE" ]]; then
-        > "$DOTFILES_LOG_FILE"
-        log_info "Log file cleared: $DOTFILES_LOG_FILE"
-      else
-        log_warn "No log file found at: $DOTFILES_LOG_FILE"
-      fi
-      ;;
-    *)
-      log_error "Invalid logs command: $action"
-      echo "Available logs commands:"
-      echo "  dotfiles logs       # Show recent entries"
-      echo "  dotfiles logs tail  # Follow log file"
-      echo "  dotfiles logs clear # Clear log file"
-      exit 1
-      ;;
-  esac
-}
-
-run_debug() {
-  local action="${1:-status}"
-  
-  case "$action" in
-    on)
-      export DOTFILES_DEBUG=1
-      echo "export DOTFILES_DEBUG=1" >> "${HOME}/.dotfilesrc"
-      log_success "Debug mode enabled"
-      log_info "Debug mode will remain enabled across sessions"
-      ;;
-    off)
-      export DOTFILES_DEBUG=0
-      # Remove debug setting from .dotfilesrc
-      if [[ -f "${HOME}/.dotfilesrc" ]]; then
-        grep -v "export DOTFILES_DEBUG=" "${HOME}/.dotfilesrc" > "${HOME}/.dotfilesrc.tmp" || true
-        mv "${HOME}/.dotfilesrc.tmp" "${HOME}/.dotfilesrc"
-      fi
-      log_success "Debug mode disabled"
-      ;;
-    status)
-      log_info "Debug Status Information"
-      echo "  DOTFILES_DEBUG: ${DOTFILES_DEBUG:-0}"
-      echo "  DOTFILES_LOG_LEVEL: ${DOTFILES_LOG_LEVEL:-INFO}"
-      echo "  DOTFILES_LOG_FILE: ${DOTFILES_LOG_FILE:-Not set}"
-      echo "  Debug mode: $([[ "${DOTFILES_DEBUG:-0}" == "1" ]] && echo "ENABLED" || echo "DISABLED")"
-      ;;
-    *)
-      log_error "Invalid debug command: $action"
-      echo "Available debug commands:"
-      echo "  dotfiles debug on      # Enable debug mode"
-      echo "  dotfiles debug off     # Disable debug mode"
-      echo "  dotfiles debug status  # Show debug status"
-      exit 1
-      ;;
-  esac
-}
-
-run_log_level() {
-  local level="${1:-}"
-  
-  if [[ -z "$level" ]]; then
-    log_info "Current log level: $DOTFILES_LOG_LEVEL"
-    log_info "Available levels: DEBUG, INFO, WARN, ERROR"
-    return 0
-  fi
-  
-  case "${level^^}" in
-    DEBUG|INFO|WARN|ERROR)
-      export DOTFILES_LOG_LEVEL="${level^^}"
-      # Update .dotfilesrc
-      if [[ -f "${HOME}/.dotfilesrc" ]]; then
-        grep -v "export DOTFILES_LOG_LEVEL=" "${HOME}/.dotfilesrc" > "${HOME}/.dotfilesrc.tmp" || true
-        echo "export DOTFILES_LOG_LEVEL=${level^^}" >> "${HOME}/.dotfilesrc.tmp"
-        mv "${HOME}/.dotfilesrc.tmp" "${HOME}/.dotfilesrc"
-      fi
-      log_success "Log level set to: ${level^^}"
-      ;;
-    *)
-      log_error "Invalid log level: $level"
-      log_info "Available levels: DEBUG, INFO, WARN, ERROR"
-      exit 1
-      ;;
-  esac
-}
-
-# Show usage if no command is provided
-if [ $# -eq 0 ]; then
-  show_help
-  exit 1
-fi
-
-# Check the command and run appropriate function
-case "${1:-help}" in
-  install)
-    case "${2:-auto}" in
-      status)
-        run_install_status
-        ;;
-      resume)
-        run_install_resume
-        ;;
-      reset)
-        run_install_reset "${3:-}"
-        ;;
-      steps)
-        run_install_steps
-        ;;
-      *)
-        run_install "${2:-auto}"
-        ;;
-    esac
-    ;;
-  config|stow)
-    run_config
-    ;;
-  fonts)
-    run_fonts
-    ;;
-  brew)
-    run_brew
-    ;;
-  update)
-    run_update
-    ;;
-  doctor)
-    run_doctor
-    ;;
-  validate)
-    run_validate
-    ;;
-  test)
-    case "${2:-}" in
-      dependencies|deps)
-        run_test_deps
-        ;;
-      script)
-        run_test_simple "${3:-}"
-        ;;
-      basic|simple)
-        echo "⚠️  Command 'test ${2:-}' is deprecated. Use 'dotfiles test script <script>' instead."
-        run_test_simple "${3:-}"
-        ;;
-      *)
-        echo "❌ Invalid test command: ${2:-}"
-        echo ""
-        echo "Available test commands:"
-        echo "  dotfiles test dependencies  # Test dependency declarations in scripts"
-        echo "  dotfiles test script <script> # Validate specific script's dependencies"
-        exit 1
-        ;;
-    esac
-    ;;
-  # Backward compatibility aliases
-  test-deps)
-    echo "⚠️  Command 'test-deps' is deprecated. Use 'dotfiles test dependencies' instead."
-    run_test_deps
-    ;;
-  test-simple)
-    echo "⚠️  Command 'test-simple' is deprecated. Use 'dotfiles test script <script>' instead."
-    run_test_simple
-    ;;
-  clean)
-    run_clean
-    ;;
-  # Package management commands
-  pkg)
-    run_pkg "${@:2}"
-    ;;
-  # Logging commands
-  logs)
-    run_logs "${2:-show}"
-    ;;
-  debug)
-    run_debug "${2:-status}"
-    ;;
-  log-level)
-    run_log_level "${2:-}"
-    ;;
-  help|--help|-h)
-    show_help
-    ;;
-  *)
-    echo "❌ Invalid command: $1"
+    fi
+    
+    log_banner "Testing Script: $(basename "$script_path")"
+    log_info "Script location: $script_path"
+    log_info "Running in DRY-RUN mode for safety"
     echo ""
-    show_help
-    exit 1
-    ;;
-esac
+    
+    # Force dry-run mode for testing
+    export DRY_RUN=true
+    
+    # Execute the script
+    bash "$script_path" "$@"
+}
+
+# Validate dotfiles system
+validate_system() {
+    log_banner "Dotfiles System Validation"
+    
+    # Check environment
+    log_info "Checking environment..."
+    if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        log_error "DOTFILES_DIR not set"
+        return 1
+    fi
+    
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        log_error "DOTFILES_DIR does not exist: $DOTFILES_DIR"
+        return 1
+    fi
+    
+    log_success "✓ Environment configured correctly"
+    
+    # Check libraries
+    log_info "Checking library files..."
+    local required_libs=(
+        "lib/logging.sh"
+        "lib/package-management.sh"
+        "lib/dotfiles.sh"
+        "lib/commands.sh"
+    )
+    
+    for lib in "${required_libs[@]}"; do
+        if [[ -f "${DOTFILES_DIR}/${lib}" ]]; then
+            log_debug "✓ $lib found"
+        else
+            log_error "✗ Missing library: $lib"
+            return 1
+        fi
+    done
+    
+    log_success "✓ All required libraries found"
+    
+    # Check main script structure
+    log_info "Checking script structure..."
+    local required_dirs=(
+        "install"
+        "configs"
+        "lib"
+        "setups"
+    )
+    
+    for dir in "${required_dirs[@]}"; do
+        if [[ -d "${DOTFILES_DIR}/${dir}" ]]; then
+            log_debug "✓ $dir directory found"
+        else
+            log_warn "⚠ Missing directory: $dir"
+        fi
+    done
+    
+    log_success "✓ System validation completed"
+    
+    if is_dry_run; then
+        log_info "(Validation performed in dry-run mode)"
+    fi
+}
+
+# Enhanced status command with dry-run awareness
+show_status() {
+    log_banner "Dotfiles System Status"
+    
+    # Environment information
+    log_info "Environment:"
+    log_info "  DOTFILES_DIR: ${DOTFILES_DIR}"
+    log_info "  DOTFILES_OS: ${DOTFILES_OS}"
+    log_info "  DRY_RUN: ${DRY_RUN:-false}"
+    log_info "  DEBUG: ${DOTFILES_DEBUG:-0}"
+    log_info "  LOG_LEVEL: ${DOTFILES_LOG_LEVEL}"
+    
+    # Git status
+    if [[ -d "${DOTFILES_DIR}/.git" ]]; then
+        log_info "Git status:"
+        cd "$DOTFILES_DIR"
+        local branch
+        branch=$(git branch --show-current 2>/dev/null || echo "unknown")
+        local status
+        status=$(git status --porcelain 2>/dev/null | wc -l || echo "unknown")
+        log_info "  Branch: $branch"
+        log_info "  Uncommitted changes: $status files"
+    fi
+    
+    # Package managers
+    if command -v show_package_manager_info >/dev/null 2>&1; then
+        show_package_manager_info
+    fi
+    
+    log_success "Status check completed"
+}
+
+# Main command dispatcher
+main() {
+    # Parse global arguments first
+    local remaining_args
+    remaining_args=($(parse_global_arguments "$@"))
+    
+    # Show dry-run info if enabled
+    if is_dry_run; then
+        show_dry_run_info
+    fi
+    
+    # Get command
+    local command="${remaining_args[0]:-}"
+    shift || true
+    
+    case "$command" in
+        "config")
+            dotfiles_config "$@"
+            ;;
+        "brew")
+            dotfiles_brew "$@"
+            ;;
+        "update")
+            dotfiles_update "$@"
+            ;;
+        "install")
+            dotfiles_install "$@"
+            ;;
+        "status")
+            show_status "$@"
+            ;;
+        "validate")
+            validate_system "$@"
+            ;;
+        "test")
+            if [[ $# -eq 0 ]]; then
+                log_error "Usage: dotfiles test <script_path>"
+                exit 1
+            fi
+            test_script "$@"
+            ;;
+        "version")
+            dotfiles_version "$@"
+            ;;
+        "")
+            log_error "No command specified"
+            log_info "Run 'dotfiles --help' for usage information"
+            exit 1
+            ;;
+        *)
+            log_error "Unknown command: $command"
+            log_info "Run 'dotfiles --help' for available commands"
+            exit 1
+            ;;
+    esac
+}
+
+# Execute main function with all arguments
+main "$@"

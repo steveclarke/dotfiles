@@ -12,6 +12,12 @@ set -euo pipefail
 # Source required libraries
 source "${DOTFILES_DIR}"/lib/macos.sh
 
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("zsh" "chsh" "sudo")
+SCRIPT_DEPENDS_PLATFORM=("macos")
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")
+SCRIPT_DEPENDS_FILES=("/opt/homebrew/bin/zsh" "/etc/shells")
+
 if ! is_installed zsh; then
   echo "ERROR: Zsh shell not installed. Should be installed via Homebrew."
   exit 1
