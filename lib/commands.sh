@@ -30,7 +30,7 @@ run_install() {
         exit 1
       fi
       echo "🐧 Starting Linux installation..."
-      source "${DOTFILES_DIR}"/install.sh
+      bash "${DOTFILES_DIR}"/install.sh
       ;;
     macos)
       if ! is_macos; then
@@ -38,7 +38,7 @@ run_install() {
         exit 1
       fi
       echo "🍎 Starting macOS installation..."
-      source "${DOTFILES_DIR}"/install.sh
+      bash "${DOTFILES_DIR}"/install.sh
       ;;
     *)
       echo "❌ Invalid platform: $platform"
@@ -50,7 +50,7 @@ run_install() {
 
 run_config() {
   echo "⚙️  Updating configuration files..."
-  source "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
   echo "✅ Configuration files updated!"
 }
 
@@ -151,7 +151,7 @@ run_fonts() {
   
   if is_macos; then
     # Run macOS font installation script
-    source "${DOTFILES_DIR}/install/macos/fonts.sh"
+    bash "${DOTFILES_DIR}/install/macos/fonts.sh"
   elif is_linux; then
     # Run Linux font stow (symlink) installation
     config_banner "Fonts"
@@ -266,10 +266,10 @@ run_install_resume() {
   # Resume the installation
   if is_macos; then
     echo "🍎 Resuming macOS installation..."
-    source "${DOTFILES_DIR}"/install.sh
+    bash "${DOTFILES_DIR}"/install.sh
   else
     echo "🐧 Resuming Linux installation..."
-    source "${DOTFILES_DIR}"/install.sh
+    bash "${DOTFILES_DIR}"/install.sh
   fi
 }
 

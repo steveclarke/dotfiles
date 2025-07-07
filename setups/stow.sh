@@ -18,7 +18,12 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Cross-platform configurations
 config_banner "${HOME}/bin"
 mkdir -p "${HOME}/bin"
-do_stow bin
+if is_linux; then
+  do_stow bin
+else
+  # macOS: stow bin but exclude Linux-only binaries
+  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}" bin --ignore="cpass$" --ignore="cursor$"
+fi
 
 config_banner "Bash"
 rm -f "${HOME}"/.bash_aliases
@@ -39,6 +44,9 @@ do_stow ghostty
 config_banner "Fish shell"
 mkdir -p "${HOME}/.config/fish"
 do_stow fish
+
+config_banner "Zsh shell"
+do_stow zsh
 
 config_banner "Ruby"
 do_stow ruby
@@ -68,10 +76,10 @@ do_stow just
 # Platform-specific configurations
 if is_linux; then
   banner "Applying Linux-specific configurations"
-  source "${DOTFILES_DIR}"/configs/linux/stow-linux.sh
+  bash "${DOTFILES_DIR}"/setups/linux/stow-linux.sh
 fi
 
 if is_macos; then
   banner "Applying macOS-specific configurations"
-  source "${DOTFILES_DIR}"/configs/macos/stow-macos.sh
+  bash "${DOTFILES_DIR}"/setups/macos/stow-macos.sh
 fi

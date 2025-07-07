@@ -26,54 +26,54 @@ detect_os
 
 # Individual installation step functions for resumable installation
 run_macos_prereq() {
-  source "${DOTFILES_DIR}"/install/macos/prereq.sh
+  bash "${DOTFILES_DIR}"/install/macos/prereq.sh
 }
 
 run_macos_stow() {
-  source "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
 }
 
 run_macos_brew() {
-  source "${DOTFILES_DIR}"/install/macos/brew.sh
+  bash "${DOTFILES_DIR}"/install/macos/brew.sh
 }
 
 run_macos_fonts() {
-  source "${DOTFILES_DIR}"/install/macos/fonts.sh
+  bash "${DOTFILES_DIR}"/install/macos/fonts.sh
 }
 
 run_macos_fish() {
-  source "${DOTFILES_DIR}"/install/macos/fish.sh
+  bash "${DOTFILES_DIR}"/install/macos/fish.sh
 }
 
 run_macos_setups() {
   for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
     # shellcheck disable=SC1090
-    [[ -f $setup ]] && source "$setup"
+    [[ -f $setup ]] && bash "$setup"
   done
 }
 
 run_cross_platform_setups() {
   for setup in "${DOTFILES_DIR}"/setups/*.sh; do
     # shellcheck disable=SC1090
-    [[ -f $setup ]] && source "$setup"
+    [[ -f $setup ]] && bash "$setup"
   done
 }
 
 run_linux_prereq() {
-  source "${DOTFILES_DIR}"/install/linux/prereq.sh
+  bash "${DOTFILES_DIR}"/install/linux/prereq.sh
 }
 
 run_linux_stow() {
-  source "${DOTFILES_DIR}"/configs/stow.sh
+  bash "${DOTFILES_DIR}"/setups/stow.sh
 }
 
 run_linux_cli() {
-  source "$DOTFILES_DIR"/install/linux/cli.sh
+  bash "$DOTFILES_DIR"/install/linux/cli.sh
 }
 
 run_linux_apps() {
   if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
-    source "$DOTFILES_DIR"/install/linux/apps.sh
+    bash "$DOTFILES_DIR"/install/linux/apps.sh
   else
     log_info "Skipping GUI applications (DOTFILES_INSTALL_GUI not set to true)"
   fi
@@ -81,7 +81,7 @@ run_linux_apps() {
 
 run_linux_desktop_entries() {
   if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
-    source "$DOTFILES_DIR"/install/linux/desktop-entries.sh
+    bash "$DOTFILES_DIR"/install/linux/desktop-entries.sh
   else
     log_info "Skipping desktop entries (DOTFILES_INSTALL_GUI not set to true)"
   fi
@@ -90,7 +90,7 @@ run_linux_desktop_entries() {
 run_linux_setups() {
   for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do 
     # shellcheck disable=SC1090
-    [[ -f $setup ]] && source "$setup"
+    [[ -f $setup ]] && bash "$setup"
   done
 }
 

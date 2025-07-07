@@ -1,4 +1,5 @@
 ---
+description: The architecture of the dotfiles system
 alwaysApply: false
 ---
 # Dotfiles Architecture Overview
