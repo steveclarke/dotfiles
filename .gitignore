@@ -6,3 +6,8 @@ repomix*
 
 # Personal configuration files
 .dotfilesrc
+
+# Cursor IDE files
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/*.mdc

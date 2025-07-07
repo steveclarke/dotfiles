@@ -231,6 +231,8 @@ When contributing to this repository:
 
 - **`docs/CHANGELOG.md`** - Detailed change history and migration information
 - **`docs/dependency-management.md`** - Comprehensive dependency management guide
+- **`docs/logging-and-error-handling.md`** - Enhanced logging and error handling system
+- **`docs/package-management.md`** - Unified package management system
 - **`docs/script-header-template.md`** - Standard script header template
 - **`docs/TODO.md`** - Project todo items and future improvements
 - **`README.md`** - This file, general usage and installation guide

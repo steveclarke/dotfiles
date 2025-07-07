@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+Always ask before testing any code in the local repository. These scripts are
+potentially destructive and many designed to bootstrap a new system from
+scratch.
