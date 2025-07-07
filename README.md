@@ -81,7 +81,7 @@ Clone the repository and run the installation:
 ```bash
 git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
-bash install.sh
+bin/dotfiles install
 ```
 
 The installation script will:
@@ -119,7 +119,7 @@ Clone the repository and run the installation:
 ```bash
 git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
-bash install.sh
+bin/dotfiles install
 ```
 
 The installation script will:

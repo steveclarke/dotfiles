@@ -1,0 +1,63 @@
+---
+description: Configuring resumable installation in scripts
+alwaysApply: false
+---
+# Resumable Installation System Guidelines
+
+When working with the resumable installation system, follow these patterns:
+
+## Installation Step Structure
+
+All installation steps should follow this pattern:
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Source required libraries
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/linux.sh  # or appropriate platform lib
+
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("required_command1" "required_command2")
+SCRIPT_DEPENDS_PLATFORM=("linux" "macos")
+SCRIPT_DEPENDS_ENV=("REQUIRED_ENV_VAR")
+
+# Individual step functions for resumable installation
+run_step_name() {
+  log_info "Starting step: step_name"
+  # Implementation here
+  log_success "Completed step: step_name"
+}
+```
+
+## State Management
+
+- Use `run_step "step_name" run_step_function` to wrap all installation steps
+- Steps are automatically tracked in `.install-state` file
+- Failed steps can be resumed without re-running completed steps
+- Always use descriptive step names that indicate what the step does
+
+## Error Handling
+
+- All scripts should use `set -euo pipefail` for strict error handling
+- Use the logging functions: `log_info`, `log_success`, `log_warn`, `log_error`
+- Let the system handle state tracking automatically - don't manually modify `.install-state`
+
+## Platform Detection
+
+- Use `is_linux()` and `is_macos()` for platform-specific logic
+- Define platform-specific steps clearly
+- Use consistent naming: `linux_*` for Linux steps, `macos_*` for macOS steps
+
+## Progress Tracking
+
+- Use `progress_start`, `progress_step`, `progress_complete` for long operations
+- Provide meaningful progress messages
+- Track completion percentages when possible
+
+## Recovery Patterns
+
+- Steps should be idempotent - safe to run multiple times
+- Check if packages/configurations are already installed before proceeding
+- Use `is_installed()` function to check command availability
+- Provide clear error messages with troubleshooting suggestions
