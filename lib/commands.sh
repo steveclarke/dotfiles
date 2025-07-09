@@ -459,3 +459,37 @@ run_test_simple() {
     echo "💡 Tip: See 'docs/dependency-management.md' for troubleshooting"
   fi
 } 
+
+run_version() {
+  echo "📋 Dotfiles Management System"
+  echo ""
+  
+  if [[ -f "${DOTFILES_DIR}/VERSION" ]]; then
+    local version
+    version=$(cat "${DOTFILES_DIR}/VERSION" | tr -d '\n')
+    echo "🔢 Version: $version"
+  else
+    echo "🔢 Version: Unknown (VERSION file not found)"
+  fi
+  
+  echo "📂 Installation directory: $DOTFILES_DIR"
+  echo "💻 Operating system: $DOTFILES_OS"
+  echo "🐚 Shell: $SHELL"
+  
+  if [[ -d "${DOTFILES_DIR}/.git" ]]; then
+    echo ""
+    echo "🔗 Git information:"
+    cd "$DOTFILES_DIR" || exit 1
+    local branch
+    branch=$(git branch --show-current 2>/dev/null || echo "unknown")
+    local commit
+    commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    echo "   Branch: $branch"
+    echo "   Commit: $commit"
+    cd - >/dev/null || exit 1
+  fi
+  
+  echo ""
+  echo "💡 Tip: Run 'dotfiles --help' for usage information"
+  echo "💡 Tip: Run 'dotfiles status' for system status"
+}

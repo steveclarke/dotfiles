@@ -246,16 +246,16 @@ main() {
     
     case "$command" in
         "config")
-            dotfiles_config "$@"
+            run_config "$@"
             ;;
         "brew")
-            dotfiles_brew "$@"
+            run_brew "$@"
             ;;
         "update")
-            dotfiles_update "$@"
+            run_update "$@"
             ;;
         "install")
-            dotfiles_install "$@"
+            run_install "$@"
             ;;
         "status")
             show_status "$@"
@@ -271,7 +271,7 @@ main() {
             test_script "$@"
             ;;
         "version")
-            dotfiles_version "$@"
+            run_version "$@"
             ;;
         "")
             log_error "No command specified"
