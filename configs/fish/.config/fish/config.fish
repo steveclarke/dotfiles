@@ -1,4 +1,12 @@
 # ─[ Path ]───────────────────────────────────────────────────────────────
+# Ensure system paths are available first
+# fish_add_path --prepend /usr/bin
+# fish_add_path --prepend /bin
+# fish_add_path --prepend /usr/sbin
+# fish_add_path --prepend /sbin
+# fish_add_path --prepend /usr/local/bin
+
+# User paths
 fish_add_path ~/bin
 fish_add_path ~/.local/bin
 fish_add_path ~/.local/share/dotfiles/bin
@@ -29,7 +37,7 @@ set -x RUBY_YJIT_ENABLE 1
 bass source ~/.dotfilesrc
 
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
-set -gx EDITOR (which vim)
+set -gx EDITOR (command -v vim || echo vim)
 if test -n "$DISPLAY" && command -q code
     set -gx VISUAL "code --wait"
 else
@@ -42,7 +50,21 @@ if test -f ~/.config/fish/secrets.fish
     source ~/.config/fish/secrets.fish
 end
 
-# ─[ Abbrs & Aliases ]────────────────────────────────────────────────────
+# ─[ Aliases (available in all shells) ]──────────────────────────────────
+# Eza (ls replacement) - with fallback to system ls
+if command -q eza
+    alias ls "eza --color=always --icons --group-directories-first"
+    alias la "eza --color=always --icons --group-directories-first --all"
+    alias lla "eza --color=always --icons --group-directories-first --all --long"
+    alias tree "eza --tree"
+else
+    # Fallback to system ls if eza is not available
+    alias ls "ls --color=auto"
+    alias la "ls --color=auto -a"
+    alias lla "ls --color=auto -la"
+end
+
+# ─[ Abbrs & Aliases (interactive only) ]─────────────────────────────────
 if status is-interactive
     abbr -a ff clear
     abbr -a upgrade "sudo nala upgrade"
@@ -100,13 +122,7 @@ if status is-interactive
     # Ranger
     abbr -a r ranger
 
-    # Eza (ls replacement)
-    if command -q eza
-        alias ls "eza --color=always --icons --group-directories-first"
-        alias la "eza --color=always --icons --group-directories-first --all"
-        alias lla "eza --color=always --icons --group-directories-first --all --long"
-        alias tree "eza --tree"
-    end
+
 
     # Fuzzy-find a process and kill it
     abbr -a fkill "ps ax | fzf | awk '{print \$1}' | xargs kill"
@@ -131,7 +147,7 @@ set fish_greeting
 # alias fish_greeting colortest
 
 # pnpm
-set -gx PNPM_HOME "/home/steve/.local/share/pnpm"
+set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
   set -gx PATH "$PNPM_HOME" $PATH
 end
