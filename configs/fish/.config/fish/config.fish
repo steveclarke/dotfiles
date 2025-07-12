@@ -1,33 +1,7 @@
 # ─[ Path ]───────────────────────────────────────────────────────────────
-# Ensure system paths are available first
-# fish_add_path --prepend /usr/bin
-# fish_add_path --prepend /bin
-# fish_add_path --prepend /usr/sbin
-# fish_add_path --prepend /sbin
-# fish_add_path --prepend /usr/local/bin
-
-# User paths
 fish_add_path ~/bin
 fish_add_path ~/.local/bin
 fish_add_path ~/.local/share/dotfiles/bin
-
-# ─[ Mise ]───────────────────────────────────────────────────────────────
-# Note: I had to move this here because it suddenly stopped working on
-# 2025-02-14 from conf.d/mise.fish in VSCode. I'm not sure why. Even placing
-# it at the end of this file didn't work. I had to move it to the top, after the
-# path additions.
-# Note: As of 2025-02-28, this is no longer needed and mise is initialized in
-# ~/.config/fish/functions/mise.fish
-# if test -f ~/.local/bin/mise
-#     # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
-#     if test "$VSCODE_RESOLVING_ENVIRONMENT" = 1
-#         mise activate fish --shims | source
-#     else if status is-interactive
-#         mise activate fish | source
-#     else
-#         mise activate fish --shims | source
-#     end
-# end
 
 # ─[ Exports ]────────────────────────────────────────────────────────────
 set -x LESS -rF # -r: raw control chars, -F: quit if one screen
