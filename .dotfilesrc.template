@@ -6,7 +6,7 @@ export DOTFILES_DIR=${HOME}/.local/share/dotfiles
 
 # SSH Configuration
 # Set these to match your SSH key setup
-export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77
+export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.87
 export DOTFILES_SSH_KEYS="sevenview2020.pub sevenview2020 sevenview.pub sevenview"
 export DOTFILES_SSH_KEYS_PRIMARY=sevenview2020
 
@@ -18,6 +18,14 @@ export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
 # GUI applications (set to true to install GUI apps on both macOS and Linux)
 export DOTFILES_INSTALL_GUI=true
 
+# Logging and Debug Configuration
+# Enable debug mode for verbose output (0/1)
+export DOTFILES_DEBUG=0
+# Set minimum log level (DEBUG/INFO/WARN/ERROR)
+export DOTFILES_LOG_LEVEL=INFO
+# Set log file path (default: ${DOTFILES_DIR}/logs/dotfiles.log)
+# export DOTFILES_LOG_FILE=${DOTFILES_DIR}/logs/dotfiles.log
+
 # Platform-specific settings
 
 # Optional: Platform-specific environment variables
@@ -27,6 +35,6 @@ export DOTFILES_INSTALL_GUI=true
 
 # Linux:
 # polybar (set to true if you want polybar installed)
-# export DOTFILES_CONFIG_POLYBAR=true 
+export DOTFILES_CONFIG_POLYBAR=false
 # i3 window manager (set to true if you want i3 installed)
-# export DOTFILES_CONFIG_I3=false
+export DOTFILES_CONFIG_I3=false

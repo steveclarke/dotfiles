@@ -6,3 +6,19 @@ repomix*
 
 # Personal configuration files
 .dotfilesrc
+
+# Installation state files
+.install-state
+.install-lock
+
+# Log files
+logs/*
+!logs/.gitkeep
+
+
+# Cursor IDE files
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/*.mdc
+
+

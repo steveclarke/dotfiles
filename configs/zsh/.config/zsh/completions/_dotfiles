@@ -1,0 +1,185 @@
+#compdef dotfiles
+
+# Zsh completion for dotfiles command
+
+_dotfiles() {
+    local context state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_dotfiles_commands' \
+        '*::arg:->args' \
+        && return
+
+    case $state in
+        args)
+            case $words[1] in
+                install)
+                    _dotfiles_install
+                    ;;
+                test)
+                    _dotfiles_test
+                    ;;
+                pkg)
+                    _dotfiles_pkg
+                    ;;
+                logs)
+                    _dotfiles_logs
+                    ;;
+                debug)
+                    _dotfiles_debug
+                    ;;
+                log-level)
+                    _dotfiles_log_level
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_dotfiles_commands() {
+    local commands; commands=(
+        'install:Run full installation'
+        'config:Update configuration files using stow'
+        'stow:Alias for config command'
+        'fonts:Install fonts'
+        'brew:Install/update packages using Homebrew'
+        'update:Update both config and packages'
+        'doctor:Check system health and dependencies'
+        'validate:Run comprehensive system validation'
+        'test:Test commands'
+        'clean:Clean up temporary files and caches'
+        'pkg:Package management commands'
+        'logs:Log management commands'
+        'debug:Debug mode commands'
+        'log-level:Set logging level'
+        'help:Show help message'
+    )
+    _describe 'command' commands
+}
+
+_dotfiles_install() {
+    local install_commands; install_commands=(
+        'status:Show installation progress and status'
+        'resume:Resume interrupted installation'
+        'reset:Reset installation state'
+        'steps:Show all installation steps and their status'
+        'linux:Force Linux installation'
+        'macos:Force macOS installation'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'install command' install_commands
+            ;;
+        3)
+            case $words[2] in
+                reset)
+                    _values 'confirmation' 'confirm'
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_dotfiles_test() {
+    local test_commands; test_commands=(
+        'dependencies:Test dependency declarations in scripts'
+        'script:Validate specific script dependencies'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'test command' test_commands
+            ;;
+        3)
+            case $words[2] in
+                script)
+                    _dotfiles_script_files
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_dotfiles_pkg() {
+    local pkg_commands; pkg_commands=(
+        'install:Install package using unified package management'
+        'install-bulk:Install multiple packages'
+        'remove:Remove package'
+        'list:Show installed packages'
+        'search:Search for package'
+        'info:Show package manager information'
+        'managers:List available package managers'
+        'conflicts:Check package conflicts'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'pkg command' pkg_commands
+            ;;
+        3)
+            case $words[2] in
+                install|remove|search|conflicts)
+                    _message "package name"
+                    ;;
+                install-bulk)
+                    _message "package names (space separated)"
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_dotfiles_logs() {
+    local logs_commands; logs_commands=(
+        'show:Show recent log entries'
+        'tail:Follow log file in real-time'
+        'clear:Clear log file'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'logs command' logs_commands
+            ;;
+    esac
+}
+
+_dotfiles_debug() {
+    local debug_commands; debug_commands=(
+        'on:Enable debug mode'
+        'off:Disable debug mode'
+        'status:Show debug status'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'debug command' debug_commands
+            ;;
+    esac
+}
+
+_dotfiles_log_level() {
+    local log_levels; log_levels=(
+        'DEBUG:Debug level logging'
+        'INFO:Info level logging'
+        'WARN:Warning level logging'
+        'ERROR:Error level logging'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'log level' log_levels
+            ;;
+    esac
+}
+
+_dotfiles_script_files() {
+    local script_files
+    if [[ -d "${DOTFILES_DIR:-$HOME/.dotfiles}/install" ]]; then
+        script_files=(${(f)"$(find "${DOTFILES_DIR:-$HOME/.dotfiles}/install" -name "*.sh" -type f 2>/dev/null | sed 's|.*/||' | sed 's|\.sh$||')"})
+        _describe 'script file' script_files
+    fi
+}
+
+_dotfiles "$@" 

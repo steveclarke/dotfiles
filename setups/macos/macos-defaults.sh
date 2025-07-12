@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/macos.sh
 
 banner "Configuring macOS system preferences"
 
