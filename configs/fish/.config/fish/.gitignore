@@ -1,2 +1,4 @@
 secrets.fish
 
+# Added by Docker desktop on Mac
+completions/docker.fish
