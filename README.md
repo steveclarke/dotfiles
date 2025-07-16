@@ -18,19 +18,38 @@ lots of assumptions about where I like to place things.
 
 ## General Organisation
 
-* `configs` - contains the stow folders for applicable apps.
-  Note: Fonts are in this folder.
-* `fixes` - contains scripts to fix issues with the system. These are not run by
-  default. Run them individually if you need a specific fix.
-* `install` - contains scripts to install software. This is broken down further
-  by category:
-   * `prereq` - scripts to install prerequisites for other scripts
-   * `cli` - command line tools
-   * `apps` - GUI applications
-   * `desktop-entries` - `.desktop` files for applications. Mainly acts as a
-     wrapper for web apps.
-   * `optional` - scripts to install optional software. These must be run manually.
-* `setups` - scripts to configure things that can't be configured via stow.
+This repository has been restructured for better organization and cross-platform support:
+
+* `configs/` - contains the stow folders for applicable apps and platform-specific configurations
+  * Cross-platform configurations (bash, tmux, nvim, etc.)
+  * `linux/` - Linux-specific configurations (i3, polybar, rofi, etc.)
+  * `macos/` - macOS-specific configurations (future)
+* `docs/` - centralized documentation and project information
+  * `CHANGELOG.md` - detailed change tracking
+  * `TODO.md` - project todo items
+* `fixes/` - platform-specific scripts to fix system issues
+  * `linux/` - Linux-specific fixes
+  * `macos/` - macOS-specific fixes (future)
+* `install/` - platform-organized installation scripts
+  * `linux/` - Linux installation scripts
+    * `prereq/` - prerequisite software installation
+    * `cli/` - command line tools
+    * `apps/` - GUI applications
+    * `desktop-entries/` - `.desktop` files for applications
+    * `optional/` - optional software (manual installation)
+  * `macos/` - macOS installation scripts
+    * `prereq.sh` - prerequisite software installation
+    * `brew.sh` - Homebrew package installation
+    * `fish.sh` - Fish shell configuration
+* `lib/` - modular library functions
+  * `dotfiles.sh` - core cross-platform functions
+  * `linux.sh` - Linux-specific functions
+  * `macos.sh` - macOS-specific functions
+  * `bootstrap.sh` - bootstrap-specific functions
+* `setups/` - platform-specific configuration scripts
+  * Cross-platform setup scripts
+  * `linux/` - Linux-specific setup scripts
+  * `macos/` - macOS-specific setup scripts
 
 
 ## Installation
@@ -50,7 +69,7 @@ sudo apt update && sudo apt install -y git curl
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -60,9 +79,9 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
-bash install.sh
+bin/dotfiles install
 ```
 
 The installation script will:
@@ -88,7 +107,7 @@ xcode-select --install
 Download and copy the `.dotfilesrc` to $HOME:
 
 ```bash
-curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/feature/restructure/.dotfilesrc.template
 ```
 
 After downloading, adjust the settings for your machine.
@@ -98,9 +117,9 @@ After downloading, adjust the settings for your machine.
 Clone the repository and run the installation:
 
 ```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
+git clone -b feature/restructure https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
 cd ~/.local/share/dotfiles
-bash install.sh
+bin/dotfiles install
 ```
 
 The installation script will:
@@ -133,6 +152,97 @@ dotfiles update # runs both stow and brew
 New items added to the `install` directory should be manually run after initial
 installation. In general you should run `bash install/**/[name].sh` to run
 any of the install scripts. You can also install optional software found in the
-`install/optional` directory,
+`install/linux/optional` directory,
 
-e.g. `bash install/optional/steam.sh` to install Emacs.
+e.g. `bash install/linux/optional/steam.sh` to install Steam.
+
+## Shell Auto-Completion
+
+The `dotfiles` command includes comprehensive auto-completion support for all major shells:
+
+- **Bash**: Auto-completion for commands, subcommands, and options
+- **Zsh**: Tab completion with detailed command descriptions  
+- **Fish**: Intelligent completion with contextual help
+
+Auto-completion is automatically enabled when you run `dotfiles config` (or `dotfiles stow`) to install the shell configurations.
+
+## Recent Restructuring
+
+This repository has undergone significant restructuring to improve organization and cross-platform support:
+
+### What Changed
+
+- **Platform Separation**: Clear separation between Linux, macOS, and cross-platform code
+- **Modular Libraries**: Split large monolithic `lib/dotfiles.sh` into focused modules
+- **Organized Documentation**: Centralized documentation in `docs/` directory
+- **Improved Structure**: Platform-specific directories for installs, configs, and fixes
+
+### Migration Notes
+
+If you're updating from an older version:
+
+1. **Library Functions**: Platform-specific functions have been moved to separate library files
+2. **Directory Structure**: Install scripts are now organized by platform
+3. **Documentation**: Check `docs/CHANGELOG.md` for detailed change information
+
+For complete migration details, see `docs/CHANGELOG.md`.
+
+## Dependency Management
+
+This repository includes a comprehensive dependency management system that validates system requirements and script dependencies before installation:
+
+### Quick Health Check
+```bash
+# Check system health and dependencies
+./bin/dotfiles doctor
+
+# Run comprehensive system validation
+./bin/dotfiles validate
+
+# Test dependency declarations in scripts
+./bin/dotfiles test dependencies
+
+# Test specific script's dependencies
+./bin/dotfiles test script <script-path>
+```
+
+### Features
+- **Platform Compatibility**: Validates Linux/macOS/distro compatibility
+- **Command Validation**: Ensures required tools are available
+- **Package Checking**: Verifies system packages are installed
+- **Conflict Detection**: Detects conflicting packages (e.g., snap vs apt)
+- **Version Requirements**: Validates minimum version requirements
+- **Environment Validation**: Checks required environment variables
+
+### For Script Authors
+Scripts can declare their dependencies using standardized arrays:
+
+```bash
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("git" "curl" "stow")     # Required commands
+SCRIPT_DEPENDS_PLATFORM=("linux")                 # Required platform
+SCRIPT_DEPENDS_DISTRO=("ubuntu")                  # Required distribution
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")               # Required env vars
+```
+
+For complete documentation, see **`docs/dependency-management.md`**.
+
+## Contributing
+
+When contributing to this repository:
+
+1. Follow the platform-specific organization structure
+2. Update appropriate library files (`lib/`) for shared functions
+3. Add dependency declarations to new scripts (see `docs/dependency-management.md`)
+4. Add documentation for significant changes
+5. Test on both Linux and macOS when applicable
+
+## Documentation
+
+- **`docs/CHANGELOG.md`** - Detailed change history and migration information
+- **`docs/dependency-management.md`** - Comprehensive dependency management guide
+- **`docs/logging-and-error-handling.md`** - Enhanced logging and error handling system
+- **`docs/package-management.md`** - Unified package management system
+- **`docs/script-header-template.md`** - Standard script header template
+- **`docs/TODO.md`** - Project todo items and future improvements
+- **`README.md`** - This file, general usage and installation guide

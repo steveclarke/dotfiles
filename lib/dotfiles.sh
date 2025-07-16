@@ -1,274 +1,153 @@
-# A collection of functions used in the dotfiles installation scripts
+# Core cross-platform functions for dotfiles installation
+
+# Source logging and error handling functions
+source "${DOTFILES_DIR}/lib/logging.sh"
+
+# Source unified package management system
+source "${DOTFILES_DIR}/lib/package-management.sh"
+
+# Source installation state tracking system
+source "${DOTFILES_DIR}/lib/installation-state.sh"
+
+# Set up error handling for all scripts using this library
+setup_error_handling
 
 is_installed() {
 	command -v "$1" >/dev/null 2>&1
 }
 
+# Enhanced banner functions that use logging
 banner() {
-	echo "=== $1"
-}
-
-# Bootstrap-specific banner with decorative formatting
-bootstrap_banner() {
-	echo "========================================================================"
-	echo " $1"
-	echo "========================================================================"
+	log_banner "$1"
 }
 
 installing_banner() {
-  banner "Installing $1"
+	log_banner "Installing $1"
+	log_info "Starting installation of $1"
 }
 
 skipping() {
-	echo "=== skipping $1 - already installed"
-}
-
-apt_install() {
-	sudo apt install -y "$1"
+	log_warn "Skipping $1 - already installed"
 }
 
 # OS Detection and Platform Functions
 detect_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     export DOTFILES_OS="macos"
+    log_debug "Detected macOS operating system"
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export DOTFILES_OS="linux"
+    log_debug "Detected Linux operating system"
   else
-    echo "Unsupported OS: $OSTYPE"
+    log_error "Unsupported OS: $OSTYPE"
     exit 1
   fi
 }
 
 is_macos() {
-  [[ "$DOTFILES_OS" == "macos" ]]
+  [[ "${DOTFILES_OS:-}" == "macos" ]]
 }
 
 is_linux() {
-  [[ "$DOTFILES_OS" == "linux" ]]
-}
-
-# macOS-specific helper functions
-macos_defaults() {
-  # Helper for setting macOS system preferences
-  defaults write "$@"
-}
-
-# Sudo credential caching helper
-cache_sudo_credentials() {
-  if is_macos; then
-    echo "Caching sudo credentials for package installation..."
-    sudo -v
-    
-    # Keep sudo timestamp refreshed in background (for long installations)
-    # This will refresh the timestamp every 60 seconds until the script exits
-    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-  fi
+  [[ "${DOTFILES_OS:-}" == "linux" ]]
 }
 
 config_banner() {
-  banner "Configuring $1"
+  log_banner "Configuring $1"
+  log_info "Starting configuration of $1"
 }
 
 do_stow() {
-  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}" "$1"
+  log_debug "Stowing configuration: $1"
+  if stow -d "${DOTFILES_DIR}/configs" -t "${HOME}" "$1"; then
+    log_success "Successfully stowed $1"
+  else
+    log_error "Failed to stow $1"
+    return 1
+  fi
 }
 
-# Bootstrap-specific shared functions
-check_dotfilesrc() {
-	if test -f ~/.dotfilesrc; then
-		source "$HOME"/.dotfilesrc
-	else
-		echo "ERROR: ~/.dotfilesrc does not exist"
-		echo "Please download and configure it first:"
-		if is_macos; then
-			    echo "curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template"
-		else
-			    echo "wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template"
-		fi
-		exit 2
-	fi
+# Enhanced validation function
+validate_environment() {
+  log_debug "Validating environment variables"
+  validate_required_vars "DOTFILES_DIR" "HOME" "USER"
+  log_debug "Environment validation complete"
 }
 
-copy_ssh_keys() {
-	bootstrap_banner "Copying SSH keys"
-	
-	# Create .ssh directory if it doesn't exist
-	mkdir -p "${HOME}/.ssh"
-	chmod 700 "${HOME}/.ssh"
-	
-	# Check if SSH keys already exist locally
-	local keys_exist=true
-	for key in ${DOTFILES_SSH_KEYS}; do
-		if [[ ! -f "${HOME}/.ssh/${key}" ]]; then
-			keys_exist=false
-			break
-		fi
-	done
-	
-	if [[ "$keys_exist" == "true" ]]; then
-		echo "SSH keys already exist locally, skipping copy"
-		return 0
-	fi
-	
-	# Test if remote host is reachable
-	echo "Testing connection to ${DOTFILES_SSH_KEYS_HOST}..."
-	
-	# First try key-based authentication (no password prompt)
-	if ssh -o ConnectTimeout=5 -o BatchMode=yes "${DOTFILES_SSH_KEYS_HOST}" 'exit 0' 2>/dev/null; then
-		echo "✅ Remote host reachable (key-based auth), copying SSH keys..."
-		copy_method="key-based"
-	else
-		# Try regular connection (may prompt for password)
-		echo "🔑 Key-based auth failed, testing password authentication..."
-		echo "You may be prompted for a password..."
-		if ssh -o ConnectTimeout=5 "${DOTFILES_SSH_KEYS_HOST}" 'exit 0'; then
-			echo "✅ Remote host reachable (password auth), copying SSH keys..."
-			copy_method="password"
-		else
-			echo "❌ Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
-			copy_method="failed"
-		fi
-	fi
-	
-	if [[ "$copy_method" != "failed" ]]; then
-		# Copy each SSH key individually for better error handling
-		for key in ${DOTFILES_SSH_KEYS}; do
-			echo "Copying ${key}..."
-			if scp "${DOTFILES_SSH_KEYS_HOST}:.ssh/${key}" "${HOME}/.ssh/${key}"; then
-				echo "✓ ${key} copied successfully"
-			else
-				echo "⚠ Failed to copy ${key} (may not exist on remote host)"
-			fi
-		done
-		
-		# Set proper permissions
-		echo "Setting SSH key permissions..."
-		if is_macos; then
-			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
-			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
-		else
-			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
-			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
-		fi
-		echo "SSH keys processing complete"
-	else
-		echo "WARNING: Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
-		echo "SSH keys will need to be copied manually to ${HOME}/.ssh/"
-		echo "Required keys: ${DOTFILES_SSH_KEYS}"
-		echo ""
-		echo "You can either:"
-		echo "1. Copy the keys manually to ${HOME}/.ssh/"
-		echo "2. Update DOTFILES_SSH_KEYS_HOST in ~/.dotfilesrc to a reachable host"
-		echo "3. Skip SSH key copying if you'll set them up differently"
-		echo ""
-		echo "Press Enter to continue without copying SSH keys, or Ctrl+C to abort..."
-		read -r
-	fi
+# Enhanced installation wrapper using unified package management
+safe_install() {
+  local package_name="$1"
+  local preferred_manager="${2:-auto}"
+  local options="${3:-}"
+  local manual_install_function="${4:-}"
+  
+  log_info "Attempting to install $package_name using unified package management"
+  
+  # Use the new unified package installation system
+  if install_package "$package_name" "$preferred_manager" "$options" "$manual_install_function"; then
+    log_success "$package_name installation completed successfully"
+    return 0
+  else
+    log_error "Failed to install $package_name"
+    return 1
+  fi
 }
 
-configure_ssh() {
-	bootstrap_banner "Configuring SSH"
-	
-	# Create SSH config if it doesn't exist
-	if [ ! -f "${HOME}/.ssh/config" ]; then
-		touch "${HOME}/.ssh/config"
-		chmod 600 "${HOME}/.ssh/config"
-	fi
-	
-	# Add identity file to SSH config
-	echo "IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY" >> "${HOME}/.ssh/config"
+# Backward compatibility function - enhanced to use unified package management
+install_package_compat() {
+  local package="$1"
+  local preferred_manager="${2:-auto}"
+  
+  if is_package_installed "$package"; then
+    log_warn "$package is already installed"
+    return 0
+  fi
+  
+  log_info "Installing $package using unified package management"
+  install_package "$package" "$preferred_manager"
 }
 
-clone_git_repo() {
-	bootstrap_banner "Cloning git repo"
-
-	if test -d "${DOTFILES_DIR}"; then
-		echo "${DOTFILES_DIR} already exists"
-	else
-		if is_macos; then
-			mkdir -p "$(dirname "${DOTFILES_DIR}")"
-		fi
-		    git clone git@github.com:steveclarke/dotfiles "${DOTFILES_DIR}"
-	fi
+# Enhanced bulk package installation
+install_multiple_packages() {
+  local packages=("$@")
+  
+  log_banner "Installing Multiple Packages"
+  log_info "Packages to install: ${packages[*]}"
+  
+  # Use the unified package management system
+  install_packages "${packages[@]}"
 }
 
-bootstrap_warning() {
-	if tput colors >/dev/null 2>&1 && [[ $(tput colors) -gt 0 ]]; then
-		echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
-		echo -e "\033[0;31m!!!!!!!!! WARNING !!!!!!!!!\033[0m"
-		echo -e "\033[0;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
-	else
-		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-		echo "!!!!!!!!! WARNING !!!!!!!!!"
-		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	fi
-	
-	if is_macos; then
-		echo -e "This script is designed to bootstrap a fresh macOS system and may overwrite existing files."
-	else
-		echo -e "This script is designed to boostrap a fresh system and may overwrite existing files."
-	fi
-	echo -e "Are you sure you want to proceed?"
+# Package manager detection wrapper
+get_available_package_managers() {
+  detect_package_managers
 }
 
-bootstrap_confirm() {
-	echo -n "Do you want to proceed? (y/N): "
-	read -r answer
-	
-	# convert answer to lowercase
-	answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
-	
-	if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-		return 0
-	else
-		echo "Exiting..."
-		return 1
-	fi
+# Package conflict checking wrapper
+check_conflicts() {
+  local package="$1"
+  local conflicts="${2:-}"
+  
+  if [[ -n "$conflicts" ]]; then
+    log_info "Checking package conflicts for $package"
+    check_package_conflicts "$package" "$conflicts"
+  fi
 }
 
-install_linux_prerequisites() {
-	bootstrap_banner "Installing bootstrap pre-requisites"
-	sudo apt update &&
-		sudo apt install -y \
-			git \
-			curl \
-			software-properties-common \
-			build-essential
-}
+# Auto-initialize environment when sourced
+if [[ -z "${DOTFILES_OS:-}" ]]; then
+  detect_os
+fi
 
-install_macos_prerequisites() {
-	bootstrap_banner "Installing bootstrap pre-requisites"
-	
-	# Install Xcode Command Line Tools if not already installed
-	if ! xcode-select -p &>/dev/null; then
-		echo "Installing Xcode Command Line Tools..."
-		xcode-select --install
-		echo "Please complete the Xcode Command Line Tools installation and re-run this script."
-		exit 1
-	fi
-	
-	# Install Homebrew if not already installed
-	if ! command -v brew &>/dev/null; then
-		echo "Installing Homebrew..."
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-		
-		# Add Homebrew to PATH for current session
-		eval "$(/opt/homebrew/bin/brew shellenv)"
-		
-		# Also add to shell profile for future sessions
-		echo "eval \"\$(/opt/homebrew/bin/brew shellenv)\"" >> "${HOME}/.zprofile"
-	fi
-	
-	# Install git if not already available
-	if ! command -v git &>/dev/null; then
-		echo "Installing git..."
-		brew install git
-	fi
-}
+# Validate environment if DOTFILES_DIR is set
+if [[ -n "$DOTFILES_DIR" ]]; then
+  validate_environment
+fi
 
-run_installation() {
-	bootstrap_banner "Running dotfiles installation"
-	
-	cd "${DOTFILES_DIR}" || exit 1
-	bash install.sh
-}
+# Show debug info if enabled
+debug_env
+
+# Show package manager info in debug mode
+if [[ "$DOTFILES_DEBUG" == "1" ]]; then
+  show_package_manager_info
+fi
