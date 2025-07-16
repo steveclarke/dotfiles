@@ -3,6 +3,7 @@ tap "heroku/brew"
 
 # macOS-specific GUI applications (casks)
 cask "1password"
+cask "1password-cli"
 cask "appcleaner"
 cask "adobe-creative-cloud"
 cask "babeledit"
