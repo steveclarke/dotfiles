@@ -1,0 +1,132 @@
+---
+description: Logging of shell scripts
+alwaysApply: false
+---
+# Logging and Error Handling System Guidelines
+
+When working with shell scripts in this dotfiles system, follow these logging patterns:
+
+## Required Setup
+
+Always include these at the top of shell scripts:
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Source required libraries
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/linux.sh  # or appropriate platform lib
+```
+
+## Logging Functions
+
+Use appropriate logging levels:
+- `log_debug "message"` - Detailed debugging info (only shown when DOTFILES_DEBUG=1)
+- `log_info "message"` - General informational messages
+- `log_success "message"` - Success confirmation messages
+- `log_warn "message"` - Warning messages that don't stop execution
+- `log_error "message"` - Error messages that require attention
+
+## Enhanced Banners
+
+For major sections:
+```bash
+log_banner "Installing Docker Engine"
+log_step "1" "Downloading packages"
+```
+
+## Progress Tracking
+
+For multi-step operations:
+```bash
+progress_start 5 "Docker Installation"
+progress_step "Installing prerequisites"
+progress_step "Downloading packages"
+progress_complete
+```
+
+## Error Handling
+
+- Error handling is automatic when sourcing lib files
+- Use `validate_required_vars` to check environment variables
+- Use `validate_commands` to check required commands
+- Use `debug_env` to show environment info in debug mode
+
+## Environment Variables
+
+Key logging environment variables:
+- `DOTFILES_DEBUG` - Enable debug mode (0/1)
+- `DOTFILES_LOG_LEVEL` - Set minimum log level (DEBUG/INFO/WARN/ERROR)
+- `DOTFILES_LOG_FILE` - Set log file path (default: logs/dotfiles.log)
+
+## Best Practices
+
+- Use descriptive log messages with context
+- Include package/service names in messages
+- Log both start and completion of operations
+- Use debug logging for command details
+- Provide helpful error messages with suggestions
+# Logging and Error Handling System Guidelines
+
+When working with shell scripts in this dotfiles system, follow these logging patterns:
+
+## Required Setup
+
+Always include these at the top of shell scripts:
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Source required libraries
+source "${HOME}"/.dotfilesrc
+source "${DOTFILES_DIR}"/lib/linux.sh  # or appropriate platform lib
+```
+
+## Logging Functions
+
+Use appropriate logging levels:
+- `log_debug "message"` - Detailed debugging info (only shown when DOTFILES_DEBUG=1)
+- `log_info "message"` - General informational messages
+- `log_success "message"` - Success confirmation messages
+- `log_warn "message"` - Warning messages that don't stop execution
+- `log_error "message"` - Error messages that require attention
+
+## Enhanced Banners
+
+For major sections:
+```bash
+log_banner "Installing Docker Engine"
+log_step "1" "Downloading packages"
+```
+
+## Progress Tracking
+
+For multi-step operations:
+```bash
+progress_start 5 "Docker Installation"
+progress_step "Installing prerequisites"
+progress_step "Downloading packages"
+progress_complete
+```
+
+## Error Handling
+
+- Error handling is automatic when sourcing lib files
+- Use `validate_required_vars` to check environment variables
+- Use `validate_commands` to check required commands
+- Use `debug_env` to show environment info in debug mode
+
+## Environment Variables
+
+Key logging environment variables:
+- `DOTFILES_DEBUG` - Enable debug mode (0/1)
+- `DOTFILES_LOG_LEVEL` - Set minimum log level (DEBUG/INFO/WARN/ERROR)
+- `DOTFILES_LOG_FILE` - Set log file path (default: logs/dotfiles.log)
+
+## Best Practices
+
+- Use descriptive log messages with context
+- Include package/service names in messages
+- Log both start and completion of operations
+- Use debug logging for command details
+- Provide helpful error messages with suggestions

@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+#
+# Script Name: fish.sh
+# Description: Configure Fish shell as default shell on macOS
+# Platform: macos
+# Dependencies: Fish shell (from Homebrew), sudo access
+#
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
+source "${DOTFILES_DIR}"/lib/macos.sh
+
+# Dependency declarations
+SCRIPT_DEPENDS_COMMANDS=("fish" "chsh" "sudo")
+SCRIPT_DEPENDS_PLATFORM=("macos")
+SCRIPT_DEPENDS_ENV=("DOTFILES_DIR")
+SCRIPT_DEPENDS_FILES=("/opt/homebrew/bin/fish" "/etc/shells")
 
 if ! is_installed fish; then
   echo "ERROR: Fish shell not installed. Should be installed via Homebrew."

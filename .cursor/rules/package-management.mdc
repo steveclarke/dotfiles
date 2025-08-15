@@ -1,0 +1,89 @@
+---
+description: Package management in scripts
+alwaysApply: false
+---
+# Package Management System
+
+> **📚 Full Documentation**: [docs/package-management.md](../docs/package-management.md)
+
+## Core Functions
+```bash
+# Primary installation function
+install_package "package-name" "manager" "options" "manual_function"
+
+# Bulk installation
+install_packages "pkg1" "pkg2" "pkg3"
+
+# Check if installed
+is_package_installed "package-name"
+
+# Check conflicts
+check_package_conflicts "package" "conflicts_array"
+```
+
+## Essential Rules
+
+### 1. Always Use Unified Functions
+```bash
+# ✅ Good
+install_package "docker"
+
+# ❌ Avoid
+apt install docker
+```
+
+### 2. Declare Conflicts
+```bash
+SCRIPT_DEPENDS_CONFLICTS=("snap:code")
+check_package_conflicts "code" "${SCRIPT_DEPENDS_CONFLICTS}"
+```
+
+### 3. Use Bulk Operations
+```bash
+# ✅ Good
+install_packages "git" "curl" "wget"
+
+# ❌ Avoid
+install_package "git"
+install_package "curl"
+```
+
+### 4. Check Before Installing
+```bash
+if ! is_package_installed "docker"; then
+    install_package "docker"
+fi
+```
+
+## Script Template
+```bash
+#!/usr/bin/env bash
+source "${DOTFILES_DIR}/lib/linux.sh"
+
+SCRIPT_DEPENDS_CONFLICTS=("snap:package-name")
+
+install_package_name() {
+    if ! check_package_conflicts "package-name" "${SCRIPT_DEPENDS_CONFLICTS}"; then
+        log_error "Conflicts detected"
+        return 1
+    fi
+    
+    install_package "package-name" "auto" "" "install_package_name_manual"
+}
+
+install_package_name_manual() {
+    log_info "Installing via manual method"
+    # Custom installation logic
+    return 0
+}
+
+install_package_name
+```
+
+## CLI Commands
+```bash
+dotfiles pkg install <package>              # Install package
+dotfiles pkg install-bulk <pkg1> <pkg2>     # Install multiple
+dotfiles pkg conflicts <package>            # Check conflicts
+dotfiles debug on                           # Enable debug mode
+```

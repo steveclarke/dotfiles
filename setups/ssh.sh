@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
-source "${DOTFILES_DIR}"/lib/dotfiles.sh
+#
+# Script Name: ssh.sh
+# Description: Set up SSH keys and configuration from remote host
+# Platform: cross-platform
+# Dependencies: .dotfilesrc, SSH configuration variables, remote SSH host
+#
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source required libraries
+source "${DOTFILES_DIR}"/lib/bootstrap.sh
 
 # SSH Setup - handles SSH key copying and configuration
 # This replaces the SSH functionality previously in bootstrap.sh

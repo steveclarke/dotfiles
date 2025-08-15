@@ -1,72 +1,290 @@
 #!/usr/bin/env bash
+#
+# Script Name: dotfiles
+# Description: Utility script for managing dotfiles installation and updates
+# Platform: cross-platform
+# Dependencies: .dotfilesrc, stow, brew (macOS), platform-specific libraries
+#
 
-set -e -o pipefail
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
 
+# Source required libraries
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/dependencies.sh
 
 # Detect OS
 detect_os
 
-# Show usage if no command is provided
-if [ $# -eq 0 ]; then
-  echo "Usage: dotfiles [command]"
-  echo "Commands:"
-  echo "  stow: Update config files using stow"
-  echo "  brew: Run \`brew bundle\` to install/update packages"
-  echo "  update: Run stow and brew"
-  exit 1
+# Source platform-specific libraries
+if is_macos; then
+    source "${DOTFILES_DIR}"/lib/macos.sh
+elif is_linux; then
+    source "${DOTFILES_DIR}"/lib/linux.sh
 fi
 
-run_stow () {
-  echo "Stowing dotfiles"
-  source "${DOTFILES_DIR}"/configs/stow.sh
+# Source command implementations
+source "${DOTFILES_DIR}"/lib/commands.sh
+
+# Parse global arguments before command processing
+parse_global_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --dry-run|--dryrun|-n)
+                export DRY_RUN=true
+                shift
+                ;;
+            --debug|-d)
+                export DOTFILES_DEBUG=1
+                shift
+                ;;
+            --verbose|-v)
+                export DOTFILES_LOG_LEVEL=DEBUG
+                shift
+                ;;
+            --quiet|-q)
+                export DOTFILES_LOG_LEVEL=ERROR
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                # Unknown option, pass it through
+                break
+                ;;
+        esac
+    done
+    
+    # Return remaining arguments
+    echo "$@"
 }
 
-run_brew () {
-  if is_macos; then
-    echo "Running brew bundle (macOS)"
+# Enhanced help with dry-run information
+show_help() {
+    cat << 'EOF'
+Dotfiles Management System
+
+USAGE:
+    dotfiles [GLOBAL_OPTIONS] <command> [COMMAND_OPTIONS] [args...]
+
+GLOBAL OPTIONS:
+    --dry-run, -n     Simulate operations without making actual changes
+    --debug, -d       Enable debug output
+    --verbose, -v     Enable verbose logging  
+    --quiet, -q       Show only errors
+    --help, -h        Show this help message
+
+COMMANDS:
+    config            Update configuration files only (using stow)
+    brew              Update packages only (using brew bundle) 
+    update            Run both config and package updates (convenience command)
     
-    # Cache sudo credentials for packages that may require it
-    cache_sudo_credentials
+    install           Interactive installation wizard
+    status            Show dotfiles system status
+    version           Show version information
     
-    cd "${DOTFILES_DIR}" || exit
-    
-    # Always run main Brewfile for CLI tools
-    if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
-      echo "Installing CLI packages from main Brewfile"
-      brew bundle --file=Brewfile
-    fi
-    
-    # Run macOS-specific Brewfile if it exists
-    if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
-      echo "Installing macOS packages from Brewfile.macos"
-      brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
-    fi
-    
-    cd - || exit
-  else
-    echo "Running brew bundle (Linux)"
-    cd "${DOTFILES_DIR}" || exit
-    brew bundle
-    cd - || exit
-  fi
+    test <script>     Test a script in dry-run mode
+    validate          Validate dotfiles system configuration
+
+EXAMPLES:
+    dotfiles config                    # Update configuration files
+    dotfiles brew                      # Update packages  
+    dotfiles update                    # Update both config and packages
+    dotfiles --dry-run update          # Simulate full update
+    dotfiles test install/linux/prereq/1-libs.sh  # Test script safely
+    dotfiles --debug config           # Update config with debug output
+
+DRY-RUN MODE:
+    Use --dry-run with any command to see what would be done without making changes.
+    This is especially useful for:
+    • Testing scripts before running them
+    • Validating configuration changes
+    • Understanding what packages would be installed
+    • Debugging installation issues
+
+For more information, visit: https://github.com/your-username/dotfiles
+EOF
 }
 
-# check the command and run appropriate function
-case $1 in
-  update)
-    run_stow
-    run_brew
-    ;;
-  stow)
-    run_stow
-    ;;
-  brew)
-    run_brew
-   ;;
-  *)
-    echo "Invalid command"
-    exit 1
-    ;;
-esac
+# Test command - run any script in dry-run mode
+test_script() {
+    local script_path="$1"
+    
+    if [[ ! -f "$script_path" ]]; then
+        # Try relative to DOTFILES_DIR
+        if [[ -f "${DOTFILES_DIR}/${script_path}" ]]; then
+            script_path="${DOTFILES_DIR}/${script_path}"
+        else
+            log_error "Script not found: $script_path"
+            exit 1
+        fi
+    fi
+    
+    log_banner "Testing Script: $(basename "$script_path")"
+    log_info "Script location: $script_path"
+    log_info "Running in DRY-RUN mode for safety"
+    echo ""
+    
+    # Force dry-run mode for testing
+    export DRY_RUN=true
+    
+    # Execute the script
+    bash "$script_path" "$@"
+}
+
+# Validate dotfiles system
+validate_system() {
+    log_banner "Dotfiles System Validation"
+    
+    # Check environment
+    log_info "Checking environment..."
+    if [[ -z "${DOTFILES_DIR:-}" ]]; then
+        log_error "DOTFILES_DIR not set"
+        return 1
+    fi
+    
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        log_error "DOTFILES_DIR does not exist: $DOTFILES_DIR"
+        return 1
+    fi
+    
+    log_success "✓ Environment configured correctly"
+    
+    # Check libraries
+    log_info "Checking library files..."
+    local required_libs=(
+        "lib/logging.sh"
+        "lib/package-management.sh"
+        "lib/dotfiles.sh"
+        "lib/commands.sh"
+    )
+    
+    for lib in "${required_libs[@]}"; do
+        if [[ -f "${DOTFILES_DIR}/${lib}" ]]; then
+            log_debug "✓ $lib found"
+        else
+            log_error "✗ Missing library: $lib"
+            return 1
+        fi
+    done
+    
+    log_success "✓ All required libraries found"
+    
+    # Check main script structure
+    log_info "Checking script structure..."
+    local required_dirs=(
+        "install"
+        "configs"
+        "lib"
+        "setups"
+    )
+    
+    for dir in "${required_dirs[@]}"; do
+        if [[ -d "${DOTFILES_DIR}/${dir}" ]]; then
+            log_debug "✓ $dir directory found"
+        else
+            log_warn "⚠ Missing directory: $dir"
+        fi
+    done
+    
+    log_success "✓ System validation completed"
+    
+    if is_dry_run; then
+        log_info "(Validation performed in dry-run mode)"
+    fi
+}
+
+# Enhanced status command with dry-run awareness
+show_status() {
+    log_banner "Dotfiles System Status"
+    
+    # Environment information
+    log_info "Environment:"
+    log_info "  DOTFILES_DIR: ${DOTFILES_DIR}"
+    log_info "  DOTFILES_OS: ${DOTFILES_OS}"
+    log_info "  DRY_RUN: ${DRY_RUN:-false}"
+    log_info "  DEBUG: ${DOTFILES_DEBUG:-0}"
+    log_info "  LOG_LEVEL: ${DOTFILES_LOG_LEVEL}"
+    
+    # Git status
+    if [[ -d "${DOTFILES_DIR}/.git" ]]; then
+        log_info "Git status:"
+        cd "$DOTFILES_DIR"
+        local branch
+        branch=$(git branch --show-current 2>/dev/null || echo "unknown")
+        local status
+        status=$(git status --porcelain 2>/dev/null | wc -l || echo "unknown")
+        log_info "  Branch: $branch"
+        log_info "  Uncommitted changes: $status files"
+    fi
+    
+    # Package managers
+    if command -v show_package_manager_info >/dev/null 2>&1; then
+        show_package_manager_info
+    fi
+    
+    log_success "Status check completed"
+}
+
+# Main command dispatcher
+main() {
+    # Parse global arguments first
+    local remaining_args
+    remaining_args=($(parse_global_arguments "$@"))
+    
+    # Show dry-run info if enabled
+    if is_dry_run; then
+        show_dry_run_info
+    fi
+    
+    # Get command
+    local command="${remaining_args[0]:-}"
+    shift || true
+    
+    case "$command" in
+        "config")
+            run_config "$@"
+            ;;
+        "brew")
+            run_brew "$@"
+            ;;
+        "update")
+            run_update "$@"
+            ;;
+        "install")
+            run_install "$@"
+            ;;
+        "status")
+            show_status "$@"
+            ;;
+        "validate")
+            validate_system "$@"
+            ;;
+        "test")
+            if [[ $# -eq 0 ]]; then
+                log_error "Usage: dotfiles test <script_path>"
+                exit 1
+            fi
+            test_script "$@"
+            ;;
+        "version")
+            run_version "$@"
+            ;;
+        "")
+            log_error "No command specified"
+            log_info "Run 'dotfiles --help' for usage information"
+            exit 1
+            ;;
+        *)
+            log_error "Unknown command: $command"
+            log_info "Run 'dotfiles --help' for available commands"
+            exit 1
+            ;;
+    esac
+}
+
+# Execute main function with all arguments
+main "$@"

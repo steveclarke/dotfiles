@@ -1,0 +1,63 @@
+---
+description: The architecture of the dotfiles system
+alwaysApply: false
+---
+# Dotfiles Architecture Overview
+
+This dotfiles system is built around several key architectural components:
+
+## Core Systems
+
+### 1. Resumable Installation System
+- **Location**: `lib/installation-state.sh`, `docs/resumable-installation.md`
+- **Purpose**: Provides fault-tolerant, resumable installation with state tracking
+- **Key Features**: Step-by-step resumption, progress monitoring, error recovery
+- **State Files**: `.install-state`, `.install-lock`
+
+### 2. Enhanced Logging System
+- **Location**: `lib/logging.sh`, `docs/logging-and-error-handling.md`
+- **Purpose**: Comprehensive logging with multiple levels and error handling
+- **Key Features**: Color-coded output, file logging, progress tracking, debug mode
+- **Log Directory**: `logs/dotfiles.log`
+
+### 3. Unified Package Management
+- **Location**: `lib/package-management.sh`, `docs/package-management.md`
+- **Purpose**: Cross-platform package installation with conflict detection
+- **Key Features**: Auto-detection, bulk installation, conflict checking
+
+## Directory Structure
+
+```
+dotfiles/
+├── bin/dotfiles           # Main CLI utility
+├── lib/                   # Core libraries and functions
+├── install/              # Platform-specific installation scripts
+├── configs/              # Configuration files and stow scripts
+├── docs/                 # Documentation
+├── logs/                 # Log files (ignored in git)
+├── setups/               # Post-installation setup scripts
+└── .cursor/rules/        # Cursor AI rules
+```
+
+## Key Reference Documents
+
+- `@resumable-installation.md` - Complete resumable installation system guide
+- `@logging-and-error-handling.md` - Logging system documentation
+- `@package-management.md` - Package management system guide
+
+## Environment Variables
+
+- `DOTFILES_DIR` - Path to dotfiles directory
+- `DOTFILES_DEBUG` - Enable debug mode (0/1)
+- `DOTFILES_LOG_LEVEL` - Set logging level
+- `DOTFILES_INSTALL_GUI` - Enable GUI applications
+
+## Best Practices
+
+- All scripts should be resumable and fault-tolerant
+- Use the unified logging system for consistency
+- Follow the established patterns for new installations
+- Test both GUI and CLI installation modes
+- Document new features in the docs/ directory
+
+@resumable-installation.md

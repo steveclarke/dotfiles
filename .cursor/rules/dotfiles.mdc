@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+
+Always ask before testing any code in the local repository. These scripts are
+potentially destructive and many designed to bootstrap a new system from
+scratch.
+
+When writing scripts use `set -euo pipefail` to ensure the script fails fast and
+exits with an error code if any command fails.
