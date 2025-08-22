@@ -1,5 +1,6 @@
 # macOS-specific packages
 tap "heroku/brew"
+tap "supersonic-app/supersonic"
 
 # macOS-specific GUI applications (casks)
 cask "1password"
@@ -42,6 +43,7 @@ cask "raycast"
 cask "ringcentral"
 cask "setapp"
 cask "spotify"
+cask "supersonic"
 cask "telegram"
 cask "todoist"
 cask "vlc"
