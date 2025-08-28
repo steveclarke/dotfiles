@@ -27,3 +27,4 @@ keybind = shift+alt+t=new_tab
 
 keybind = ctrl+enter=toggle_maximize
 
+config-file = "?local/macos.conf"
