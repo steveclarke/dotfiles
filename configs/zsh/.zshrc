@@ -1,4 +1,26 @@
 # =============================================================================
+# ZSH RC - INTERACTIVE SHELL CONFIGURATION  
+# =============================================================================
+# This file (.zshrc) is loaded for ALL INTERACTIVE shells (login + non-login)
+#
+# INTERACTIVE SHELLS are created when:
+# - Opening a new terminal tab/window (most common)
+# - Running `zsh` without special flags
+# - Any shell where you can type commands interactively
+# - NOT loaded for non-interactive shells (scripts, command execution)
+#
+# LOADING ORDER:
+# For login shells:      ~/.zprofile → ~/.zshrc (THIS FILE)
+# For non-login shells:  ~/.zshrc (THIS FILE) only
+#
+# Use this file for:
+# - Interactive features: completion, prompt, key bindings, aliases
+# - Plugin configuration and shell enhancements
+# - Settings that should apply to every interactive session
+# - Anything that makes the shell more pleasant to use interactively
+# =============================================================================
+
+# =============================================================================
 # ZINIT PLUGIN MANAGER
 # =============================================================================
 
@@ -81,8 +103,10 @@ zinit cdreplay -q
 
 # Enable case-insensitive completion matching (lowercase matches uppercase)
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-# Add colors to the completion list
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# Add colors to the completion list (split LS_COLORS on colons for zsh format)
+if [[ -n "$LS_COLORS" ]]; then
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+fi
 
 # =============================================================================
 # AUTO-SUGGESTIONS (FISH-STYLE)
@@ -224,10 +248,10 @@ fi
 # =============================================================================
 # MISE
 # =============================================================================
-
-if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate zsh)"
-fi
+# This is now in .zprofile
+# if command -v mise >/dev/null 2>&1; then
+#     eval "$(mise activate zsh --shims)"
+# fi
 
 # =============================================================================
 # KEYCHAIN - frontend to ssh-agent (Linux only)
