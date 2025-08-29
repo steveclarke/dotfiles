@@ -1,8 +1,11 @@
+-- Enable editorconfig support
+vim.g.editorconfig = true
+
 -- Use block cursor in all modes instead of thin line cursor
 vim.opt.guicursor = ""
 
 -- Use system clipboard for all yank/delete/put operations
-vim.opt.clipboard = "unnamedplus"
+vim.opt.clipboard:append("unnamedplus")
 
 -- Show search matches incrementally as you type the search pattern
 vim.opt.incsearch = true
@@ -128,3 +131,10 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Set command line height to 1 line for displaying messages
 -- vim.opt.cmdheight = 1
+
+-- Make @ count as a filename character, so Neovim doesn't split on it when
+-- detecting or completing filenames.
+vim.opt.isfname:append("@-@")
+
+-- Set the minimum time (ms) of inactivity before CursorHold and CursorHoldI events fire
+vim.opt.updatetime = 50
