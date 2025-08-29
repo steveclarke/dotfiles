@@ -26,6 +26,32 @@ zinit light-mode for \
 ### End of Zinit's installer chunk
 
 # =============================================================================
+# ENVIRONMENT VARIABLES
+# =============================================================================
+
+# Add local bin directories to PATH
+export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/dotfiles/bin:$PATH"
+
+# Less pager configuration: -r (raw control chars), -F (quit if one screen)
+export LESS="-rF"
+
+# Enable Ruby YJIT (Just-In-Time compiler) for better performance
+export RUBY_YJIT_ENABLE=1
+
+# =============================================================================
+# EDITOR AND SUDO_EDITOR
+# =============================================================================
+export EDITOR=$(command -v vim || echo vim)
+if [[ -n "$DISPLAY" ]] && command -v cursor >/dev/null 2>&1; then
+    export VISUAL="cursor --wait"
+else
+    export VISUAL="$EDITOR"
+fi
+export SUDO_EDITOR="$EDITOR"
+
+# =============================================================================
 # SYNTAX HIGHLIGHTING (for shell commands)
 # =============================================================================
 zinit light zsh-users/zsh-syntax-highlighting
