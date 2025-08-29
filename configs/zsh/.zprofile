@@ -22,9 +22,7 @@
 # =============================================================================
 
 # If brew is present, load its env (login shell is the right place to eval this)
-if command -v brew >/dev/null 2>&1; then
-  eval "$(brew shellenv)"
-fi
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Activate mise for *login* shells only, and only if not already active.
 # Guard prevents double activation if something else sourced this earlier.
