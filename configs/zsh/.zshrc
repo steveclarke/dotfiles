@@ -31,21 +31,34 @@ zinit light-mode for \
 zinit light zsh-users/zsh-syntax-highlighting
 
 # =============================================================================
-# COMPLETION CONFIGURATION
+# COMPLETIONS 
 # =============================================================================
 
 # Load enhanced completion definitions for many commands
 zinit light zsh-users/zsh-completions
 
-# Initialize the completion system with security checks
+# Load and initialize zsh's completion system (compinit)
+# autoload -U loads the compinit function without expanding aliases
+# compinit initializes completions and performs security checks by verifying
+# that completion files are not writable by others (prevents code injection)
 autoload -U compinit && compinit
+
+# Replay cached completion definitions from loaded plugins (quietly)
+# This must run after compinit to activate all the completion rules from
+# plugins like zsh-completions. Without this, tab completion won't work for
+# many commands. The -q flag suppresses output during the replay process.
+# See: https://github.com/zdharma-continuum/zinit#calling-compinit-without-turbo-mode
+zinit cdreplay -q
 
 # Enable case-insensitive completion matching (lowercase matches uppercase)
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# Add colors to the completion list
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # =============================================================================
 # AUTO-SUGGESTIONS (FISH-STYLE)
 # =============================================================================
+
 zinit light zsh-users/zsh-autosuggestions
 
 # =============================================================================
@@ -94,6 +107,7 @@ bindkey '^n' history-search-forward
 # =============================================================================
 # PROMPT CONFIGURATION
 # =============================================================================
+
 if command -v starship >/dev/null; then
     eval "$(starship init zsh)"
 fi
@@ -101,4 +115,48 @@ fi
 # =============================================================================
 # ALIASES
 # =============================================================================
+
+# Eza (ls replacement) - with fallback to system ls
+if command -v eza >/dev/null 2>&1; then
+    alias ls="eza --color=always --icons --group-directories-first"
+    alias la="eza --color=always --icons --group-directories-first --all"
+    alias lla="eza --color=always --icons --group-directories-first --all --long"
+    alias tree="eza --tree"
+else
+    # Fallback to system ls if eza is not available
+    alias ls="ls --color=auto"
+    alias la="ls --color=auto -a"
+    alias lla="ls --color=auto -la"
+fi
+
 alias ff=clear
+
+# =============================================================================
+# FUZZY FINDER (FZF)
+# =============================================================================
+
+if command -v fzf >/dev/null 2>&1; then
+    zinit light Aloxaf/fzf-tab
+    eval "$(fzf --zsh)"
+    zstyle ':completion:*' menu no
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+fi
+
+# =============================================================================
+# ZOXIDE
+# =============================================================================
+
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init --cmd cd zsh)"
+    # use fzf-tab to preview the directory
+    if command -v fzf >/dev/null 2>&1; then
+        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+    fi
+fi
+
+# =============================================================================
+# SNIPPETS
+# =============================================================================
+
+# zinit snippet OMZP::git
+# zinit snippet OMZP::sudo
