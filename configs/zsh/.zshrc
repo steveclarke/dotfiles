@@ -192,7 +192,7 @@ alias dotz="cd \$DOTFILES_DIR/configs/zellij/.config/zellij/"
 alias zj=zellij
 
 # Nvim
-alias n=nvim
+alias n="NVIM_APPNAME=nvim-handcrafted nvim"
 
 # Eza (ls replacement) - with fallback to system ls
 if command -v eza >/dev/null 2>&1; then
