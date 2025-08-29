@@ -20,6 +20,7 @@ lots of assumptions about where I like to place things.
 
 * `configs` - contains the stow folders for applicable apps.
   Note: Fonts are in this folder.
+* `docs` - documentation and reference guides for various topics.
 * `fixes` - contains scripts to fix issues with the system. These are not run by
   default. Run them individually if you need a specific fix.
 * `install` - contains scripts to install software. This is broken down further
@@ -32,6 +33,13 @@ lots of assumptions about where I like to place things.
    * `optional` - scripts to install optional software. These must be run manually.
 * `setups` - scripts to configure things that can't be configured via stow.
 
+## Documentation
+
+For detailed guides and reference materials, see the `docs/` directory:
+
+- **[ZSH Shell Configuration Guide](docs/zsh-shell-guide.md)** - Complete reference for understanding when `.zprofile` and `.zshrc` are loaded, interactive vs login shells, and platform differences
+- **[Restructuring Plan](docs/restructure-spec.md)** - Detailed plan for reorganizing the repository structure
+- **[Restructuring Todo](docs/restructure-todo.md)** - Implementation checklist for the restructuring plan
 
 ## Installation
 
