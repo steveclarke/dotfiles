@@ -40,6 +40,9 @@ export LESS="-rF"
 # Enable Ruby YJIT (Just-In-Time compiler) for better performance
 export RUBY_YJIT_ENABLE=1
 
+# Dotfiles directory for aliases
+export DOTFILES_DIR="$HOME/.local/share/dotfiles"
+
 # =============================================================================
 # EDITOR AND SUDO_EDITOR
 # =============================================================================
@@ -142,6 +145,31 @@ fi
 # ALIASES
 # =============================================================================
 
+alias be="bundle exec"
+alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
+alias ff=clear
+alias gg=lazygit
+alias kill-server-pid="kill -QUIT \$(cat tmp/pids/server.pid)"
+alias lg=lazygit
+alias ncdu="ncdu --color dark"
+
+# Commonly cd'ed directories (fish had --set-cursor, zsh uses simple aliases)
+alias src="cd ~/src/"
+alias sand="cd ~/src/sandbox/"
+
+# Dotfiles (requires DOTFILES_DIR to be set)
+alias dot="cd \$DOTFILES_DIR/"
+alias dotf="cd \$DOTFILES_DIR/configs/fish/.config/fish/"
+alias dotg="cd \$DOTFILES_DIR/configs/ghostty/.config/ghostty/"
+alias dotn="cd \$DOTFILES_DIR/configs/nvim/.config/nvim/"
+alias dotz="cd \$DOTFILES_DIR/configs/zellij/.config/zellij/"
+
+# Zellij
+alias zj=zellij
+
+# Nvim
+alias n=nvim
+
 # Eza (ls replacement) - with fallback to system ls
 if command -v eza >/dev/null 2>&1; then
     alias ls="eza --color=always --icons --group-directories-first"
@@ -154,8 +182,6 @@ else
     alias la="ls --color=auto -a"
     alias lla="ls --color=auto -la"
 fi
-
-alias ff=clear
 
 # =============================================================================
 # FUZZY FINDER (FZF)
