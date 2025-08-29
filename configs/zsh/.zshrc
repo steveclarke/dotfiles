@@ -197,12 +197,14 @@ alias n="NVIM_APPNAME=nvim-handcrafted nvim"
 # Eza (ls replacement) - with fallback to system ls
 if command -v eza >/dev/null 2>&1; then
     alias ls="eza --color=always --icons --group-directories-first"
+    alias ll="eza --color=always --icons --group-directories-first --long --classify"
     alias la="eza --color=always --icons --group-directories-first --all"
-    alias lla="eza --color=always --icons --group-directories-first --all --long"
+    alias lla="eza --color=always --icons --group-directories-first --all --long --classify"
     alias tree="eza --tree"
 else
     # Fallback to system ls if eza is not available
     alias ls="ls --color=auto"
+    alias ll="ls --color=auto -alF"
     alias la="ls --color=auto -a"
     alias lla="ls --color=auto -la"
 fi

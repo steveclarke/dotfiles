@@ -50,7 +50,8 @@ mkdir -p "${HOME}/.config/zellij"
 do_stow zellij
 
 config_banner "zsh"
-mkdir -p "${HOME}/.config/zsh"
+rm -f "${HOME}"/.zshrc
+rm -f "${HOME}"/.zprofile
 do_stow zsh
 
 config_banner "starship"
