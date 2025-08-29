@@ -82,7 +82,7 @@ zinit cdreplay -q
 # Enable case-insensitive completion matching (lowercase matches uppercase)
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 # Add colors to the completion list
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # =============================================================================
 # AUTO-SUGGESTIONS (FISH-STYLE)
@@ -212,3 +212,67 @@ fi
 
 # zinit snippet OMZP::git
 # zinit snippet OMZP::sudo
+
+# =============================================================================
+# DIRENV
+# =============================================================================
+
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook zsh)"
+fi
+
+# =============================================================================
+# MISE
+# =============================================================================
+
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi
+
+# =============================================================================
+# KEYCHAIN - frontend to ssh-agent (Linux only)
+# =============================================================================
+# Keychain is a frontend to ssh-agent that manages SSH keys across shell sessions.
+# It's particularly useful on Linux where ssh-agent management isn't as integrated
+# as it is on macOS. This configuration:
+#
+# 1. Only runs on Linux systems (macOS has better native SSH agent integration)
+# 2. Only runs in interactive sessions to avoid issues with non-interactive scripts
+# 3. Checks for specific SSH keys before attempting to load them
+# 4. Provides helpful warnings when expected keys are missing
+# 5. Sources the keychain environment to make SSH keys available to all shells
+#
+# Expected SSH keys:
+# - ~/.ssh/sevenview2020 - Primary SSH key
+# - ~/.ssh/sevenview     - Secondary SSH key
+#
+# See: https://www.funtoo.org/Funtoo:Keychain
+
+if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -o interactive ]] && command -v keychain >/dev/null 2>&1; then
+    # Only load keychain if SSH keys exist
+    ssh_keys=()
+    missing_keys=()
+    
+    if [[ -f "$HOME/.ssh/sevenview2020" ]]; then
+        ssh_keys+=("$HOME/.ssh/sevenview2020")
+    else
+        missing_keys+=("sevenview2020")
+    fi
+    
+    if [[ -f "$HOME/.ssh/sevenview" ]]; then
+        ssh_keys+=("$HOME/.ssh/sevenview")
+    else
+        missing_keys+=("sevenview")
+    fi
+    
+    # Only run keychain if we have keys to load
+    if [[ ${#ssh_keys[@]} -gt 0 ]]; then
+        keychain --nogui "${ssh_keys[@]}"
+        if [[ -f "$HOME/.keychain/$HOST-sh" ]]; then
+            source "$HOME/.keychain/$HOST-sh"
+        fi
+    else
+        echo "⚠ Keychain: No SSH keys found (${missing_keys[*]})"
+        echo "  SSH keys should be placed in ~/.ssh/ during dotfiles setup"
+    fi
+fi
