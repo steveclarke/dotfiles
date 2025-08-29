@@ -41,6 +41,10 @@ config_banner "Neovim"
 mkdir -p "${HOME}/.config/nvim"
 do_stow nvim
 
+config_banner "Neovim Handcrafted (WIP)"
+mkdir -p "${HOME}/.config/nvim-handcrafted"
+do_stow nvim-handcrafted
+
 config_banner "Zellij"
 mkdir -p "${HOME}/.config/zellij"
 do_stow zellij
