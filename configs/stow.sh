@@ -45,6 +45,14 @@ config_banner "Zellij"
 mkdir -p "${HOME}/.config/zellij"
 do_stow zellij
 
+config_banner "zsh"
+mkdir -p "${HOME}/.config/zsh"
+do_stow zsh
+
+config_banner "starship"
+mkdir -p "${HOME}/.config/starship"
+do_stow starship
+
 config_banner "Fonts"
 mkdir -p "${HOME}/.local/share/fonts"
 do_stow fonts
