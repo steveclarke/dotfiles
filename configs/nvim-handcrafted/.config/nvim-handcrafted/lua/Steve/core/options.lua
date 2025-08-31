@@ -1,6 +1,11 @@
 -- Enable editorconfig support
 vim.g.editorconfig = true
+
+-- Configure netrw to use tree style directory listing
 vim.g.netrw_liststyle = 3
+
+-- Hide the banner in netrw file explorer for cleaner interface
+-- vim.cmd("let g:netrw_banner = 0")
 
 -- Use block cursor in all modes instead of thin line cursor
 vim.opt.guicursor = ""
@@ -52,9 +57,6 @@ vim.opt.splitbelow = true
 
 -- Open vertical splits to the right of the current window instead of left
 vim.opt.splitright = true
-
--- Hide the banner in netrw file explorer for cleaner interface
-vim.cmd("let g:netrw_banner = 0")
 
 -- Enable 24-bit RGB color support in terminal for better colorscheme display
 vim.opt.termguicolors = true
