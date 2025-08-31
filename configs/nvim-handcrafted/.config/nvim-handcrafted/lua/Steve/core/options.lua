@@ -1,5 +1,6 @@
 -- Enable editorconfig support
 vim.g.editorconfig = true
+vim.g.netrw_liststyle = 3
 
 -- Use block cursor in all modes instead of thin line cursor
 vim.opt.guicursor = ""
