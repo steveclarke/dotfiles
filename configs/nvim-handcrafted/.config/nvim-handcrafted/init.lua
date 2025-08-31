@@ -19,7 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = "\\"
 
 -- Setup keymaps, options, etc.
 require("Steve.core")
@@ -33,9 +33,13 @@ require("lazy").setup({
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
+  install = { colorscheme = { "catppuccin" } },
   -- automatically check for plugin updates
   checker = { enabled = true },
+  -- UI configuration
+  ui = {
+    border = "rounded", -- Options: "none", "single", "double", "rounded", "solid", "shadow"
+  },
 })
 
 vim.cmd("colorscheme catppuccin-mocha")
