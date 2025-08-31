@@ -2,6 +2,9 @@
 tap "heroku/brew"
 tap "supersonic-app/supersonic"
 
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
+
 # macOS-specific GUI applications (casks)
 cask "1password"
 cask "1password-cli"
