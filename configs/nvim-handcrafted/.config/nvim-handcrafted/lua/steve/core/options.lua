@@ -5,7 +5,7 @@ vim.g.editorconfig = true
 -- vim.cmd("let g:netrw_banner = 0")
 
 -- Use block cursor in all modes instead of thin line cursor
-vim.opt.guicursor = ""
+-- vim.opt.guicursor = ""
 
 -- Use system clipboard for all yank/delete/put operations
 vim.opt.clipboard:append("unnamedplus")
