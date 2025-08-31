@@ -8,6 +8,8 @@ end
 -- Disable space key
 vim.keymap.set("n", "<space>", "<nop>")
 
+vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode with jj" })
+
 -- Clear search highlights
 vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
 
