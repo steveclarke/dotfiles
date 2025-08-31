@@ -22,14 +22,14 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- Setup keymaps, options, etc.
-require("Steve.core")
+require("steve.core")
 
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
     -- import your plugins
-    { import = "Steve.plugins" },
-    { import = "Steve.lang"}
+    { import = "steve.plugins" },
+    { import = "steve.lang"}
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.

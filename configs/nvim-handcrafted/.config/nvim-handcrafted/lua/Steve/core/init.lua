@@ -1,2 +1,2 @@
-require("Steve.core.options")
-require("Steve.core.keymaps")
+require("steve.core.options")
+require("steve.core.keymaps")
