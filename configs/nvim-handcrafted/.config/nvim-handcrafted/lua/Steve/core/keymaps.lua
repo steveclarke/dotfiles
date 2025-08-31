@@ -5,10 +5,6 @@ local function merge_opts(additional_opts)
   return vim.tbl_extend("force", opts, additional_opts or {})
 end
 
--- Leader keys
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 -- Disable space key
 vim.keymap.set("n", "<space>", "<nop>")
 
