@@ -1,9 +1,6 @@
 -- Enable editorconfig support
 vim.g.editorconfig = true
 
--- Configure netrw to use tree style directory listing
-vim.g.netrw_liststyle = 3
-
 -- Hide the banner in netrw file explorer for cleaner interface
 -- vim.cmd("let g:netrw_banner = 0")
 
