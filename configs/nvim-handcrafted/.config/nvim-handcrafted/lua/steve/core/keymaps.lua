@@ -1,5 +1,10 @@
 local opts = { noremap = true, silent = true }
 
+-- Make sure to setup `mapleader` and `maplocalleader` before loading lazy.nvim
+-- so that mappings are correct.
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 -- Helper function to merge additional options with default opts
 local function merge_opts(additional_opts)
   return vim.tbl_extend("force", opts, additional_opts or {})
@@ -11,7 +16,8 @@ vim.keymap.set("n", "<space>", "<nop>")
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode with jj" })
 
 -- Clear search highlights
-vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
+-- vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<leader>nn", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
 
 -- Scroll and center
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
