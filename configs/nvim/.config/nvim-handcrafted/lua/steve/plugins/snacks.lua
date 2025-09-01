@@ -19,7 +19,11 @@ return {
     { "<leader>/", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
     { "<leader>sg", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
     { "<leader>sG", function() require("snacks").picker.grep({ follow = true, root = false }) end, desc = "Live Grep (cwd)" },
+    { "<leader>sw", function() require("snacks").picker.grep_word({ follow = true }) end, desc = "Visual selection or word", mode = { "n", "x" } },
     { "<leader>sB", function() require("snacks").picker.grep_buffers() end, desc = "Grep Open Buffers" },
     { "<leader>sb", function() require("snacks").picker.lines() end, desc = "Buffer Lines" },
+    
+    -- UI/Utility
+    { "<leader>uC", function() require("snacks").picker.colorschemes() end, desc = "Colorschemes" },
   },
 }
