@@ -15,8 +15,11 @@ vim.keymap.set("n", "<space>", "<nop>")
 
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode with jj" })
 
--- Clear search highlights
-vim.keymap.set("n", "<leader>/", "<cmd>set hlsearch!<CR>", merge_opts({ desc = "Toggle search highlights" }))
+-- Clear search highlights automatically on escape (LazyVim style)
+vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
+  vim.cmd("noh")
+  return "<esc>"
+end, { expr = true, desc = "Escape and Clear hlsearch" })
 
 -- Scroll and center
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
@@ -52,11 +55,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- split management with <leader>s keys
-vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-vim.keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+-- Window management (LazyVim style)
+vim.keymap.set("n", "<leader>-", "<C-w>s", { desc = "Split Window Below" }) -- horizontal split
+vim.keymap.set("n", "<leader>|", "<C-w>v", { desc = "Split Window Right" }) -- vertical split
+vim.keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
+vim.keymap.set("n", "<leader>wd", "<cmd>close<CR>", { desc = "Delete Window" }) -- close current split window
 
 -- Navigate between vim splits and tmux panes
 -- NOTE: this is handled by the vim-tmux-navigator plugin

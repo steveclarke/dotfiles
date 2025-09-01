@@ -14,5 +14,12 @@ return {
     { "<leader>fg", function() require("snacks").picker.git_files() end, desc = "Find Git Files" },
     { "<leader>fr", function() require("snacks").picker.recent() end, desc = "Recent Files" },
     { "<leader>fb", function() require("snacks").picker.buffers() end, desc = "Find Buffers" },
+    
+    -- Grep/search functionality
+    { "<leader>/", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
+    { "<leader>sg", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
+    { "<leader>sG", function() require("snacks").picker.grep({ follow = true, root = false }) end, desc = "Live Grep (cwd)" },
+    { "<leader>sB", function() require("snacks").picker.grep_buffers() end, desc = "Grep Open Buffers" },
+    { "<leader>sb", function() require("snacks").picker.lines() end, desc = "Buffer Lines" },
   },
 }

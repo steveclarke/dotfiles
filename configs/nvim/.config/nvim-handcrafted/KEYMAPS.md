@@ -19,75 +19,90 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [File Explorer (`<leader>e*`)](#file-explorer-leadere)
   - [File Picker (`<leader>f*`)](#file-picker-leaderf)
   - [Window Navigation](#window-navigation)
-  - [Split Management (`<leader>s*`)](#split-management-leaders)
+  - [Search \& Grep (`<leader>s*`, `<leader>/`)](#search--grep-leaders-leader)
+  - [Window Management](#window-management)
   - [System Operations (`\`)](#system-operations-)
   - [Notes](#notes)
 
 ## General
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `jj` | Exit insert mode | **i** |
-| `<leader>/` | Toggle search highlights | **n** |
-| `<C-d>` | Scroll down and center *(default: just scroll down)* | **n** |
-| `<C-u>` | Scroll up and center *(default: just scroll up)* | **n** |
-| `n` | Next search result and center *(default: just next result)* | **n** |
-| `N` | Previous search result and center *(default: just previous result)* | **n** |
-| `x` | Delete char without yanking *(default: yanks to register)* | **n** |
-| `<` / `>` | Indent and reselect *(default: loses selection)* | **v** |
-| `<A-j>` | Move line/selection down | **n**, **i**, **v** |
-| `<A-k>` | Move line/selection up | **n**, **i**, **v** |
-| `<leader>qq` | Quit all without saving | **n** |
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `jj` | Exit insert mode | **i** |
+|| `<esc>` | Escape and clear search highlights *(LazyVim style)* | **i**, **n**, **s** |
+|| `<C-d>` | Scroll down and center *(default: just scroll down)* | **n** |
+|| `<C-u>` | Scroll up and center *(default: just scroll up)* | **n** |
+|| `n` | Next search result and center *(default: just next result)* | **n** |
+|| `N` | Previous search result and center *(default: just previous result)* | **n** |
+|| `x` | Delete char without yanking *(default: yanks to register)* | **n** |
+|| `<` / `>` | Indent and reselect *(default: loses selection)* | **v** |
+|| `<A-j>` | Move line/selection down | **n**, **i**, **v** |
+|| `<A-k>` | Move line/selection up | **n**, **i**, **v** |
+|| `<leader>qq` | Quit all without saving | **n** |
 
 ## File Explorer (`<leader>e*`)
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `<leader>ee` | Toggle file explorer | **n** |
-| `<leader>ef` | Focus file explorer | **n** |
-| `<leader>er` | Reveal current file | **n** |
-| `<leader>eg` | Toggle git explorer | **n** |
-| `<leader>eb` | Toggle buffer explorer | **n** |
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<leader>ee` | Toggle file explorer | **n** |
+|| `<leader>ef` | Focus file explorer | **n** |
+|| `<leader>er` | Reveal current file | **n** |
+|| `<leader>eg` | Toggle git explorer | **n** |
+|| `<leader>eb` | Toggle buffer explorer | **n** |
 
 ## File Picker (`<leader>f*`)
 
 *Provided by Snacks picker with symlink support (`follow = true`)*
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `<leader>ff` | Find files | **n** |
-| `<leader>fg` | Find git files | **n** |
-| `<leader>fr` | Recent files | **n** |
-| `<leader>fb` | Find buffers | **n** |
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<leader>ff` | Find files | **n** |
+|| `<leader>fg` | Find git files | **n** |
+|| `<leader>fr` | Recent files | **n** |
+|| `<leader>fb` | Find buffers | **n** |
 
 ## Window Navigation
 
 *Provided by the vim-tmux-navigator plugin*
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `<C-h>` | Go to left window | **n** |
-| `<C-j>` | Go to lower window | **n** |
-| `<C-k>` | Go to upper window | **n** |
-| `<C-l>` | Go to right window | **n** |
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<C-h>` | Go to left window | **n** |
+|| `<C-j>` | Go to lower window | **n** |
+|| `<C-k>` | Go to upper window | **n** |
+|| `<C-l>` | Go to right window | **n** |
 
-## Split Management (`<leader>s*`)
+## Search & Grep (`<leader>s*`, `<leader>/`)
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `<leader>sv` | Split window vertically | **n** |
-| `<leader>sh` | Split window horizontally | **n** |
-| `<leader>se` | Make splits equal size | **n** |
-| `<leader>sx` | Close current split | **n** |
+*Provided by Snacks picker with live grep functionality*
+
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<leader>/` | Live Grep (Root Dir) | **n** |
+|| `<leader>sg` | Live Grep (Root Dir) | **n** |
+|| `<leader>sG` | Live Grep (cwd) | **n** |
+|| `<leader>sb` | Buffer Lines | **n** |
+|| `<leader>sB` | Grep Open Buffers | **n** |
+
+## Window Management
+
+*LazyVim-style window operations with visual mnemonics*
+
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<leader>-` | Split Window Below *(horizontal)* | **n** |
+|| `<leader>|` | Split Window Right *(vertical)* | **n** |
+|| `<leader>we` | Make splits equal size | **n** |
+|| `<leader>wd` | Delete Window | **n** |
 
 ## System Operations (`\`)
 
-| Key | Description | Mode |
-|-----|-------------|------|
-| `\c` | Edit config (init.lua) | **n** |
-| `\r` | Reload current file | **n** |
-| `\w` | Toggle line wrap | **n** |
-| `\n` | Toggle line numbers | **n** |
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `\c` | Edit config (init.lua) | **n** |
+|| `\r` | Reload current file | **n** |
+|| `\w` | Toggle line wrap | **n** |
+|| `\n` | Toggle line numbers | **n** |
 
 ## Notes
 

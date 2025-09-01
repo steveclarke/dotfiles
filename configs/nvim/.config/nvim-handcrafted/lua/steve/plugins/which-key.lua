@@ -12,7 +12,9 @@ return {
     which_key.add({
       { "<leader>", group = "Leader Key (Space)"},
       { "<leader>e", group = "File Explorer", icon = "󰉋" },
-      { "<leader>s", group = "Split Management", icon = "󰕮" },
+      { "<leader>f", group = "File Picker", icon = "󰈞" },
+      { "<leader>s", group = "Search & Grep", icon = "󰍉" },
+      { "<leader>w", group = "Window Management", icon = "󰕮" },
       { "<leader>q", group = "Quit", icon = "󰗼" },
       { "\\", group = "System Operations"},
     })
