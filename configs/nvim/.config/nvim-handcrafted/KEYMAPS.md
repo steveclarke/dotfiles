@@ -21,6 +21,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [Window Navigation](#window-navigation)
   - [Search \& Grep (`<leader>s*`, `<leader>/`)](#search--grep-leaders-leader)
   - [Window Management](#window-management)
+  - [UI/Utility (`<leader>u*`)](#uiutility-leaderu)
   - [System Operations (`\`)](#system-operations-)
   - [Notes](#notes)
 
@@ -81,6 +82,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 || `<leader>/` | Live Grep (Root Dir) | **n** |
 || `<leader>sg` | Live Grep (Root Dir) | **n** |
 || `<leader>sG` | Live Grep (cwd) | **n** |
+|| `<leader>sw` | Visual selection or word | **n**, **x** |
 || `<leader>sb` | Buffer Lines | **n** |
 || `<leader>sB` | Grep Open Buffers | **n** |
 
@@ -94,6 +96,14 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 || `<leader>|` | Split Window Right *(vertical)* | **n** |
 || `<leader>we` | Make splits equal size | **n** |
 || `<leader>wd` | Delete Window | **n** |
+
+## UI/Utility (`<leader>u*`)
+
+*LazyVim-style UI and utility functions*
+
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<leader>uC` | Colorschemes | **n** |
 
 ## System Operations (`\`)
 

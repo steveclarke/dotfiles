@@ -14,6 +14,7 @@ return {
       { "<leader>e", group = "File Explorer", icon = "󰉋" },
       { "<leader>f", group = "File Picker", icon = "󰈞" },
       { "<leader>s", group = "Search & Grep", icon = "󰍉" },
+      { "<leader>u", group = "UI/Utility", icon = "󰙵" },
       { "<leader>w", group = "Window Management", icon = "󰕮" },
       { "<leader>q", group = "Quit", icon = "󰗼" },
       { "\\", group = "System Operations"},
