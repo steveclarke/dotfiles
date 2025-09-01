@@ -5,7 +5,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 ## Keymap Philosophy
 
 - **`<leader>` = `<Space>`** - Primary leader key for most functionality
-- **`<localleader>` = `\`** - Secondary leader for system/config operations
+- **`\` (backslash)** - System/config operations (literal key, not leader-based)
 - **Grouped by function** - Related commands share a common prefix (e.g., all explorer commands under `<leader>e*`)
 - **Mnemonic naming** - Second letter indicates specific action (`f` = focus, `r` = reveal, etc.)
 - **No comma remapping** - Preserve comma for f/F/t/T motion reversals in Markdown editing
