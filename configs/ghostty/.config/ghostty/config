@@ -28,3 +28,7 @@ keybind = shift+alt+t=new_tab
 keybind = ctrl+enter=toggle_maximize
 
 config-file = "?local/macos.conf"
+
+# Make Option key behave as Alt key for terminal applications
+# This allows Neovim to recognize Alt key combinations like <A-j> and <A-k>
+macos-option-as-alt = true
