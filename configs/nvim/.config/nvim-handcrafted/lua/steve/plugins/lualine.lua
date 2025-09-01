@@ -10,20 +10,15 @@ return {
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("lualine").setup({
+      options = {
+      -- Creates a single statusline across the entire bottom of Neovim instead
+      -- of separate statuslines for each window/split
+        globalstatus = true,
+      },
       sections = {
         lualine_x = {
-          {
-            function()
-              local lazy = require("lazy.status")
-              return lazy.updates()
-            end,
-            cond = function()
-              local lazy = require("lazy.status")
-              return lazy.has_updates()
-            end,
-          },
           "encoding",
-          "fileformat", 
+          "fileformat",
           "filetype"
         },
       },
