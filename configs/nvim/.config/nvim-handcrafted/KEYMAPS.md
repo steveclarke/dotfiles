@@ -17,6 +17,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [Table of Contents](#table-of-contents)
   - [General](#general)
   - [File Explorer (`<leader>e*`)](#file-explorer-leadere)
+  - [File Picker (`<leader>f*`)](#file-picker-leaderf)
   - [Window Navigation](#window-navigation)
   - [Split Management (`<leader>s*`)](#split-management-leaders)
   - [System Operations (`\`)](#system-operations-)
@@ -47,6 +48,17 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 | `<leader>er` | Reveal current file | **n** |
 | `<leader>eg` | Toggle git explorer | **n** |
 | `<leader>eb` | Toggle buffer explorer | **n** |
+
+## File Picker (`<leader>f*`)
+
+*Provided by Snacks picker with symlink support (`follow = true`)*
+
+| Key | Description | Mode |
+|-----|-------------|------|
+| `<leader>ff` | Find files | **n** |
+| `<leader>fg` | Find git files | **n** |
+| `<leader>fr` | Recent files | **n** |
+| `<leader>fb` | Find buffers | **n** |
 
 ## Window Navigation
 
