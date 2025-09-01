@@ -23,6 +23,11 @@ See [KEYMAPS.md](./KEYMAPS.md) for complete keymap documentation and philosophy.
 
 - **Neo-tree** - Modern file explorer with git integration
 - **Oil.nvim** - Buffer-based file editing
+- **Snacks Picker** - Fast file/buffer/git file searching with telescope-like functionality
+  - `<leader>ff` - Find Files (with symlink following)
+  - `<leader>fg` - Find Git Files  
+  - `<leader>fr` - Recent Files
+  - `<leader>fb` - Find Buffers
 - **Mason** - LSP server management
 - **Lazy.nvim** - Fast plugin management
 - **Vim-tmux-navigator** - Seamless tmux integration
