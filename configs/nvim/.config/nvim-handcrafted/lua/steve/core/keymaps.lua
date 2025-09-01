@@ -68,7 +68,7 @@ vim.keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current spli
 -- Uses the black-hole register so your last yank stays intact.
 -- vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
--- System/Config operations with backslash leader
+-- System/Config operations with backslash
 vim.keymap.set("n", "\\c", ":edit ~/.config/nvim/init.lua<cr>", merge_opts({ desc = "Edit config" }))
 vim.keymap.set("n", "\\r", ":source %<cr>", merge_opts({ desc = "Reload current file" }))
 vim.keymap.set("n", "\\w", ":set wrap!<cr>", merge_opts({ desc = "Toggle wrap" }))
