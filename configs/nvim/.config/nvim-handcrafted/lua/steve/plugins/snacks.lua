@@ -9,6 +9,9 @@ return {
   },
 
   keys = {
+    -- Smart picker (LazyVim style)
+    { "<leader><space>", function() require("snacks").picker.smart({ follow = true }) end, desc = "Smart Find Files" },
+    
     -- Essential file picker keymaps with explicit follow = true
     { "<leader>ff", function() require("snacks").picker.files({ follow = true }) end, desc = "Find Files" },
     { "<leader>fg", function() require("snacks").picker.git_files() end, desc = "Find Git Files" },
@@ -16,10 +19,12 @@ return {
     { "<leader>fb", function() require("snacks").picker.buffers() end, desc = "Find Buffers" },
     
     -- Grep/search functionality
-    { "<leader>/", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
-    { "<leader>sg", function() require("snacks").picker.grep({ follow = true }) end, desc = "Live Grep (Root Dir)" },
-    { "<leader>sG", function() require("snacks").picker.grep({ follow = true, root = false }) end, desc = "Live Grep (cwd)" },
-    { "<leader>sw", function() require("snacks").picker.grep_word({ follow = true }) end, desc = "Visual selection or word", mode = { "n", "x" } },
+    { "<leader>/", function() require("snacks").picker.grep({ follow = true }) end, desc = "Grep (Root Dir)" },
+    { "<leader>sg", function() require("snacks").picker.grep({ follow = true }) end, desc = "Grep (Root Dir)" },
+    { "<leader>sG", function() require("snacks").picker.grep({ follow = true, root = false }) end, desc = "Grep (cwd)" },
+    { "<leader>sw", function() require("snacks").picker.grep_word({ follow = true }) end, desc = "Visual selection or word (Root Dir)", mode = { "n", "x" } },
+    { "<leader>sW", function() require("snacks").picker.grep_word({ follow = true, root = false }) end, desc = "Visual selection or word (cwd)", mode = { "n", "x" } },
+    { '<leader>s"', function() require("snacks").picker.registers() end, desc = "Registers" },
     { "<leader>sB", function() require("snacks").picker.grep_buffers() end, desc = "Grep Open Buffers" },
     { "<leader>sb", function() require("snacks").picker.lines() end, desc = "Buffer Lines" },
     
