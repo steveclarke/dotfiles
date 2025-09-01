@@ -71,6 +71,8 @@ vim.keymap.set("n", "<leader>wd", "<cmd>close<CR>", { desc = "Delete Window" }) 
 -- Uses the black-hole register so your last yank stays intact.
 -- vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
+-- Buffer navigation handled by bufferline.nvim plugin
+
 -- System/Config operations with backslash
 vim.keymap.set("n", "\\c", ":edit ~/.config/nvim/init.lua<cr>", merge_opts({ desc = "Edit config" }))
 vim.keymap.set("n", "\\r", ":source %<cr>", merge_opts({ desc = "Reload current file" }))

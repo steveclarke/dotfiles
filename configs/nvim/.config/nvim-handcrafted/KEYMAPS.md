@@ -16,6 +16,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [Keymap Philosophy](#keymap-philosophy)
   - [Table of Contents](#table-of-contents)
   - [General](#general)
+  - [Buffer Navigation](#buffer-navigation)
   - [File Explorer (`<leader>e*`)](#file-explorer-leadere)
   - [File Picker (`<leader>f*`)](#file-picker-leaderf)
   - [Window Navigation](#window-navigation)
@@ -40,6 +41,28 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 || `<A-j>` | Move line/selection down | **n**, **i**, **v** |
 || `<A-k>` | Move line/selection up | **n**, **i**, **v** |
 || `<leader>qq` | Quit all without saving | **n** |
+
+## Buffer Navigation
+
+*All buffer management provided by bufferline.nvim plugin*
+
+|| Key | Description | Mode |
+||-----|-------------|------|
+|| `<S-h>` | Prev Buffer | **n** |
+|| `<S-l>` | Next Buffer | **n** |
+|| `[b` | Prev Buffer | **n** |
+|| `]b` | Next Buffer | **n** |
+|| `[B` | Move buffer prev | **n** |
+|| `]B` | Move buffer next | **n** |
+|| `<leader>bb` | Switch to Other Buffer | **n** |
+|| `<leader>\`` | Switch to Other Buffer | **n** |
+|| `<leader>bd` | Delete Buffer | **n** |
+|| `<leader>bo` | Delete Other Buffers | **n** |
+|| `<leader>bp` | Toggle Pin | **n** |
+|| `<leader>bP` | Delete Non-Pinned buffers | **n** |
+|| `<leader>br` | Delete Buffers to the Right | **n** |
+|| `<leader>bl` | Delete Buffers to the Left | **n** |
+|| `<leader>bD` | Delete Buffer and Window | **n** |
 
 ## File Explorer (`<leader>e*`)
 
