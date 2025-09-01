@@ -27,6 +27,8 @@ require("lazy").setup({
   install = { colorscheme = { "catppuccin" } },
   -- automatically check for plugin updates
   checker = { enabled = true },
+  -- disable change detection notifications
+  change_detection = { notify = false },
   -- UI configuration
   ui = {
     border = "rounded", -- Options: "none", "single", "double", "rounded", "solid", "shadow"

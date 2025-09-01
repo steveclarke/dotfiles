@@ -6,7 +6,7 @@
 return {
   'stevearc/oil.nvim',
   dependencies = { { "nvim-mini/mini.icons", opts = {} } },
-  enabled = true,
+  enabled = false,
   -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
   lazy = false,
   config = function()
@@ -17,6 +17,5 @@ return {
         show_hidden = true,
       },
     })
-    vim.keymap.set("n", "\\\\", "<cmd>Oil<cr>", { desc = "Open Oil file explorer", noremap = true, silent = true })
   end,
 }
