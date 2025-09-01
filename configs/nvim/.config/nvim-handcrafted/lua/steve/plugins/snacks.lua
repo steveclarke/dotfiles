@@ -14,10 +14,15 @@ return {
     -- Only enable the picker for now - other features can be enabled later as needed
     -- The picker provides fast file/buffer/recent file searching with telescope-like functionality
     picker = { enabled = true },
+
     -- Enable zen functionality which includes zoom (window maximize)
     zen = { enabled = true },
+
     -- Enable toggle functionality for window maximize/zoom
     toggle = { enabled = true },
+
+    --Visualize indent guides and scopes based on treesitter or indent.
+    indent = { enabled = true },
   },
 
   keys = {
