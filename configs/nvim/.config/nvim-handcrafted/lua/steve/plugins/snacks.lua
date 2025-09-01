@@ -6,6 +6,10 @@ return {
     -- Only enable the picker for now - other features can be enabled later as needed
     -- The picker provides fast file/buffer/recent file searching with telescope-like functionality
     picker = { enabled = true },
+    -- Enable zen functionality which includes zoom (window maximize)
+    zen = { enabled = true },
+    -- Enable toggle functionality for window maximize/zoom
+    toggle = { enabled = true },
   },
 
   keys = {
@@ -30,5 +34,8 @@ return {
     
     -- UI/Utility
     { "<leader>uC", function() require("snacks").picker.colorschemes() end, desc = "Colorschemes" },
+    
+    -- Window management
+    { "<leader>wm", function() require("snacks").zen.zoom() end, desc = "Toggle Window Maximize" },
   },
 }
