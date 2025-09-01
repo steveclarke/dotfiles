@@ -57,6 +57,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 
 || Key | Description | Mode |
 ||-----|-------------|------|
+|| `<leader><space>` | Smart Find Files *(buffers + recent + files)* | **n** |
 || `<leader>ff` | Find files | **n** |
 || `<leader>fg` | Find git files | **n** |
 || `<leader>fr` | Recent files | **n** |
@@ -79,10 +80,12 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 
 || Key | Description | Mode |
 ||-----|-------------|------|
-|| `<leader>/` | Live Grep (Root Dir) | **n** |
-|| `<leader>sg` | Live Grep (Root Dir) | **n** |
-|| `<leader>sG` | Live Grep (cwd) | **n** |
-|| `<leader>sw` | Visual selection or word | **n**, **x** |
+|| `<leader>/` | Grep (Root Dir) | **n** |
+|| `<leader>sg` | Grep (Root Dir) | **n** |
+|| `<leader>sG` | Grep (cwd) | **n** |
+|| `<leader>sw` | Visual selection or word (Root Dir) | **n**, **x** |
+|| `<leader>sW` | Visual selection or word (cwd) | **n**, **x** |
+|| `<leader>s"` | Registers | **n** |
 || `<leader>sb` | Buffer Lines | **n** |
 || `<leader>sB` | Grep Open Buffers | **n** |
 
