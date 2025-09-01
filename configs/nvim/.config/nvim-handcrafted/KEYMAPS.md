@@ -55,7 +55,6 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 || `[B` | Move buffer prev | **n** |
 || `]B` | Move buffer next | **n** |
 || `<leader>bb` | Switch to Other Buffer | **n** |
-|| `<leader>\`` | Switch to Other Buffer | **n** |
 || `<leader>bd` | Delete Buffer | **n** |
 || `<leader>bo` | Delete Other Buffers | **n** |
 || `<leader>bp` | Toggle Pin | **n** |
