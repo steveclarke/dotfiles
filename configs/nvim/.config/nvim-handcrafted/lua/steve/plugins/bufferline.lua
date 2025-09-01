@@ -26,7 +26,6 @@ return {
     
     -- Core buffer management (works with/without bufferline)
     { "<leader>bb", "<cmd>e #<cr>", desc = "Switch to Other Buffer" },      -- Jump to last buffer
-    { "<leader>`", "<cmd>e #<cr>", desc = "Switch to Other Buffer" },       -- Alternative binding
     { "<leader>bd", "<cmd>bdelete<cr>", desc = "Delete Buffer" },           -- Close current buffer
     { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Delete Other Buffers" }, -- Close all except current
     { "<leader>bD", "<cmd>bdelete|quit<cr>", desc = "Delete Buffer and Window" },      -- Close buffer + window
