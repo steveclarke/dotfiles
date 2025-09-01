@@ -1,3 +1,8 @@
+-- oil.nvim: Buffer-based file manager for neovim
+-- Allows editing directories like text buffers - rename files by editing text,
+-- create/delete files with normal vim operations, and navigate directories seamlessly
+-- Replaces netrw as the default file explorer with a more intuitive editing experience
+
 return {
   'stevearc/oil.nvim',
   enabled = true,
