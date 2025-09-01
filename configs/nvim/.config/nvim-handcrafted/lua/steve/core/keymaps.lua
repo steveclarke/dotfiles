@@ -16,7 +16,7 @@ vim.keymap.set("n", "<space>", "<nop>")
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode with jj" })
 
 -- Clear search highlights
-vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<leader>/", "<cmd>set hlsearch!<CR>", merge_opts({ desc = "Toggle search highlights" }))
 
 -- Scroll and center
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
@@ -26,9 +26,13 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result and center" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result and center" })
 
--- Move lines up and down in visual mode
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move the current line up in visual mode" })
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move the current line down in visual mode" })
+-- Move lines up and down with Alt+j/k (LazyVim style)
+vim.keymap.set("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move line up" })
+vim.keymap.set("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move line down" })
+vim.keymap.set("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
 
 -- Reselect visual block after indenting left or right in visual mode
 vim.keymap.set("v", "<", "<gv", merge_opts({ desc = "Re-select visual block after indenting left" }))
@@ -69,3 +73,6 @@ vim.keymap.set("n", "\\c", ":edit ~/.config/nvim/init.lua<cr>", merge_opts({ des
 vim.keymap.set("n", "\\r", ":source %<cr>", merge_opts({ desc = "Reload current file" }))
 vim.keymap.set("n", "\\w", ":set wrap!<cr>", merge_opts({ desc = "Toggle wrap" }))
 vim.keymap.set("n", "\\n", ":set number!<cr>", merge_opts({ desc = "Toggle line numbers" }))
+
+-- Quit all without saving
+vim.keymap.set("n", "<leader>qq", ":qa!<CR>", merge_opts({ desc = "Quit all without saving" }))

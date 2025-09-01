@@ -27,15 +27,16 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 | Key | Description | Mode |
 |-----|-------------|------|
 | `jj` | Exit insert mode | **i** |
-| `<leader>/` | Clear search highlights | **n** |
+| `<leader>/` | Toggle search highlights | **n** |
 | `<C-d>` | Scroll down and center *(default: just scroll down)* | **n** |
 | `<C-u>` | Scroll up and center *(default: just scroll up)* | **n** |
 | `n` | Next search result and center *(default: just next result)* | **n** |
 | `N` | Previous search result and center *(default: just previous result)* | **n** |
 | `x` | Delete char without yanking *(default: yanks to register)* | **n** |
 | `<` / `>` | Indent and reselect *(default: loses selection)* | **v** |
-| `K` | Move line up *(default: show man page)* | **v** |
-| `J` | Move line down *(default: join lines)* | **v** |
+| `<A-j>` | Move line/selection down | **n**, **i**, **v** |
+| `<A-k>` | Move line/selection up | **n**, **i**, **v** |
+| `<leader>qq` | Quit all without saving | **n** |
 
 ## File Explorer (`<leader>e*`)
 
