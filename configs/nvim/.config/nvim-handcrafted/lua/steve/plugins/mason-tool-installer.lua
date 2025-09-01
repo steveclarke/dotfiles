@@ -1,3 +1,7 @@
+-- mason-tool-installer: Automatically install tools managed by Mason
+-- Ensures that specified LSP servers, formatters, linters, and DAP servers are installed
+-- Extends the base ensure_installed list with tools defined in lang/* files
+
 return {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
   dependencies = { "mason-org/mason.nvim" },

@@ -16,8 +16,7 @@ vim.keymap.set("n", "<space>", "<nop>")
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode with jj" })
 
 -- Clear search highlights
--- vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
-vim.keymap.set("n", "<leader>nn", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<leader>/", "<cmd>nohlsearch<cr>", { desc = "Clear search highlights" })
 
 -- Scroll and center
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
@@ -64,3 +63,9 @@ vim.keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current spli
 
 -- Uses the black-hole register so your last yank stays intact.
 -- vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+
+-- System/Config operations with backslash leader
+vim.keymap.set("n", "\\c", ":edit ~/.config/nvim/init.lua<cr>", merge_opts({ desc = "Edit config" }))
+vim.keymap.set("n", "\\r", ":source %<cr>", merge_opts({ desc = "Reload current file" }))
+vim.keymap.set("n", "\\w", ":set wrap!<cr>", merge_opts({ desc = "Toggle wrap" }))
+vim.keymap.set("n", "\\n", ":set number!<cr>", merge_opts({ desc = "Toggle line numbers" }))
