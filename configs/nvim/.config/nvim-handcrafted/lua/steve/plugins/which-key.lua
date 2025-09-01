@@ -11,6 +11,7 @@ return {
     -- Register key group descriptions 
     which_key.add({
       { "<leader>", group = "Leader Key (Space)"},
+      { "<leader>b", group = "Buffer Navigation", icon = "󰓩" },
       { "<leader>e", group = "File Explorer", icon = "󰉋" },
       { "<leader>f", group = "File Picker", icon = "󰈞" },
       { "<leader>s", group = "Search & Grep", icon = "󰍉" },
