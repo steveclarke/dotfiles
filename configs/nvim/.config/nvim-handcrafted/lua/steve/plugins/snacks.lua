@@ -1,3 +1,11 @@
+-- Snacks: A collection of small QoL plugins for Neovim
+-- Provides fast file/buffer/grep picking (telescope-like functionality),
+-- zen mode for distraction-free editing, and window management utilities.
+-- Minimal configuration - only enabling picker, zen, and toggle features.
+--
+-- NOTE: Snacks is modular - we only enable what we need:
+--   picker = file/buffer/grep searching, zen = window maximize, toggle = UI toggles
+
 return {
   "folke/snacks.nvim",
   priority = 1000,

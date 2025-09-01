@@ -1,3 +1,10 @@
+-- Which-Key: Displays a popup with available keybindings
+-- Shows available commands when you start typing a key sequence,
+-- helping you discover and remember keybindings. Uses Helix preset for clean layout.
+--
+-- NOTE: Timeout is set to 500ms for quick response. Key groups provide
+--   organized categorization of related commands with descriptive icons.
+
 return {
   "folke/which-key.nvim",
   event = "VeryLazy",
