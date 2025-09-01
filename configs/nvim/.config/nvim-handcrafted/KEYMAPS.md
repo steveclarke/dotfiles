@@ -122,6 +122,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 || `<leader>|` | Split Window Right *(vertical)* | **n** |
 || `<leader>we` | Make splits equal size | **n** |
 || `<leader>wd` | Delete Window | **n** |
+|| `<leader>wm` | Toggle Window Maximize *(zoom current window)* | **n** |
 
 ## UI/Utility (`<leader>u*`)
 
