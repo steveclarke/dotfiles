@@ -51,7 +51,6 @@ rm -f "${HOME}"/.zprofile
 do_stow zsh
 
 config_banner "starship"
-mkdir -p "${HOME}/.config/starship"
 do_stow starship
 
 config_banner "Fonts"
