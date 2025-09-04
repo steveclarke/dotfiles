@@ -21,6 +21,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [File Picker (`<leader>f*`)](#file-picker-leaderf)
   - [Window Navigation](#window-navigation)
   - [Search \& Grep (`<leader>s*`, `<leader>/`)](#search--grep-leaders-leader)
+  - [Code Completion (`blink.cmp`)](#code-completion-blinkcmp)
   - [Window Management](#window-management)
   - [UI/Utility (`<leader>u*`)](#uiutility-leaderu)
   - [System Operations (`\`)](#system-operations-)
@@ -110,6 +111,20 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 | `<leader>s"` | Registers | **n** |
 | `<leader>sb` | Buffer Lines | **n** |
 | `<leader>sB` | Grep Open Buffers | **n** |
+
+## Code Completion (`blink.cmp`)
+
+*Provided by blink.cmp plugin with 'default' preset (similar to built-in completions)*
+
+| Key | Description | Mode |
+|-----|-------------|------|
+| `<C-Space>` | Open completion menu or docs if menu is open | **i** |
+| `<C-n>` / `<Down>` / `<C-j>` | Select next completion item | **i** |
+| `<C-p>` / `<Up>` / `<C-k>` | Select previous completion item | **i** |
+| `<C-y>` | Accept completion *(default preset behavior)* | **i** |
+| `<C-e>` | Hide completion menu | **i** |
+
+**Note**: `<C-k>` is customized for navigation, overriding the default signature help binding.
 
 ## Window Management
 
