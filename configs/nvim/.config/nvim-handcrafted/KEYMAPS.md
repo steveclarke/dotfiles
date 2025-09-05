@@ -21,6 +21,7 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
   - [File Picker (`<leader>f*`)](#file-picker-leaderf)
   - [Window Navigation](#window-navigation)
   - [Search \& Grep (`<leader>s*`, `<leader>/`)](#search--grep-leaders-leader)
+  - [Todo Comments Navigation](#todo-comments-navigation)
   - [Code Completion (`blink.cmp`)](#code-completion-blinkcmp)
   - [Window Management](#window-management)
   - [UI/Utility (`<leader>u*`)](#uiutility-leaderu)
@@ -111,6 +112,15 @@ This configuration uses a structured approach to keymaps, inspired by [LazyVim's
 | `<leader>s"` | Registers | **n** |
 | `<leader>sb` | Buffer Lines | **n** |
 | `<leader>sB` | Grep Open Buffers | **n** |
+
+## Todo Comments Navigation
+
+*Provided by todo-comments.nvim plugin for jumping between todo comments*
+
+| Key | Description | Mode |
+|-----|-------------|------|
+| `]t` | Next todo comment | **n** |
+| `[t` | Previous todo comment | **n** |
 
 ## Code Completion (`blink.cmp`)
 
