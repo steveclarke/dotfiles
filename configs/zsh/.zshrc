@@ -302,3 +302,11 @@ if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -o interactive ]] && command -v keychai
         echo "  SSH keys should be placed in ~/.ssh/ during dotfiles setup"
     fi
 fi
+
+# pnpm
+export PNPM_HOME="/Users/steve/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
