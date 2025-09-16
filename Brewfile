@@ -1,5 +1,8 @@
 # Cross-platform CLI tools
 # Core development tools
+
+tap "hashicorp/tap"
+
 brew "act"
 brew "aichat"
 brew "atuin"
@@ -56,7 +59,7 @@ brew "rust"
 brew "s3cmd"
 brew "shellcheck"
 brew "starship"
-brew "terraform"
+brew "hashicorp/tap/terraform"
 brew "the_silver_searcher"
 brew "tldr"
 brew "tmux"
