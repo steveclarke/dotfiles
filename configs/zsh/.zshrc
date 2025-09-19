@@ -220,17 +220,6 @@ if command -v fzf >/dev/null 2>&1; then
     zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 fi
 
-# =============================================================================
-# ZOXIDE
-# =============================================================================
-
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init --cmd cd zsh)"
-    # use fzf-tab to preview the directory
-    if command -v fzf >/dev/null 2>&1; then
-        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
-    fi
-fi
 
 # =============================================================================
 # SNIPPETS
@@ -310,3 +299,15 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# =============================================================================
+# ZOXIDE (MUST BE INITIALIZED LAST)
+# =============================================================================
+
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init --cmd cd zsh)"
+    # use fzf-tab to preview the directory
+    if command -v fzf >/dev/null 2>&1; then
+        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+    fi
+fi
