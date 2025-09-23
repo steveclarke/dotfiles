@@ -2,6 +2,7 @@
 # Core development tools
 
 tap "hashicorp/tap"
+tap "TheZoraiz/ascii-image-converter"
 
 brew "act"
 brew "aichat"
@@ -72,3 +73,4 @@ brew "ugrep"
 brew "wget"
 brew "zellij"
 brew "zoxide"
+brew "ascii-image-converter"
