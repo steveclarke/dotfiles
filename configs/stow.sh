@@ -69,6 +69,13 @@ if [ -f "${HOME}"/justfile ]; then
 fi
 do_stow just
 
+config_banner "Cursor"
+mkdir -p "${HOME}/.cursor"
+if [ -d "${HOME}/.cursor/commands" ]; then
+  rm -rf "${HOME}/.cursor/commands"
+fi
+do_stow cursor
+
 # Linux-specific configurations
 if is_linux; then
   if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
