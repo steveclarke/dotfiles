@@ -23,6 +23,14 @@ skipping() {
 	echo "=== skipping $1 - already installed"
 }
 
+success() {
+	echo "✓ $1"
+}
+
+error() {
+	echo "✗ ERROR: $1" >&2
+}
+
 apt_install() {
 	sudo apt install -y "$1"
 }
