@@ -18,6 +18,8 @@ lots of assumptions about where I like to place things.
 
 ## General Organisation
 
+* `ai` - AI/LLM resources including development guides and prompts.
+  See the [AI Resources README](ai/README.md) for details.
 * `configs` - contains the stow folders for applicable apps.
   Note: Fonts are in this folder.
 * `docs` - documentation and reference guides for various topics.
