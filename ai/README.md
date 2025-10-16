@@ -7,13 +7,14 @@ This directory contains AI and LLM-related resources for development workflows, 
 - **[guides/](guides/)** - Development process documentation and guides
 - **[prompts/](prompts/)** - Reusable prompt templates for various tasks
 
-## Relationship to Cursor Commands
+## Prompts and Agent Integration
 
-Cursor commands live in `configs/cursor/.cursor/commands/` as they are Cursor-specific configuration files managed by stow.
+**All prompts are stored in `ai/prompts/` as the source of truth.** Agent-specific configurations (like Cursor commands) use symlinks to selectively expose prompts to different agents.
 
-This `ai/` directory is for:
-- Process guides that the commands reference (like feature-development-process.md)
-- Reusable prompts for various development tasks
+For detailed information on the symlink architecture and how to integrate prompts with agents like Cursor, see **[ai/prompts/README.md](prompts/README.md)**.
+
+This `ai/` directory also contains:
+- Process guides that agents reference (like feature-development-process.md)
 - Notes and learnings about working with AI tools
 
 ## Quick Start

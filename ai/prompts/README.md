@@ -4,9 +4,45 @@ This directory contains reusable prompt templates for various development tasks.
 
 ## Purpose
 
-Prompts are focused templates for specific tasks that can be used with any AI tool (Cursor, ChatGPT, Claude, etc.). Unlike Cursor commands which are app-specific, these prompts are tool-agnostic.
+This is the **source of truth** for all prompt templates. Prompts stored here are:
+- Version controlled as regular files
+- Tool-agnostic and reusable across different AI agents
+- Selectively exposed to agents via symlinks
+
+## Architecture
+
+```
+ai/prompts/                           ← Source of truth (actual files)
+    └── code-review-prep.md
+    └── plan.md
+    └── ...
+
+configs/cursor/.cursor/commands/      ← Symlinks to prompts
+    └── code-review-prep.md → ../../../../ai/prompts/code-review-prep.md
+    └── plan.md → ../../../../ai/prompts/plan.md
+
+~/.cursor/commands/                   ← Stow deploys symlinks here
+    └── code-review-prep.md → ~/.local/share/dotfiles/configs/cursor/...
+```
 
 ## Usage
 
-These prompts are not automatically available to any tool - copy them into your projects as needed. For Cursor-specific commands that are automatically available in Cursor, see [`configs/cursor/.cursor/commands/`](../configs/cursor/.cursor/commands/).
+### For Cursor
+Prompts symlinked in `configs/cursor/.cursor/commands/` are automatically available as Cursor commands after running stow.
+
+### For Other Agents
+Copy prompts to agent-specific directories or create symlinks as needed.
+
+### Adding a New Cursor Command
+```bash
+cd configs/cursor/.cursor/commands/
+ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
+```
+
+## Benefits
+
+- **Single source of truth**: Edit prompts here; changes reflect everywhere
+- **Selective exposure**: Choose which prompts each agent sees
+- **Reusability**: Same prompt can be used by multiple agents
+- **Git tracking**: Prompts tracked as regular files, symlinks tracked as symlinks
 
