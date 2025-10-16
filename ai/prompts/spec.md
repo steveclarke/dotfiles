@@ -6,9 +6,11 @@ Structured command to help create concise technical specification documents by g
 You are helping create a technical specification document following our established feature development process. You have comprehensive context available:
 
 **Required Reading**:
-- Feature development guide: @project/guides/feature-development-process.md
+- Feature development guide: @~/.local/share/dotfiles/ai/guides/feature-development-process.md
 - Vision document: @vision.md
 - Requirements document: @requirements.md
+
+Note: If the project has a local copy of the guide at @project/guides/feature-development-process.md, you may reference that instead for project-specific modifications.
 
 **Additional Context Available**:
 - **Full Codebase**: Examine existing patterns in backend/ and frontend/ directories

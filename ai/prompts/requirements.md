@@ -3,7 +3,9 @@
 ## Overview
 Structured command to help create a requirements document by guiding through requirements discovery, practical scoping, and generating a single, consolidated requirements document with clear, practical language.
 
-You are helping create a requirements document following our established feature development process. First, read our feature development guide at @project/guides/feature-development-process.md and the vision document at @vision.md to understand the feature scope and our documentation approach.
+You are helping create a requirements document following our established feature development process. First, read our feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md and the vision document at @vision.md to understand the feature scope and our documentation approach.
+
+Note: If the project has a local copy of the guide at @project/guides/feature-development-process.md, you may reference that instead for project-specific modifications.
 
 **IMPORTANT**: Start by creating a TODO list to track the 3 phases of requirements creation. Mark the first phase as "in_progress" and others as "pending".
 

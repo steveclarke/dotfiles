@@ -3,7 +3,9 @@
 ## Overview
 Structured command to help create vision documents by guiding through focused discovery phases and building each section systematically following our established feature development process.
 
-You are helping create a vision document following our established feature development process. First, read our feature development guide at @project/guides/feature-development-process.md to understand our vision document structure and approach.
+You are helping create a vision document following our established feature development process. First, read our feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md to understand our vision document structure and approach.
+
+Note: If the project has a local copy of the guide at @project/guides/feature-development-process.md, you may reference that instead for project-specific modifications.
 
 **IMPORTANT**: Start by creating a TODO list to track the 5 phases of vision document creation. Mark the first phase as "in_progress" and others as "pending".
 
