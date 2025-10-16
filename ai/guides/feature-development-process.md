@@ -12,6 +12,8 @@ Today, AI and LLM-assisted tooling have transformed this trade-off. With tools l
 * **Iterate specs cheaply** — we can refine requirements and designs multiple times before writing code.
 * **Generate implementation scaffolds directly from specs** — bridging the gap from design to code.
 * **Use specs as the single source of truth** — LLMs can consume them to write code, generate tests, and even produce documentation.
+* **Let AI read the docs for you** — traditionally, nobody wanted to read lengthy specification documents. Now, AI can read them instantly and answer questions like "What did the requirements say about X again?" without you having to search through pages of documentation.
+* **Let AI maintain consistency across documents** — even "small" edits benefit from AI assistance. What seems like a one-word change often requires updates across multiple documents and sections. AI catches these cross-references and maintains consistency in ways that are mentally exhausting for humans. This is what makes comprehensive, multi-document specs actually maintainable.
 
 This enables a **spec-first but agile** process:
 we maintain the agility to change direction when needed, but we also benefit from highly structured, traceable documentation that improves communication, makes code generation more accurate, and reduces rework.
@@ -45,19 +47,11 @@ By combining agile principles with modern AI-enabled workflows, we get the best 
   - [4. Naming Conventions](#4-naming-conventions)
     - [4.1. Single Document Approach](#41-single-document-approach)
     - [4.2. Multi-Document Breakdown](#42-multi-document-breakdown)
-    - [4.3. Feature-Specific Flexibility](#43-feature-specific-flexibility)
-  - [5. Document Flow and Workflow](#5-document-flow-and-workflow)
-    - [5.1. Development Sequence](#51-development-sequence)
-    - [5.2. Stakeholder Alignment](#52-stakeholder-alignment)
-    - [5.3. Review and Approval Process](#53-review-and-approval-process)
-  - [6. Key Principles](#6-key-principles)
-    - [6.1. Separation of Concerns](#61-separation-of-concerns)
-    - [6.2. Audience-Specific Content](#62-audience-specific-content)
-    - [6.3. Progressive Complexity](#63-progressive-complexity)
-    - [6.4. Living Documents Philosophy](#64-living-documents-philosophy)
-    - [6.5. Evolution and Maintenance](#65-evolution-and-maintenance)
-  - [7. Best Practices](#7-best-practices)
-  - [8. Template Structure](#8-template-structure)
+  - [5. Template Structure](#5-template-structure)
+  - [6. Document Flow and Workflow](#6-document-flow-and-workflow)
+    - [6.1. Development Sequence](#61-development-sequence)
+  - [7. Living Documents](#7-living-documents)
+  - [8. Best Practices](#8-best-practices)
 
 ## 1. Overview
 
@@ -76,10 +70,10 @@ We write different types of documents for different people. Business documents f
 We provide Cursor commands to streamline document creation with guided, structured processes:
 
 **Available Commands**:
-* **`/vision-assistant`** - Creates vision documents through structured discovery
-* **`/requirements-assistant`** - Creates functional and system requirements through structured discovery
-* **`/spec-assistant`** - Creates technical specifications through architecture and design process
-* **`/plan-assistant`** - Creates implementation plans through sequencing and task planning process
+* **`/vision`** - Creates vision documents through structured discovery
+* **`/requirements`** - Creates functional and system requirements through structured discovery
+* **`/spec`** - Creates technical specifications through architecture and design process
+* **`/plan`** - Creates implementation plans through sequencing and task planning process
 
 **Benefits**:
 * **Guided Discovery**: Step-by-step questions ensure nothing gets missed
@@ -197,6 +191,8 @@ Each document builds upon the previous while serving distinct purposes and audie
 * Application type definitions (using your language's type system)
 * Cross-references to requirements with precise section numbering (requirements.md#1.2)
 
+**Code Snippets vs Implementation Code**: Technical specifications should include code snippets for illustration purposes (type definitions, data structures, schemas, example API payloads) but should NOT contain complete implementation code. Full working code belongs in implementation plans, not technical specifications.
+
 ### 3.4. Design Brief (Optional)
 
 **Filename**: `design-brief.md`
@@ -238,7 +234,7 @@ Each document builds upon the previous while serving distinct purposes and audie
 * Granular tasks within each phase with integrated validation and data
 * Team-specific implementation approaches
 * Dependencies and prerequisites
-* T-shirt sizing for effort estimation (Small, Medium, Large)
+* T-shirt sizing for effort estimation (Small, Medium, Large) - **do not include time estimates**
 * Risk mitigation strategies
 * Testing and validation approaches
 * Cross-references to technical specifications with precise section numbering (spec.md#1.2)
@@ -277,7 +273,18 @@ Each document builds upon the previous while serving distinct purposes and audie
 **Audience**: Product team, future developers
 **Purpose**: Capture valuable ideas and requirements that are beyond current scope
 
-**When to Use**:
+**When to Capture Future Ideas**:
+
+Future ideas emerge throughout the entire development process, not just during initial planning. Capture them immediately whenever they arise:
+
+* **During Vision & Requirements**: "That's brilliant, but it's too much for Phase 1"
+* **During Technical Specification**: "This technical approach enables X in the future"
+* **During Implementation**: "We could extend this to support Y later"
+* **Any Time**: When discussing features and someone says "that's a great idea, but not now"
+
+The key is to **capture ideas when they emerge** rather than losing them. Writing to the future document is encouraged at any phase - it prevents scope creep while preserving innovation.
+
+**What to Capture**:
 
 * Great ideas that exceed current team capacity or timeline
 * Complex features requiring Phase 2/3/4 implementation
@@ -339,95 +346,7 @@ FT### - Feature Name/
 * `tasks-backend.md` - Backend-specific task breakdown
 * `tasks-design.md` - Design-specific task breakdown
 
-### 4.3. Feature-Specific Flexibility
-
-**Adapt to Feature Needs**: Not every feature requires all document types.
-
-**Examples**:
-
-* **Backend-only feature**: May only need `requirements.md` and `plan.md`
-* **Simple feature**: May only need `requirements.md` and `spec.md`
-* **Complex multi-system feature**: May require all document types with multiple spec and plan documents
-
-## 5. Document Flow and Workflow
-
-### 5.1. Development Sequence
-
-1. **Vision Document**: Define strategic context and high-level goals
-2. **Requirements Document**: Specify business capabilities, user workflows, and quality constraints
-3. **Technical Specification**: Design implementation approach and architecture
-4. **Design Brief** (optional): Extract UI/UX guidance for designer when feature has UI complexity
-5. **Implementation Plans**: Sequence development and allocate resources (includes granular tasks)
-6. **Task Lists** (optional): Break down plans into discrete trackable items when needed
-
-### 5.2. Stakeholder Alignment
-
-**Vision Stage**: All stakeholders align on business value and strategic direction
-**Requirements Stage**: Product team defines business capabilities and quality constraints
-**Specification Stage**: Technical team designs implementation approach
-**Design Brief Stage** (when needed): Designer receives standalone UI/UX guidance
-**Planning Stage**: Development teams coordinate implementation sequence with granular tasks
-**Task Stage** (when needed): Individual contributors create discrete, trackable work items
-
-### 5.3. Review and Approval Process
-
-* **Different approval cycles**: Business requirements change less frequently than technical implementations
-* **Separate reviews**: Different stakeholders approve different documents at different times
-* **Evolution support**: Technical approach can evolve without rewriting business requirements
-* **Living documents**: All documents are designed to be revised as discoveries are made during development
-
-## 6. Key Principles
-
-### 6.1. Separation of Concerns
-
-* **Business Capabilities & Quality Attributes** stay in requirements
-* **Technical Implementation Details** belong in specifications
-* **Implementation Sequence** is captured in plans
-
-### 6.2. Audience-Specific Content
-
-* **Product Managers** focus on vision and requirements
-* **Developers** focus on requirements, specifications and plans
-* **Business Stakeholders** focus on vision and business aspects of requirements
-
-### 6.3. Progressive Complexity
-
-* **Start Simple**: Single documents for straightforward features
-* **Add Complexity**: Split documents only when single documents become unwieldy
-* **Feature-Driven**: Let feature complexity drive document structure decisions
-
-### 6.4. Living Documents Philosophy
-
-* **All documents are revisable**: Discovery during development can lead to revisions of any document in the hierarchy
-* **Upstream revision freedom**: Technical discoveries may warrant updates to functional requirements or even vision documents
-* **AI-enabled agility**: Modern tooling allows us to maintain detailed specs while preserving the ability to iterate quickly
-* **Exception awareness**: Customer commitments or contractual obligations may require formal change processes
-* **Default assumption**: Unless explicitly locked down, all documents should be treated as living and evolving
-
-> 💡 **The Living Documents Advantage**: Unlike old-school development where changing early decisions was expensive and painful, AI tools let us quickly update our documents when we find better solutions. We can keep detailed specs but still be flexible when we learn something new.
-
-### 6.5. Evolution and Maintenance
-
-* **Requirements** (business capabilities and quality attributes) have longer lifespan and change less frequently
-* **Technical specifications** may evolve as implementation approaches mature
-* **Clear boundaries** prevent technical changes from requiring requirements updates
-
-## 7. Best Practices
-
-1. **Start with the simplest structure** that serves your feature's needs
-2. **Use consistent naming** across all features for easy navigation (document-type first: `plan-frontend.md`, `tasks-backend.md`)
-3. **Reference other documents** rather than duplicating technical implementation details in requirements
-4. **Write for your audience** - avoid technical jargon in business documents
-5. **Keep documents focused** - each document should serve a clear, distinct purpose
-6. **Update cross-references** when splitting or renaming documents
-7. **Consider longevity** - requirements should remain stable as technical approaches evolve
-8. **Validate against industry standards** - our approach aligns with standard software engineering practices
-9. **Plans typically include tasks** - Most features are small enough that plan documents contain both sequencing and granular tasks
-10. **Split task documents only when needed** - Create separate task documents only when multiple people need different task lists for the same area
-11. **Include complete work items** - Each task section should include related code, tests, and sample data requirements
-12. **LLM Readiness** - Write documents clearly enough that they can be consumed by AI tools for code, test, and plan generation
-
-## 8. Template Structure
+## 5. Template Structure
 
 Each feature directory should be structured to support this documentation flow:
 
@@ -457,3 +376,59 @@ Each feature directory should be structured to support this documentation flow:
 └── tasks-backend.md            # When multiple developers on same area
 ```
 
+## 6. Document Flow and Workflow
+
+### 6.1. Development Sequence
+
+| Phase | Document | Purpose | Who's Involved |
+|-------|----------|---------|----------------|
+| 1 | **Vision Document** | Define strategic context and high-level goals | **Entire team** |
+| 2 | **Requirements Document** | Specify business capabilities, user workflows, and quality constraints | **Entire team** |
+| 3 | **Technical Specification** | Design implementation approach and architecture | Developers, Architects, DevOps |
+| 4 | **Design Brief** (optional) | Extract UI/UX guidance for designer when feature has UI complexity | Designers, Product Manager |
+| 5 | **Implementation Plans** | Sequence development and allocate resources (includes granular tasks) | Development team OR individual developers working on specific areas |
+| 6 | **Task Lists** (optional) | Break down plans into discrete trackable items when needed | Individual developers working on specific areas |
+
+## 7. Living Documents
+
+* **All documents are revisable**: Discovery during development can lead to revisions of any document in the hierarchy
+* **Upstream revision freedom**: Technical discoveries may warrant updates to functional requirements or even vision documents
+* **AI-enabled agility**: Modern tooling allows us to maintain detailed specs while preserving the ability to iterate quickly
+* **Exception awareness**: Customer commitments or contractual obligations may require formal change processes
+* **Default assumption**: Unless explicitly locked down, all documents should be treated as living and evolving
+
+> 💡 **The Living Documents Advantage**: Unlike old-school development where changing early decisions was expensive and painful, AI tools let us quickly update our documents when we find better solutions. We can keep detailed specs but still be flexible when we learn something new.
+
+## 8. Best Practices
+
+> 💡 **Always Start with Vision & Involve the Whole Team**
+> 
+> While not every feature requires all document types, we **highly recommend always having a vision document**. There's nothing like taking the time to envision what we want so that everybody agrees on the direction.
+> 
+> **Team Involvement in Early Phases**:
+> * **Vision**: Ideally, the **entire team should be involved in vision** whenever possible. It's surprising how much better outcomes are when the whole team participates in envisioning the future. If in doubt, include the full team.
+> * **Requirements**: Similarly, the **full team is valuable during requirements** - this is where the most discussion, visioning, workshopping, and dreaming happens. This is where we hash out technical possibilities, time availability, and constraints together.
+> * **Later Phases**: As you move into technical specifications and implementation plans, team involvement can become more specialized (frontend devs, backend devs, designers working on their respective areas).
+> 
+> **When in doubt, involve the whole team in vision and requirements.**
+
+> 💡 **Let AI Handle All Edits, Even Small Ones**
+> 
+> You might think "I can just change this one word myself" — but you'd be surprised how often that "small" change needs to ripple through multiple documents. The AI will catch that a term change in requirements needs to update the technical spec, the implementation plan, and three cross-references you forgot about.
+> 
+> **This capability is what makes our comprehensive documentation approach viable.** Without AI maintaining consistency, the cognitive load of keeping multiple detailed documents in sync would force us back to minimal documentation. Let the AI do the work — it's faster and more thorough than manual updates.
+
+1. **Start with the simplest structure** that serves your feature's needs
+2. **Use consistent naming** across all features for easy navigation (document-type first: `plan-frontend.md`, `tasks-backend.md`)
+3. **Reference other documents** rather than duplicating technical implementation details in requirements
+4. **Write for your audience** - avoid technical jargon in business documents
+5. **Keep documents focused** - each document should serve a clear, distinct purpose
+6. **Update cross-references** when splitting or renaming documents
+7. **Keep tasks in plans by default** - Most features need both sequencing and tasks in one document. Only split into separate task documents when multiple people need different task lists for the same area
+8. **Include complete work items** - Each task section should include related code, tests, and sample data requirements
+9. **Specify test structure, not test code** - Plans should include test outlines (describe/context blocks and test case descriptions) that define *what* to test, but not the actual test implementation code. Example: `describe User { it "validates email format" }` not the full test body with expectations and assertions
+10. **LLM Readiness** - Write documents clearly enough that they can be consumed by AI tools for code, test, and plan generation
+
+---
+
+By combining detailed, AI-enabled documentation with agile principles, we get the best of both worlds: the clarity and alignment that specs provide, with the flexibility and speed that modern development demands. These practices aren't about creating bureaucracy—they're about creating shared understanding that makes building software faster, better, and more enjoyable for everyone involved.
