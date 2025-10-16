@@ -1,98 +1,138 @@
+#!/usr/bin/env bash
+#
+# Stow Configuration Script
+#
+# Symlinks dotfile configurations from the configs/ directory to $HOME
+# using GNU Stow. Handles cross-platform and Linux/macOS-specific configs.
+#
+# Prerequisites: GNU Stow must be installed
+# Usage: bash stow.sh (or via 'dotfiles config' command)
+#
+
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
+
+# Exit on any error
+set -e
+
+# Validate stow is installed
+if ! is_installed stow; then
+  error "GNU Stow is not installed. Run prereq installation first."
+  exit 1
+fi
 
 config_banner() {
   banner "Configuring $1"
 }
 
 do_stow() {
-  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"
+  if ! stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" "$1"; then
+    error "Failed to stow $1"
+    return 1
+  fi
+}
+
+# Remove files or directories that would conflict with stow (non-symlinks only)
+# This makes the script idempotent - existing stow symlinks are left untouched
+cleanup_paths() {
+  local path
+  for path in "$@"; do
+    if [ -e "$path" ] && [ ! -L "$path" ]; then
+      if [ -d "$path" ]; then
+        rm -rf "$path"
+      else
+        rm -f "$path"
+      fi
+    fi
+  done
+}
+
+# Ensure directories exist (for stow to symlink into)
+ensure_dir() {
+  local path
+  for path in "$@"; do
+    mkdir -p "$path"
+  done
+}
+
+# Stow a configuration package
+# Args: display_name, stow_package
+stow_package() {
+  local display_name="$1"
+  local stow_package="$2"
+  
+  config_banner "${display_name}"
+  do_stow "${stow_package}"
 }
 
 # Cross-platform configurations
-config_banner "${HOME}/bin"
-mkdir -p "${HOME}/bin"
-do_stow bin
+ensure_dir "${HOME}/bin"
+stow_package "${HOME}/bin" "bin"
 
-config_banner "Bash"
-rm -f "${HOME}"/.bash_aliases
-do_stow bash
+cleanup_paths "${HOME}/.bash_aliases"
+stow_package "Bash" "bash"
 
-config_banner "Tmux"
-mkdir -p "${HOME}/.config/tmux"
-do_stow tmux
+ensure_dir "${HOME}/.config/tmux"
+stow_package "Tmux" "tmux"
 
-config_banner "Alacritty"
-mkdir -p "${HOME}/.config/alacritty"
-do_stow alacritty
+ensure_dir "${HOME}/.config/alacritty"
+stow_package "Alacritty" "alacritty"
 
-config_banner "Ghostty"
-mkdir -p "${HOME}/.config/ghostty"
-do_stow ghostty
+ensure_dir "${HOME}/.config/ghostty"
+stow_package "Ghostty" "ghostty"
 
-config_banner "Fish shell"
-mkdir -p "${HOME}/.config/fish"
-do_stow fish
+ensure_dir "${HOME}/.config/fish"
+stow_package "Fish shell" "fish"
 
-config_banner "Ruby"
-do_stow ruby
+stow_package "Ruby" "ruby"
 
-config_banner "Neovim"
-mkdir -p "${HOME}/.config/nvim"
-do_stow nvim
+ensure_dir "${HOME}/.config/nvim"
+stow_package "Neovim" "nvim"
 
-config_banner "Zellij"
-mkdir -p "${HOME}/.config/zellij"
-do_stow zellij
+ensure_dir "${HOME}/.config/zellij"
+stow_package "Zellij" "zellij"
 
-config_banner "zsh"
-rm -f "${HOME}"/.zshrc
-rm -f "${HOME}"/.zprofile
-do_stow zsh
+cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
+stow_package "zsh" "zsh"
 
-config_banner "starship"
-do_stow starship
+stow_package "starship" "starship"
 
-config_banner "Fonts"
-mkdir -p "${HOME}/.local/share/fonts"
-do_stow fonts
+ensure_dir "${HOME}/.local/share/fonts"
+stow_package "Fonts" "fonts"
 
-config_banner "Idea"
-if [ -f "${HOME}"/.ideavimrc ]; then
-  rm -f "${HOME}"/.ideavimrc
-fi
-do_stow idea
+cleanup_paths "${HOME}/.ideavimrc"
+stow_package "Idea" "idea"
 
-config_banner "Just"
-if [ -f "${HOME}"/justfile ]; then
-  rm -f "${HOME}"/justfile
-fi
-do_stow just
+cleanup_paths "${HOME}/justfile"
+stow_package "Just" "just"
+
+ensure_dir "${HOME}/.cursor"
+cleanup_paths "${HOME}/.cursor/commands"
+stow_package "Cursor" "cursor"
 
 # Linux-specific configurations
 if is_linux; then
   if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-    config_banner "i3 Window Manager"
-    mkdir -p "${HOME}/.config/i3"
-    do_stow i3
-
-    config_banner "Picom (compositor)"
-    mkdir -p "${HOME}/.config/picom"
-    do_stow picom
-
-    config_banner "Polybar"
-    mkdir -p "${HOME}/.config/polybar"
-    do_stow polybar
-
-    config_banner "Rofi"
-    mkdir -p "${HOME}/.config/rofi"
-    do_stow rofi
+    ensure_dir "${HOME}/.config/i3"
+    stow_package "i3 Window Manager" "i3"
+    
+    ensure_dir "${HOME}/.config/picom"
+    stow_package "Picom (compositor)" "picom"
+    
+    ensure_dir "${HOME}/.config/polybar"
+    stow_package "Polybar" "polybar"
+    
+    ensure_dir "${HOME}/.config/rofi"
+    stow_package "Rofi" "rofi"
   fi
 fi
 
 # macOS-specific configurations
 if is_macos; then
-  # Add macOS-specific configurations here if needed
-  # For now, all existing configurations should work cross-platform
-  echo "macOS-specific configurations would go here"
+  # macOS-specific configurations will be added here as needed
+  # For now, all existing configurations work cross-platform
+  :
 fi
+
+success "All configurations stowed successfully"
+exit 0
