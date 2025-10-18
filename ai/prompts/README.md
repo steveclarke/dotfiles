@@ -39,6 +39,27 @@ cd configs/cursor/.cursor/commands/
 ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
 ```
 
+## Available Prompts
+
+### Development Workflow
+- **plan.md** - Create detailed implementation plans for features
+- **spec.md** - Generate technical specifications
+- **requirements.md** - Document requirements and acceptance criteria
+- **vision.md** - Define project vision and high-level goals
+
+### Code Quality
+- **code-review.md** - Conduct thorough code reviews
+- **code-review-prep.md** - Prepare code for review
+
+### Documentation & Summaries
+- **monthly-invoice-summary.md** - Generate client-friendly invoice summaries from git commits
+- **guided-config.md** - Interactive configuration guide
+
+### Productivity
+- **todoist-daily-review.md** - Interactive Todoist task research and triage assistant
+- **obsidian-vault-context.md** - Comprehensive Obsidian vault structure and interaction guide
+- **browse-cursor.md** - Browse and explore Cursor features
+
 ## Benefits
 
 - **Single source of truth**: Edit prompts here; changes reflect everywhere

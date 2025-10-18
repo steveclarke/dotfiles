@@ -1,0 +1,1 @@
+../../../../ai/prompts/obsidian-vault-context.md
