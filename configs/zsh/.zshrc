@@ -311,3 +311,7 @@ if command -v zoxide >/dev/null 2>&1; then
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
     fi
 fi
+
+# Stop Homebrew from showing hints after every command
+export HOMEBREW_NO_ENV_HINTS=1
+
