@@ -1,0 +1,1 @@
+../../../../ai/prompts/browse-cursor.md

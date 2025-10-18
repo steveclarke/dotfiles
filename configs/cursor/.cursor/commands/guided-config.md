@@ -1,0 +1,1 @@
+../../../../ai/prompts/guided-config.md
