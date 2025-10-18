@@ -83,6 +83,9 @@ If it's an action item, acknowledge this but offer to research anyway if the use
 ### Phase 3: Research Selected Item
 
 **Step 3.1: Conduct Research**
+
+**Note:** The task title itself is often a direct URL to an article or resource (e.g., "https://example.com/interesting-article"). When this is the case, start by visiting that link directly rather than searching for it.
+
 Use the `web_search` tool to research the selected item. Focus on finding:
 - What it is (brief description)
 - Key features or main points
