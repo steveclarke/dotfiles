@@ -315,5 +315,8 @@ fi
 # Stop Homebrew from showing hints after every command
 export HOMEBREW_NO_ENV_HINTS=1
 
-export PATH="/Users/steve/.config/herd-lite/bin:$PATH"
-export PHP_INI_SCAN_DIR="/Users/steve/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
+# Herd Lite - PHP development environment
+if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
+    export PATH="/Users/steve/.config/herd-lite/bin:$PATH"
+    export PHP_INI_SCAN_DIR="/Users/steve/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
+fi
