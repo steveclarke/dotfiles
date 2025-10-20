@@ -39,6 +39,8 @@ Search the codebase for:
 
 Reference actual files, not hypothetical examples.
 
+**Ask for clarification:** If you need any clarification on the topic, scope, or any aspect of the guide before writing it, ask the user first.
+
 ### Step 3: Write the Guide
 
 Use this structure (adapt as needed):
