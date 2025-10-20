@@ -65,6 +65,12 @@ export RUBY_YJIT_ENABLE=1
 # Dotfiles directory for aliases
 export DOTFILES_DIR="$HOME/.local/share/dotfiles"
 
+# Source shared dotfiles configuration (environment variables, secrets, etc.)
+# This file is shared between Fish (via bass plugin) and Zsh
+if [[ -f "$HOME/.dotfilesrc" ]]; then
+    source "$HOME/.dotfilesrc"
+fi
+
 # =============================================================================
 # EDITOR AND SUDO_EDITOR
 # =============================================================================
@@ -300,6 +306,15 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+# Stop Homebrew from showing hints after every command
+export HOMEBREW_NO_ENV_HINTS=1
+
+# Herd Lite - PHP development environment
+if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
+    export PATH="/Users/steve/.config/herd-lite/bin:$PATH"
+    export PHP_INI_SCAN_DIR="/Users/steve/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
+fi
+
 # =============================================================================
 # ZOXIDE (MUST BE INITIALIZED LAST)
 # =============================================================================
@@ -310,13 +325,4 @@ if command -v zoxide >/dev/null 2>&1; then
     if command -v fzf >/dev/null 2>&1; then
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
     fi
-fi
-
-# Stop Homebrew from showing hints after every command
-export HOMEBREW_NO_ENV_HINTS=1
-
-# Herd Lite - PHP development environment
-if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
-    export PATH="/Users/steve/.config/herd-lite/bin:$PATH"
-    export PHP_INI_SCAN_DIR="/Users/steve/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
 fi
