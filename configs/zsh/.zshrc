@@ -318,7 +318,6 @@ fi
 # =============================================================================
 # ZOXIDE (MUST BE INITIALIZED LAST)
 # =============================================================================
-
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init --cmd cd zsh)"
     # use fzf-tab to preview the directory

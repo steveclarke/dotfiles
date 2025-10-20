@@ -30,3 +30,13 @@ export DOTFILES_INSTALL_GUI=true
 # export DOTFILES_CONFIG_POLYBAR=true 
 # i3 window manager (set to true if you want i3 installed)
 # export DOTFILES_CONFIG_I3=false
+
+# =============================================================================
+# SECRETS AND API KEYS
+# =============================================================================
+# This section is for storing secrets, API keys, tokens, and other sensitive
+# environment variables. This file is NOT tracked in git and is safe for secrets.
+# Both Fish and Zsh automatically source this file on startup.
+
+# Example:
+# export MY_API_KEY="your-secret-key-here"

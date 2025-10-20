@@ -48,6 +48,14 @@ For each new file, you should include:
 - Note: "Full file can be opened in editor or printed separately"
 - Do NOT include full file contents in the review document
 
+**Special Handling for Test Files:**
+For test files (spec files, test files), include a **test outline** showing the test structure in documentation format (like RSpec `--format documentation` output). This helps spot missing edge cases without wading through implementation details.
+
+- Extract the test structure hierarchy
+- Show as plain indented text (NOT in code blocks)
+- Include only test descriptions
+- Use proper indentation to show nesting
+
 Example format:
 ```markdown
 ### New Files
@@ -57,6 +65,20 @@ Printer adapter library implementing the unified print interface.
 
 #### [`tests/printers-lib.test.ts`](tests/printers-lib.test.ts) (89 lines)
 Test suite for printer adapter functionality.
+
+**Test Outline:**
+
+PrintersLib
+  initialization
+    initializes with default config
+    throws error with invalid config
+  print operations
+    prints successfully with valid printer
+    retries on temporary failure
+    throws error when printer not found
+  error handling
+    handles network timeouts gracefully
+    logs errors with full context
 ```
 
 #### Modified Files Section
@@ -68,6 +90,15 @@ For each modified file, you should show the complete functions/methods that chan
   - `// BEGIN REMOVED CODE` / `// END REMOVED CODE` for deletions
   - `// BEGIN MODIFIED CODE` / `// END MODIFIED CODE` for modifications
 - Adjust comment syntax for the language (e.g., `#` for Python, `//` for JS/TS)
+
+**Special Handling for Test Files:**
+For modified test files, show ONLY the **added or modified tests** in documentation format. This reveals what test coverage changed without showing unchanged tests or implementation details.
+
+- Show only tests that were added, removed, or modified
+- Use plain indented text (NOT code blocks)
+- Mark changes clearly: `[ADDED]`, `[REMOVED]`, or `[MODIFIED]`
+- For modified tests, show both old and new descriptions
+- Include enough context (parent describe/context blocks) to understand where the tests belong
 
 Example format:
 ```markdown
@@ -92,6 +123,17 @@ async initializePrinter(config: PrinterConfig): Promise<void> {
   // END NEW CODE
 }
 ```
+
+#### `spec/models/user_spec.rb` (Modified tests)
+
+**Test Changes:**
+
+User
+  validations
+    [ADDED] validates email format
+  #full_name
+    [REMOVED] handles nil last name
+    [ADDED] handles missing first or last name
 ```
 
 #### Summary Section
@@ -118,11 +160,13 @@ You should:
 - Everything in one markdown file for easy navigation
 - New files listed with paths (not full contents)
 - Modified files show complete functions with changes marked
+- Test files show test outlines (not implementation details)
 - Clear section organization for easy scanning
 
 **Your Key Principles:**
 - **Complete**: Document all changes in one place
 - **Contextual**: Show full functions with changes clearly marked
+- **Test-focused**: Show test structure to spot missing edge cases
 - **Navigable**: Use clear structure with file paths as links
 - **Flexible context**: Work with staged, branch, PR, or custom descriptions
 - **Offline-ready**: Generate markdown that can be reviewed/printed as needed
@@ -133,3 +177,7 @@ You should:
 - Use language-appropriate comment syntax
 - Include file paths as relative links
 - Don't include full new files - just paths and descriptions
+- **For test files**: Show test structure in plain text documentation format (like RSpec `--format documentation`)
+- **New test files**: Show complete test hierarchy
+- **Modified test files**: Show ONLY added/removed/modified tests with [ADDED]/[REMOVED] markers
+- **Test outline purpose**: Makes it easy to spot missing edge cases and test coverage gaps
