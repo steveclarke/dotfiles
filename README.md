@@ -146,3 +146,31 @@ any of the install scripts. You can also install optional software found in the
 `install/optional` directory,
 
 e.g. `bash install/optional/steam.sh` to install Emacs.
+
+## Configuration and Secrets
+
+### Shared Environment Variables
+
+The `.dotfilesrc` file in your home directory serves as a centralized location for environment variables and secrets that are shared across all shells (Fish, Zsh, Bash).
+
+**Location**: `~/.dotfilesrc`
+
+Both Fish and Zsh automatically source this file on startup, making any exported variables available in your shell environment.
+
+#### Adding Secrets
+
+Add environment variables using standard bash export syntax:
+
+```bash
+# API keys and tokens
+export MY_API_KEY="your-secret-key"
+export GITHUB_TOKEN="ghp_..."
+
+# Database credentials
+export DATABASE_URL="postgresql://user:pass@host/db"
+
+# Custom environment variables
+export MY_CUSTOM_VAR="value"
+```
+
+**Security Note**: The `.dotfilesrc` file lives in your home directory and is NOT tracked in git, making it safe for storing secrets and machine-specific configuration.
