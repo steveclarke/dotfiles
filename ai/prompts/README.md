@@ -57,6 +57,7 @@ ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
 
 ### Productivity
 - **todoist-daily-review.md** - Interactive Todoist task research and triage assistant
+- **toggl.md** - Toggl time tracking assistant for timesheet management
 - **obsidian-vault-context.md** - Comprehensive Obsidian vault structure and interaction guide
 - **browse-cursor.md** - Browse and explore Cursor features
 
