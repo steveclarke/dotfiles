@@ -40,3 +40,9 @@ export DOTFILES_INSTALL_GUI=true
 
 # Example:
 # export MY_API_KEY="your-secret-key-here"
+
+# Toggl
+# export TOGGL_API_TOKEN=
+# export TOGGL_DEFAULT_WORKSPACE_ID=
+# export TOGGL_DEFAULT_PROJECT_ID=
+# export TOGGL_TIMEZONE=America/St_Johns
