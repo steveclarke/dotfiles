@@ -1,0 +1,1 @@
+../../../../ai/prompts/handbook-writing.md
