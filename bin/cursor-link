@@ -33,8 +33,9 @@ show_usage() {
   echo ""
   echo "Examples:"
   echo "  cursor-link list"
-  echo "  cursor-link link code-review.md"
-  echo "  cursor-link unlink plan.md"
+  echo "  cursor-link link code-review      # .md extension optional"
+  echo "  cursor-link link spec.md"
+  echo "  cursor-link unlink plan"
 }
 
 # List all available prompts
@@ -92,7 +93,7 @@ link_prompt() {
   
   if [[ -z "$prompt_name" ]]; then
     echo -e "${RED}Error: Please specify a prompt to link${NC}"
-    echo "Example: cursor-link link code-review.md"
+    echo "Example: cursor-link link code-review"
     exit 1
   fi
   
@@ -136,7 +137,7 @@ unlink_prompt() {
   
   if [[ -z "$prompt_name" ]]; then
     echo -e "${RED}Error: Please specify a prompt to unlink${NC}"
-    echo "Example: cursor-link unlink code-review.md"
+    echo "Example: cursor-link unlink code-review"
     exit 1
   fi
   
