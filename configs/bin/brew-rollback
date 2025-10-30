@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+# brew-rollback - Rollback a Homebrew package to a specific version
+#
+# Usage: brew-rollback [OPTIONS] <package> <version>
+#
+# Arguments:
+#   package     Name of the Homebrew package (e.g., mise, cmake, htop)
+#   version     Version to rollback to (e.g., 2025.10.19, 3.31.1)
+#
+# Options:
+#   --pin       Pin the version after install to prevent auto-updates
+#   --force     Skip confirmation prompt before uninstalling
+#   -h, --help  Show this help message
+#
+# Examples:
+#   brew-rollback mise 2025.10.19
+#   brew-rollback --pin cmake 3.31.1
+#   brew-rollback --force htop 3.3.0
+#
+# Why is this needed?
+# ===================
+# Unlike npm, pip, gem, and other package managers, Homebrew doesn't provide
+# a simple way to install specific old versions (e.g., `brew install pkg@1.2.3`).
+# This script implements the modern workaround using `brew extract`.
+#
+# Method:
+# =======
+# 1. Creates a local tap ($USER/local-tap) to store old formula versions
+# 2. Taps homebrew/core to access formula history (~1GB, one-time)
+# 3. Extracts the specific version from git history
+# 4. Uninstalls current version
+# 5. Installs the old version from local tap
+# 6. Optionally pins the version to prevent future auto-updates
+#
+# Notes:
+# ======
+# - First run will clone homebrew-core repo (~1GB) to:
+#   /opt/homebrew/Library/Taps/homebrew/homebrew-core
+# - Subsequent rollbacks reuse this clone (no additional downloads)
+# - Local tap is created at:
+#   /opt/homebrew/Library/Taps/$USER/homebrew-local-tap
+# - After rollback, manual upgrades will be needed if version is pinned
+#
+# References:
+# ===========
+# - https://stackoverflow.com/questions/3987683/homebrew-install-specific-version-of-formula
+# - https://www.ericbariaux.com/posts/brew_rollback/ (January 2025)
+# - https://paul.af/brew-rollback (August 2025)
+#
+# Author: Created October 2025
+# License: MIT
+
+set -euo pipefail
+
+# Make Homebrew non-interactive
+export HOMEBREW_NO_INPUT=1
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+LOCAL_TAP="${USER}/local-tap"
+
+# Function to print colored messages
+error() {
+    echo -e "${RED}Error: $*${NC}" >&2
+}
+
+success() {
+    echo -e "${GREEN}✓ $*${NC}"
+}
+
+info() {
+    echo -e "${BLUE}→ $*${NC}"
+}
+
+warn() {
+    echo -e "${YELLOW}⚠ $*${NC}"
+}
+
+# Function to show usage
+usage() {
+    sed -n '2,/^# Author:/p' "$0" | sed 's/^# //; s/^#//' | head -n -2
+    exit 0
+}
+
+# Function to confirm action
+confirm() {
+    local prompt="$1"
+    local response
+    echo -ne "${YELLOW}${prompt} [y/N]: ${NC}"
+    read -r response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
+# Parse command line arguments
+PIN=false
+FORCE=false
+PACKAGE=""
+VERSION=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --pin)
+            PIN=true
+            shift
+            ;;
+        --force)
+            FORCE=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+        -*)
+            error "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+        *)
+            if [[ -z "$PACKAGE" ]]; then
+                PACKAGE="$1"
+            elif [[ -z "$VERSION" ]]; then
+                VERSION="$1"
+            else
+                error "Too many arguments"
+                echo "Use --help for usage information"
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Validate arguments
+if [[ -z "$PACKAGE" ]] || [[ -z "$VERSION" ]]; then
+    error "Missing required arguments"
+    echo "Usage: brew-rollback [OPTIONS] <package> <version>"
+    echo "Use --help for more information"
+    exit 1
+fi
+
+# Check if brew is installed
+if ! command -v brew &> /dev/null; then
+    error "Homebrew is not installed"
+    echo "Install from: https://brew.sh"
+    exit 1
+fi
+
+echo ""
+info "Rolling back ${PACKAGE} to version ${VERSION}"
+echo ""
+
+# Check if package is currently installed
+CURRENT_VERSION=""
+if brew list --versions "$PACKAGE" &> /dev/null; then
+    CURRENT_VERSION=$(brew list --versions "$PACKAGE" | awk '{print $2}')
+    info "Current version: ${CURRENT_VERSION}"
+    
+    # Confirm uninstall unless --force
+    if [[ "$FORCE" != true ]]; then
+        echo ""
+        if ! confirm "This will uninstall ${PACKAGE} ${CURRENT_VERSION} and install ${VERSION}. Continue?"; then
+            echo "Aborted."
+            exit 0
+        fi
+    fi
+else
+    info "Package ${PACKAGE} is not currently installed"
+fi
+
+echo ""
+
+# Step 1: Create local tap if it doesn't exist
+info "Step 1/5: Setting up local tap..."
+if brew tap | grep -q "^${LOCAL_TAP}$"; then
+    success "Local tap ${LOCAL_TAP} already exists"
+else
+    if brew tap-new "$LOCAL_TAP" &> /dev/null; then
+        success "Created local tap ${LOCAL_TAP}"
+    else
+        error "Failed to create local tap"
+        exit 1
+    fi
+fi
+
+# Step 2: Tap homebrew/core if needed
+info "Step 2/5: Ensuring homebrew/core is tapped..."
+if [[ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]]; then
+    success "homebrew/core already tapped"
+else
+    warn "This will clone homebrew-core (~1GB, one-time operation)"
+    if brew tap homebrew/core --force; then
+        success "Tapped homebrew/core"
+    else
+        error "Failed to tap homebrew/core"
+        exit 1
+    fi
+fi
+
+# Step 3: Extract the specific version
+info "Step 3/5: Extracting ${PACKAGE}@${VERSION}..."
+EXTRACT_OUTPUT=$(brew extract --force --version="$VERSION" "$PACKAGE" "$LOCAL_TAP" 2>&1) || {
+    error "Failed to extract version ${VERSION}"
+    echo "$EXTRACT_OUTPUT" >&2
+    echo ""
+    warn "Possible reasons:"
+    echo "  - Version ${VERSION} doesn't exist in homebrew-core history"
+    echo "  - Package name is incorrect"
+    echo "  - Check available versions at:"
+    echo "    https://github.com/Homebrew/homebrew-core/commits/main/Formula/${PACKAGE:0:1}/${PACKAGE}.rb"
+    exit 1
+}
+success "Extracted ${PACKAGE}@${VERSION}"
+
+# Step 4: Uninstall current version if installed
+if [[ -n "$CURRENT_VERSION" ]]; then
+    info "Step 4/5: Uninstalling current version..."
+    if brew uninstall "$PACKAGE" &> /dev/null; then
+        success "Uninstalled ${PACKAGE} ${CURRENT_VERSION}"
+    else
+        error "Failed to uninstall ${PACKAGE}"
+        exit 1
+    fi
+else
+    info "Step 4/5: Skipping uninstall (not currently installed)"
+fi
+
+# Step 5: Install the old version
+info "Step 5/5: Installing ${PACKAGE}@${VERSION}..."
+if brew install "${LOCAL_TAP}/${PACKAGE}@${VERSION}"; then
+    success "Installed ${PACKAGE}@${VERSION}"
+else
+    error "Failed to install ${PACKAGE}@${VERSION}"
+    exit 1
+fi
+
+# Optional: Pin the version
+if [[ "$PIN" == true ]]; then
+    info "Pinning ${PACKAGE}@${VERSION}..."
+    if brew pin "${LOCAL_TAP}/${PACKAGE}@${VERSION}" &> /dev/null; then
+        success "Pinned ${PACKAGE}@${VERSION}"
+        warn "Manual upgrades will be needed. Use 'brew unpin ${PACKAGE}' to enable auto-updates"
+    else
+        error "Failed to pin ${PACKAGE}"
+        exit 1
+    fi
+fi
+
+# Verify installation
+echo ""
+info "Verifying installation..."
+INSTALLED_VERSION=$("$PACKAGE" --version 2>&1 | head -1 || echo "unknown")
+echo "  ${INSTALLED_VERSION}"
+
+echo ""
+success "Rollback complete!"
+echo ""
+info "Notes:"
+echo "  - Version is now at: ${VERSION}"
+echo "  - To prevent auto-updates: brew pin ${PACKAGE}"
+echo "  - To allow auto-updates: brew unpin ${PACKAGE}"
+echo "  - To upgrade manually: brew upgrade ${PACKAGE}"
+echo ""
+
