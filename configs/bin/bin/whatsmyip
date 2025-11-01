@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Get the IP address
+ip=$(curl -s https://ipinfo.io/ip)
+
+# Display the IP
+echo "$ip"
+
+# Copy to clipboard based on available command
+if command -v pbcopy &> /dev/null; then
+    # macOS
+    echo -n "$ip" | pbcopy
+    echo "(Copied to clipboard)" >&2
+elif command -v xclip &> /dev/null; then
+    # Linux with xclip
+    echo -n "$ip" | xclip -selection clipboard
+    echo "(Copied to clipboard)" >&2
+elif command -v xsel &> /dev/null; then
+    # Linux with xsel
+    echo -n "$ip" | xsel --clipboard
+    echo "(Copied to clipboard)" >&2
+else
+    echo "(Clipboard tool not found - install xclip or xsel on Linux)" >&2
+fi
+
