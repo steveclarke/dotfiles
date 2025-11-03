@@ -18,6 +18,8 @@ Write bash scripts with clear structure, proper error handling, and modular func
 
 ## Script Structure
 
+Place `main()` immediately after variables so the workflow is visible at the top of the file. Implementation details come after.
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
@@ -41,16 +43,37 @@ set -euo pipefail
 #
 ################################################################################
 
+# Colors for output
+green='\033[0;32m'
+blue='\033[0;34m'
+yellow='\033[1;33m'
+red='\033[0;31m'
+nc='\033[0m'
+
 # Configuration variables (from environment/args)
+VAR_ONE=${VAR_ONE:-default}
+VAR_TWO=${VAR_TWO:?VAR_TWO is required}
+
+################################################################################
+# Main Orchestration
+################################################################################
+
+main() {
+  parse_arguments "$@"
+  step_one
+  step_two
+  step_three
+  log "Complete!"
+}
 
 ################################################################################
 # Helper Functions
 ################################################################################
 
-log() { echo -e "${GREEN}==>${NC} ${1}"; }
-info() { echo -e "${BLUE}Info:${NC} ${1}"; }
-warn() { echo -e "${YELLOW}Warning:${NC} ${1}"; }
-error() { echo -e "${RED}Error:${NC} ${1}" >&2; exit 1; }
+log() { echo -e "${green}==>${nc} ${1}"; }
+info() { echo -e "${blue}Info:${nc} ${1}"; }
+warn() { echo -e "${yellow}Warning:${nc} ${1}"; }
+error() { echo -e "${red}Error:${nc} ${1}" >&2; exit 1; }
 
 ################################################################################
 # Core Functions (organized by purpose)
@@ -62,16 +85,6 @@ function_name() {
   # Implementation
   
   log "Complete"
-}
-
-################################################################################
-# Main Orchestration
-################################################################################
-
-main() {
-  step_one
-  step_two
-  step_three
 }
 
 ################################################################################
@@ -115,8 +128,17 @@ setup_directory() {
 
 ## Main Flow Readability
 
-**Main should tell the story:**
+**Place main() at the top** (right after variables) so the workflow is immediately visible when opening the file. Implementation details come after.
+
+**Good - Workflow visible at top:**
 ```bash
+# Configuration variables
+DEPLOY_HOST=${DEPLOY_HOST:?Required}
+
+################################################################################
+# Main Orchestration
+################################################################################
+
 main() {
   parse_arguments "$@"
   validate_environment
@@ -132,13 +154,20 @@ main() {
   verify_success
   log "Complete!"
 }
+
+# ... helper functions and implementation below ...
 ```
 
-**Not this:**
+**Bad - Must scroll to find workflow:**
 ```bash
+# ... 150 lines of functions ...
+
 main() {
-  # 200 lines of inline code
+  step_one
+  step_two
 }
+
+main "$@"
 ```
 
 ## Quality Checklist
