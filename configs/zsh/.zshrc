@@ -245,10 +245,12 @@ fi
 # =============================================================================
 # MISE
 # =============================================================================
-# This is now in .zprofile
-# if command -v mise >/dev/null 2>&1; then
-#     eval "$(mise activate zsh --shims)"
-# fi
+# Activate mise for interactive shells (both login and non-login)
+# Non-login shells (like those opened in VS Code/Cursor) won't load .zprofile
+# so we need this here to ensure mise is available in all interactive shells
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi
 
 # =============================================================================
 # KEYCHAIN - frontend to ssh-agent (Linux only)
@@ -315,3 +317,6 @@ if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
     export PHP_INI_SCAN_DIR="/Users/steve/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
 fi
 
+
+# Added by Antigravity
+export PATH="/Users/steve/.antigravity/antigravity/bin:$PATH"
