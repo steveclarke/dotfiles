@@ -208,6 +208,23 @@ Ask Claude questions that should trigger your skill based on its description. Cl
 
 ## Skills in This Directory
 
+### bruno-endpoint-creation
+
+Comprehensive guide for creating REST API endpoints in Bruno. Provides patterns and best practices for:
+- Environment configuration (development vs production)
+- RESTful endpoint structure and CRUD patterns
+- Authentication (collection-level and individual)
+- Request configuration and body formatting
+- Response handling with pre/post-request scripts
+- Error handling and validation
+- Documentation standards
+- Collection organization and folder structure
+- Advanced patterns (pagination, filtering, bulk operations)
+- Testing strategies and security considerations
+
+**Files:**
+- `SKILL.md` - Core skill definition with all patterns and examples
+
 ### todoist-daily-review
 
 Automates the workflow for reviewing and documenting Todoist investigation tasks:

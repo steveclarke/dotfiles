@@ -77,6 +77,11 @@ ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
 - **Reusability**: Same prompt can be used by multiple agents
 - **Git tracking**: Prompts tracked as regular files, symlinks tracked as symlinks
 
+## Migrated to Skills
+
+Some prompts have been converted to Claude Agent Skills for better discoverability and automatic invocation:
+- **bruno-endpoint-creation** → Now available as `bruno-endpoint-creation` skill
+
 ## Related
 
 - **[Claude Agent Skills](../skills/README.md)** - Similar architecture for Claude Agent Skills (model-invoked capabilities that extend Claude's functionality)
