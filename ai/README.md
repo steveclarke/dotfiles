@@ -6,7 +6,7 @@ This directory contains AI and LLM-related resources for development workflows, 
 
 - **[guides/](guides/)** - Development process documentation and guides
 - **[prompts/](prompts/)** - Reusable prompt templates for various tasks
-- **[skills/](skills/)** - ⚠️ Claude Agent Skills (experimental/WIP)
+- **[skills/](skills/)** - Claude Agent Skills for extending Claude's capabilities
 
 ## Prompts and Agent Integration
 
@@ -17,13 +17,13 @@ For detailed information on the symlink architecture and how to integrate prompt
 This `ai/` directory also contains:
 - Process guides that agents reference (like feature-development-process.md)
 - Notes and learnings about working with AI tools
-- **Experimental:** Claude Agent Skills (brand new feature from Oct 2025, currently WIP)
+- Claude Agent Skills for extending Claude's capabilities in Claude Code and Cursor
 
 ## Quick Start
 
 1. **Using Guides**: Check `guides/` for process documentation
 2. **Using Prompts**: Browse `prompts/` for reusable templates
-3. **Using Skills**: See `skills/README.md` for info on Claude Agent Skills (experimental)
+3. **Using Skills**: See `skills/README.md` for info on Claude Agent Skills
 
 ## Contributing
 

@@ -106,8 +106,8 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
-ensure_dir "${HOME}/.cursor"
-cleanup_paths "${HOME}/.cursor/commands"
+ensure_dir "${HOME}/.cursor" "${HOME}/.claude"
+cleanup_paths "${HOME}/.cursor/commands" "${HOME}/.claude/skills"
 stow_package "Cursor" "cursor"
 
 # Linux-specific configurations

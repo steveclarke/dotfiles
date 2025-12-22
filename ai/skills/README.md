@@ -1,23 +1,62 @@
 # Claude Agent Skills
 
-> ⚠️ **WORK IN PROGRESS**
->
-> This is an experimental area for testing Claude's new Agent Skills feature (announced Oct 16, 2025).
-> **Current Status:** Not fully working yet - needs iteration and debugging.
-> This directory contains early attempts that may not function as intended.
-
-## What are Agent Skills?
-
-Agent Skills are a new way to extend Claude's capabilities by packaging specialized knowledge, workflows, and code into organized folders that Claude can discover and load dynamically. Instead of building custom agents for each use case, you can create composable "skills" that teach Claude how to perform specific tasks.
+Agent Skills extend Claude's capabilities by packaging specialized knowledge, workflows, and code into organized folders that Claude can discover and load dynamically. Instead of building custom agents for each use case, you can create composable "skills" that teach Claude how to perform specific tasks.
 
 Think of a skill like an onboarding guide for a new hire - it contains instructions, examples, and tools needed to accomplish a specific type of work.
 
-**Announced:** October 16, 2025  
 **Official Resources:**
+- [Claude Code Skills Documentation](https://code.claude.com/docs/en/skills)
 - [Engineering Blog Post](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
-- [Skills Documentation](https://docs.anthropic.com/en/docs/agents/skills)
-- [How to Create Skills Guide](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
 - [Example Skills Repository](https://github.com/anthropics/skills)
+
+## Installation & Architecture
+
+Skills in this repository use a three-layer architecture similar to the [prompts system](../prompts/README.md):
+
+```
+ai/skills/todoist-daily-review/
+    ↓ (symlink via skills-link)
+configs/cursor/.claude/skills/todoist-daily-review/
+    ↓ (symlink via stow)
+~/.claude/skills/todoist-daily-review/
+```
+
+### Architecture Flow
+
+1. **Source of truth**: `ai/skills/` - Actual skill directories with SKILL.md files
+2. **Stow staging**: `configs/cursor/.claude/skills/` - Symlinks created by `skills-link` command
+3. **Deployed location**: `~/.claude/skills/` - Where Claude Code/Cursor discovers skills (via stow)
+
+### Linking Skills
+
+Use the `skills-link` CLI command to selectively link skills:
+
+```bash
+# List all available skills
+skills-link list
+
+# Link a specific skill
+skills-link link todoist-daily-review
+
+# Link all skills
+skills-link link-all
+
+# Unlink a skill
+skills-link unlink todoist-daily-review
+
+# List currently linked skills
+skills-link linked
+```
+
+After linking, run stow to deploy:
+
+```bash
+dotfiles stow
+# or
+bash configs/stow.sh
+```
+
+This creates symlinks in `~/.claude/skills/` where Claude Code and Cursor automatically discover them.
 
 ## How Skills Work
 
@@ -39,7 +78,7 @@ A skill is a directory containing at minimum a `SKILL.md` file:
 my-skill/
 ├── SKILL.md           # Required: core skill definition
 ├── reference.md       # Optional: additional context
-├── examples.md        # Optional: examples and edge cases
+├── examples.md         # Optional: examples and edge cases
 └── scripts/           # Optional: executable code
     └── helper.py
 ```
@@ -52,7 +91,6 @@ Every `SKILL.md` must start with YAML frontmatter containing required metadata:
 ---
 name: my-skill-name
 description: Clear description of what this skill does and when to use it
-version: 1.0.0
 ---
 
 # My Skill
@@ -72,6 +110,11 @@ Step-by-step workflow...
 - Bad: `My Skill`, `My_Skill`, `MySkill`
 - Good: `my-skill`, `my-skill-v2`, `skill-123`
 
+**Description Best Practices:**
+- Include both **what** the skill does and **when** to use it
+- Use specific trigger terms users would mention
+- Be clear and specific (vague descriptions make discovery difficult)
+
 ### Skills and Code Execution
 
 Skills can include Python or JavaScript code that Claude can execute as tools. This is useful for:
@@ -82,8 +125,7 @@ Skills can include Python or JavaScript code that Claude can execute as tools. T
 ```markdown
 ---
 name: pdf-form-filler
-description: Fill out PDF forms programmatically
-dependencies: python>=3.8, pypdf>=3.0.0
+description: Fill out PDF forms programmatically. Use when working with PDF files or forms.
 ---
 
 # PDF Form Filler
@@ -93,50 +135,61 @@ dependencies: python>=3.8, pypdf>=3.0.0
 Use `scripts/extract_fields.py` to get all form fields from a PDF.
 ```
 
-## Creating and Installing Skills
+## Usage
+
+Skills are **model-invoked**—Claude autonomously decides when to use them based on your request and the skill's description. You don't need to explicitly invoke them.
+
+**Example:**
+- You: "Can you help me review my Todoist tasks for today?"
+- Claude: Automatically activates the `todoist-daily-review` skill if it matches the description
+
+To see what skills are available, ask Claude:
+- "What skills are available?"
+- "List all available skills"
+
+## Creating New Skills
 
 ### 1. Create the Skill Directory
 
 ```bash
-mkdir my-skill
-cd my-skill
+mkdir ai/skills/my-new-skill
+cd ai/skills/my-new-skill
 ```
 
 ### 2. Write SKILL.md
 
-Start with YAML frontmatter, then add instructions in markdown.
+Create `SKILL.md` with YAML frontmatter and instructions:
 
-### 3. Package as ZIP
+```markdown
+---
+name: my-new-skill
+description: Brief description of what this skill does and when to use it. Include trigger terms users would mention.
+---
+
+# My New Skill
+
+## Instructions
+Step-by-step guidance for Claude...
+
+## Examples
+Concrete examples of using this skill...
+```
+
+### 3. Link the Skill
 
 ```bash
-cd ..
-zip -r my-skill.zip my-skill/
+skills-link link my-new-skill
+dotfiles stow
 ```
 
-**Important:** The ZIP must contain the skill folder as its root, not files directly:
+### 4. Test the Skill
 
-```
-✅ Correct:
-my-skill.zip
-└── my-skill/
-    └── SKILL.md
-
-❌ Incorrect:
-my-skill.zip
-└── SKILL.md (directly in root)
-```
-
-### 4. Upload to Claude
-
-1. Go to Claude.ai Settings > Capabilities
-2. Upload your skill ZIP file
-3. Enable the skill
-4. Test with prompts that should trigger it
+Ask Claude questions that should trigger your skill based on its description. Claude will automatically use the skill when relevant.
 
 ## Best Practices
 
 - **Keep it focused:** One skill per workflow. Multiple focused skills compose better than one large skill
-- **Write clear descriptions:** Claude uses the description to decide when to invoke the skill
+- **Write clear descriptions:** Claude uses the description to decide when to invoke the skill. Include both what it does and when to use it
 - **Start simple:** Begin with basic markdown instructions before adding complex scripts
 - **Use examples:** Include example inputs/outputs to show what success looks like
 - **Version your skills:** Track versions as you iterate (helps with troubleshooting)
@@ -157,8 +210,6 @@ my-skill.zip
 
 ### todoist-daily-review
 
-**Status:** ⚠️ Work in Progress - Not fully functional
-
 Automates the workflow for reviewing and documenting Todoist investigation tasks:
 1. Fetches today's tasks from Todoist
 2. Identifies investigation items (tools, articles, resources)
@@ -171,22 +222,17 @@ Automates the workflow for reviewing and documenting Todoist investigation tasks
 - `SKILL.md` - Core skill definition and workflow
 - `examples.md` - Example outputs and edge cases
 
-## Future Plans
-
-As the Skills feature matures, this directory will contain:
-- Production-ready skills for my workflows
-- Templates and examples for creating new skills
-- Integration guides for different contexts (Claude.ai, Claude Code, API)
-
 ## Platform Support
 
-Skills are currently supported on:
-- **Claude.ai** - Web interface with skill management
-- **Claude Code** - Local code execution environment
+Skills are supported on:
+- **Claude Code** - Local code execution environment (recommended)
+- **Cursor** - Integrated Claude Code environment
+- **Claude.ai** - Web interface (requires ZIP upload)
 - **Claude Agent SDK** - For building custom agents
 - **Claude Developer Platform** - API integration (dependencies must be pre-installed)
 
+For Claude Code and Cursor, skills are automatically discovered from `~/.claude/skills/` directory.
+
 ---
 
-*Last Updated: October 18, 2025*
-
+*Last Updated: January 2025*

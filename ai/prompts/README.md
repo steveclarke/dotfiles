@@ -34,6 +34,15 @@ Prompts symlinked in `configs/cursor/.cursor/commands/` are automatically availa
 Copy prompts to agent-specific directories or create symlinks as needed.
 
 ### Adding a New Cursor Command
+
+Use the `commands-link` CLI command:
+
+```bash
+commands-link link your-prompt
+```
+
+Or manually create a symlink:
+
 ```bash
 cd configs/cursor/.cursor/commands/
 ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
@@ -68,3 +77,7 @@ ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
 - **Reusability**: Same prompt can be used by multiple agents
 - **Git tracking**: Prompts tracked as regular files, symlinks tracked as symlinks
 
+## Related
+
+- **[Claude Agent Skills](../skills/README.md)** - Similar architecture for Claude Agent Skills (model-invoked capabilities that extend Claude's functionality)
+- Skills use the same three-layer architecture: source → staging → deployed via symlinks
