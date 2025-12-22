@@ -81,6 +81,7 @@ ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
 
 Some prompts have been converted to Claude Agent Skills for better discoverability and automatic invocation:
 - **bruno-endpoint-creation** → Now available as `bruno-endpoint-creation` skill
+- **code-review** → Now available as `code-review` skill
 
 ## Related
 
