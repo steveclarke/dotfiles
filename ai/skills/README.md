@@ -225,6 +225,19 @@ Comprehensive guide for creating REST API endpoints in Bruno. Provides patterns 
 **Files:**
 - `SKILL.md` - Core skill definition with all patterns and examples
 
+### code-review
+
+Comprehensive code review process for conducting thorough, educational, and actionable code reviews:
+- Initial comprehensive scan (security, performance, code quality, architecture, testing, documentation)
+- Feature documentation verification (cross-checking against specs, plans, requirements)
+- Test pattern analysis and anti-pattern identification
+- Guided interactive walkthrough with issue prioritization
+- Structured review document generation with checklists
+- Review file organization and GitHub posting support
+
+**Files:**
+- `SKILL.md` - Complete review workflow and best practices
+
 ### todoist-daily-review
 
 Automates the workflow for reviewing and documenting Todoist investigation tasks:
