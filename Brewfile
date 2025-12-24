@@ -68,8 +68,7 @@ brew "the_silver_searcher"
 brew "tealdeer"  # Replacement for deprecated tldr
 brew "tmux"
 brew "tree"
-# https://github.com/alexpasmantier/television
-# Fuzzy finder
+brew "yt-dlp"
 brew "television"
 brew "ugrep"
 brew "vultr"
