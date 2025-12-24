@@ -21,6 +21,8 @@ This skill helps you find the perfect domain name for your project by generating
 1. **Understands Your Project**: Analyzes what you're building and who it's for
 2. **Generates Creative Names**: Creates relevant, memorable domain options
 3. **Checks Availability**: Verifies which domains are actually available across multiple TLDs
+   - **Priority Method**: Uses the `whois` command-line utility if available (fastest and most reliable)
+   - **Fallback Methods**: Uses web-based APIs or services if `whois` is not available
 4. **Multiple Extensions**: Suggests .com, .io, .dev, .ai, .app, and more
 5. **Provides Alternatives**: Offers variations if top choices are taken
 6. **Branding Insights**: Explains why certain names work well
@@ -201,6 +203,22 @@ When suggesting domains, I'll note:
 - Premium TLDs (.io, .ai): ~$30-50/year
 - Taken domains: Market price if listed
 - Premium domains: $hundreds to $thousands
+
+## Implementation Notes
+
+When checking domain availability:
+
+1. **First**: Check if `whois` command-line utility is available (`which whois` or `command -v whois`)
+2. **If available**: Use `whois <domain>` to check availability (fastest, most reliable, no API limits)
+3. **If not available**: Fall back to web-based domain availability APIs or services
+4. **Note**: Some TLDs may have different whois servers or rate limiting; handle gracefully
+
+Example whois check:
+```bash
+whois example.com
+# Look for "No match" or "NOT FOUND" in output for available domains
+# Look for registration details for taken domains
+```
 
 ## Related Tools
 
