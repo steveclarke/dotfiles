@@ -17,35 +17,36 @@ ai/prompts/                           ← Source of truth (actual files)
     └── plan.md
     └── ...
 
-configs/cursor/.cursor/commands/      ← Symlinks to prompts
+configs/cursor/.cursor/commands/      ← Symlinks to prompts (Cursor)
+configs/claude/.claude/commands/      ← Symlinks to prompts (Claude)
     └── code-review-prep.md → ../../../../ai/prompts/code-review-prep.md
     └── plan.md → ../../../../ai/prompts/plan.md
 
-~/.cursor/commands/                   ← Stow deploys symlinks here
-    └── code-review-prep.md → ~/.local/share/dotfiles/configs/cursor/...
+~/.cursor/commands/                   ← Stow deploys Cursor symlinks here
+~/.claude/commands/                   ← Stow deploys Claude symlinks here
 ```
 
 ## Usage
 
-### For Cursor
-Prompts symlinked in `configs/cursor/.cursor/commands/` are automatically available as Cursor commands after running stow.
+### For Cursor & Claude
+Prompts symlinked in `configs/cursor/.cursor/commands/` and `configs/claude/.claude/commands/` are automatically available as commands after running stow.
 
 ### For Other Agents
 Copy prompts to agent-specific directories or create symlinks as needed.
 
-### Adding a New Cursor Command
+### Adding Commands
 
 Use the `commands-link` CLI command:
 
 ```bash
+# Link to both Cursor and Claude (default)
 commands-link link your-prompt
-```
 
-Or manually create a symlink:
+# Link to Cursor only
+commands-link --cursor link your-prompt
 
-```bash
-cd configs/cursor/.cursor/commands/
-ln -s ../../../../ai/prompts/your-prompt.md your-prompt.md
+# Link to Claude only
+commands-link --claude link your-prompt
 ```
 
 ## Available Prompts
