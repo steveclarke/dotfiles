@@ -21,7 +21,7 @@ NC='\033[0m' # No Color
 
 # Show usage
 show_usage() {
-  echo "Usage: skills-link [command] [skill]"
+  echo "Usage: link-skills [command] [skill]"
   echo ""
   echo "Commands:"
   echo "  list           List all available skills"
@@ -32,9 +32,9 @@ show_usage() {
   echo "  unlink-all     Unlink all skills"
   echo ""
   echo "Examples:"
-  echo "  skills-link list"
-  echo "  skills-link link todoist-daily-review"
-  echo "  skills-link unlink todoist-daily-review"
+  echo "  link-skills list"
+  echo "  link-skills link todoist-daily-review"
+  echo "  link-skills unlink todoist-daily-review"
 }
 
 # List all available skills
@@ -109,7 +109,7 @@ link_skill() {
   
   if [[ -z "$skill_name" ]]; then
     echo -e "${RED}Error: Please specify a skill to link${NC}"
-    echo "Example: skills-link link todoist-daily-review"
+    echo "Example: link-skills link todoist-daily-review"
     exit 1
   fi
   
@@ -158,7 +158,7 @@ unlink_skill() {
   
   if [[ -z "$skill_name" ]]; then
     echo -e "${RED}Error: Please specify a skill to unlink${NC}"
-    echo "Example: skills-link unlink todoist-daily-review"
+    echo "Example: link-skills unlink todoist-daily-review"
     exit 1
   fi
   

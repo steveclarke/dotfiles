@@ -26,7 +26,7 @@ USE_CLAUDE=true
 
 # Show usage
 show_usage() {
-  echo "Usage: commands-link [flags] [command] [prompt]"
+  echo "Usage: link-commands [flags] [command] [prompt]"
   echo ""
   echo "Flags:"
   echo "  --cursor       Only target Cursor commands"
@@ -42,10 +42,10 @@ show_usage() {
   echo "  unlink-all     Unlink all prompts"
   echo ""
   echo "Examples:"
-  echo "  commands-link list"
-  echo "  commands-link link code-review      # .md extension optional"
-  echo "  commands-link --cursor link spec.md"
-  echo "  commands-link --claude unlink plan"
+  echo "  link-commands list"
+  echo "  link-commands link code-review      # .md extension optional"
+  echo "  link-commands --cursor link spec.md"
+  echo "  link-commands --claude unlink plan"
 }
 
 # Get array of target directories based on flags
@@ -172,7 +172,7 @@ link_prompt() {
   
   if [[ -z "$prompt_name" ]]; then
     echo -e "${RED}Error: Please specify a prompt to link${NC}"
-    echo "Example: commands-link link code-review"
+    echo "Example: link-commands link code-review"
     exit 1
   fi
   
@@ -234,7 +234,7 @@ unlink_prompt() {
   
   if [[ -z "$prompt_name" ]]; then
     echo -e "${RED}Error: Please specify a prompt to unlink${NC}"
-    echo "Example: commands-link unlink code-review"
+    echo "Example: link-commands unlink code-review"
     exit 1
   fi
   

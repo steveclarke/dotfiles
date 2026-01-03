@@ -36,17 +36,17 @@ Copy prompts to agent-specific directories or create symlinks as needed.
 
 ### Adding Commands
 
-Use the `commands-link` CLI command:
+Use the `link-commands` CLI command:
 
 ```bash
 # Link to both Cursor and Claude (default)
-commands-link link your-prompt
+link-commands link your-prompt
 
 # Link to Cursor only
-commands-link --cursor link your-prompt
+link-commands --cursor link your-prompt
 
 # Link to Claude only
-commands-link --claude link your-prompt
+link-commands --claude link your-prompt
 ```
 
 ## Available Prompts
