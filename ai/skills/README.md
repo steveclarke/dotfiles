@@ -16,7 +16,7 @@ Skills in this repository use a three-layer architecture similar to the [prompts
 ```
 ai/skills/todoist-daily-review/
     ↓ (symlink via skills-link)
-configs/cursor/.claude/skills/todoist-daily-review/
+configs/claude/.claude/skills/todoist-daily-review/
     ↓ (symlink via stow)
 ~/.claude/skills/todoist-daily-review/
 ```
@@ -24,7 +24,7 @@ configs/cursor/.claude/skills/todoist-daily-review/
 ### Architecture Flow
 
 1. **Source of truth**: `ai/skills/` - Actual skill directories with SKILL.md files
-2. **Stow staging**: `configs/cursor/.claude/skills/` - Symlinks created by `skills-link` command
+2. **Stow staging**: `configs/claude/.claude/skills/` - Symlinks created by `skills-link` command
 3. **Deployed location**: `~/.claude/skills/` - Where Claude Code/Cursor discovers skills (via stow)
 
 ### Linking Skills

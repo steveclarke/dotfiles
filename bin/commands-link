@@ -10,7 +10,8 @@ else
 fi
 
 PROMPTS_DIR="${DOTFILES_DIR}/ai/prompts"
-COMMANDS_DIR="${DOTFILES_DIR}/configs/cursor/.cursor/commands"
+CURSOR_COMMANDS_DIR="${DOTFILES_DIR}/configs/cursor/.cursor/commands"
+CLAUDE_COMMANDS_DIR="${DOTFILES_DIR}/configs/claude/.claude/commands"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -19,29 +20,63 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Target selection (default: both)
+USE_CURSOR=true
+USE_CLAUDE=true
+
 # Show usage
 show_usage() {
-  echo "Usage: commands-link [command] [prompt]"
+  echo "Usage: commands-link [flags] [command] [prompt]"
+  echo ""
+  echo "Flags:"
+  echo "  --cursor       Only target Cursor commands"
+  echo "  --claude       Only target Claude commands"
+  echo "  (default)      Target both Cursor and Claude"
   echo ""
   echo "Commands:"
   echo "  list           List all available prompts"
   echo "  linked         List currently linked prompts"
-  echo "  link <prompt>  Link a prompt to Cursor commands"
-  echo "  unlink <prompt>  Unlink a prompt from Cursor commands"
+  echo "  link <prompt>  Link a prompt to commands"
+  echo "  unlink <prompt>  Unlink a prompt from commands"
   echo "  link-all       Link all available prompts"
   echo "  unlink-all     Unlink all prompts"
   echo ""
   echo "Examples:"
   echo "  commands-link list"
   echo "  commands-link link code-review      # .md extension optional"
-  echo "  commands-link link spec.md"
-  echo "  commands-link unlink plan"
+  echo "  commands-link --cursor link spec.md"
+  echo "  commands-link --claude unlink plan"
+}
+
+# Get array of target directories based on flags
+get_targets() {
+  local targets=()
+  if [[ "$USE_CURSOR" == true ]]; then
+    targets+=("cursor:${CURSOR_COMMANDS_DIR}")
+  fi
+  if [[ "$USE_CLAUDE" == true ]]; then
+    targets+=("claude:${CLAUDE_COMMANDS_DIR}")
+  fi
+  echo "${targets[@]}"
+}
+
+# Get display name from target
+get_target_name() {
+  echo "$1" | cut -d: -f1
+}
+
+# Get directory from target
+get_target_dir() {
+  echo "$1" | cut -d: -f2
 }
 
 # List all available prompts
 list_prompts() {
   echo -e "${BLUE}Available prompts in ai/prompts/:${NC}"
   echo ""
+  
+  local targets
+  read -ra targets <<< "$(get_targets)"
   
   for prompt in "${PROMPTS_DIR}"/*.md; do
     if [[ -f "$prompt" ]]; then
@@ -52,12 +87,25 @@ list_prompts() {
         continue
       fi
       
-      # Check if linked
-      if [[ -L "${COMMANDS_DIR}/${basename_prompt}" ]]; then
-        echo -e "  ${GREEN}✓${NC} ${basename_prompt}"
-      else
-        echo -e "  ${YELLOW}○${NC} ${basename_prompt}"
-      fi
+      echo -e "  ${basename_prompt}"
+      
+      # Show status for each target
+      local status_parts=()
+      for target in "${targets[@]}"; do
+        local name dir
+        name=$(get_target_name "$target")
+        dir=$(get_target_dir "$target")
+        
+        if [[ -L "${dir}/${basename_prompt}" ]]; then
+          status_parts+=("${name}: ${GREEN}✓${NC}")
+        else
+          status_parts+=("${name}: ${YELLOW}○${NC}")
+        fi
+      done
+      
+      # Join with spaces
+      local IFS='  '
+      echo -e "    ${status_parts[*]}"
     fi
   done
   
@@ -67,24 +115,55 @@ list_prompts() {
 
 # List currently linked prompts
 list_linked() {
-  echo -e "${BLUE}Currently linked prompts:${NC}"
-  echo ""
+  local targets
+  read -ra targets <<< "$(get_targets)"
   
-  local count=0
-  for link in "${COMMANDS_DIR}"/*.md; do
-    if [[ -L "$link" ]]; then
-      basename_link=$(basename "$link")
-      target=$(readlink "$link")
-      echo -e "  ${GREEN}✓${NC} ${basename_link} → ${target}"
-      ((count++))
+  for target in "${targets[@]}"; do
+    local name dir
+    name=$(get_target_name "$target")
+    dir=$(get_target_dir "$target")
+    
+    echo -e "${BLUE}Linked prompts (${name}):${NC}"
+    echo ""
+    
+    local count=0
+    for link in "${dir}"/*.md; do
+      if [[ -L "$link" ]]; then
+        basename_link=$(basename "$link")
+        link_target=$(readlink "$link")
+        echo -e "  ${GREEN}✓${NC} ${basename_link} → ${link_target}"
+        ((count++)) || true
+      fi
+    done
+    
+    if [[ $count -eq 0 ]]; then
+      echo "  No prompts currently linked"
     fi
+    
+    echo ""
   done
+}
+
+# Link a prompt to a single target directory
+link_prompt_to_target() {
+  local prompt_name="$1"
+  local target_name="$2"
+  local target_dir="$3"
   
-  if [[ $count -eq 0 ]]; then
-    echo "  No prompts currently linked"
+  local target_link="${target_dir}/${prompt_name}"
+  
+  # Check if already linked
+  if [[ -L "$target_link" ]]; then
+    echo -e "  ${YELLOW}${target_name}: Already linked${NC}"
+    return 0
   fi
   
-  echo ""
+  # Create the symlink (relative path: ../../../../ai/prompts/file.md)
+  cd "${target_dir}" || exit 1
+  ln -s "../../../../ai/prompts/${prompt_name}" "${prompt_name}"
+  cd - > /dev/null || exit 1
+  
+  echo -e "  ${GREEN}${target_name}: Linked${NC}"
 }
 
 # Link a prompt
@@ -103,7 +182,6 @@ link_prompt() {
   fi
   
   local source_file="${PROMPTS_DIR}/${prompt_name}"
-  local target_link="${COMMANDS_DIR}/${prompt_name}"
   
   # Check if source exists
   if [[ ! -f "$source_file" ]]; then
@@ -114,21 +192,40 @@ link_prompt() {
   # Skip README
   if [[ "$prompt_name" == "README.md" ]]; then
     echo -e "${YELLOW}Skipping README.md (not a prompt)${NC}"
-    exit 0
+    return 0
   fi
   
-  # Check if already linked
-  if [[ -L "$target_link" ]]; then
-    echo -e "${YELLOW}Already linked: ${prompt_name}${NC}"
-    exit 0
+  echo -e "Linking: ${prompt_name}"
+  
+  local targets
+  read -ra targets <<< "$(get_targets)"
+  
+  for target in "${targets[@]}"; do
+    local name dir
+    name=$(get_target_name "$target")
+    dir=$(get_target_dir "$target")
+    link_prompt_to_target "$prompt_name" "$name" "$dir"
+  done
+}
+
+# Unlink a prompt from a single target directory
+unlink_prompt_from_target() {
+  local prompt_name="$1"
+  local target_name="$2"
+  local target_dir="$3"
+  
+  local target_link="${target_dir}/${prompt_name}"
+  
+  # Check if link exists
+  if [[ ! -L "$target_link" ]]; then
+    echo -e "  ${YELLOW}${target_name}: Not linked${NC}"
+    return 0
   fi
   
-  # Create the symlink (relative path: ../../../../ai/prompts/file.md)
-  cd "${COMMANDS_DIR}" || exit 1
-  ln -s "../../../../ai/prompts/${prompt_name}" "${prompt_name}"
-  cd - > /dev/null || exit 1
+  # Remove the symlink
+  rm -f "$target_link"
   
-  echo -e "${GREEN}✓${NC} Linked: ${prompt_name}"
+  echo -e "  ${GREEN}${target_name}: Unlinked${NC}"
 }
 
 # Unlink a prompt
@@ -146,18 +243,17 @@ unlink_prompt() {
     prompt_name="${prompt_name}.md"
   fi
   
-  local target_link="${COMMANDS_DIR}/${prompt_name}"
+  echo -e "Unlinking: ${prompt_name}"
   
-  # Check if link exists
-  if [[ ! -L "$target_link" ]]; then
-    echo -e "${YELLOW}Not linked: ${prompt_name}${NC}"
-    exit 0
-  fi
+  local targets
+  read -ra targets <<< "$(get_targets)"
   
-  # Remove the symlink
-  rm -f "$target_link"
-  
-  echo -e "${GREEN}✓${NC} Unlinked: ${prompt_name}"
+  for target in "${targets[@]}"; do
+    local name dir
+    name=$(get_target_name "$target")
+    dir=$(get_target_dir "$target")
+    unlink_prompt_from_target "$prompt_name" "$name" "$dir"
+  done
 }
 
 # Link all prompts
@@ -175,10 +271,10 @@ link_all() {
       fi
       
       link_prompt "$basename_prompt"
+      echo ""
     fi
   done
   
-  echo ""
   echo -e "${GREEN}Done!${NC}"
 }
 
@@ -187,18 +283,60 @@ unlink_all() {
   echo -e "${BLUE}Unlinking all prompts...${NC}"
   echo ""
   
-  for link in "${COMMANDS_DIR}"/*.md; do
-    if [[ -L "$link" ]]; then
-      basename_link=$(basename "$link")
-      unlink_prompt "$basename_link"
-    fi
+  local targets
+  read -ra targets <<< "$(get_targets)"
+  
+  # Collect all unique prompt names across targets
+  declare -A prompts_seen
+  
+  for target in "${targets[@]}"; do
+    local dir
+    dir=$(get_target_dir "$target")
+    
+    for link in "${dir}"/*.md; do
+      if [[ -L "$link" ]]; then
+        basename_link=$(basename "$link")
+        prompts_seen["$basename_link"]=1
+      fi
+    done
   done
   
-  echo ""
+  # Unlink each unique prompt
+  for prompt_name in "${!prompts_seen[@]}"; do
+    unlink_prompt "$prompt_name"
+    echo ""
+  done
+  
   echo -e "${GREEN}Done!${NC}"
 }
 
 # Main command handler
+if [[ $# -eq 0 ]]; then
+  show_usage
+  exit 1
+fi
+
+# Parse flags first
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --cursor)
+      USE_CURSOR=true
+      USE_CLAUDE=false
+      shift
+      ;;
+    --claude)
+      USE_CURSOR=false
+      USE_CLAUDE=true
+      shift
+      ;;
+    *)
+      # Not a flag, stop parsing
+      break
+      ;;
+  esac
+done
+
+# Handle case where only flags were provided
 if [[ $# -eq 0 ]]; then
   show_usage
   exit 1

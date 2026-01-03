@@ -10,7 +10,7 @@ else
 fi
 
 SKILLS_DIR="${DOTFILES_DIR}/ai/skills"
-STAGING_DIR="${DOTFILES_DIR}/configs/cursor/.claude/skills"
+STAGING_DIR="${DOTFILES_DIR}/configs/claude/.claude/skills"
 
 # Colors for output
 GREEN='\033[0;32m'
