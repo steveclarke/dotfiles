@@ -111,7 +111,7 @@ cleanup_paths "${HOME}/.cursor/commands"
 stow_package "Cursor" "cursor"
 
 ensure_dir "${HOME}/.claude"
-cleanup_paths "${HOME}/.claude/commands" "${HOME}/.claude/skills"
+cleanup_paths "${HOME}/.claude/commands" "${HOME}/.claude/skills" "${HOME}/.claude/agents"
 stow_package "Claude" "claude"
 
 # Linux-specific configurations
