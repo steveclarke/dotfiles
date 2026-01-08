@@ -114,6 +114,10 @@ ensure_dir "${HOME}/.claude"
 cleanup_paths "${HOME}/.claude/commands" "${HOME}/.claude/skills" "${HOME}/.claude/agents"
 stow_package "Claude" "claude"
 
+ensure_dir "${HOME}/.config/opencode"
+cleanup_paths "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
+stow_package "OpenCode" "opencode"
+
 # Linux-specific configurations
 if is_linux; then
   if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
