@@ -1,5 +1,6 @@
 # macOS-specific packages
 tap "heroku/brew"
+tap "steipete/tap"
 tap "supersonic-app/supersonic"
 
 # Fonts
@@ -19,6 +20,7 @@ cask "chatgpt"
 cask "claude"
 cask "cleanshot"
 cask "codex"
+cask "steipete/tap/codexbar"
 cask "cursor"
 cask "discord"
 cask "docker-desktop"
