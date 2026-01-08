@@ -1,1 +1,0 @@
-../../../../ai/prompts/bruno-endpoint-creation.md

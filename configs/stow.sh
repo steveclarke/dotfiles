@@ -106,16 +106,28 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
+# AI tool configurations - symlinks directly to ai/ directories
+# These bypass stow because stow doesn't handle symlink-to-symlink chains well
+
+config_banner "Cursor"
 ensure_dir "${HOME}/.cursor"
-cleanup_paths "${HOME}/.cursor/commands"
-stow_package "Cursor" "cursor"
+rm -f "${HOME}/.cursor/commands" "${HOME}/.cursor/skills"
+ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.cursor/commands"
+ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.cursor/skills"
 
+config_banner "Claude"
 ensure_dir "${HOME}/.claude"
-cleanup_paths "${HOME}/.claude/commands" "${HOME}/.claude/skills" "${HOME}/.claude/agents"
-stow_package "Claude" "claude"
+rm -f "${HOME}/.claude/agents" "${HOME}/.claude/commands" "${HOME}/.claude/skills"
+ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
+ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
+ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
 
+config_banner "OpenCode"
 ensure_dir "${HOME}/.config/opencode"
-cleanup_paths "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
+rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
+ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
+ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.config/opencode/command"
+ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.config/opencode/skill"
 stow_package "OpenCode" "opencode"
 
 # Linux-specific configurations
