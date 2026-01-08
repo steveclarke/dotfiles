@@ -8,5 +8,5 @@ Development guides provide structured approaches and processes for building soft
 
 ## Usage
 
-These guides are not automatically available to any tool - copy them into your projects as needed. For commands that are automatically available in Cursor and Claude, see [`configs/cursor/.cursor/commands/`](../../configs/cursor/.cursor/commands/) and [`configs/claude/.claude/commands/`](../../configs/claude/.claude/commands/).
+These guides are not automatically available to any tool - copy them into your projects as needed. For commands that are automatically available in Cursor, Claude, and OpenCode, see [`ai/commands/`](../commands/).
 

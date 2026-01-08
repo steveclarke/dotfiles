@@ -1,6 +1,6 @@
-# Claude Agent Skills
+# Agent Skills
 
-Agent Skills extend Claude's capabilities by packaging specialized knowledge, workflows, and code into organized folders that Claude can discover and load dynamically. Instead of building custom agents for each use case, you can create composable "skills" that teach Claude how to perform specific tasks.
+Agent Skills extend AI agent capabilities by packaging specialized knowledge, workflows, and code into organized folders that agents can discover and load dynamically. Instead of building custom agents for each use case, you can create composable "skills" that teach agents how to perform specific tasks.
 
 Think of a skill like an onboarding guide for a new hire - it contains instructions, examples, and tools needed to accomplish a specific type of work.
 
@@ -11,44 +11,33 @@ Think of a skill like an onboarding guide for a new hire - it contains instructi
 
 ## Installation & Architecture
 
-Skills in this repository use a three-layer architecture similar to the [prompts system](../prompts/README.md):
+Skills are shared across all AI tools via directory symlinks:
 
 ```
-ai/skills/todoist-daily-review/
-    ↓ (symlink via link-skills)
-configs/claude/.claude/skills/todoist-daily-review/
-    ↓ (symlink via stow)
-~/.claude/skills/todoist-daily-review/
+ai/skills/                              ← Source of truth
+    └── todoist-daily-review/
+    └── code-review/
+    └── ...
+
+~/.claude/skills      → dotfiles/ai/skills   (Claude Code)
+~/.cursor/skills      → dotfiles/ai/skills   (Cursor)
+~/.config/opencode/skill → dotfiles/ai/skills   (OpenCode)
 ```
 
-### Architecture Flow
+### Adding a New Skill
 
-1. **Source of truth**: `ai/skills/` - Actual skill directories with SKILL.md files
-2. **Stow staging**: `configs/claude/.claude/skills/` - Symlinks created by `link-skills` command
-3. **Deployed location**: `~/.claude/skills/` - Where Claude Code/Cursor discovers skills (via stow)
-
-### Linking Skills
-
-Use the `link-skills` CLI command to selectively link skills:
+Simply create a skill directory in `ai/skills/`:
 
 ```bash
-# List all available skills
-link-skills list
-
-# Link a specific skill
-link-skills link todoist-daily-review
-
-# Link all skills
-link-skills link-all
-
-# Unlink a skill
-link-skills unlink todoist-daily-review
-
-# List currently linked skills
-link-skills linked
+mkdir ai/skills/my-new-skill
+# Create SKILL.md (see format below)
 ```
 
-After linking, run stow to deploy:
+The skill is immediately available to Claude Code, Cursor, and OpenCode - no linking required.
+
+### Deploying Skills
+
+Run stow to deploy (if not already set up):
 
 ```bash
 dotfiles stow
@@ -56,19 +45,17 @@ dotfiles stow
 bash configs/stow.sh
 ```
 
-This creates symlinks in `~/.claude/skills/` where Claude Code and Cursor automatically discover them.
-
 ## How Skills Work
 
 ### Progressive Disclosure
 
 Skills use a three-level progressive disclosure system:
 
-1. **Level 1 - Metadata** (always loaded): Claude pre-loads the `name` and `description` of all installed skills into its system prompt at startup
-2. **Level 2 - Core Instructions**: If Claude thinks a skill is relevant, it reads the full `SKILL.md` file into context
-3. **Level 3+ - Additional Resources**: Skills can bundle extra files (reference docs, scripts) that Claude loads only when needed
+1. **Level 1 - Metadata** (always loaded): Agents pre-load the `name` and `description` of all installed skills into their system prompt at startup
+2. **Level 2 - Core Instructions**: If the agent thinks a skill is relevant, it reads the full `SKILL.md` file into context
+3. **Level 3+ - Additional Resources**: Skills can bundle extra files (reference docs, scripts) that agents load only when needed
 
-This design keeps Claude's context window lean while making virtually unlimited context available on-demand.
+This design keeps context windows lean while making virtually unlimited context available on-demand.
 
 ### Anatomy of a Skill
 
@@ -78,7 +65,7 @@ A skill is a directory containing at minimum a `SKILL.md` file:
 my-skill/
 ├── SKILL.md           # Required: core skill definition
 ├── reference.md       # Optional: additional context
-├── examples.md         # Optional: examples and edge cases
+├── examples.md        # Optional: examples and edge cases
 └── scripts/           # Optional: executable code
     └── helper.py
 ```
@@ -96,7 +83,7 @@ description: Clear description of what this skill does and when to use it
 # My Skill
 
 ## Overview
-Detailed instructions for Claude...
+Detailed instructions for the agent...
 
 ## When to Use
 Apply this skill when...
@@ -117,7 +104,7 @@ Step-by-step workflow...
 
 ### Skills and Code Execution
 
-Skills can include Python or JavaScript code that Claude can execute as tools. This is useful for:
+Skills can include Python or JavaScript code that agents can execute as tools. This is useful for:
 - Operations better suited to code than token generation (sorting, parsing, etc.)
 - Tasks requiring deterministic reliability
 - Interacting with APIs or filesystems
@@ -137,13 +124,13 @@ Use `scripts/extract_fields.py` to get all form fields from a PDF.
 
 ## Usage
 
-Skills are **model-invoked**—Claude autonomously decides when to use them based on your request and the skill's description. You don't need to explicitly invoke them.
+Skills are **model-invoked**—agents autonomously decide when to use them based on your request and the skill's description. You don't need to explicitly invoke them.
 
 **Example:**
 - You: "Can you help me review my Todoist tasks for today?"
-- Claude: Automatically activates the `todoist-daily-review` skill if it matches the description
+- Agent: Automatically activates the `todoist-daily-review` skill if it matches the description
 
-To see what skills are available, ask Claude:
+To see what skills are available, ask the agent:
 - "What skills are available?"
 - "List all available skills"
 
@@ -169,36 +156,29 @@ description: Brief description of what this skill does and when to use it. Inclu
 # My New Skill
 
 ## Instructions
-Step-by-step guidance for Claude...
+Step-by-step guidance for the agent...
 
 ## Examples
 Concrete examples of using this skill...
 ```
 
-### 3. Link the Skill
+### 3. Test the Skill
 
-```bash
-link-skills link my-new-skill
-dotfiles stow
-```
-
-### 4. Test the Skill
-
-Ask Claude questions that should trigger your skill based on its description. Claude will automatically use the skill when relevant.
+Ask the agent questions that should trigger your skill based on its description. The agent will automatically use the skill when relevant.
 
 ## Best Practices
 
 - **Keep it focused:** One skill per workflow. Multiple focused skills compose better than one large skill
-- **Write clear descriptions:** Claude uses the description to decide when to invoke the skill. Include both what it does and when to use it
+- **Write clear descriptions:** Agents use the description to decide when to invoke the skill. Include both what it does and when to use it
 - **Start simple:** Begin with basic markdown instructions before adding complex scripts
 - **Use examples:** Include example inputs/outputs to show what success looks like
 - **Version your skills:** Track versions as you iterate (helps with troubleshooting)
 - **Test incrementally:** Test after each change rather than building everything at once
-- **Let skills compose:** Claude can use multiple skills together automatically
+- **Let skills compose:** Agents can use multiple skills together automatically
 
 ## Security Considerations
 
-⚠️ **Only install skills from trusted sources**
+**Only install skills from trusted sources**
 
 - Skills can execute code in your environment
 - Don't hardcode sensitive info (API keys, passwords)
@@ -222,9 +202,6 @@ Comprehensive guide for creating REST API endpoints in Bruno. Provides patterns 
 - Advanced patterns (pagination, filtering, bulk operations)
 - Testing strategies and security considerations
 
-**Files:**
-- `SKILL.md` - Core skill definition with all patterns and examples
-
 ### code-review
 
 Comprehensive code review process for conducting thorough, educational, and actionable code reviews:
@@ -234,9 +211,6 @@ Comprehensive code review process for conducting thorough, educational, and acti
 - Guided interactive walkthrough with issue prioritization
 - Structured review document generation with checklists
 - Review file organization and GitHub posting support
-
-**Files:**
-- `SKILL.md` - Complete review workflow and best practices
 
 ### todoist-daily-review
 
@@ -248,21 +222,18 @@ Automates the workflow for reviewing and documenting Todoist investigation tasks
 5. Appends to Obsidian daily notes
 6. Marks tasks complete in Todoist
 
-**Files:**
-- `SKILL.md` - Core skill definition and workflow
-- `examples.md` - Example outputs and edge cases
-
 ## Platform Support
 
 Skills are supported on:
-- **Claude Code** - Local code execution environment (recommended)
-- **Cursor** - Integrated Claude Code environment
+- **Claude Code** - Local code execution environment
+- **Cursor** - Integrated Claude Code environment (nightly)
+- **OpenCode** - Terminal-based AI coding agent
 - **Claude.ai** - Web interface (requires ZIP upload)
 - **Claude Agent SDK** - For building custom agents
-- **Claude Developer Platform** - API integration (dependencies must be pre-installed)
 
-For Claude Code and Cursor, skills are automatically discovered from `~/.claude/skills/` directory.
+For Claude Code, Cursor, and OpenCode, skills are automatically discovered from their respective skills directories.
 
----
+## Related
 
-*Last Updated: January 2025*
+- **[Commands](../commands/README.md)** - Reusable command/prompt templates
+- **[Agents](../agents/README.md)** - Agent definitions with model/tool configurations
