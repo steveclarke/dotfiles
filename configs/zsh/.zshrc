@@ -320,3 +320,6 @@ fi
 
 # Added by Antigravity
 export PATH="/Users/steve/.antigravity/antigravity/bin:$PATH"
+
+# opencode
+export PATH=/Users/steve/.opencode/bin:$PATH
