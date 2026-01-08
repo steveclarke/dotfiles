@@ -17,13 +17,9 @@ ai/commands/                              ← Source of truth (actual files)
     └── plan.md
     └── ...
 
-configs/cursor/.cursor/commands           ← Symlink to ai/commands
-configs/claude/.claude/commands           ← Symlink to ai/commands
-configs/opencode/.config/opencode/command ← Symlink to ai/commands
-
-~/.cursor/commands/                       ← Stow deploys here
-~/.claude/commands/                       ← Stow deploys here
-~/.config/opencode/command/               ← Stow deploys here
+~/.cursor/commands        → dotfiles/ai/commands   (created by stow.sh)
+~/.claude/commands        → dotfiles/ai/commands   (created by stow.sh)
+~/.config/opencode/command → dotfiles/ai/commands   (created by stow.sh)
 ```
 
 ## Usage
