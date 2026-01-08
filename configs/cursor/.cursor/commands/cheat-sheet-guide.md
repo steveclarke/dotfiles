@@ -1,1 +1,0 @@
-../../../../ai/prompts/cheat-sheet-guide.md

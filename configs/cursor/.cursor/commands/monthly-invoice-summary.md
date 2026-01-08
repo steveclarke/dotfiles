@@ -1,1 +1,0 @@
-../../../../ai/prompts/monthly-invoice-summary.md

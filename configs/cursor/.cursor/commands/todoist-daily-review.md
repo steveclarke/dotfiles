@@ -1,1 +1,0 @@
-../../../../ai/prompts/todoist-daily-review.md
