@@ -1,4 +1,32 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-opus-4-5"
+  "theme": "catppuccin",
+  "model": "anthropic/claude-opus-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "tui": {
+    "scroll_acceleration": {
+      "enabled": false
+    },
+    "scroll_speed": 1,
+    "diff_style": "stacked"
+  },
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "git add *": "ask",
+      "git commit *": "ask",
+      "git push *": "ask",
+      "git reset *": "ask",
+      "git checkout *": "ask",
+      "git rebase *": "ask",
+      "git merge *": "ask",
+      "git stash *": "ask",
+      "git cherry-pick *": "ask",
+      "git revert *": "ask",
+      "git clean *": "ask",
+      "git rm *": "ask",
+      "git mv *": "ask",
+      "git restore *": "ask"
+    }
+  }
 }
