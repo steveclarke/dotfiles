@@ -122,7 +122,6 @@ ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
 ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
 ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
 
-config_banner "OpenCode"
 ensure_dir "${HOME}/.config/opencode"
 rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
 ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
