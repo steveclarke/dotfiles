@@ -34,6 +34,32 @@ Note: If the project has a local copy of the guide at @project/guides/feature-de
 - Success criteria and acceptance criteria
 - Constraints and assumptions
 
+## Requirement Identification Format
+
+All requirements must use systematic ID prefixes for easy cross-referencing in
+specs, plans, and discussions.
+
+| Prefix | Usage | Numbering |
+|--------|-------|-----------|
+| `US-X.X.X` | User Stories | Section.Subsection.Item |
+| `REQ-X.X.X` | Requirements | Section.Subsection.Item |
+| `SC-X` | Success Criteria | Sequential number |
+
+**Format Examples**:
+```markdown
+**US-1.1.1**: As a staff member, I want to view custom field data...
+
+**REQ-2.1.1**: The system must render form controls dynamically based on...
+
+**SC-1**: Staff can view custom field values on detail pages.
+```
+
+**Numbering Rules**:
+- Numbers follow document section hierarchy (section 2.1 → REQ-2.1.x)
+- User stories in section 1.1 use US-1.1.1, US-1.1.2, etc.
+- Requirements in section 3.2 use REQ-3.2.1, REQ-3.2.2, etc.
+- Success criteria use simple sequential numbers (SC-1 through SC-N)
+
 ## Existing System Patterns to Consider
 
 When gathering requirements, check if existing system capabilities apply:
@@ -89,6 +115,8 @@ For each discovered requirement, ask:
 - Written in clear, simple language
 
 ### Phase 3: Document Generation
+- Apply ID prefixes to all user stories (US-), requirements (REQ-), and success
+  criteria (SC-) following the Requirement Identification Format above
 - Create a single consolidated requirements.md document with the following structure:
   1. **User Stories & Business Needs** - structured by role with clear business capabilities
   2. **Core System Capabilities** - what the system must provide to users

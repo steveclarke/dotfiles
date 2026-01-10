@@ -159,6 +159,21 @@ Each document builds upon the previous while serving distinct purposes and audie
 
 > 💡 **Consolidated Approach**: We combine business capabilities and system quality attributes in one document because our small team benefits from having all requirements in a single, readable document rather than artificial boundaries that create duplication and confusion.
 
+**Requirement Identification Format**:
+
+All requirements use systematic ID prefixes for easy cross-referencing in specs, plans, and discussions:
+
+| Prefix | Usage | Numbering |
+|--------|-------|-----------|
+| `US-X.X.X` | User Stories | Section.Subsection.Item |
+| `REQ-X.X.X` | Requirements | Section.Subsection.Item |
+| `SC-X` | Success Criteria | Sequential number |
+
+Examples:
+- `**US-1.1.1**: As a staff member, I want to view custom field data...`
+- `**REQ-2.1.1**: The system must render form controls dynamically...`
+- `**SC-1**: Staff can view custom field values on detail pages.`
+
 **Content Includes**:
 
 * **User Stories & Business Needs**: User stories structured by role, business capabilities and workflows

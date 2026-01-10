@@ -29,7 +29,7 @@ Our implementation plans include:
 - Detailed code blocks for unique/novel aspects (with full documentation using your language's standards)
 - Pattern references for established code (noting only what's different)
 - Granular checkbox tasks within each phase
-- Cross-references to vision, requirements, and spec documents
+- Cross-references to vision, requirements (using IDs like REQ-2.1.1, US-1.1.2), and spec documents
 
 **IMPORTANT**: 
 - Do NOT include any effort sizing estimates, hours, or time estimates in the plan documents
@@ -92,7 +92,7 @@ Create the actual plan documents based on Phase 2 planning:
   - For **unique/novel code**: Include FULL, detailed implementations with complete documentation using your language's standards
   - For **established patterns**: Reference existing implementations and note only what's different
   - When code IS included, make it complete enough for plan-level review and iteration
-- **Include justification and cross-references** for each phase explaining which spec sections it implements (use precise section references like spec.md#1.2, spec.md#3.1)
+- **Include justification and cross-references** for each phase explaining which spec sections and requirements it implements (use spec references like spec.md#1.2 and requirement IDs like REQ-2.1.1, US-1.1.2)
 - **Use clear, practical language** focused on implementation sequencing
 - **Update discussion-summary.md**:
   - Check if discussion-summary.md exists in the feature directory
