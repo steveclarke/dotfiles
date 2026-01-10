@@ -101,6 +101,14 @@ For each discovered requirement, ask:
   9. **Success Criteria** - clear acceptance criteria and definition of success
   10. **Constraints & Assumptions** - scope boundaries and foundational assumptions
 - Create future.md for deferred requirements (organized by user stories and technical phases)
+- **Update or create discussion-summary.md**:
+  - Check if discussion-summary.md exists in the feature directory
+  - If exists: Add a "Requirements Phase" section with:
+    - Technical discussions and research from requirements phase
+    - "Resolved Questions from Vision" subsection (table showing what was open and how resolved)
+    - Update Key Decisions Log with new decisions (continuing numbering from vision)
+    - Update Technical Context with newly referenced files
+  - If not exists: Create it with full structure including Vision Phase placeholder
 - Include table of contents with proper links in all documents
 - Include systematic section numbering (1.1, 1.2, 2.1, 2.2, etc.) for precise cross-referencing
 - Cross-reference the vision document for business context
