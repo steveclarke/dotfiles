@@ -94,6 +94,15 @@ Create the actual plan documents based on Phase 2 planning:
   - When code IS included, make it complete enough for plan-level review and iteration
 - **Include justification and cross-references** for each phase explaining which spec sections it implements (use precise section references like spec.md#1.2, spec.md#3.1)
 - **Use clear, practical language** focused on implementation sequencing
+- **Update discussion-summary.md**:
+  - Check if discussion-summary.md exists in the feature directory
+  - If exists: Add a "Plan Phase" section with:
+    - Implementation approach discussions
+    - Sequencing decisions and rationale
+    - Any pivots made during planning
+    - Update Key Decisions Log with plan decisions (continuing numbering)
+    - Update Technical Context with newly referenced files
+  - If not exists: Create it with full structure including earlier phase placeholders
 
 ## Guidelines
 - **Context First**: Always analyze existing plans and implementation patterns before planning

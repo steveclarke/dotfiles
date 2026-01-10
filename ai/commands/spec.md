@@ -254,6 +254,17 @@ Organize sections to flow naturally from foundational data through backend to fr
 
 **Spec Integration**: Add lightweight section in spec.md that references the full design brief and provides quick summary for developers.
 
+### Update discussion-summary.md
+After generating spec documents, update the discussion summary:
+- Check if discussion-summary.md exists in the feature directory
+- If exists: Add a "Spec Phase" section with:
+  - Architectural decisions and their rationale
+  - Technology choices explored and selected
+  - Technical research conducted during spec phase
+  - Update Key Decisions Log with spec decisions (continuing numbering)
+  - Update Technical Context with newly referenced files
+- If not exists: Create it with full structure including earlier phase placeholders
+
 ## Codebase Patterns to Reference
 
 Always examine existing code before making technical decisions:

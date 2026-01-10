@@ -44,6 +44,7 @@ By combining agile principles with modern AI-enabled workflows, we get the best 
     - [3.5. Implementation Plans](#35-implementation-plans)
     - [3.6. Task Lists (When Needed)](#36-task-lists-when-needed)
     - [3.7. Future Ideas Document (Optional)](#37-future-ideas-document-optional)
+    - [3.8. Discussion Summary](#38-discussion-summary)
   - [4. Naming Conventions](#4-naming-conventions)
     - [4.1. Single Document Approach](#41-single-document-approach)
     - [4.2. Multi-Document Breakdown](#42-multi-document-breakdown)
@@ -106,6 +107,7 @@ We provide Cursor commands to streamline document creation with guided, structur
 | **WHEN?** | Implementation Plan | `plan.md` | Implementation sequence, phases, when and in what order |
 | **TASKS?** | Task Breakdown | `tasks.md` | Granular checklist items (only when plans need to be split from the plan) |
 | **LATER?** | Future Ideas | `future.md` | Deferred requirements and ideas for future development phases |
+| **CONTEXT?** | Discussion Summary | `discussion-summary.md` | Institutional memory - technical discussions, decisions, and context accumulated across all phases |
 
 ## 2. Document Hierarchy
 
@@ -306,6 +308,37 @@ The key is to **capture ideas when they emerge** rather than losing them. Writin
 * **Team Alignment**: Clear separation between "now" and "later" features
 * **Stakeholder Communication**: Shows awareness of broader possibilities while maintaining focus
 
+### 3.8. Discussion Summary
+
+**Filename**: `discussion-summary.md`
+**Audience**: Development team, future developers picking up the feature
+**Purpose**: Institutional memory that accumulates context across all development phases
+
+> 💡 **Living Document**: Unlike other documents that are phase-specific, the discussion summary grows throughout the entire feature lifecycle. Each phase (vision, requirements, spec, plan) adds its section, creating a comprehensive record of technical discussions, decisions, and context.
+
+**Content Includes**:
+
+* **Vision Phase**: Problem discovery discussions, solution approach evolution, technical feasibility conversations
+* **Requirements Phase**: Technical research, resolved questions from vision, data type decisions
+* **Spec Phase**: Architectural decisions, technology choices, implementation pattern research
+* **Plan Phase**: Implementation approach discussions, sequencing rationale, pivots made during planning
+* **Key Decisions Log**: Numbered decisions with rationale and phase, accumulated across all phases
+* **Technical Context**: Files referenced, related features, backend/frontend paths explored
+
+**What Belongs Here vs. Formal Documents**:
+
+* ✅ **Discussion Summary**: Technical discussions, research findings, decision rationale, open questions resolved, context that helps future developers understand "why"
+* ❌ **Formal Documents**: Final decisions, specifications, requirements, implementation plans
+
+**Benefits**:
+
+* **Institutional Memory**: Captures context that doesn't fit in formal documents but is valuable for implementation
+* **Onboarding Aid**: New developers can quickly understand the technical journey and key decisions
+* **Reduces Re-discussion**: When questions arise later, the summary provides answers without re-hashing old conversations
+* **Cross-Phase Continuity**: Each phase builds on previous context rather than starting fresh
+
+**Created By**: The `/vision` command creates this document with the full structure. Subsequent commands (`/requirements`, `/spec`, `/plan`) add their respective sections.
+
 ## 4. Naming Conventions
 
 ### 4.1. Single Document Approach
@@ -317,7 +350,8 @@ FT### - Feature Name/
 ├── vision.md
 ├── requirements.md
 ├── spec.md
-└── plan.md
+├── plan.md
+└── discussion-summary.md
 ```
 
 ### 4.2. Multi-Document Breakdown
@@ -352,11 +386,12 @@ Each feature directory should be structured to support this documentation flow:
 
 ```
 [FT### - Feature Name]/
-├── vision.md          # Strategic context and goals
-├── requirements.md    # Business capabilities, workflows, and quality constraints
-├── spec.md           # Technical implementation (start here)
-├── design-brief.md   # UI/UX guidance for designer (optional - only if UI complexity)
-└── plan.md           # Implementation sequencing (start here)
+├── vision.md              # Strategic context and goals
+├── requirements.md        # Business capabilities, workflows, and quality constraints
+├── spec.md                # Technical implementation (start here)
+├── design-brief.md        # UI/UX guidance for designer (optional - only if UI complexity)
+├── plan.md                # Implementation sequencing (start here)
+└── discussion-summary.md  # Institutional memory across all phases
 ```
 
 **Evolution path** as complexity grows:
@@ -366,14 +401,15 @@ Each feature directory should be structured to support this documentation flow:
 ├── vision.md
 ├── requirements.md
 ├── spec-architecture.md         # Split when needed
-├── spec-frontend.md            # Split when needed  
-├── spec-backend.md             # Split when needed
-├── design-brief.md             # Optional - for UI/UX complexity
-├── plan-frontend.md            # Split when needed
-├── plan-backend.md             # Split when needed
-├── plan-design.md              # Split when needed
-├── tasks-frontend.md           # When multiple developers on same area
-└── tasks-backend.md            # When multiple developers on same area
+├── spec-frontend.md             # Split when needed
+├── spec-backend.md              # Split when needed
+├── design-brief.md              # Optional - for UI/UX complexity
+├── plan-frontend.md             # Split when needed
+├── plan-backend.md              # Split when needed
+├── plan-design.md               # Split when needed
+├── tasks-frontend.md            # When multiple developers on same area
+├── tasks-backend.md             # When multiple developers on same area
+└── discussion-summary.md        # Institutional memory across all phases
 ```
 
 ## 6. Document Flow and Workflow

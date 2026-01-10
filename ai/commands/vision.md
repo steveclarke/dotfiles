@@ -92,15 +92,17 @@ Ask about:
 - Organize by phases (Phase 2, Phase 3, etc.)
 - Include strategic future vision (if applicable)
 
-**3. vision-discussion-summary.md** - Complete conversation summary:
-- Summarize the ENTIRE conversation, not just vision-related content
-- Include technical feasibility discussions that happened during planning
-- Document architectural decisions made and their rationale
-- Capture implementation ideas that were explored
+**3. discussion-summary.md** - Living discussion summary document:
+- Create a unified discussion summary that will accumulate across all phases
+- Include "Vision Phase" section with all vision-related discussions
+- Include placeholder sections for Requirements, Spec, and Plan phases
+- Document architectural decisions made and their rationale in Key Decisions Log
+- Capture technical feasibility discussions and implementation ideas
 - Note any technical constraints or challenges identified
 - Include open questions that should be addressed in requirements/spec
+- Add Technical Context section with files referenced and related features
 - Organize with clear sections and table of contents
-- This document helps save time in later phases (requirements, spec, implementation)
+- This document serves as institutional memory across the entire feature lifecycle
 
 ## Key Principles
 
@@ -145,52 +147,83 @@ Vision documents should be 100-150 lines MAX. If you're over 200 lines, you're r
 - Reference any existing notes or context provided
 - Stay practical - we're a small team that values readable, actionable documents
 - During discovery, it's normal to discuss technical feasibility and architecture - capture all of this
-- Always create three documents at the end: vision.md, future.md, and vision-discussion-summary.md
+- Always create three documents at the end: vision.md, future.md, and discussion-summary.md
 
 ## Getting Started Process
 1. Create your 5-phase TODO list immediately
 2. Ask user: "What feature directory are you working in? Please provide the full path (e.g., project/features/FT033-feature-name)"
 3. Ask user: "If you have existing notes, please tag them with @notes.md or @[filename].md so I can review them"
-4. Validate the directory exists and confirm that's where you'll create vision.md, future.md, and vision-discussion-summary.md
+4. Validate the directory exists and confirm that's where you'll create vision.md, future.md, and discussion-summary.md
 5. Review any tagged notes files
 6. Begin Phase 1 with the first problem discovery question
 7. Keep questions focused and wait for answers before proceeding to next questions
 8. During conversations, capture technical/architectural discussions even if they don't directly go into vision.md
 
-## What to Capture in vision-discussion-summary.md
+## What to Capture in discussion-summary.md
 
-This document should be comprehensive and include:
+This document should be structured to accumulate context across all feature
+development phases. For vision phase, create the full document structure:
 
-**All Conversation Context:**
+**Document Structure:**
+```markdown
+# Feature Name: Discussion Summary
+
+Living document capturing technical discussions, research, decisions, and
+context from all phases of feature development.
+
+## Table of Contents
+- [Vision Phase](#vision-phase)
+- [Requirements Phase](#requirements-phase)
+- [Spec Phase](#spec-phase)
+- [Plan Phase](#plan-phase)
+- [Key Decisions Log](#key-decisions-log)
+- [Technical Context](#technical-context)
+
+## Vision Phase
+[Vision phase content goes here]
+
+## Requirements Phase
+*To be added during requirements phase.*
+
+## Spec Phase
+*To be added during spec phase.*
+
+## Plan Phase
+*To be added during plan phase.*
+
+## Key Decisions Log
+| # | Decision | Rationale | Phase |
+|---|----------|-----------|-------|
+[Decisions from vision phase]
+
+## Technical Context
+### Files Referenced
+[Backend and frontend files referenced]
+
+### Related Features
+[Related feature references]
+```
+
+**Vision Phase Content to Include:**
 - Core problem identified and all nuances discussed
 - Solution approach and how it evolved during discussion
 - Technical feasibility discussions
 - Architectural decisions made and their rationale
 - Implementation ideas explored (even if not chosen)
-
-**Technical Details:**
 - Technology choices and why (SDKs, frameworks, protocols)
-- Deployment architecture discussions
-- Infrastructure considerations
 - Technical constraints identified
 - Integration points with existing systems
+- Open questions for requirements/spec phases
 
-**Decisions & Rationale:**
-- Key architectural decisions numbered with clear rationale
-- What alternatives were considered
-- Why certain approaches were chosen over others
-- What was explicitly excluded and why
+**Key Decisions Log:**
+- Number decisions starting from 1
+- Include decision, rationale, and "Vision" as the phase
+- Later phases will continue the numbering
 
-**Open Questions:**
-- Questions that emerged during discussion
-- What needs to be determined in requirements phase
-- What needs to be determined in spec phase
-- Technical unknowns to investigate
+**Technical Context:**
+- List files referenced during discussions (backend and frontend paths)
+- Note related features that may be affected
 
-**Context for Future Phases:**
-- Notes about team structure/roles that affect implementation
-- Environment-specific behaviors (staging vs production vs local)
-- Strategic context that influences technical decisions
-- Anything discussed that will save time in requirements/spec/implementation
-
-**Purpose:** When creating requirements or spec documents, this summary provides all the context from vision planning without having to re-discuss everything. It bridges the gap between vision conversations and detailed technical work.
+**Purpose:** This document serves as institutional memory across the entire
+feature lifecycle. Each phase adds its section, and the Key Decisions Log and
+Technical Context accumulate across all phases.
