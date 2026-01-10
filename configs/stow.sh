@@ -121,6 +121,8 @@ rm -f "${HOME}/.claude/agents" "${HOME}/.claude/commands" "${HOME}/.claude/skill
 ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
 ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
 ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
+cleanup_paths "${HOME}/.claude/settings.json"
+do_stow "claude"
 
 ensure_dir "${HOME}/.config/opencode"
 rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
