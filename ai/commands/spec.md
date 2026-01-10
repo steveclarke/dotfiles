@@ -191,6 +191,8 @@ Organize sections to flow naturally from foundational data through backend to fr
 - **File Organization**: Where components live and why
 - **Quality Attributes**: Performance, reliability, maintainability considerations
 - **Integration Patterns**: How it connects to existing systems
+- **Requirement Cross-References**: Use requirement IDs when referencing requirements
+  (e.g., "implements REQ-2.1.1", "addresses US-1.1.2", "satisfies SC-3")
 
 **Backend API Response Design** (Request/Response Contracts):
 - ✅ **Focus on response structure**: Show what the response should look like, not how to build it
