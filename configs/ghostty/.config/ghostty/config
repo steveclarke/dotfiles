@@ -1,7 +1,7 @@
 font-family = "JetBrains Mono NF"
 font-size = 11
 
-theme = Dracula+
+theme = Catppuccin Macchiato
 
 # --------------
 # Keybinds
