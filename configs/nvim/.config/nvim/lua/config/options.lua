@@ -3,3 +3,5 @@
 -- Add any additional options here
 
 vim.g.lazyvim_ruby_formatter = "standardrb"
+
+vim.opt.spell = false

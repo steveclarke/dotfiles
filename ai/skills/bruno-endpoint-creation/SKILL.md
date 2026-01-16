@@ -248,9 +248,63 @@ Bruno Collection/
     └── Health Check.bru
 ```
 
+## Dynamic Variables
+
+Built-in placeholders for test data (no scripts needed):
+```
+{{$guid}}            {{$timestamp}}       {{$randomInt}}
+{{$randomEmail}}     {{$randomFirstName}} {{$randomLastName}}
+{{$randomFullName}}  {{$randomPhoneNumber}}
+{{$randomCity}}      {{$randomCountry}}
+```
+
+## Declarative Variable Blocks
+
+Alternative to scripts for simple variable assignment:
+```bru
+vars:pre-request {
+  apiKey: secret123
+}
+
+vars:post-response {
+  userId: {{res.body.id}}
+}
+```
+
 ## Advanced Patterns
 
-**Pagination Support:**
+**Request Chaining:**
+```javascript
+script:post-response {
+  // Chain to next request in workflow
+  bru.setNextRequest("Verify Resource");
+}
+```
+
+**Cookie Management:**
+```javascript
+const jar = bru.cookies.jar();
+jar.setCookie(url, "sessionId", "abc123");
+jar.getCookie(url, "sessionId");
+jar.deleteCookie(url, "sessionId");
+```
+
+**Additional bru Methods:**
+```javascript
+bru.sleep(1000);              // Pause execution (rate limiting)
+bru.getProcessEnv("API_KEY"); // Access system env vars
+bru.cwd();                    // Current working directory
+```
+
+**Request Manipulation:**
+```javascript
+req.setUrl(newUrl);
+req.setHeader("X-Custom", "value");
+req.setBody({ key: "value" });
+req.setTimeout(5000);
+```
+
+**Pagination:**
 ```
 params:query {
   page: 1
@@ -266,19 +320,6 @@ params:query {
   search: "search term"
   status: active
   created_after: "2024-01-01"
-  tags: "tag1,tag2"
-}
-```
-
-**Bulk Operations:**
-```
-body:json {
-  {
-    "resources": [
-      {"field1": "value1"},
-      {"field1": "value2"}
-    ]
-  }
 }
 ```
 
