@@ -12,16 +12,31 @@ Build Ruby CLI tools using Thor for commands and Zeitwerk for autoloading.
 - **Starting a new CLI gem from scratch?** See [references/bootstrap.md](references/bootstrap.md)
 - **Adding commands or subcommands?** See [references/patterns.md](references/patterns.md)
 - **Thor syntax reference?** See [references/patterns.md](references/patterns.md)
+- **Rich terminal UI with Gum?** See [references/gum.md](references/gum.md)
 
 ## Core Principles
 
 - Use compact class declarations: `class GemName::Cli::Main < GemName::Cli::Base`
 - Use `extend self` instead of `module_function` for utility modules
-- Use Thor's built-in `say "message", :color` for output
 - Keep the Base class lean - add helpers as patterns emerge
+
+## Output Styling
+
+For basic output, use Thor's built-in `say "message", :color`.
+
+For rich terminal UI (headers, tables, spinners, confirmations), use the Gum gem:
+
+```ruby
+ui.header("Section Title")    # branded header with border
+ui.success("Done!")           # green checkmark
+ui.error("Failed")            # red X
+ui.table(rows, columns: [...]) # formatted table
+ui.spin("Working...") { ... } # spinner during work
+```
+
+See [references/gum.md](references/gum.md) for setup and full API.
 
 ## Tips & Gotchas
 
-<!-- Add tips here as we discover them while working on CLI tools -->
-
-*This section will grow as we learn from building CLI tools.*
+- Add `# rubocop:disable Rails/Output` to UI modules (stdout is intentional in CLIs)
+- Gum requires `brew install gum` on the host machine
