@@ -1,9 +1,6 @@
 # Cross-platform CLI tools
 # Core development tools
 
-tap "hashicorp/tap"
-tap "TheZoraiz/ascii-image-converter"
-
 brew "act"
 brew "aichat"
 brew "atuin"
@@ -22,6 +19,7 @@ brew "fish"
 brew "fzf"
 brew "gcc"
 brew "gh"
+brew "steipete/tap/gogcli"
 brew "git-cliff"
 brew "git-delta"
 brew "git-lfs"
@@ -75,5 +73,5 @@ brew "vultr"
 brew "wget"
 brew "zellij"
 brew "zoxide"
-brew "ascii-image-converter"
+brew "TheZoraiz/ascii-image-converter/ascii-image-converter"
 brew "sachaos/todoist/todoist"
