@@ -47,7 +47,13 @@ export DOTFILES_INSTALL_GUI=true
 # export TOGGL_DEFAULT_PROJECT_ID=
 # export TOGGL_TIMEZONE=America/St_Johns
 
-# Unio / 1Password Docker tokens
-# export UNIO_OP_DOCKER_GHCR_TOKEN="op://Employee/Github/foobarbaz"
-# export UNIO_OP_DOCKER_HUB_TOKEN="op://Personal/Docker Hub/token"
-# export UNIO_OP_SKIP=1  # Skip 1Password entirely
+# Unio CLI
+# export UNIO_OP_DOCKER_GHCR_USERNAME_REF=   # op:// ref for username
+# export UNIO_OP_DOCKER_GHCR_TOKEN_REF=      # op:// ref for token
+#
+# Docker Hub (docker.io):
+# export UNIO_OP_DOCKER_HUB_USERNAME_REF=    # op:// ref for username
+# export UNIO_OP_DOCKER_HUB_TOKEN_REF=       # op:// ref for token
+#
+# Control:
+# UNIO_OP_SKIP                   # Set to skip 1Password entirely Unio / 1Password Docker tokens
