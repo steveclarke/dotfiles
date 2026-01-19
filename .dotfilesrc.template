@@ -53,7 +53,7 @@ export DOTFILES_INSTALL_GUI=true
 #
 # GitHub Container Registry (GHCR):
 # export UNIO_OP_DOCKER_GHCR_USERNAME_REF="op://Employee/Github/login"
-# export UNIO_OP_DOCKER_GHCR_TOKEN_REF="op://Employee/Github/4ald6a576coqf6empvn2pkomra"
+# export UNIO_OP_DOCKER_GHCR_TOKEN_REF="op://Employee/Github/my4b6euepsrgn6v24es73u7eau"
 #
 # Docker Hub (docker.io):
 # export UNIO_OP_DOCKER_HUB_USERNAME_REF="op://Employee/Docker Hub/Username"
