@@ -48,12 +48,17 @@ export DOTFILES_INSTALL_GUI=true
 # export TOGGL_TIMEZONE=America/St_Johns
 
 # Unio CLI
-# export UNIO_OP_DOCKER_GHCR_USERNAME_REF=   # op:// ref for username
-# export UNIO_OP_DOCKER_GHCR_TOKEN_REF=      # op:// ref for token
+# Configure Unio CLI to use 1Password for Docker registry authentication.
+# All settings use 1Password op:// references to securely store credentials.
+#
+# GitHub Container Registry (GHCR):
+# export UNIO_OP_DOCKER_GHCR_USERNAME_REF="op://Employee/Github/login"
+# export UNIO_OP_DOCKER_GHCR_TOKEN_REF="op://Employee/Github/4ald6a576coqf6empvn2pkomra"
 #
 # Docker Hub (docker.io):
-# export UNIO_OP_DOCKER_HUB_USERNAME_REF=    # op:// ref for username
-# export UNIO_OP_DOCKER_HUB_TOKEN_REF=       # op:// ref for token
+# export UNIO_OP_DOCKER_HUB_USERNAME_REF="op://Employee/Docker Hub/Username"
+# export UNIO_OP_DOCKER_HUB_TOKEN_REF=
 #
 # Control:
-# UNIO_OP_SKIP                   # Set to skip 1Password entirely Unio / 1Password Docker tokens
+# Set to skip 1Password entirely for Unio / 1Password Docker tokens
+# export UNIO_OP_SKIP=1
