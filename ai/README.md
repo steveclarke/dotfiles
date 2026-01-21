@@ -1,55 +1,117 @@
-# AI/LLM Resources
+# AI Resources
 
-This directory contains AI and LLM-related resources for development workflows, shared across Cursor, Claude Code, and OpenCode.
+Shared resources for AI coding tools. One place to manage prompts, skills, and agents that work across Cursor, Claude Code, and OpenCode.
 
-## Directory Structure
+## Why Use This?
 
-- **[agents/](agents/)** - Agent definitions (Claude Code, OpenCode)
-- **[commands/](commands/)** - Reusable command/prompt templates
-- **[guides/](guides/)** - Development process documentation and guides
-- **[skills/](skills/)** - Agent skills for extending capabilities
+Most AI tools store settings in their own folders. This creates a problem: you end up copying the same prompts and skills between tools.
 
-## Architecture
+This setup fixes that. You write a skill once, and all your AI tools can use it.
 
-All AI tools (Cursor, Claude Code, OpenCode) share the same resources via directory symlinks:
+## What's Inside
+
+| Folder | What It Does |
+|--------|--------------|
+| `agents/` | Agent settings (model, tools, behavior) |
+| `commands/` | Prompt templates you can reuse |
+| `guides/` | Process docs and how-to guides |
+| `skills/` | Skills that teach agents new tasks |
+
+## How It Works
+
+All AI tools share the same files through symlinks:
 
 ```
 ai/
-├── agents/       ← Agent definitions
-├── commands/     ← Command/prompt templates  
-├── guides/       ← Process documentation
+├── agents/       ← Agent settings
+├── commands/     ← Prompt templates
+├── guides/       ← Process docs
 └── skills/       ← Agent skills
 
-configs/cursor/.cursor/
-├── commands → ../../../../ai/commands
-└── skills → ../../../../ai/skills
+~/.cursor/
+├── commands → ai/commands
+└── skills → ai/skills
 
-configs/claude/.claude/
-├── agents → ../../../../ai/agents
-├── commands → ../../../../ai/commands
-└── skills → ../../../../ai/skills
+~/.claude/
+├── agents → ai/agents
+├── commands → ai/commands
+└── skills → ai/skills
 
-configs/opencode/.config/opencode/
-├── agent → ../../../../ai/agents
-├── command → ../../../../ai/commands
-└── skill → ../../../../ai/skills
+~/.config/opencode/
+├── agent → ai/agents
+├── command → ai/commands
+└── skill → ai/skills
 ```
 
-After running `stow`, these are deployed to `~/.cursor/`, `~/.claude/`, and `~/.config/opencode/`.
+After you run `stow`, all tools see the same files.
 
 ## Quick Start
 
-1. **Add a command**: Create a markdown file in `ai/commands/` - automatically available to all tools
-2. **Add a skill**: Create a skill directory in `ai/skills/` - available to Claude and OpenCode
-3. **Add an agent**: Create a markdown file in `ai/agents/` - available to Claude and OpenCode
-4. **Deploy changes**: Run `bash configs/stow.sh` or `dotfiles stow`
+### Add a Command
 
-## Contributing
+Create a markdown file in `ai/commands/`:
 
-When adding new resources:
-- Commands go in `commands/` - reusable prompt templates
-- Skills go in `skills/` - agent skills (see skills/README.md for format)
-- Agents go in `agents/` - agent definitions with model/tool configs
-- Guides go in `guides/` - process documentation
-- Keep content generic and shareable (no project-specific details)
+```bash
+touch ai/commands/my-prompt.md
+```
 
+All tools can now use this prompt template.
+
+### Add a Skill
+
+Create a folder with a `SKILL.md` file in `ai/skills/`:
+
+```bash
+mkdir ai/skills/my-skill
+touch ai/skills/my-skill/SKILL.md
+```
+
+See `ai/skills/README.md` for the full skill format.
+
+### Add an Agent
+
+Create a markdown file in `ai/agents/`:
+
+```bash
+touch ai/agents/my-agent.md
+```
+
+### Deploy Changes
+
+Run stow to create the symlinks:
+
+```bash
+dotfiles stow
+# or
+bash configs/stow.sh
+```
+
+## Directory Guide
+
+| Path | Purpose |
+|------|---------|
+| `ai/commands/*.md` | Prompt templates. Markdown files with reusable prompts. |
+| `ai/skills/*/SKILL.md` | Agent skills. Folders with instructions agents can learn. |
+| `ai/agents/*.md` | Agent configs. Model and tool settings. |
+| `ai/guides/*.md` | Process docs. Workflows and best practices. |
+
+## Adding New Resources
+
+> [!TIP]
+> Keep content generic. Don't add project-specific details that won't work elsewhere.
+
+**Commands**: Add prompt templates to `commands/`. Use them for tasks you repeat often.
+
+**Skills**: Add skill folders to `skills/`. Each skill needs a `SKILL.md` file with YAML frontmatter. Skills can include scripts and reference docs.
+
+**Agents**: Add agent definitions to `agents/`. These control which model and tools an agent uses.
+
+**Guides**: Add process docs to `guides/`. These are for human readers, not agents.
+
+## Supported Tools
+
+| Tool | Commands | Skills | Agents |
+|------|----------|--------|--------|
+| Cursor | Yes | Yes | No |
+| Claude Code | Yes | Yes | Yes |
+| OpenCode | Yes | Yes | Yes |
