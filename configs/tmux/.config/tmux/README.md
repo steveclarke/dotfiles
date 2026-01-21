@@ -1,9 +1,11 @@
-# My Tmux Configuration
+# Tmux Config
 
-Install [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm)
+## Setup
 
-`$ git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm`
+Install [TPM](https://github.com/tmux-plugins/tpm) (Tmux Plugin Manager):
 
-To install plugins:
-`C-a C-I`
+```bash
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+```
 
+Press `C-a C-I` in tmux to install plugins.

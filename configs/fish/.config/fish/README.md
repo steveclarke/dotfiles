@@ -1,23 +1,20 @@
-# Fish Shell
+# Fish Shell Config
 
-* Place includes in `conf.d` to be automatically included.
+Put includes in `conf.d/` to load them automatically.
 
-## Fuzzy Finder Keybinds
+## Fuzzy Finder Keys
 
-`CTRL + ALT + F` - `F`iles
+Uses [fzf.fish](https://github.com/PatrickF1/fzf.fish).
 
-`CTRL + R` - History
+| Keys | What It Does |
+|------|--------------|
+| `Ctrl+Alt+F` | Find files |
+| `Ctrl+R` | Search history |
+| `Ctrl+V` | Show variables |
+| `Ctrl+Alt+P` | Find processes |
+| `Ctrl+Alt+L` | Git log |
+| `Ctrl+Alt+S` | Git status |
 
-`CTRL + V` - `V`ariables
+## Links
 
-`CTRL + ALT + P` - `P`rocesses
-
-`CTRL + ALT + L` - Git `L`og
-
-`CTRL + ALT + S` - Git `S`tatus
-
-<https://github.com/PatrickF1/fzf.fish>
-
-## Notes
-
-[A useful collection of functions](https://github.com/razzius/fish-functions?tab=readme-ov-file#backup-file-source)
+- [Useful fish functions](https://github.com/razzius/fish-functions)

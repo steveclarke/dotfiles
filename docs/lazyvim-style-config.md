@@ -1,15 +1,11 @@
-# LazyVim-Style Modular Configuration Guide
+# LazyVim-Style Config Guide
 
-This document explains how to achieve LazyVim-style modular plugin configurations using Lazy.nvim's `opts_extend` feature.
+How to use `opts_extend` in Lazy.nvim for modular plugin configs.
 
-## The Problem: List Merging in Lazy.nvim
+## The Problem
 
-When you define the same plugin in multiple files, Lazy.nvim has different merging behaviors:
+When you set up the same plugin in multiple files, Lazy.nvim merges them. But lists get replaced, not combined.
 
-- **Key-value tables**: Merged together ✅
-- **List-like tables**: Last one wins (overridden) ❌
-
-### Example Problem
 ```lua
 -- plugins/mason-tool-installer.lua
 {
@@ -19,86 +15,79 @@ When you define the same plugin in multiple files, Lazy.nvim has different mergi
   }
 }
 
--- lang/ruby.lua  
+-- lang/ruby.lua
 {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
   opts = {
-    ensure_installed = { "ruby_lsp", "standardrb" }  -- This REPLACES the first list!
+    ensure_installed = { "ruby_lsp", "standardrb" }  -- Replaces the first list!
   }
 }
 ```
 
-**Result**: Only `ruby_lsp` and `standardrb` are installed. The Lua tools are lost!
+**Result:** Only `ruby_lsp` and `standardrb` get installed. The Lua tools are gone.
 
-## The Solution: `opts_extend`
+## The Fix: opts_extend
 
-`opts_extend` tells Lazy.nvim which keys should be **extended** (concatenated) instead of **merged** (replaced).
-
-### Basic Usage
+Tell Lazy.nvim which keys should be combined instead of replaced:
 
 ```lua
 -- plugins/mason-tool-installer.lua
 {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
-  opts_extend = { "ensure_installed" },  -- ← The magic!
+  opts_extend = { "ensure_installed" },  -- The fix
   opts = {
     ensure_installed = { "lua_ls", "stylua" }
   }
 }
 
--- lang/ruby.lua  
+-- lang/ruby.lua
 {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
   opts = {
-    ensure_installed = { "ruby_lsp", "standardrb" }  -- This gets ADDED now!
+    ensure_installed = { "ruby_lsp", "standardrb" }  -- Now gets added
   }
 }
 ```
 
-**Result**: All tools installed: `lua_ls`, `stylua`, `ruby_lsp`, `standardrb` ✅
+**Result:** All tools installed: `lua_ls`, `stylua`, `ruby_lsp`, `standardrb`
 
-## Key Concepts
+## How It Works
 
-### 1. Parent Specs and Load Order
+### Load Order
 
-- Lazy.nvim loads files **alphabetically**
-- The **first file** with a plugin spec becomes the "parent spec"
-- `opts_extend` should be defined in the parent spec
-- **Best Practice**: Add `opts_extend` to every spec to be load-order independent
+- Lazy.nvim loads files in alphabetical order
+- The first file with a plugin spec is the "parent spec"
+- Put `opts_extend` in the parent spec
+- Tip: Add `opts_extend` to every spec so load order doesn't matter
 
-### 2. Dotted Key Support
+### Nested Keys
 
-You can extend nested table keys using dot notation:
+Use dots to extend nested tables:
 
 ```lua
 opts_extend = {
   "sources.completion.enabled_providers",
   "sources.compat",
-  "spec"  -- Simple key
+  "spec"
 }
 ```
 
-### 3. Multiple Keys
+### Multiple Keys
 
-Extend multiple keys at once:
+Extend several keys at once:
 
 ```lua
 opts_extend = { "ensure_installed", "optional_tools", "disabled_tools" }
 ```
 
-## Real-World Examples
+## Examples
 
-### Mason Tool Installer (Our Setup)
+### Mason Tool Installer
 
 ```lua
 -- plugins/mason-tool-installer.lua
 {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
-  -- opts_extend: Lazy.nvim feature added in v10.23.0 (June 2024)
-  -- Allows specified keys to be EXTENDED (concatenated) instead of MERGED (replaced)
-  -- This enables lang/* files to add tools to ensure_installed without complex functions
-  -- Usage in lang files: just use opts = { ensure_installed = { "tool1", "tool2" } }
-  -- Underdocumented but used extensively in LazyVim - see CHANGELOG.md
   opts_extend = { "ensure_installed" },
   opts = {
     ensure_installed = { "lua_ls", "stylua" },
@@ -116,7 +105,7 @@ opts_extend = { "ensure_installed", "optional_tools", "disabled_tools" }
 }
 ```
 
-### Treesitter (LazyVim Pattern)
+### Treesitter
 
 ```lua
 -- plugins/treesitter.lua
@@ -130,14 +119,14 @@ opts_extend = { "ensure_installed", "optional_tools", "disabled_tools" }
 
 -- lang/javascript.lua
 {
-  "nvim-treesitter/nvim-treesitter", 
+  "nvim-treesitter/nvim-treesitter",
   opts = {
     ensure_installed = { "javascript", "typescript", "tsx" }
   }
 }
 ```
 
-### Which-Key (Complex Specs)
+### Which-Key
 
 ```lua
 -- plugins/which-key.lua
@@ -164,62 +153,51 @@ opts_extend = { "ensure_installed", "optional_tools", "disabled_tools" }
 }
 ```
 
-## Feature History
+## Tips
 
-- **Added**: Lazy.nvim v10.23.0 (June 7, 2024)
-- **Changelog**: *"plugin: `opts_extend` can be a list of dotted keys that will be extended instead of merged"*
-- **Status**: Functional but underdocumented
-- **Usage**: Extensively used in LazyVim for modular configurations
-
-## Best Practices
-
-1. **Always define `opts_extend` in your main plugin config** to ensure it works regardless of load order
+1. **Put `opts_extend` in your main plugin config** so it works no matter what order files load
 2. **Use simple table syntax** in language files: `opts = { ensure_installed = { ... } }`
-3. **Group related extensions** in language-specific files for maintainability
-4. **Document usage** since the feature is underdocumented upstream
-5. **Test load order** by alphabetically renaming files if needed
+3. **Group related tools** in language-specific files
+4. **Test load order** by renaming files if needed
 
 ## Troubleshooting
 
-### Not Working?
+**Not working?**
 
-1. Check if `opts_extend` is in the parent spec (first file loaded alphabetically)
-2. Verify you're using the correct key names
-3. Ensure you have Lazy.nvim v10.23.0 or later
-4. Look for typos in dotted key paths
+1. Is `opts_extend` in the parent spec (first file loaded)?
+2. Are the key names spelled right?
+3. Do you have Lazy.nvim v10.23.0 or later?
+4. Check for typos in dotted key paths
 
-### Complex Debugging
+**Debug with logging:**
 
-Add logging to see what's happening:
 ```lua
 opts = function(_, opts)
-  print("Before extend:", vim.inspect(opts.ensure_installed))
+  print("Current:", vim.inspect(opts.ensure_installed))
   return opts
 end
 ```
 
-## References
+## The Old Way
 
-- [Lazy.nvim CHANGELOG](https://github.com/folke/lazy.nvim/blob/main/CHANGELOG.md) - Official feature mention
-- [GitHub Discussion #1706](https://github.com/folke/lazy.nvim/discussions/1706) - Community explanation
-- [LazyVim Source](https://github.com/LazyVim/LazyVim) - Extensive real-world usage examples
-
-## Alternative Approaches
-
-Before `opts_extend`, you had to use function-based merging:
+Before `opts_extend`, you had to merge lists by hand:
 
 ```lua
--- Old complex way
+-- Old way (complex)
 opts = function(_, opts)
   vim.list_extend(opts.ensure_installed or {}, {
     "ruby_lsp", "standardrb", "solargraph"
   })
 end
 
--- New simple way with opts_extend  
+-- New way (simple)
 opts = {
   ensure_installed = { "ruby_lsp", "standardrb", "solargraph" }
 }
 ```
 
-The `opts_extend` approach is cleaner, more declarative, and follows the LazyVim pattern exactly.
+## Links
+
+- [Lazy.nvim CHANGELOG](https://github.com/folke/lazy.nvim/blob/main/CHANGELOG.md) — feature added in v10.23.0 (June 2024)
+- [GitHub Discussion #1706](https://github.com/folke/lazy.nvim/discussions/1706) — community explanation
+- [LazyVim Source](https://github.com/LazyVim/LazyVim) — real-world examples
