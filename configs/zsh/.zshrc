@@ -55,6 +55,7 @@ zinit light-mode for \
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/dotfiles/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # Less pager configuration: -r (raw control chars), -F (quit if one screen)
 export LESS="-rF"

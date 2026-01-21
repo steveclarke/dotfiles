@@ -188,6 +188,13 @@ Ask the agent questions that should trigger your skill based on its description.
 
 ## Skills in This Directory
 
+### 1password
+
+Secure secret management using 1Password CLI. Teaches the agent to:
+- Ask for 1Password secret references instead of raw secrets
+- Use `op read "op://Vault/Item/field"` to fetch secrets
+- Keep credentials out of chat history, shell history, and config files
+
 ### bruno-endpoint-creation
 
 Comprehensive guide for creating REST API endpoints in Bruno. Provides patterns and best practices for:
@@ -211,6 +218,16 @@ Comprehensive code review process for conducting thorough, educational, and acti
 - Guided interactive walkthrough with issue prioritization
 - Structured review document generation with checklists
 - Review file organization and GitHub posting support
+
+### toggl
+
+Time tracking assistant using the Toggl CLI. Automatically invoked when discussing:
+- Time tracking, timers, timesheets
+- Starting/stopping work timers
+- Logging hours or checking time entries
+- Viewing what's currently running
+
+Uses the Rust-based toggl CLI (watercooler-labs/toggl-cli) with Toggl API v9.
 
 ### todoist-daily-review
 
