@@ -5,24 +5,24 @@ require "shale"
 module SyncBooks
   module Models
     class Contact < Shale::Mapper
-      attribute :url, Shale::Type::String
-      attribute :organisation_name, Shale::Type::String
-      attribute :first_name, Shale::Type::String
-      attribute :last_name, Shale::Type::String
-      attribute :email, Shale::Type::String
-      attribute :country, Shale::Type::String
-      attribute :status, Shale::Type::String
-      attribute :locale, Shale::Type::String
-      attribute :account_balance, Shale::Type::Float
-      attribute :charge_sales_tax, Shale::Type::String
-      attribute :contact_name_on_invoices, Shale::Type::Boolean
-      attribute :active_projects_count, Shale::Type::Integer
-      attribute :uses_contact_invoice_sequence, Shale::Type::Boolean
-      attribute :emails_invoices_automatically, Shale::Type::Boolean
-      attribute :emails_payment_reminders, Shale::Type::Boolean
-      attribute :emails_thank_you_notes, Shale::Type::Boolean
-      attribute :created_at, Shale::Type::Time
-      attribute :updated_at, Shale::Type::Time
+      attribute :url, :string
+      attribute :organisation_name, :string
+      attribute :first_name, :string
+      attribute :last_name, :string
+      attribute :email, :string
+      attribute :country, :string
+      attribute :status, :string
+      attribute :locale, :string
+      attribute :account_balance, :float
+      attribute :charge_sales_tax, :string
+      attribute :contact_name_on_invoices, :boolean
+      attribute :active_projects_count, :integer
+      attribute :uses_contact_invoice_sequence, :boolean
+      attribute :emails_invoices_automatically, :boolean
+      attribute :emails_payment_reminders, :boolean
+      attribute :emails_thank_you_notes, :boolean
+      attribute :created_at, :time
+      attribute :updated_at, :time
 
       def id
         url&.split("/")&.last

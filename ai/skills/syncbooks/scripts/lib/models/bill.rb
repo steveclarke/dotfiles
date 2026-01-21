@@ -5,29 +5,29 @@ require "shale"
 module SyncBooks
   module Models
     class Bill < Shale::Mapper
-      attribute :url, Shale::Type::String
-      attribute :contact, Shale::Type::String
-      attribute :contact_name, Shale::Type::String
-      attribute :reference, Shale::Type::String
-      attribute :status, Shale::Type::String
-      attribute :long_status, Shale::Type::String
-      attribute :currency, Shale::Type::String
-      attribute :net_value, Shale::Type::Float
-      attribute :sales_tax_value, Shale::Type::Float
-      attribute :total_value, Shale::Type::Float
-      attribute :paid_value, Shale::Type::Float
-      attribute :due_value, Shale::Type::Float
-      attribute :native_due_value, Shale::Type::Float
-      attribute :dated_on, Shale::Type::Date
-      attribute :due_on, Shale::Type::Date
-      attribute :paid_on, Shale::Type::Date
-      attribute :comments, Shale::Type::String
-      attribute :is_locked, Shale::Type::Boolean
-      attribute :locked_reason, Shale::Type::String
-      attribute :input_total_values_inc_tax, Shale::Type::Boolean
-      attribute :is_paid_by_hire_purchase, Shale::Type::Boolean
-      attribute :created_at, Shale::Type::Time
-      attribute :updated_at, Shale::Type::Time
+      attribute :url, :string
+      attribute :contact, :string
+      attribute :contact_name, :string
+      attribute :reference, :string
+      attribute :status, :string
+      attribute :long_status, :string
+      attribute :currency, :string
+      attribute :net_value, :float
+      attribute :sales_tax_value, :float
+      attribute :total_value, :float
+      attribute :paid_value, :float
+      attribute :due_value, :float
+      attribute :native_due_value, :float
+      attribute :dated_on, :date
+      attribute :due_on, :date
+      attribute :paid_on, :date
+      attribute :comments, :string
+      attribute :is_locked, :boolean
+      attribute :locked_reason, :string
+      attribute :input_total_values_inc_tax, :boolean
+      attribute :is_paid_by_hire_purchase, :boolean
+      attribute :created_at, :time
+      attribute :updated_at, :time
 
       def id
         url&.split("/")&.last
