@@ -186,6 +186,7 @@ alias ncdu="ncdu --color dark"
 # Commonly cd'ed directories (fish had --set-cursor, zsh uses simple aliases)
 alias src="cd ~/src/"
 alias sand="cd ~/src/sandbox/"
+alias cun="cd ~/src/myunio/unio/"
 
 # Dotfiles (requires DOTFILES_DIR to be set)
 alias dot="cd \$DOTFILES_DIR/"
