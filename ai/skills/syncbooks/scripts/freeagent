@@ -121,7 +121,51 @@ class FreeAgentClient
     get("/company")["company"]
   end
 
+  # Bank accounts
+  def bank_accounts
+    get("/bank_accounts")["bank_accounts"]
+  end
+
+  # Bank transaction explanations for an account
+  def bank_transaction_explanations(bank_account_url, from_date:, to_date:)
+    encoded_url = URI.encode_www_form_component(bank_account_url)
+    get_all_pages("/bank_transaction_explanations?bank_account=#{encoded_url}&from_date=#{from_date}&to_date=#{to_date}")
+  end
+
+  # Invoices with date filter
+  def invoices_by_date(from_date:, to_date:)
+    get_all_pages("/invoices?from_date=#{from_date}&to_date=#{to_date}")
+  end
+
+  # Bills with date filter
+  def bills(from_date:, to_date:)
+    get_all_pages("/bills?from_date=#{from_date}&to_date=#{to_date}")
+  end
+
+  # Expenses with date filter
+  def expenses(from_date:, to_date:)
+    get_all_pages("/expenses?from_date=#{from_date}&to_date=#{to_date}")
+  end
+
   private
+
+  def get_all_pages(endpoint)
+    all_items = []
+    page = 1
+    loop do
+      sep = endpoint.include?("?") ? "&" : "?"
+      url = "#{endpoint}#{sep}page=#{page}&per_page=100"
+      response = get(url)
+      # Find the array in the response (first key with array value)
+      items = response.values.find { |v| v.is_a?(Array) }
+      break if items.nil? || items.empty?
+      all_items.concat(items)
+      break if items.length < 100
+      page += 1
+      break if page > 50 # Safety limit
+    end
+    all_items
+  end
 
   def get(endpoint, retry_count: 0)
     response = HTTParty.get(
@@ -500,6 +544,131 @@ class CLI < Thor
       }
     end
     puts JSON.pretty_generate(data)
+  end
+
+  desc "hst", "Calculate HST report for a date range"
+  option :from, aliases: "-f", required: true, desc: "Start date (YYYY-MM-DD)"
+  option :to, aliases: "-t", required: true, desc: "End date (YYYY-MM-DD)"
+  def hst
+    from_date = options[:from]
+    to_date = options[:to]
+
+    puts "HST Report: #{from_date} to #{to_date}"
+    puts "=" * 60
+    puts ""
+
+    hst_charged = 0.0
+    hst_reclaimed = 0.0
+
+    # 1. Invoices - HST charged on sales
+    print "Fetching invoices..."
+    invoices = client.invoices_by_date(from_date: from_date, to_date: to_date)
+    inv_hst = invoices.sum { |i| i["sales_tax_value"].to_f }
+    hst_charged += inv_hst
+    puts " #{invoices.length} invoices"
+
+    # 2. Bills - HST reclaimed on purchases
+    print "Fetching bills..."
+    bills = client.bills(from_date: from_date, to_date: to_date)
+    bills_hst = bills.sum { |b| b["sales_tax_value"].to_f.abs }
+    hst_reclaimed += bills_hst
+    puts " #{bills.length} bills"
+
+    # 3. Expenses - HST reclaimed
+    print "Fetching expenses..."
+    expenses = client.expenses(from_date: from_date, to_date: to_date)
+    exp_hst = expenses.select { |e| e["sales_tax_value"] }.sum { |e| e["sales_tax_value"].to_f.abs }
+    hst_reclaimed += exp_hst
+    puts " #{expenses.length} expenses"
+
+    # 4. Bank transaction explanations
+    print "Fetching bank transactions..."
+    accounts = client.bank_accounts.select { |a| a["status"] == "active" }
+    bank_charged = 0.0
+    bank_reclaimed = 0.0
+    total_txns = 0
+
+    accounts.each do |acc|
+      exps = client.bank_transaction_explanations(acc["url"], from_date: from_date, to_date: to_date)
+      total_txns += exps.length
+      exps.each do |e|
+        stv = e["sales_tax_value"]
+        next unless stv
+
+        val = stv.to_f.abs
+        cat = e["category"]&.split("/")&.last.to_i
+        if cat < 100 # Income category
+          bank_charged += val
+        else # Expense category
+          bank_reclaimed += val
+        end
+      end
+    end
+    puts " #{total_txns} transactions"
+
+    hst_charged += bank_charged
+    hst_reclaimed += bank_reclaimed
+
+    # Summary
+    puts ""
+    puts "-" * 60
+    puts "BREAKDOWN"
+    puts "-" * 60
+    puts ""
+    puts "HST Charged (on sales):"
+    puts "  Invoices:                      $%12.2f" % inv_hst
+    puts "  Bank transactions (income):    $%12.2f" % bank_charged
+    puts "  %-30s $%12.2f" % ["TOTAL CHARGED:", hst_charged]
+    puts ""
+    puts "HST Reclaimed (on purchases):"
+    puts "  Bills:                         $%12.2f" % bills_hst
+    puts "  Expenses:                      $%12.2f" % exp_hst
+    puts "  Bank transactions (expenses):  $%12.2f" % bank_reclaimed
+    puts "  %-30s $%12.2f" % ["TOTAL RECLAIMED:", hst_reclaimed]
+    puts ""
+    puts "=" * 60
+    puts "%-32s $%12.2f" % ["NET HST OWING TO CRA:", hst_charged - hst_reclaimed]
+    puts "=" * 60
+  end
+
+  desc "balance", "Show total balance across all bank accounts"
+  def balance
+    accounts = client.bank_accounts.select { |a| a["status"] == "active" }
+
+    if accounts.empty?
+      puts "No active bank accounts found."
+      return
+    end
+
+    # Group by type
+    bank_accounts = accounts.select { |a| a["type"] == "StandardBankAccount" }
+    credit_cards = accounts.select { |a| a["type"] == "CreditCardAccount" }
+    paypal = accounts.select { |a| a["type"]&.include?("Paypal") }
+
+    # Calculate totals
+    bank_total = bank_accounts.sum { |a| a["current_balance"].to_f }
+    credit_total = credit_cards.sum { |a| a["current_balance"].to_f }
+    paypal_total = paypal.sum { |a| a["current_balance"].to_f }
+    total = accounts.sum { |a| a["current_balance"].to_f }
+
+    currency = accounts.first["currency"] || "CAD"
+
+    puts "FreeAgent Total Balance"
+    puts "=" * 50
+    puts ""
+    puts "Active Accounts:"
+    accounts.each do |a|
+      puts "  %-30s %s %12.2f" % [a["name"], a["currency"], a["current_balance"].to_f]
+    end
+    puts ""
+    puts "-" * 50
+    puts "Total by Type:"
+    puts "  %-30s %s %12.2f" % ["Bank Accounts:", currency, bank_total]
+    puts "  %-30s %s %12.2f" % ["Credit Cards:", currency, credit_total]
+    puts "  %-30s %s %12.2f" % ["PayPal:", currency, paypal_total]
+    puts ""
+    puts "%-32s %s %12.2f" % ["TOTAL BALANCE:", currency, total]
+    puts "=" * 50
   end
 
   private
