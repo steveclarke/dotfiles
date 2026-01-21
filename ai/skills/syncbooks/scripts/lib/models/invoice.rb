@@ -5,32 +5,32 @@ require "shale"
 module SyncBooks
   module Models
     class Invoice < Shale::Mapper
-      attribute :url, Shale::Type::String
-      attribute :contact, Shale::Type::String
-      attribute :contact_name, Shale::Type::String
-      attribute :bank_account, Shale::Type::String
-      attribute :reference, Shale::Type::String
-      attribute :status, Shale::Type::String
-      attribute :long_status, Shale::Type::String
-      attribute :currency, Shale::Type::String
-      attribute :exchange_rate, Shale::Type::Float
-      attribute :net_value, Shale::Type::Float
-      attribute :sales_tax_value, Shale::Type::Float
-      attribute :total_value, Shale::Type::Float
-      attribute :paid_value, Shale::Type::Float
-      attribute :due_value, Shale::Type::Float
-      attribute :dated_on, Shale::Type::Date
-      attribute :due_on, Shale::Type::Date
-      attribute :paid_on, Shale::Type::Date
-      attribute :payment_terms_in_days, Shale::Type::Integer
-      attribute :involves_sales_tax, Shale::Type::Boolean
-      attribute :send_reminder_emails, Shale::Type::Boolean
-      attribute :send_thank_you_emails, Shale::Type::Boolean
-      attribute :send_new_invoice_emails, Shale::Type::Boolean
-      attribute :omit_header, Shale::Type::Boolean
-      attribute :always_show_bic_and_iban, Shale::Type::Boolean
-      attribute :created_at, Shale::Type::Time
-      attribute :updated_at, Shale::Type::Time
+      attribute :url, :string
+      attribute :contact, :string
+      attribute :contact_name, :string
+      attribute :bank_account, :string
+      attribute :reference, :string
+      attribute :status, :string
+      attribute :long_status, :string
+      attribute :currency, :string
+      attribute :exchange_rate, :float
+      attribute :net_value, :float
+      attribute :sales_tax_value, :float
+      attribute :total_value, :float
+      attribute :paid_value, :float
+      attribute :due_value, :float
+      attribute :dated_on, :date
+      attribute :due_on, :date
+      attribute :paid_on, :date
+      attribute :payment_terms_in_days, :integer
+      attribute :involves_sales_tax, :boolean
+      attribute :send_reminder_emails, :boolean
+      attribute :send_thank_you_emails, :boolean
+      attribute :send_new_invoice_emails, :boolean
+      attribute :omit_header, :boolean
+      attribute :always_show_bic_and_iban, :boolean
+      attribute :created_at, :time
+      attribute :updated_at, :time
 
       def id
         url&.split("/")&.last

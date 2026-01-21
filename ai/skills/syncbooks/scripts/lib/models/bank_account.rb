@@ -5,23 +5,23 @@ require "shale"
 module SyncBooks
   module Models
     class BankAccount < Shale::Mapper
-      attribute :url, Shale::Type::String
-      attribute :name, Shale::Type::String
-      attribute :type, Shale::Type::String
-      attribute :currency, Shale::Type::String
-      attribute :status, Shale::Type::String
-      attribute :current_balance, Shale::Type::Float
-      attribute :opening_balance, Shale::Type::Float
-      attribute :is_personal, Shale::Type::Boolean
-      attribute :is_primary, Shale::Type::Boolean
-      attribute :bank_name, Shale::Type::String
-      attribute :account_number, Shale::Type::String
-      attribute :sort_code, Shale::Type::String
-      attribute :bic, Shale::Type::String
-      attribute :bank_code, Shale::Type::String
-      attribute :latest_activity_date, Shale::Type::Date
-      attribute :created_at, Shale::Type::Time
-      attribute :updated_at, Shale::Type::Time
+      attribute :url, :string
+      attribute :name, :string
+      attribute :type, :string
+      attribute :currency, :string
+      attribute :status, :string
+      attribute :current_balance, :float
+      attribute :opening_balance, :float
+      attribute :is_personal, :boolean
+      attribute :is_primary, :boolean
+      attribute :bank_name, :string
+      attribute :account_number, :string
+      attribute :sort_code, :string
+      attribute :bic, :string
+      attribute :bank_code, :string
+      attribute :latest_activity_date, :date
+      attribute :created_at, :time
+      attribute :updated_at, :time
 
       def id
         url&.split("/")&.last

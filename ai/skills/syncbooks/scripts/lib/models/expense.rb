@@ -5,21 +5,21 @@ require "shale"
 module SyncBooks
   module Models
     class Expense < Shale::Mapper
-      attribute :url, Shale::Type::String
-      attribute :user, Shale::Type::String
-      attribute :category, Shale::Type::String
-      attribute :description, Shale::Type::String
-      attribute :currency, Shale::Type::String
-      attribute :gross_value, Shale::Type::Float
-      attribute :native_gross_value, Shale::Type::Float
-      attribute :sales_tax_rate, Shale::Type::Float
-      attribute :sales_tax_value, Shale::Type::Float
-      attribute :native_sales_tax_value, Shale::Type::Float
-      attribute :sales_tax_status, Shale::Type::String
-      attribute :dated_on, Shale::Type::Date
-      attribute :receipt_reference, Shale::Type::String
-      attribute :created_at, Shale::Type::Time
-      attribute :updated_at, Shale::Type::Time
+      attribute :url, :string
+      attribute :user, :string
+      attribute :category, :string
+      attribute :description, :string
+      attribute :currency, :string
+      attribute :gross_value, :float
+      attribute :native_gross_value, :float
+      attribute :sales_tax_rate, :float
+      attribute :sales_tax_value, :float
+      attribute :native_sales_tax_value, :float
+      attribute :sales_tax_status, :string
+      attribute :dated_on, :date
+      attribute :receipt_reference, :string
+      attribute :created_at, :time
+      attribute :updated_at, :time
 
       def id
         url&.split("/")&.last
