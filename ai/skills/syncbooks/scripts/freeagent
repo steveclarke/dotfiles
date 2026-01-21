@@ -1,0 +1,592 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+  gem "httparty"
+  gem "webrick"
+end
+
+require "json"
+require "time"
+require "date"
+require "fileutils"
+require "webrick"
+require "uri"
+
+class FreeAgentClient
+  BASE_URL = "https://api.freeagent.com/v2"
+  TOKEN_URL = "https://api.freeagent.com/v2/token_endpoint"
+  CREDENTIALS_PATH = File.expand_path("~/.local/share/syncbooks/credentials.json")
+
+  # 1Password references
+  OP_CLIENT_ID = "op://Employee/FreeAgent API - SyncBooks/username"
+  OP_CLIENT_SECRET = "op://Employee/FreeAgent API - SyncBooks/credential"
+
+  def initialize
+    load_config!
+    raise "FreeAgent not configured. Run initial OAuth setup first." if @access_token.nil? || @access_token.empty?
+  end
+
+  def load_config!
+    # Load tokens from credentials file (these refresh and need persistence)
+    if File.exist?(CREDENTIALS_PATH)
+      creds = JSON.parse(File.read(CREDENTIALS_PATH))
+      fa = creds["freeagent"] || {}
+      @access_token = fa["access_token"]
+      @refresh_token = fa["refresh_token"]
+      @token_expiry = fa["token_expiry"]
+    end
+
+    # Get client credentials from 1Password (primary) or env vars (fallback)
+    @client_id = op_read(OP_CLIENT_ID) || ENV["FREEAGENT_CLIENT_ID"]
+    @client_secret = op_read(OP_CLIENT_SECRET) || ENV["FREEAGENT_CLIENT_SECRET"]
+
+    # Fall back to env vars for tokens if not in credentials file
+    @access_token ||= ENV["FREEAGENT_API_KEY"]
+    @refresh_token ||= ENV["FREEAGENT_REFRESH_TOKEN"]
+  end
+
+  def op_read(ref)
+    warn "Fetching #{ref.split("/").last} from 1Password..."
+    result = `op read '#{ref}' 2>/dev/null`.chomp
+    result.empty? ? nil : result
+  rescue
+    nil
+  end
+
+  def save_credentials!
+    creds = File.exist?(CREDENTIALS_PATH) ? JSON.parse(File.read(CREDENTIALS_PATH)) : {}
+    creds["freeagent"] ||= {}
+    creds["freeagent"]["access_token"] = @access_token
+    creds["freeagent"]["refresh_token"] = @refresh_token
+    creds["freeagent"]["token_expiry"] = @token_expiry
+
+    FileUtils.mkdir_p(File.dirname(CREDENTIALS_PATH))
+    File.write(CREDENTIALS_PATH, JSON.pretty_generate(creds))
+    File.chmod(0o600, CREDENTIALS_PATH)
+  end
+
+  # Contacts
+  def contacts(view: "active")
+    get("/contacts?view=#{view}")["contacts"]
+  end
+
+  def contact(id)
+    get("/contacts/#{id}")["contact"]
+  end
+
+  def create_contact(attrs)
+    post("/contacts", {contact: attrs})["contact"]
+  end
+
+  def find_contact_by_name(name)
+    contacts.find do |c|
+      org = c["organisation_name"]&.downcase
+      full = "#{c["first_name"]} #{c["last_name"]}".strip.downcase
+      name.downcase == org || name.downcase == full
+    end
+  end
+
+  # Invoices
+  def invoices(view: "recent", nested_invoice_items: true)
+    params = "view=#{view}&nested_invoice_items=#{nested_invoice_items}"
+    get("/invoices?#{params}")["invoices"]
+  end
+
+  def invoice(id)
+    get("/invoices/#{id}")["invoice"]
+  end
+
+  def create_invoice(attrs)
+    post("/invoices", {invoice: attrs})["invoice"]
+  end
+
+  def mark_invoice_sent(id)
+    put("/invoices/#{id}/transitions/mark_as_sent", {})
+  end
+
+  # Projects (for invoice creation)
+  def projects(contact_id: nil)
+    url = "/projects"
+    url += "?contact=#{BASE_URL}/contacts/#{contact_id}" if contact_id
+    get(url)["projects"]
+  end
+
+  # Company info
+  def company
+    get("/company")["company"]
+  end
+
+  private
+
+  def get(endpoint, retry_count: 0)
+    response = HTTParty.get(
+      "#{BASE_URL}#{endpoint}",
+      headers: auth_headers
+    )
+    result = handle_response(response, retry_count: retry_count)
+    return get(endpoint, retry_count: retry_count + 1) if result == :retry
+    result
+  end
+
+  def post(endpoint, body, retry_count: 0)
+    response = HTTParty.post(
+      "#{BASE_URL}#{endpoint}",
+      headers: auth_headers.merge("Content-Type" => "application/json"),
+      body: body.to_json
+    )
+    result = handle_response(response, retry_count: retry_count)
+    return post(endpoint, body, retry_count: retry_count + 1) if result == :retry
+    result
+  end
+
+  def put(endpoint, body, retry_count: 0)
+    response = HTTParty.put(
+      "#{BASE_URL}#{endpoint}",
+      headers: auth_headers.merge("Content-Type" => "application/json"),
+      body: body.to_json
+    )
+    result = handle_response(response, retry_count: retry_count)
+    return put(endpoint, body, retry_count: retry_count + 1) if result == :retry
+    result
+  end
+
+  def auth_headers
+    {"Authorization" => "Bearer #{@access_token}"}
+  end
+
+  def handle_response(response, retry_count: 0)
+    return response.parsed_response if response.success?
+
+    if response.code == 401 && can_refresh? && retry_count == 0
+      warn "Token expired, refreshing..."
+      refresh_token!
+      return :retry
+    end
+
+    raise "FreeAgent API error: #{response.code} - #{response.body}"
+  end
+
+  def can_refresh?
+    @refresh_token && @client_id && @client_secret
+  end
+
+  def refresh_token!
+    response = HTTParty.post(
+      TOKEN_URL,
+      headers: {"Content-Type" => "application/x-www-form-urlencoded"},
+      body: {
+        grant_type: "refresh_token",
+        refresh_token: @refresh_token,
+        client_id: @client_id,
+        client_secret: @client_secret
+      }
+    )
+
+    if response.success?
+      data = response.parsed_response
+      @access_token = data["access_token"]
+      @refresh_token = data["refresh_token"] if data["refresh_token"]
+      @token_expiry = (Time.now + (data["expires_in"] || 3600)).utc.to_s
+
+      save_credentials!
+      warn "Token refreshed and saved to #{CREDENTIALS_PATH}"
+    else
+      raise "Failed to refresh token: #{response.body}"
+    end
+  end
+end
+
+class CLI < Thor
+  REDIRECT_URI = "http://localhost:8080/callback"
+  AUTH_URL = "https://api.freeagent.com/v2/approve_app"
+  TOKEN_URL = "https://api.freeagent.com/v2/token_endpoint"
+
+  def self.exit_on_failure?
+    true
+  end
+
+  # === Auth Commands ===
+
+  desc "auth", "Configure FreeAgent OAuth credentials"
+  option :clear, type: :boolean, default: false, desc: "Clear stored credentials"
+  def auth
+    if options[:clear]
+      clear_credentials!
+      puts "FreeAgent credentials cleared."
+      return
+    end
+
+    # Get client credentials from 1Password
+    client_id = op_read(FreeAgentClient::OP_CLIENT_ID)
+    client_secret = op_read(FreeAgentClient::OP_CLIENT_SECRET)
+
+    unless client_id && client_secret
+      raise Thor::Error, "Could not load credentials from 1Password. Ensure op CLI is authenticated."
+    end
+
+    puts "FreeAgent OAuth Configuration"
+    puts "=" * 50
+    puts ""
+
+    # Build authorization URL
+    auth_url = "#{AUTH_URL}?response_type=code&client_id=#{URI.encode_www_form_component(client_id)}&redirect_uri=#{URI.encode_www_form_component(REDIRECT_URI)}"
+
+    puts "Step 1: Opening browser for authorization..."
+    puts ""
+    puts "If the browser doesn't open, visit:"
+    puts auth_url
+    puts ""
+
+    # Open browser
+    system("open", auth_url) if RUBY_PLATFORM.include?("darwin")
+
+    puts "Step 2: Waiting for authorization callback..."
+    puts "(Listening on #{REDIRECT_URI})"
+    puts ""
+
+    # Start local server and wait for callback
+    code = wait_for_callback
+
+    unless code
+      raise Thor::Error, "Authorization failed or timed out."
+    end
+
+    puts "Authorization code received."
+    puts ""
+    puts "Step 3: Exchanging code for access tokens..."
+    puts ""
+
+    # Exchange code for tokens
+    response = HTTParty.post(
+      TOKEN_URL,
+      headers: {"Content-Type" => "application/x-www-form-urlencoded"},
+      body: {
+        grant_type: "authorization_code",
+        code: code,
+        client_id: client_id,
+        client_secret: client_secret,
+        redirect_uri: REDIRECT_URI
+      }
+    )
+
+    unless response.success?
+      raise Thor::Error, "Token exchange failed: #{response.body}"
+    end
+
+    data = response.parsed_response
+    save_tokens!(data)
+
+    puts "FreeAgent OAuth configured successfully!"
+    puts "Credentials saved to #{FreeAgentClient::CREDENTIALS_PATH}"
+    puts ""
+    puts "Run 'freeagent company' to verify the connection."
+  end
+
+  # === Contact Commands ===
+
+  desc "contacts", "List contacts"
+  option :view, default: "active", desc: "View: active, all, clients, suppliers"
+  def contacts
+    data = client.contacts(view: options[:view]).map do |c|
+      {
+        id: extract_id(c["url"]),
+        name: c["organisation_name"] || "#{c["first_name"]} #{c["last_name"]}".strip,
+        email: c["email"],
+        status: c["status"]
+      }
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "contact ID", "Show contact details"
+  def contact(id)
+    data = client.contact(id)
+    puts JSON.pretty_generate(
+      id: extract_id(data["url"]),
+      organisation_name: data["organisation_name"],
+      first_name: data["first_name"],
+      last_name: data["last_name"],
+      email: data["email"],
+      billing_email: data["billing_email"],
+      phone: data["phone_number"],
+      address: [data["address1"], data["address2"], data["address3"]].compact.join(", "),
+      town: data["town"],
+      region: data["region"],
+      postcode: data["postcode"],
+      country: data["country"],
+      status: data["status"],
+      payment_terms: data["default_payment_terms_in_days"]
+    )
+  end
+
+  desc "create-contact", "Create a new contact"
+  option :organisation, aliases: "-o", desc: "Organisation name"
+  option :first_name, aliases: "-f", desc: "First name"
+  option :last_name, aliases: "-l", desc: "Last name"
+  option :email, aliases: "-e", desc: "Email address"
+  option :billing_email, desc: "Billing email (defaults to email)"
+  option :phone, aliases: "-p", desc: "Phone number"
+  option :address, aliases: "-a", desc: "Street address"
+  option :town, desc: "City/Town"
+  option :region, desc: "Province/State/Region"
+  option :postcode, desc: "Postal/ZIP code"
+  option :country, default: "Canada", desc: "Country"
+  option :payment_terms, aliases: "-t", type: :numeric, default: 30, desc: "Payment terms in days"
+  def create_contact
+    attrs = {}
+    attrs[:organisation_name] = options[:organisation] if options[:organisation]
+    attrs[:first_name] = options[:first_name] if options[:first_name]
+    attrs[:last_name] = options[:last_name] if options[:last_name]
+    attrs[:email] = options[:email] if options[:email]
+    attrs[:billing_email] = options[:billing_email] || options[:email]
+    attrs[:phone_number] = options[:phone] if options[:phone]
+    attrs[:address1] = options[:address] if options[:address]
+    attrs[:town] = options[:town] if options[:town]
+    attrs[:region] = options[:region] if options[:region]
+    attrs[:postcode] = options[:postcode] if options[:postcode]
+    attrs[:country] = options[:country]
+    attrs[:default_payment_terms_in_days] = options[:payment_terms]
+    attrs[:locale] = "en"
+    attrs[:charge_sales_tax] = "Auto"
+
+    if attrs[:organisation_name].nil? && (attrs[:first_name].nil? || attrs[:last_name].nil?)
+      raise Thor::Error, "Must provide --organisation OR both --first-name and --last-name"
+    end
+
+    contact = client.create_contact(attrs)
+    puts JSON.pretty_generate(
+      id: extract_id(contact["url"]),
+      name: contact["organisation_name"] || "#{contact["first_name"]} #{contact["last_name"]}".strip,
+      email: contact["email"]
+    )
+    puts "Contact created successfully."
+  end
+
+  # === Invoice Commands ===
+
+  desc "invoices", "List invoices"
+  option :view, default: "recent", desc: "View: recent, open, all, overdue, draft"
+  def invoices
+    data = client.invoices(view: options[:view]).map do |inv|
+      {
+        id: extract_id(inv["url"]),
+        reference: inv["reference"],
+        contact_id: extract_id(inv["contact"]),
+        dated_on: inv["dated_on"],
+        due_on: inv["due_on"],
+        status: inv["status"],
+        total: inv["total_value"],
+        currency: inv["currency"]
+      }
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "invoice ID", "Show invoice details"
+  def invoice(id)
+    inv = client.invoice(id)
+    items = (inv["invoice_items"] || []).map do |item|
+      {
+        description: item["description"],
+        quantity: item["quantity"],
+        price: item["price"],
+        sales_tax_rate: item["sales_tax_rate"]
+      }
+    end
+
+    puts JSON.pretty_generate(
+      id: extract_id(inv["url"]),
+      reference: inv["reference"],
+      contact_id: extract_id(inv["contact"]),
+      dated_on: inv["dated_on"],
+      due_on: inv["due_on"],
+      status: inv["status"],
+      net_value: inv["net_value"],
+      sales_tax_value: inv["sales_tax_value"],
+      total_value: inv["total_value"],
+      currency: inv["currency"],
+      items: items
+    )
+  end
+
+  desc "create-invoice", "Create a new invoice"
+  option :contact, aliases: "-c", required: true, desc: "Contact ID or name"
+  option :reference, aliases: "-r", desc: "Invoice reference/number"
+  option :date, aliases: "-d", default: Date.today.to_s, desc: "Invoice date (YYYY-MM-DD)"
+  option :due_days, aliases: "-t", type: :numeric, default: 30, desc: "Payment terms in days"
+  option :currency, default: "CAD", desc: "Currency code"
+  option :description, aliases: "-D", required: true, desc: "Line item description"
+  option :quantity, aliases: "-q", type: :numeric, default: 1, desc: "Quantity"
+  option :price, aliases: "-p", required: true, type: :numeric, desc: "Price per unit"
+  option :item_type, default: "Services", desc: "Item type: Hours, Days, Services, Products"
+  option :tax_rate, type: :numeric, default: 15.0, desc: "Sales tax rate (%)"
+  option :send, type: :boolean, default: false, desc: "Mark as sent after creation"
+  def create_invoice
+    # Resolve contact
+    contact_id = resolve_contact(options[:contact])
+    contact_url = "#{FreeAgentClient::BASE_URL}/contacts/#{contact_id}"
+
+    dated_on = Date.parse(options[:date])
+    due_on = dated_on + options[:due_days]
+
+    attrs = {
+      contact: contact_url,
+      dated_on: dated_on.to_s,
+      due_on: due_on.to_s,
+      payment_terms_in_days: options[:due_days],
+      currency: options[:currency],
+      invoice_items: [
+        {
+          description: options[:description],
+          item_type: options[:item_type],
+          quantity: options[:quantity].to_s,
+          price: options[:price].to_s,
+          sales_tax_rate: options[:tax_rate].to_s
+        }
+      ]
+    }
+    attrs[:reference] = options[:reference] if options[:reference]
+
+    invoice = client.create_invoice(attrs)
+    invoice_id = extract_id(invoice["url"])
+
+    if options[:send]
+      client.mark_invoice_sent(invoice_id)
+      puts "Invoice marked as sent."
+    end
+
+    puts JSON.pretty_generate(
+      id: invoice_id,
+      reference: invoice["reference"],
+      dated_on: invoice["dated_on"],
+      due_on: invoice["due_on"],
+      status: invoice["status"],
+      total_value: invoice["total_value"],
+      currency: invoice["currency"]
+    )
+    puts "Invoice created successfully."
+  end
+
+  # === Utility Commands ===
+
+  desc "company", "Show company info"
+  def company
+    data = client.company
+    puts JSON.pretty_generate(
+      name: data["name"],
+      type: data["type"],
+      currency: data["currency"],
+      country: data["company_registration_number"],
+      sales_tax_registration_number: data["sales_tax_registration_number"]
+    )
+  end
+
+  desc "projects", "List projects"
+  option :contact, aliases: "-c", desc: "Filter by contact ID"
+  def projects
+    data = client.projects(contact_id: options[:contact]).map do |p|
+      {
+        id: extract_id(p["url"]),
+        name: p["name"],
+        contact_id: extract_id(p["contact"]),
+        status: p["status"],
+        budget: p["budget"],
+        currency: p["currency"]
+      }
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  private
+
+  def client
+    @client ||= FreeAgentClient.new
+  end
+
+  def extract_id(url)
+    return nil unless url
+    url.split("/").last
+  end
+
+  def resolve_contact(input)
+    # If numeric, assume it's an ID
+    return input if input.match?(/^\d+$/)
+
+    # Otherwise search by name
+    contact = client.find_contact_by_name(input)
+    raise Thor::Error, "Contact not found: #{input}" unless contact
+
+    extract_id(contact["url"])
+  end
+
+  def op_read(ref)
+    warn "Fetching #{ref.split("/").last} from 1Password..."
+    result = `op read '#{ref}' 2>/dev/null`.chomp
+    result.empty? ? nil : result
+  rescue
+    nil
+  end
+
+  def wait_for_callback
+    code = nil
+    server = WEBrick::HTTPServer.new(
+      Port: 8080,
+      Logger: WEBrick::Log.new(File::NULL),
+      AccessLog: []
+    )
+
+    server.mount_proc "/callback" do |req, res|
+      code = req.query["code"]
+      res.content_type = "text/html"
+      res.body = <<~HTML
+        <!DOCTYPE html>
+        <html>
+          <head><title>Authorization Successful</title></head>
+          <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #28a745;">Authorization Successful!</h1>
+            <p>You can close this window and return to the terminal.</p>
+          </body>
+        </html>
+      HTML
+      server.shutdown
+    end
+
+    # Timeout after 5 minutes
+    Thread.new do
+      sleep 300
+      server.shutdown if server.status == :Running
+    end
+
+    server.start
+    code
+  end
+
+  def save_tokens!(data)
+    creds_path = FreeAgentClient::CREDENTIALS_PATH
+    creds = File.exist?(creds_path) ? JSON.parse(File.read(creds_path)) : {}
+    creds["freeagent"] ||= {}
+    creds["freeagent"]["access_token"] = data["access_token"]
+    creds["freeagent"]["refresh_token"] = data["refresh_token"]
+    creds["freeagent"]["token_expiry"] = (Time.now + (data["expires_in"] || 3600)).utc.to_s
+
+    FileUtils.mkdir_p(File.dirname(creds_path))
+    File.write(creds_path, JSON.pretty_generate(creds))
+    File.chmod(0o600, creds_path)
+  end
+
+  def clear_credentials!
+    creds_path = FreeAgentClient::CREDENTIALS_PATH
+    return unless File.exist?(creds_path)
+
+    creds = JSON.parse(File.read(creds_path))
+    creds["freeagent"] = {}
+    File.write(creds_path, JSON.pretty_generate(creds))
+  end
+end
+
+CLI.start(ARGV)
