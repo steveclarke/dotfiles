@@ -1,155 +1,165 @@
-# ZSH Shell Configuration Guide
+# ZSH Shell Guide
 
-Understanding when shell configuration files are loaded can be confusing. Here's a comprehensive reference for when `.zprofile` and `.zshrc` are loaded and what should go in each.
+When do `.zprofile` and `.zshrc` load? This guide explains shell types and config files.
 
-## Interactive vs Login Shells
+## Two Types of Shells
 
-The key is understanding that these are **two separate, independent characteristics** that can be combined:
+Shells have two traits. These traits combine in different ways.
 
-**Interactive vs Non-Interactive:**
-- **Interactive**: You can type commands and get responses (normal terminal use)
-- **Non-Interactive**: Running scripts, commands via SSH, etc. (no human interaction)
+### Interactive vs Non-Interactive
 
-**Login vs Non-Login:**
-- **Login**: You "logged in" to get this shell (authenticated to the system)
-- **Non-Login**: You got this shell from within an existing session
+| Type | What It Means | Example |
+|------|---------------|---------|
+| Interactive | You type commands | Normal terminal use |
+| Non-Interactive | Scripts run on their own | Cron jobs, `./script.sh` |
+
+### Login vs Non-Login
+
+| Type | What It Means | Example |
+|------|---------------|---------|
+| Login | You logged in to get this shell | SSH, first terminal |
+| Non-Login | You opened a shell from inside another | New tab, running `zsh` |
 
 ## The Four Shell Types
 
-### 1. Interactive Login Shell
-*You can type commands AND you logged in to get here*
+### 1. Interactive + Login
+
+You can type commands. You logged in to get here.
 
 **Examples:**
 - SSH into a server: `ssh user@server`
-- Terminal.app on macOS (by default)
-- Logging into a Linux console (Ctrl+Alt+F1)
-- Running `zsh --login`
+- Terminal.app on macOS
+- Linux console (Ctrl+Alt+F1)
 
 **Files loaded:** `.zprofile` → `.zshrc`
 
-### 2. Interactive Non-Login Shell
-*You can type commands BUT you didn't log in (you're already logged in)*
+### 2. Interactive + Non-Login
+
+You can type commands. You're already logged in.
 
 **Examples:**
-- Opening a new terminal tab/window (most Linux terminals)
-- Running `zsh` from within an existing shell
-- Opening a terminal in VS Code
-- Most terminal emulators on Linux
+- New terminal tab (most Linux terminals)
+- Running `zsh` from another shell
+- VS Code terminal
 
 **Files loaded:** `.zshrc` only
 
-### 3. Non-Interactive Login Shell
-*Running a script/command AND you're logging in*
+### 3. Non-Interactive + Login
+
+A script runs. You're logging in.
 
 **Examples:**
-- `ssh user@server 'some-command'` (SSH with a command)
-- Login scripts during system startup
+- `ssh user@server 'some-command'`
+- Login scripts at startup
 
 **Files loaded:** `.zprofile` only
 
-### 4. Non-Interactive Non-Login Shell
-*Running a script from within an existing session*
+### 4. Non-Interactive + Non-Login
+
+A script runs from an existing session.
 
 **Examples:**
 - Shell scripts: `./myscript.sh`
 - Command substitution: `$(some-command)`
 - Cron jobs
 
-**Files loaded:** Usually none (scripts should be self-contained)
+**Files loaded:** None (scripts should set their own env)
 
-## Configuration File Purpose
+## Which File Does What?
 
-### `.zprofile` - Login Shell Environment Setup
-**When it loads:** Login shells only, before `.zshrc`
+### .zprofile — Login Setup
 
-**Use this file for:**
-- Environment variables that should be set once per login session
-- PATH modifications that need to be available to all processes
-- One-time initialization that doesn't need to run for every shell
-- Package manager environment setup (Homebrew, mise, etc.)
+Loads once when you log in. Runs before `.zshrc`.
 
-### `.zshrc` - Interactive Shell Experience
-**When it loads:** All interactive shells (login + non-login)
+**Put these things here:**
+- Environment variables (PATH, etc.)
+- Package manager setup (Homebrew, mise)
+- One-time init that all processes need
 
-**Use this file for:**
-- Interactive features: completion, prompt, key bindings, aliases
-- Plugin configuration and shell enhancements
-- Settings that should apply to every interactive session
-- Anything that makes the shell more pleasant to use interactively
+### .zshrc — Interactive Setup
 
-## Complete ZSH Loading Order
+Loads for every interactive shell.
 
-For reference, here's the complete loading order for zsh:
-
-### Interactive Login Shells
-1. `/etc/zshenv` → `~/.zshenv` (always loaded first)
-2. `/etc/zprofile` → `~/.zprofile` (login shells only)
-3. `/etc/zshrc` → `~/.zshrc` (interactive shells)
-4. `/etc/zlogin` → `~/.zlogin` (login shells only, after zshrc)
-
-### Interactive Non-Login Shells
-1. `/etc/zshenv` → `~/.zshenv` (always loaded first)
-2. `/etc/zshrc` → `~/.zshrc` (interactive shells)
-
-### Non-Interactive Shells
-1. `/etc/zshenv` → `~/.zshenv` (always loaded first)
-2. (Additional files may load for login shells, but not interactive features)
-
-## Platform Differences
-
-### macOS
-- **Terminal.app**: Defaults to login shells (loads both `.zprofile` and `.zshrc`)
-- **iTerm2**: Usually defaults to login shells
-- **Third-party terminals**: May vary
-
-### Linux
-- **Most terminal emulators**: Default to non-login shells (only `.zshrc`)
-- **SSH sessions**: Always login shells (loads both files)
-- **Console login**: Login shells (loads both files)
-
-## Common Gotchas
-
-### Environment Variables Not Available
-**Problem:** PATH or other environment variables work on macOS but not Linux
-**Cause:** Environment setup in `.zshrc` instead of `.zprofile`
-**Solution:** Move environment setup to `.zprofile`
-
-### Slow Shell Startup
-**Problem:** New terminal tabs/windows take a long time to open
-**Cause:** Heavy processing in `.zshrc` that runs for every interactive shell
-**Solution:** Move one-time setup to `.zprofile`
-
-### SSH Command Failures
-**Problem:** Commands work in interactive SSH but fail when run via `ssh user@server 'command'`
-**Cause:** Interactive features in `.zprofile` breaking non-interactive shells
-**Solution:** Guard interactive features with `[[ -o interactive ]]` or move to `.zshrc`
+**Put these things here:**
+- Aliases and functions
+- Prompt settings
+- Key bindings
+- Plugins and completions
+- Anything that makes typing nicer
 
 ## Quick Reference
 
-| Shell Type | Interactive | Login | Files Loaded | Common Examples |
-|------------|-------------|-------|--------------|-----------------|
-| Interactive Login | ✅ | ✅ | `.zprofile` → `.zshrc` | SSH, Terminal.app |
-| Interactive Non-Login | ✅ | ❌ | `.zshrc` only | New terminal tab (Linux) |
-| Non-Interactive Login | ❌ | ✅ | `.zprofile` only | `ssh server 'command'` |
-| Non-Interactive Non-Login | ❌ | ❌ | Usually none | Shell scripts |
+| Shell Type | Interactive | Login | Files Loaded |
+|------------|-------------|-------|--------------|
+| Interactive Login | Yes | Yes | `.zprofile` → `.zshrc` |
+| Interactive Non-Login | Yes | No | `.zshrc` only |
+| Non-Interactive Login | No | Yes | `.zprofile` only |
+| Non-Interactive Non-Login | No | No | Usually none |
 
-## Testing Your Setup
+## macOS vs Linux
 
-To test which type of shell you're in:
+### macOS
+
+- **Terminal.app**: Login shell (loads both files)
+- **iTerm2**: Login shell (loads both files)
+
+### Linux
+
+- **Most terminals**: Non-login shell (`.zshrc` only)
+- **SSH sessions**: Login shell (loads both files)
+- **Console login**: Login shell (loads both files)
+
+## Common Problems
+
+### Env vars work on macOS but not Linux
+
+**Why:** You put env setup in `.zshrc` instead of `.zprofile`.
+
+**Fix:** Move env setup to `.zprofile`.
+
+### Shell starts slowly
+
+**Why:** Heavy work in `.zshrc` runs every time you open a tab.
+
+**Fix:** Move one-time setup to `.zprofile`.
+
+### SSH commands fail
+
+**Why:** Interactive code in `.zprofile` breaks non-interactive shells.
+
+**Fix:** Guard with `[[ -o interactive ]]` or move to `.zshrc`.
+
+## Full Load Order
+
+For interactive login shells:
+
+1. `/etc/zshenv` → `~/.zshenv`
+2. `/etc/zprofile` → `~/.zprofile`
+3. `/etc/zshrc` → `~/.zshrc`
+4. `/etc/zlogin` → `~/.zlogin`
+
+For interactive non-login shells:
+
+1. `/etc/zshenv` → `~/.zshenv`
+2. `/etc/zshrc` → `~/.zshrc`
+
+## Test Your Shell
+
+Check if your shell is interactive:
 
 ```bash
-# Check if interactive
 [[ $- == *i* ]] && echo "Interactive" || echo "Non-interactive"
-
-# Check if login shell  
-shopt -q login_shell && echo "Login shell" || echo "Non-login shell"
-
-# Or use this one-liner
-echo "Interactive: $([[ $- == *i* ]] && echo yes || echo no), Login: $(shopt -q login_shell && echo yes || echo no)"
 ```
 
-To see which files were loaded:
+Check if it's a login shell:
+
 ```bash
-# Add this to your shell files to trace loading
-echo "Loading $(basename $0) at $(date)"
+[[ -o login ]] && echo "Login" || echo "Non-login"
+```
+
+Debug which files load:
+
+```bash
+# Add this to each file
+echo "Loading ~/.zprofile" # or ~/.zshrc
 ```

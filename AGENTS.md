@@ -1,27 +1,45 @@
-# Dotfiles Agent Guidelines
+# Dotfiles Agent Guide
 
-## Build/Test Commands
-- **Main install**: `bash install.sh` (from dotfiles root)
-- **Stow configs**: `bash configs/stow.sh` or `dotfiles stow`
-- **Update packages**: `dotfiles update` (runs stow + brew)
-- **Just commands**: `just up` (upgrade all packages via fish)
-- No formal test suite - scripts are self-testing via command checks
+Guide for AI agents working on this repo.
 
-## Code Style Guidelines
-- Use `#!/usr/bin/env bash` shebang for all shell scripts
-- Source shared functions from `lib/dotfiles.sh` at script start
-- Use `installing_banner "Package Name"` for install progress
-- Check if commands exist with `is_installed command_name` before use
-- Platform detection: use `is_macos` and `is_linux` functions
-- Variable naming: use `DOTFILES_*` prefix for environment vars
-- Quote all file paths with spaces: `"${HOME}/.config/app"`
-- Use `mkdir -p` for directory creation, `rm -f` for safe removal
-- Cache sudo credentials with `cache_sudo_credentials` for long installs
-- Error handling: exit with code 1-2, show clear error messages
+## Commands
 
-## Repository Structure
-- `configs/` - stow packages for dotfile configs
-- `install/` - installation scripts by category (cli, apps, optional)
-- `lib/dotfiles.sh` - shared utility functions for all scripts
-- `setups/` - post-install configuration scripts
-- Platform-specific paths: `install/macos/` and `setups/linux/`
+| Task | Command |
+|------|---------|
+| Install everything | `bash install.sh` |
+| Update symlinks | `dotfiles stow` |
+| Update packages | `dotfiles update` |
+| Upgrade all | `just up` |
+
+No test suite. Scripts test if commands exist.
+
+## Code Style
+
+**Shebang:** Use `#!/usr/bin/env bash` for all scripts.
+
+**Shared code:** Source `lib/dotfiles.sh` at the top of each script.
+
+**Helpers:**
+- `installing_banner "Name"` — show progress
+- `is_installed cmd` — check if command exists
+- `is_macos` / `is_linux` — detect OS
+- `cache_sudo_credentials` — keep sudo alive
+
+**Naming:** Use `DOTFILES_*` prefix for env vars.
+
+**Paths:** Quote paths with spaces: `"${HOME}/.config/app"`
+
+**File ops:** Use `mkdir -p` to create dirs, `rm -f` to delete safely.
+
+**Errors:** Exit with code 1 or 2. Show clear error messages.
+
+## Repo Structure
+
+| Folder | What's Inside |
+|--------|---------------|
+| `configs/` | Stow packages (dotfile configs) |
+| `install/` | Install scripts (cli, apps, optional) |
+| `lib/dotfiles.sh` | Shared functions for all scripts |
+| `setups/` | Post-install config scripts |
+| `install/macos/` | macOS-only installs |
+| `setups/linux/` | Linux-only setup |
