@@ -1,111 +1,54 @@
-# Steve Clarke's Dotfiles
+# Dotfiles
 
-This is a collection of my config files to help me get each of my computers
-quickly bootstrapped. It's a work in progress and is specifically tweaked with
-lots of assumptions about where I like to place things.
+My personal setup scripts for Mac and Linux machines. Clone the repo, run one command, and you're done.
 
-## Supported Platforms
+> [!CAUTION]
+> This is my personal config. It makes lots of assumptions about how I like things set up. Feel free to browse and borrow ideas, but don't expect it to work for you out of the box.
 
-* **Linux**: Debian-derived distributions (e.g. Ubuntu, Pop!_OS)
-* **macOS**: macOS 10.15 (Catalina) or later
+## What This Does
 
-## Pre-requisites
+- Installs your preferred CLI tools and apps
+- Sets up shell configs (Fish, Zsh, Bash)
+- Manages dotfiles with GNU Stow
+- Configures system settings
+- Sets up SSH keys
 
-* Repository lives at `~/.local/share/dotfiles` (unless otherwise specified in
-  `.dotfilesrc`)
-* **Linux**: Debian-derived operating system
-* **macOS**: macOS 10.15 or later with Xcode Command Line Tools
+## Supported Systems
 
-## General Organisation
+| Platform | Version |
+|----------|---------|
+| macOS | 10.15 (Catalina) or later |
+| Linux | Debian-based (Ubuntu, Pop!_OS, etc.) |
 
-* `ai` - AI/LLM resources including development guides and prompts.
-  See the [AI Resources README](ai/README.md) for details.
-* `configs` - contains the stow folders for applicable apps.
-  Note: Fonts are in this folder.
-* `docs` - documentation and reference guides for various topics.
-* `fixes` - contains scripts to fix issues with the system. These are not run by
-  default. Run them individually if you need a specific fix.
-* `install` - contains scripts to install software. This is broken down further
-  by category:
-   * `prereq` - scripts to install prerequisites for other scripts
-   * `cli` - command line tools
-   * `apps` - GUI applications
-   * `desktop-entries` - `.desktop` files for applications. Mainly acts as a
-     wrapper for web apps.
-   * `optional` - scripts to install optional software. These must be run manually.
-* `setups` - scripts to configure things that can't be configured via stow.
+## Quick Start
 
-## Documentation
+### 1. Install Prerequisites
 
-For detailed guides and reference materials, see the `docs/` directory:
-
-- **[ZSH Shell Configuration Guide](docs/zsh-shell-guide.md)** - Complete reference for understanding when `.zprofile` and `.zshrc` are loaded, interactive vs login shells, and platform differences
-- **[Restructuring Plan](docs/restructure-spec.md)** - Detailed plan for reorganizing the repository structure
-- **[Restructuring Todo](docs/restructure-todo.md)** - Implementation checklist for the restructuring plan
-
-## Installation
-
-### Linux Installation
-
-#### Prerequisites
-
-Ensure you have `git` and `curl` installed:
-
-```bash
-sudo apt update && sudo apt install -y git curl
-```
-
-#### Setup
-
-Download and copy the `.dotfilesrc` to $HOME:
-
-```bash
-wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
-```
-
-After downloading, adjust the settings for your machine.
-
-#### Clone and Install
-
-Clone the repository and run the installation:
-
-```bash
-git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
-cd ~/.local/share/dotfiles
-bash install.sh
-```
-
-The installation script will:
-1. Install system prerequisites and build tools
-2. Install GNU Stow for configuration management
-3. Install CLI tools via package managers
-4. Install GUI applications (if DOTFILES_INSTALL_GUI=true)
-5. Configure SSH keys and settings (if configured)
-6. Set up shell configurations and dotfiles
-
-### macOS Installation
-
-#### Prerequisites
-
-First, install Xcode Command Line Tools if not already installed:
-
+**macOS:**
 ```bash
 xcode-select --install
 ```
 
-#### Setup
+**Linux:**
+```bash
+sudo apt update && sudo apt install -y git curl
+```
 
-Download and copy the `.dotfilesrc` to $HOME:
+### 2. Download the Config File
 
+**macOS:**
 ```bash
 curl -o ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
 ```
 
-After downloading, adjust the settings for your machine.
+**Linux:**
+```bash
+wget -qO ~/.dotfilesrc https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
+```
 
-#### Clone and Install
+Edit `~/.dotfilesrc` to match your preferences.
 
-Clone the repository and run the installation:
+### 3. Clone and Install
 
 ```bash
 git clone https://github.com/steveclarke/dotfiles.git ~/.local/share/dotfiles
@@ -113,64 +56,103 @@ cd ~/.local/share/dotfiles
 bash install.sh
 ```
 
-The installation script will:
-1. Install Homebrew if not already installed
-2. Install GNU Stow for configuration management
-3. Install CLI tools from the main Brewfile
-4. Install GUI applications from the Brewfile.macos (if DOTFILES_INSTALL_GUI=true)
-5. Configure SSH keys and settings (if configured)
-6. Configure system preferences via macOS defaults
-7. Set up shell configurations and dotfiles
+> [!NOTE]
+> The script detects your OS. It uses Homebrew on macOS and apt on Linux.
+
+## What Gets Installed
+
+**macOS:**
+1. Homebrew (if missing)
+2. GNU Stow
+3. CLI tools from Brewfile
+4. GUI apps (if enabled)
+5. SSH keys (if set up)
+6. System settings
+7. Shell configs
+
+**Linux:**
+1. Build tools
+2. GNU Stow
+3. CLI tools
+4. GUI apps (if enabled)
+5. SSH keys (if set up)
+6. Shell configs
+
+## Directory Structure
+
+| Folder | What It Contains |
+|--------|------------------|
+| `ai/` | AI prompts, skills, and agents. See [AI README](ai/README.md). |
+| `configs/` | Stow packages for app configs. Fonts live here too. |
+| `docs/` | Guides and reference docs. |
+| `fixes/` | Scripts to fix issues. Run by hand when needed. |
+| `install/` | Install scripts by category (see below). |
+| `setups/` | Config scripts for things Stow can't handle. |
+
+### Install Scripts
+
+| Folder | Purpose |
+|--------|---------|
+| `install/prereq/` | Tools needed by other scripts |
+| `install/cli/` | Command line tools |
+| `install/apps/` | GUI apps |
+| `install/desktop-entries/` | `.desktop` files (web app wrappers) |
+| `install/optional/` | Extra software. Run by hand. |
 
 ## Updating
 
-Use `git` to update the dotfiles from the repository.
+Pull the latest changes:
 
 ```bash
 git pull
 ```
 
-To update the stowed dotfiles and Homebrew packages you can use the `dotfiles`
-script in the `bin` directory (added to path automatically).
-
+Update configs and packages:
 
 ```bash
-dotfiles stow # re-runs stow on the `configs` directory, updating symlinks
-dotfiles brew # Runs `brew bundle` to install and update Homebrew packages
-dotfiles update # runs both stow and brew
-
+dotfiles stow    # Update symlinks
+dotfiles brew    # Update Homebrew packages
+dotfiles update  # Run both
 ```
-New items added to the `install` directory should be manually run after initial
-installation. In general you should run `bash install/**/[name].sh` to run
-any of the install scripts. You can also install optional software found in the
-`install/optional` directory,
 
-e.g. `bash install/optional/steam.sh` to install Emacs.
+### Installing New Scripts
 
-## Configuration and Secrets
-
-### Shared Environment Variables
-
-The `.dotfilesrc` file in your home directory serves as a centralized location for environment variables and secrets that are shared across all shells (Fish, Zsh, Bash).
-
-**Location**: `~/.dotfilesrc`
-
-Both Fish and Zsh automatically source this file on startup, making any exported variables available in your shell environment.
-
-#### Adding Secrets
-
-Add environment variables using standard bash export syntax:
+New install scripts don't run on their own. Run them by hand:
 
 ```bash
-# API keys and tokens
+bash install/cli/some-tool.sh
+bash install/optional/steam.sh
+```
+
+## Configuration
+
+### The .dotfilesrc File
+
+The `~/.dotfilesrc` file holds your settings and secrets. Fish and Zsh load it on startup.
+
+> [!IMPORTANT]
+> This file is NOT tracked in git. It's safe for secrets and machine-specific settings.
+
+Add secrets like this:
+
+```bash
+# API keys
 export MY_API_KEY="your-secret-key"
 export GITHUB_TOKEN="ghp_..."
 
 # Database credentials
 export DATABASE_URL="postgresql://user:pass@host/db"
-
-# Custom environment variables
-export MY_CUSTOM_VAR="value"
 ```
 
-**Security Note**: The `.dotfilesrc` file lives in your home directory and is NOT tracked in git, making it safe for storing secrets and machine-specific configuration.
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [ZSH Shell Guide](docs/zsh-shell-guide.md) | Shell startup files, shell types, OS differences |
+| [AI Resources](ai/README.md) | Prompts, skills, and agents for AI coding tools |
+
+## Requirements
+
+- Repo goes in `~/.local/share/dotfiles` (or set a custom path in `.dotfilesrc`)
+- **macOS**: Xcode Command Line Tools
+- **Linux**: Debian-based distro (apt package manager)
