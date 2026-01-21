@@ -1,6 +1,6 @@
 ---
 name: syncbooks
-description: Daily accounting reconciliation with FreeAgent, WHMCS, and Google Sheets. Use when user asks about invoices, contacts, accounting, FreeAgent, WHMCS transactions, cash position, or financial reconciliation. Triggers on "syncbooks", "freeagent", "invoice", "contact", "accounting", "reconciliation", "cash position".
+description: Daily accounting reconciliation with FreeAgent, WHMCS, and Google Sheets. Use when user asks about invoices, contacts, accounting, FreeAgent, WHMCS transactions, cash position, HST report, or financial reconciliation. Triggers on "syncbooks", "freeagent", "invoice", "contact", "accounting", "reconciliation", "cash position", "HST".
 ---
 
 # SyncBooks
@@ -67,6 +67,28 @@ scripts/freeagent create-invoice \
   --item-type Hours \
   --send
 ```
+
+### Balance & Cash Position
+
+```bash
+# Total balance across all bank accounts
+scripts/freeagent balance
+```
+
+Shows active accounts grouped by type (bank, credit card, PayPal) with totals.
+
+### HST Report
+
+```bash
+# Calculate HST for a date range
+scripts/freeagent hst --from 2025-10-01 --to 2025-12-31
+```
+
+Calculates HST by aggregating:
+- **HST Charged**: Invoices + bank transactions categorized as income
+- **HST Reclaimed**: Bills + expenses + bank transactions categorized as expenses
+
+Output matches FreeAgent's official HST Report (Tax → HST on the web UI).
 
 ### Utility
 
