@@ -1,0 +1,571 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+  gem "httparty"
+end
+
+require "json"
+require "time"
+
+module TimeTracking
+  class BaseClient
+    def me
+      raise NotImplementedError
+    end
+
+    def workspace_id
+      raise NotImplementedError
+    end
+
+    def projects
+      raise NotImplementedError
+    end
+
+    def find_project(name)
+      projects.find { |p| p["name"].downcase == name.downcase }
+    end
+
+    def entries(days:)
+      raise NotImplementedError
+    end
+
+    def current_entry
+      raise NotImplementedError
+    end
+
+    def start_entry(description:, project_id:, billable:, tags:)
+      raise NotImplementedError
+    end
+
+    def stop_entry(entry_id)
+      raise NotImplementedError
+    end
+
+    def create_entry(description:, project_id:, start_time:, stop_time:, billable:, tags:)
+      raise NotImplementedError
+    end
+
+    def delete_entry(entry_id)
+      raise NotImplementedError
+    end
+
+    protected
+
+    def parse_datetime(str)
+      Time.strptime(str, "%Y-%m-%d %H:%M")
+    end
+  end
+
+  class TogglClient < BaseClient
+    BASE_URL = "https://api.track.toggl.com/api/v9"
+    OP_REF = "op://Employee/Toggl/api key"
+
+    def initialize
+      @token = nil
+      @workspace_id = nil
+    end
+
+    def me
+      get("/me")
+    end
+
+    def workspace_id
+      @workspace_id ||= me["default_workspace_id"]
+    end
+
+    def projects
+      get("/workspaces/#{workspace_id}/projects")
+    end
+
+    def entries(days: 7)
+      start_date = (Date.today - days).to_s
+      end_date = Date.today.to_s
+      get("/me/time_entries?start_date=#{start_date}&end_date=#{end_date}")
+    end
+
+    def current_entry
+      get("/me/time_entries/current")
+    end
+
+    def start_entry(description:, project_id:, billable: true, tags: nil)
+      payload = {
+        description: description,
+        start: Time.now.iso8601,
+        duration: -1,
+        project_id: project_id,
+        workspace_id: workspace_id,
+        billable: billable,
+        created_with: "time-tracker"
+      }
+      payload[:tags] = tags.split(",").map(&:strip) if tags
+      post("/workspaces/#{workspace_id}/time_entries", payload)
+    end
+
+    def stop_entry(entry_id)
+      put("/workspaces/#{workspace_id}/time_entries/#{entry_id}/stop", {})
+    end
+
+    def create_entry(description:, project_id:, start_time:, stop_time:, billable: true, tags: nil)
+      start_dt = parse_datetime(start_time)
+      stop_dt = parse_datetime(stop_time)
+      duration = (stop_dt - start_dt).to_i
+
+      payload = {
+        description: description,
+        start: start_dt.iso8601,
+        stop: stop_dt.iso8601,
+        duration: duration,
+        project_id: project_id,
+        workspace_id: workspace_id,
+        billable: billable,
+        created_with: "time-tracker"
+      }
+      payload[:tags] = tags.split(",").map(&:strip) if tags
+      post("/workspaces/#{workspace_id}/time_entries", payload)
+    end
+
+    def delete_entry(entry_id)
+      delete("/workspaces/#{workspace_id}/time_entries/#{entry_id}")
+    end
+
+    private
+
+    def token
+      @token ||= begin
+        warn "Fetching Toggl API key from 1Password..."
+        `op read '#{OP_REF}'`.chomp.tap do |t|
+          raise "Failed to get API token from 1Password" if t.empty?
+        end
+      end
+    end
+
+    def auth
+      {username: token, password: "api_token"}
+    end
+
+    def get(endpoint)
+      response = HTTParty.get("#{BASE_URL}#{endpoint}", basic_auth: auth)
+      handle_response(response)
+    end
+
+    def post(endpoint, body)
+      response = HTTParty.post(
+        "#{BASE_URL}#{endpoint}",
+        basic_auth: auth,
+        headers: {"Content-Type" => "application/json"},
+        body: body.to_json
+      )
+      handle_response(response)
+    end
+
+    def put(endpoint, body)
+      response = HTTParty.put(
+        "#{BASE_URL}#{endpoint}",
+        basic_auth: auth,
+        headers: {"Content-Type" => "application/json"},
+        body: body.to_json
+      )
+      handle_response(response)
+    end
+
+    def delete(endpoint)
+      response = HTTParty.delete("#{BASE_URL}#{endpoint}", basic_auth: auth)
+      return nil if response.code == 200
+      handle_response(response)
+    end
+
+    def handle_response(response)
+      return response.parsed_response if response.success?
+      raise "Toggl API error: #{response.code} - #{response.body}"
+    end
+  end
+
+  class ClockifyClient < BaseClient
+    BASE_URL = "https://api.clockify.me/api/v1"
+    OP_REF = "op://Employee/Clockify/Saved on app.clockify.me/apikey"
+
+    def initialize
+      @token = nil
+      @workspace_id = nil
+      @user_id = nil
+    end
+
+    def me
+      get("/user")
+    end
+
+    def user_id
+      @user_id ||= me["id"]
+    end
+
+    def workspace_id
+      @workspace_id ||= me["defaultWorkspace"]
+    end
+
+    def projects
+      get("/workspaces/#{workspace_id}/projects")
+    end
+
+    def entries(days: 7)
+      start_date = (Date.today - days).iso8601
+      end_date = Date.today.iso8601
+      get("/workspaces/#{workspace_id}/user/#{user_id}/time-entries?start=#{start_date}&end=#{end_date}")
+    end
+
+    def current_entry
+      entries = get("/workspaces/#{workspace_id}/user/#{user_id}/time-entries?in-progress=true")
+      entries&.first
+    end
+
+    def start_entry(description:, project_id:, billable: true, tags: nil)
+      payload = {
+        description: description,
+        start: Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        projectId: project_id,
+        billable: billable
+      }
+      payload[:tagIds] = resolve_tag_ids(tags) if tags
+      post("/workspaces/#{workspace_id}/time-entries", payload)
+    end
+
+    def stop_entry(_entry_id)
+      payload = {end: Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}
+      patch("/workspaces/#{workspace_id}/user/#{user_id}/time-entries", payload)
+    end
+
+    def create_entry(description:, project_id:, start_time:, stop_time:, billable: true, tags: nil)
+      start_dt = parse_datetime(start_time)
+      stop_dt = parse_datetime(stop_time)
+
+      payload = {
+        description: description,
+        start: start_dt.utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        end: stop_dt.utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        projectId: project_id,
+        billable: billable
+      }
+      payload[:tagIds] = resolve_tag_ids(tags) if tags
+      post("/workspaces/#{workspace_id}/time-entries", payload)
+    end
+
+    def delete_entry(entry_id)
+      delete("/workspaces/#{workspace_id}/time-entries/#{entry_id}")
+    end
+
+    private
+
+    def resolve_tag_ids(tags_string)
+      return nil unless tags_string
+      tag_names = tags_string.split(",").map(&:strip).map(&:downcase)
+      all_tags = get("/workspaces/#{workspace_id}/tags")
+      all_tags.select { |t| tag_names.include?(t["name"].downcase) }.map { |t| t["id"] }
+    end
+
+    def token
+      @token ||= begin
+        warn "Fetching Clockify API key from 1Password..."
+        `op read '#{OP_REF}'`.chomp.tap do |t|
+          raise "Failed to get API token from 1Password" if t.empty?
+        end
+      end
+    end
+
+    def headers
+      {"X-Api-Key" => token, "Content-Type" => "application/json"}
+    end
+
+    def get(endpoint)
+      response = HTTParty.get("#{BASE_URL}#{endpoint}", headers: headers)
+      handle_response(response)
+    end
+
+    def post(endpoint, body)
+      response = HTTParty.post("#{BASE_URL}#{endpoint}", headers: headers, body: body.to_json)
+      handle_response(response)
+    end
+
+    def patch(endpoint, body)
+      response = HTTParty.patch("#{BASE_URL}#{endpoint}", headers: headers, body: body.to_json)
+      handle_response(response)
+    end
+
+    def delete(endpoint)
+      response = HTTParty.delete("#{BASE_URL}#{endpoint}", headers: headers)
+      return nil if response.code == 204
+      handle_response(response)
+    end
+
+    def handle_response(response)
+      return response.parsed_response if response.success?
+      raise "Clockify API error: #{response.code} - #{response.body}"
+    end
+  end
+end
+
+class CLI < Thor
+  class_option :provider, aliases: "-P", default: "toggl", desc: "Provider: toggl or clockify"
+
+  def self.exit_on_failure?
+    true
+  end
+
+  desc "me", "Show current user info"
+  def me
+    data = client.me
+    if toggl?
+      puts JSON.pretty_generate(
+        id: data["id"],
+        email: data["email"],
+        fullname: data["fullname"],
+        timezone: data["timezone"],
+        default_workspace_id: data["default_workspace_id"]
+      )
+    else
+      puts JSON.pretty_generate(
+        id: data["id"],
+        email: data["email"],
+        name: data["name"],
+        default_workspace: data["defaultWorkspace"],
+        timezone: data["settings"]&.dig("timeZone")
+      )
+    end
+  end
+
+  desc "projects", "List all projects"
+  def projects
+    data = client.projects.map do |p|
+      if toggl?
+        {id: p["id"], name: p["name"], billable: p["billable"], active: p["active"]}
+      else
+        {id: p["id"], name: p["name"], billable: p["billable"], archived: p["archived"]}
+      end
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "entries", "List recent time entries"
+  option :days, type: :numeric, default: 7, desc: "Number of days to look back"
+  def entries
+    data = client.entries(days: options[:days]).map do |e|
+      if toggl?
+        {
+          id: e["id"],
+          description: e["description"],
+          start: e["start"],
+          stop: e["stop"],
+          duration: e["duration"],
+          project_id: e["project_id"],
+          billable: e["billable"]
+        }
+      else
+        duration = e["timeInterval"]["duration"]
+        {
+          id: e["id"],
+          description: e["description"],
+          start: e["timeInterval"]["start"],
+          stop: e["timeInterval"]["end"],
+          duration: duration,
+          project_id: e["projectId"],
+          billable: e["billable"]
+        }
+      end
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "current", "Show the currently running timer"
+  def current
+    entry = client.current_entry
+    if entry.nil?
+      puts "No timer is currently running."
+      return
+    end
+
+    if toggl?
+      start_time = Time.parse(entry["start"])
+      running_seconds = (Time.now - start_time).to_i
+      hours = running_seconds / 3600
+      minutes = (running_seconds % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        project_id: entry["project_id"],
+        start: entry["start"],
+        running_hours: hours,
+        running_minutes: minutes,
+        billable: entry["billable"]
+      )
+    else
+      start_time = Time.parse(entry["timeInterval"]["start"])
+      running_seconds = (Time.now - start_time).to_i
+      hours = running_seconds / 3600
+      minutes = (running_seconds % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        project_id: entry["projectId"],
+        start: entry["timeInterval"]["start"],
+        running_hours: hours,
+        running_minutes: minutes,
+        billable: entry["billable"]
+      )
+    end
+  end
+
+  desc "start DESCRIPTION", "Start a new timer"
+  option :project, aliases: "-p", required: true, desc: "Project name"
+  option :billable, aliases: "-b", type: :boolean, default: true
+  option :tags, aliases: "-t", desc: "Comma-separated tags"
+  def start(description)
+    project = client.find_project(options[:project])
+    raise Thor::Error, "Project not found: #{options[:project]}" unless project
+
+    entry = client.start_entry(
+      description: description,
+      project_id: project["id"],
+      billable: options[:billable],
+      tags: options[:tags]
+    )
+
+    if toggl?
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        start: entry["start"],
+        billable: entry["billable"]
+      )
+    else
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        start: entry["timeInterval"]["start"],
+        billable: entry["billable"]
+      )
+    end
+    puts "Timer started."
+  end
+
+  desc "stop", "Stop the current running timer"
+  def stop
+    entry = client.current_entry
+    if entry.nil?
+      puts "No timer is currently running."
+      return
+    end
+
+    stopped = client.stop_entry(entry["id"])
+
+    if toggl?
+      hours = stopped["duration"] / 3600
+      minutes = (stopped["duration"] % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: stopped["id"],
+        description: stopped["description"],
+        start: stopped["start"],
+        stop: stopped["stop"],
+        duration_hours: hours,
+        duration_minutes: minutes,
+        billable: stopped["billable"]
+      )
+    else
+      start_time = Time.parse(stopped["timeInterval"]["start"])
+      end_time = Time.parse(stopped["timeInterval"]["end"])
+      duration_seconds = (end_time - start_time).to_i
+      hours = duration_seconds / 3600
+      minutes = (duration_seconds % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: stopped["id"],
+        description: stopped["description"],
+        start: stopped["timeInterval"]["start"],
+        stop: stopped["timeInterval"]["end"],
+        duration_hours: hours,
+        duration_minutes: minutes,
+        billable: stopped["billable"]
+      )
+    end
+    puts "Timer stopped."
+  end
+
+  desc "create DESCRIPTION", "Create a completed time entry"
+  option :project, aliases: "-p", required: true, desc: "Project name"
+  option :start, aliases: "-s", required: true, desc: "Start time (YYYY-MM-DD HH:MM)"
+  option :stop, aliases: "-e", required: true, desc: "Stop time (YYYY-MM-DD HH:MM)"
+  option :billable, aliases: "-b", type: :boolean, default: true
+  option :tags, aliases: "-t", desc: "Comma-separated tags"
+  def create(description)
+    project = client.find_project(options[:project])
+    raise Thor::Error, "Project not found: #{options[:project]}" unless project
+
+    entry = client.create_entry(
+      description: description,
+      project_id: project["id"],
+      start_time: options[:start],
+      stop_time: options[:stop],
+      billable: options[:billable],
+      tags: options[:tags]
+    )
+
+    if toggl?
+      hours = entry["duration"] / 3600
+      minutes = (entry["duration"] % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        start: entry["start"],
+        stop: entry["stop"],
+        duration_hours: hours,
+        duration_minutes: minutes,
+        billable: entry["billable"]
+      )
+    else
+      start_time = Time.parse(entry["timeInterval"]["start"])
+      end_time = Time.parse(entry["timeInterval"]["end"])
+      duration_seconds = (end_time - start_time).to_i
+      hours = duration_seconds / 3600
+      minutes = (duration_seconds % 3600) / 60
+
+      puts JSON.pretty_generate(
+        id: entry["id"],
+        description: entry["description"],
+        start: entry["timeInterval"]["start"],
+        stop: entry["timeInterval"]["end"],
+        duration_hours: hours,
+        duration_minutes: minutes,
+        billable: entry["billable"]
+      )
+    end
+    puts "Time entry created successfully."
+  end
+
+  desc "delete ENTRY_ID", "Delete a time entry by ID"
+  def delete(entry_id)
+    client.delete_entry(entry_id)
+    puts "Entry #{entry_id} deleted."
+  end
+
+  private
+
+  def toggl?
+    options[:provider] == "toggl"
+  end
+
+  def client
+    @client ||= if toggl?
+      TimeTracking::TogglClient.new
+    else
+      TimeTracking::ClockifyClient.new
+    end
+  end
+end
+
+CLI.start(ARGV)
