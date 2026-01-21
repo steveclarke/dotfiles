@@ -1,0 +1,310 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+  gem "httparty"
+end
+
+require "json"
+require "time"
+
+class TogglClient
+  BASE_URL = "https://api.track.toggl.com/api/v9"
+  OP_REF = "op://Employee/Toggl/api key"
+
+  def initialize
+    @token = nil
+    @workspace_id = nil
+  end
+
+  def me
+    get("/me")
+  end
+
+  def workspace_id
+    @workspace_id ||= me["default_workspace_id"]
+  end
+
+  def projects
+    get("/workspaces/#{workspace_id}/projects")
+  end
+
+  def find_project(name)
+    projects.find { |p| p["name"] == name }
+  end
+
+  def entries(days: 7)
+    start_date = (Date.today - days).to_s
+    end_date = Date.today.to_s
+    get("/me/time_entries?start_date=#{start_date}&end_date=#{end_date}")
+  end
+
+  def current_entry
+    get("/me/time_entries/current")
+  end
+
+  def start_entry(description:, project_id:, billable: true, tags: nil)
+    payload = {
+      description: description,
+      start: Time.now.iso8601,
+      duration: -1,
+      project_id: project_id,
+      workspace_id: workspace_id,
+      billable: billable,
+      created_with: "toggl-api"
+    }
+    payload[:tags] = tags.split(",").map(&:strip) if tags
+    post("/workspaces/#{workspace_id}/time_entries", payload)
+  end
+
+  def stop_entry(entry_id)
+    put("/workspaces/#{workspace_id}/time_entries/#{entry_id}/stop", {})
+  end
+
+  def create_entry(description:, project_id:, start_time:, stop_time:, billable: true, tags: nil)
+    start_dt = parse_datetime(start_time)
+    stop_dt = parse_datetime(stop_time)
+    duration = (stop_dt - start_dt).to_i
+
+    payload = {
+      description: description,
+      start: start_dt.iso8601,
+      stop: stop_dt.iso8601,
+      duration: duration,
+      project_id: project_id,
+      workspace_id: workspace_id,
+      billable: billable,
+      created_with: "toggl-api"
+    }
+    payload[:tags] = tags.split(",").map(&:strip) if tags
+    post("/workspaces/#{workspace_id}/time_entries", payload)
+  end
+
+  def delete_entry(entry_id)
+    delete("/workspaces/#{workspace_id}/time_entries/#{entry_id}")
+  end
+
+  private
+
+  def token
+    @token ||= begin
+      warn "Fetching Toggl API key from 1Password..."
+      `op read '#{OP_REF}'`.chomp.tap do |t|
+        raise "Failed to get API token from 1Password" if t.empty?
+      end
+    end
+  end
+
+  def auth
+    {username: token, password: "api_token"}
+  end
+
+  def get(endpoint)
+    response = HTTParty.get("#{BASE_URL}#{endpoint}", basic_auth: auth)
+    handle_response(response)
+  end
+
+  def post(endpoint, body)
+    response = HTTParty.post(
+      "#{BASE_URL}#{endpoint}",
+      basic_auth: auth,
+      headers: {"Content-Type" => "application/json"},
+      body: body.to_json
+    )
+    handle_response(response)
+  end
+
+  def put(endpoint, body)
+    response = HTTParty.put(
+      "#{BASE_URL}#{endpoint}",
+      basic_auth: auth,
+      headers: {"Content-Type" => "application/json"},
+      body: body.to_json
+    )
+    handle_response(response)
+  end
+
+  def delete(endpoint)
+    response = HTTParty.delete("#{BASE_URL}#{endpoint}", basic_auth: auth)
+    return nil if response.code == 200
+    handle_response(response)
+  end
+
+  def handle_response(response)
+    return response.parsed_response if response.success?
+    raise "API error: #{response.code} - #{response.body}"
+  end
+
+  def parse_datetime(str)
+    Time.strptime(str, "%Y-%m-%d %H:%M")
+  end
+end
+
+class CLI < Thor
+  def self.exit_on_failure?
+    true
+  end
+
+  desc "me", "Show current user info"
+  def me
+    data = client.me
+    puts JSON.pretty_generate(
+      id: data["id"],
+      email: data["email"],
+      fullname: data["fullname"],
+      timezone: data["timezone"],
+      default_workspace_id: data["default_workspace_id"]
+    )
+  end
+
+  desc "projects", "List all projects"
+  def projects
+    data = client.projects.map do |p|
+      {id: p["id"], name: p["name"], billable: p["billable"], active: p["active"]}
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "entries", "List recent time entries"
+  option :days, type: :numeric, default: 7, desc: "Number of days to look back"
+  def entries
+    data = client.entries(days: options[:days]).map do |e|
+      {
+        id: e["id"],
+        description: e["description"],
+        start: e["start"],
+        stop: e["stop"],
+        duration: e["duration"],
+        project_id: e["project_id"],
+        billable: e["billable"]
+      }
+    end
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "current", "Show the currently running timer"
+  def current
+    entry = client.current_entry
+    if entry.nil?
+      puts "No timer is currently running."
+      return
+    end
+
+    start_time = Time.parse(entry["start"])
+    running_seconds = (Time.now - start_time).to_i
+    hours = running_seconds / 3600
+    minutes = (running_seconds % 3600) / 60
+
+    puts JSON.pretty_generate(
+      id: entry["id"],
+      description: entry["description"],
+      project_id: entry["project_id"],
+      start: entry["start"],
+      running_hours: hours,
+      running_minutes: minutes,
+      billable: entry["billable"]
+    )
+  end
+
+  desc "start DESCRIPTION", "Start a new timer"
+  option :project, aliases: "-p", required: true, desc: "Project name"
+  option :billable, aliases: "-b", type: :boolean, default: true
+  option :tags, aliases: "-t", desc: "Comma-separated tags"
+  def start(description)
+    project = client.find_project(options[:project])
+    raise Thor::Error, "Project not found: #{options[:project]}" unless project
+
+    entry = client.start_entry(
+      description: description,
+      project_id: project["id"],
+      billable: options[:billable],
+      tags: options[:tags]
+    )
+    puts JSON.pretty_generate(
+      id: entry["id"],
+      description: entry["description"],
+      project_name: entry["project_name"],
+      start: entry["start"],
+      billable: entry["billable"]
+    )
+    puts "Timer started."
+  end
+
+  desc "stop", "Stop the current running timer"
+  def stop
+    entry = client.current_entry
+    if entry.nil?
+      puts "No timer is currently running."
+      return
+    end
+
+    stopped = client.stop_entry(entry["id"])
+    hours = stopped["duration"] / 3600
+    minutes = (stopped["duration"] % 3600) / 60
+
+    puts JSON.pretty_generate(
+      id: stopped["id"],
+      description: stopped["description"],
+      project_name: stopped["project_name"],
+      start: stopped["start"],
+      stop: stopped["stop"],
+      duration_hours: hours,
+      duration_minutes: minutes,
+      billable: stopped["billable"]
+    )
+    puts "Timer stopped."
+  end
+
+  desc "create DESCRIPTION", "Create a completed time entry"
+  option :project, aliases: "-p", required: true, desc: "Project name"
+  option :start, aliases: "-s", required: true, desc: "Start time (YYYY-MM-DD HH:MM)"
+  option :stop, aliases: "-e", required: true, desc: "Stop time (YYYY-MM-DD HH:MM)"
+  option :billable, aliases: "-b", type: :boolean, default: true
+  option :tags, aliases: "-t", desc: "Comma-separated tags"
+  def create(description)
+    project = client.find_project(options[:project])
+    raise Thor::Error, "Project not found: #{options[:project]}" unless project
+
+    entry = client.create_entry(
+      description: description,
+      project_id: project["id"],
+      start_time: options[:start],
+      stop_time: options[:stop],
+      billable: options[:billable],
+      tags: options[:tags]
+    )
+
+    hours = entry["duration"] / 3600
+    minutes = (entry["duration"] % 3600) / 60
+
+    puts JSON.pretty_generate(
+      id: entry["id"],
+      description: entry["description"],
+      project_name: entry["project_name"],
+      start: entry["start"],
+      stop: entry["stop"],
+      duration_hours: hours,
+      duration_minutes: minutes,
+      billable: entry["billable"]
+    )
+    puts "Time entry created successfully."
+  end
+
+  desc "delete ENTRY_ID", "Delete a time entry by ID"
+  def delete(entry_id)
+    client.delete_entry(entry_id)
+    puts "Entry #{entry_id} deleted."
+  end
+
+  private
+
+  def client
+    @client ||= TogglClient.new
+  end
+end
+
+CLI.start(ARGV)
