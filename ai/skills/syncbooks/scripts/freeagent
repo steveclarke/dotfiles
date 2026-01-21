@@ -8,6 +8,7 @@ gemfile do
   gem "thor"
   gem "httparty"
   gem "webrick"
+  gem "shale"
 end
 
 require "json"
@@ -16,6 +17,8 @@ require "date"
 require "fileutils"
 require "webrick"
 require "uri"
+
+require_relative "lib/models"
 
 class SyncBooksConfig
   CONFIG_PATH = File.expand_path("~/.config/syncbooks/config.json")
@@ -131,37 +134,41 @@ class FreeAgentClient
 
   # Contacts
   def contacts(view: "active")
-    get("/contacts?view=#{view}")["contacts"]
+    data = get("/contacts?view=#{view}")["contacts"] || []
+    parse_collection(data, SyncBooks::Models::Contact)
   end
 
   def contact(id)
-    get("/contacts/#{id}")["contact"]
+    data = get("/contacts/#{id}")["contact"]
+    SyncBooks::Models::Contact.from_hash(data)
   end
 
   def create_contact(attrs)
-    post("/contacts", {contact: attrs})["contact"]
+    data = post("/contacts", {contact: attrs})["contact"]
+    SyncBooks::Models::Contact.from_hash(data)
   end
 
   def find_contact_by_name(name)
     contacts.find do |c|
-      org = c["organisation_name"]&.downcase
-      full = "#{c["first_name"]} #{c["last_name"]}".strip.downcase
-      name.downcase == org || name.downcase == full
+      c.name&.downcase == name.downcase
     end
   end
 
   # Invoices
   def invoices(view: "recent", nested_invoice_items: true)
     params = "view=#{view}&nested_invoice_items=#{nested_invoice_items}"
-    get("/invoices?#{params}")["invoices"]
+    data = get("/invoices?#{params}")["invoices"] || []
+    parse_collection(data, SyncBooks::Models::Invoice)
   end
 
   def invoice(id)
-    get("/invoices/#{id}")["invoice"]
+    data = get("/invoices/#{id}")["invoice"]
+    SyncBooks::Models::Invoice.from_hash(data)
   end
 
   def create_invoice(attrs)
-    post("/invoices", {invoice: attrs})["invoice"]
+    data = post("/invoices", {invoice: attrs})["invoice"]
+    SyncBooks::Models::Invoice.from_hash(data)
   end
 
   def mark_invoice_sent(id)
@@ -182,7 +189,8 @@ class FreeAgentClient
 
   # Bank accounts
   def bank_accounts
-    get("/bank_accounts")["bank_accounts"]
+    data = get("/bank_accounts")["bank_accounts"] || []
+    parse_collection(data, SyncBooks::Models::BankAccount)
   end
 
   # Bank transaction explanations for an account
@@ -191,27 +199,36 @@ class FreeAgentClient
     get_all_pages("/bank_transaction_explanations?bank_account=#{encoded_url}&from_date=#{from_date}&to_date=#{to_date}")
   end
 
-  # Invoices with date filter
+  # Invoices with date filter (returns raw hashes for HST calculation)
   def invoices_by_date(from_date:, to_date:)
-    get_all_pages("/invoices?from_date=#{from_date}&to_date=#{to_date}")
+    data = get_all_pages("/invoices?from_date=#{from_date}&to_date=#{to_date}")
+    parse_collection(data, SyncBooks::Models::Invoice)
   end
 
   # Bills with date filter
   def bills(from_date:, to_date:)
-    get_all_pages("/bills?from_date=#{from_date}&to_date=#{to_date}")
+    data = get_all_pages("/bills?from_date=#{from_date}&to_date=#{to_date}")
+    parse_collection(data, SyncBooks::Models::Bill)
   end
 
   # Bills by view (open, overdue, etc)
   def bills_by_view(view:)
-    get("/bills?view=#{view}")["bills"] || []
+    data = get("/bills?view=#{view}")["bills"] || []
+    parse_collection(data, SyncBooks::Models::Bill)
   end
 
   # Expenses with date filter
   def expenses(from_date:, to_date:)
-    get_all_pages("/expenses?from_date=#{from_date}&to_date=#{to_date}")
+    data = get_all_pages("/expenses?from_date=#{from_date}&to_date=#{to_date}")
+    parse_collection(data, SyncBooks::Models::Expense)
   end
 
   private
+
+  def parse_collection(data, model_class)
+    return [] if data.nil? || data.empty?
+    data.map { |item| model_class.from_hash(item) }
+  end
 
   def get_all_pages(endpoint)
     all_items = []
@@ -402,10 +419,10 @@ class CLI < Thor
   def contacts
     data = client.contacts(view: options[:view]).map do |c|
       {
-        id: extract_id(c["url"]),
-        name: c["organisation_name"] || "#{c["first_name"]} #{c["last_name"]}".strip,
-        email: c["email"],
-        status: c["status"]
+        id: c.id,
+        name: c.display_name,
+        email: c.email,
+        status: c.status
       }
     end
     puts JSON.pretty_generate(data)
@@ -413,22 +430,15 @@ class CLI < Thor
 
   desc "contact ID", "Show contact details"
   def contact(id)
-    data = client.contact(id)
+    c = client.contact(id)
     puts JSON.pretty_generate(
-      id: extract_id(data["url"]),
-      organisation_name: data["organisation_name"],
-      first_name: data["first_name"],
-      last_name: data["last_name"],
-      email: data["email"],
-      billing_email: data["billing_email"],
-      phone: data["phone_number"],
-      address: [data["address1"], data["address2"], data["address3"]].compact.join(", "),
-      town: data["town"],
-      region: data["region"],
-      postcode: data["postcode"],
-      country: data["country"],
-      status: data["status"],
-      payment_terms: data["default_payment_terms_in_days"]
+      id: c.id,
+      organisation_name: c.organisation_name,
+      first_name: c.first_name,
+      last_name: c.last_name,
+      email: c.email,
+      country: c.country,
+      status: c.status
     )
   end
 
@@ -468,9 +478,9 @@ class CLI < Thor
 
     contact = client.create_contact(attrs)
     puts JSON.pretty_generate(
-      id: extract_id(contact["url"]),
-      name: contact["organisation_name"] || "#{contact["first_name"]} #{contact["last_name"]}".strip,
-      email: contact["email"]
+      id: contact.id,
+      name: contact.display_name,
+      email: contact.email
     )
     puts "Contact created successfully."
   end
@@ -482,14 +492,14 @@ class CLI < Thor
   def invoices
     data = client.invoices(view: options[:view]).map do |inv|
       {
-        id: extract_id(inv["url"]),
-        reference: inv["reference"],
-        contact_id: extract_id(inv["contact"]),
-        dated_on: inv["dated_on"],
-        due_on: inv["due_on"],
-        status: inv["status"],
-        total: inv["total_value"],
-        currency: inv["currency"]
+        id: inv.id,
+        reference: inv.reference,
+        contact_id: inv.contact_id,
+        dated_on: inv.dated_on,
+        due_on: inv.due_on,
+        status: inv.status,
+        total: inv.display_total,
+        currency: inv.currency
       }
     end
     puts JSON.pretty_generate(data)
@@ -498,27 +508,17 @@ class CLI < Thor
   desc "invoice ID", "Show invoice details"
   def invoice(id)
     inv = client.invoice(id)
-    items = (inv["invoice_items"] || []).map do |item|
-      {
-        description: item["description"],
-        quantity: item["quantity"],
-        price: item["price"],
-        sales_tax_rate: item["sales_tax_rate"]
-      }
-    end
-
     puts JSON.pretty_generate(
-      id: extract_id(inv["url"]),
-      reference: inv["reference"],
-      contact_id: extract_id(inv["contact"]),
-      dated_on: inv["dated_on"],
-      due_on: inv["due_on"],
-      status: inv["status"],
-      net_value: inv["net_value"],
-      sales_tax_value: inv["sales_tax_value"],
-      total_value: inv["total_value"],
-      currency: inv["currency"],
-      items: items
+      id: inv.id,
+      reference: inv.reference,
+      contact_id: inv.contact_id,
+      dated_on: inv.dated_on,
+      due_on: inv.due_on,
+      status: inv.status,
+      net_value: inv.net_value,
+      sales_tax_value: inv.sales_tax_value,
+      total_value: inv.total_value,
+      currency: inv.currency
     )
   end
 
@@ -560,22 +560,21 @@ class CLI < Thor
     }
     attrs[:reference] = options[:reference] if options[:reference]
 
-    invoice = client.create_invoice(attrs)
-    invoice_id = extract_id(invoice["url"])
+    inv = client.create_invoice(attrs)
 
     if options[:send]
-      client.mark_invoice_sent(invoice_id)
+      client.mark_invoice_sent(inv.id)
       puts "Invoice marked as sent."
     end
 
     puts JSON.pretty_generate(
-      id: invoice_id,
-      reference: invoice["reference"],
-      dated_on: invoice["dated_on"],
-      due_on: invoice["due_on"],
-      status: invoice["status"],
-      total_value: invoice["total_value"],
-      currency: invoice["currency"]
+      id: inv.id,
+      reference: inv.reference,
+      dated_on: inv.dated_on,
+      due_on: inv.due_on,
+      status: inv.status,
+      total_value: inv.display_total,
+      currency: inv.currency
     )
     puts "Invoice created successfully."
   end
@@ -726,19 +725,19 @@ class CLI < Thor
 
     # 2. Get balance
     print "Fetching balance..."
-    accounts = client.bank_accounts.select { |a| a["status"] == "active" }
-    balance_total = accounts.sum { |a| a["current_balance"].to_f }
+    accounts = client.bank_accounts.select(&:active?)
+    balance_total = accounts.sum { |a| a.current_balance || 0 }
     puts " $#{"%.2f" % balance_total}"
 
     # 3. Get outstanding invoices (open + overdue)
     print "Fetching open invoices..."
     open_invoices = client.invoices(view: "open")
-    open_total = open_invoices.sum { |i| i["total_value"].to_f }
+    open_total = open_invoices.sum { |i| i.total_value || 0 }
     puts " #{open_invoices.length} invoices ($#{"%.2f" % open_total})"
 
     print "Fetching overdue invoices..."
     overdue_invoices = client.invoices(view: "overdue")
-    overdue_total = overdue_invoices.sum { |i| i["total_value"].to_f }
+    overdue_total = overdue_invoices.sum { |i| i.total_value || 0 }
     puts " #{overdue_invoices.length} invoices ($#{"%.2f" % overdue_total})"
 
     invoices_total = open_total + overdue_total
@@ -746,12 +745,12 @@ class CLI < Thor
     # 4. Get outstanding bills (open + overdue)
     print "Fetching open bills..."
     open_bills = client.bills_by_view(view: "open")
-    open_bills_total = open_bills.sum { |b| b["total_value"].to_f }
+    open_bills_total = open_bills.sum { |b| b.total_value || 0 }
     puts " #{open_bills.length} bills ($#{"%.2f" % open_bills_total})"
 
     print "Fetching overdue bills..."
     overdue_bills = client.bills_by_view(view: "overdue")
-    overdue_bills_total = overdue_bills.sum { |b| b["total_value"].to_f }
+    overdue_bills_total = overdue_bills.sum { |b| b.total_value || 0 }
     puts " #{overdue_bills.length} bills ($#{"%.2f" % overdue_bills_total})"
 
     bills_total = open_bills_total + overdue_bills_total
@@ -793,7 +792,7 @@ class CLI < Thor
 
   desc "balance", "Show total balance across all bank accounts"
   def balance
-    accounts = client.bank_accounts.select { |a| a["status"] == "active" }
+    accounts = client.bank_accounts.select(&:active?)
 
     if accounts.empty?
       puts "No active bank accounts found."
@@ -801,24 +800,24 @@ class CLI < Thor
     end
 
     # Group by type
-    bank_accounts = accounts.select { |a| a["type"] == "StandardBankAccount" }
-    credit_cards = accounts.select { |a| a["type"] == "CreditCardAccount" }
-    paypal = accounts.select { |a| a["type"]&.include?("Paypal") }
+    bank_accts = accounts.select(&:bank?)
+    credit_cards = accounts.select(&:credit_card?)
+    paypal = accounts.select(&:paypal?)
 
     # Calculate totals
-    bank_total = bank_accounts.sum { |a| a["current_balance"].to_f }
-    credit_total = credit_cards.sum { |a| a["current_balance"].to_f }
-    paypal_total = paypal.sum { |a| a["current_balance"].to_f }
-    total = accounts.sum { |a| a["current_balance"].to_f }
+    bank_total = bank_accts.sum { |a| a.current_balance || 0 }
+    credit_total = credit_cards.sum { |a| a.current_balance || 0 }
+    paypal_total = paypal.sum { |a| a.current_balance || 0 }
+    total = accounts.sum { |a| a.current_balance || 0 }
 
-    currency = accounts.first["currency"] || "CAD"
+    currency = accounts.first.currency || "CAD"
 
     puts "FreeAgent Total Balance"
     puts "=" * 50
     puts ""
     puts "Active Accounts:"
     accounts.each do |a|
-      puts "  %-30s %s %12.2f" % [a["name"], a["currency"], a["current_balance"].to_f]
+      puts "  %-30s %s %12.2f" % [a.name, a.currency, a.current_balance || 0]
     end
     puts ""
     puts "-" * 50
@@ -841,33 +840,33 @@ class CLI < Thor
     # 1. Invoices - HST charged on sales
     print "Fetching invoices..."
     invoices = client.invoices_by_date(from_date: from_date, to_date: to_date)
-    details[:inv_hst] = invoices.sum { |i| i["sales_tax_value"].to_f }
+    details[:inv_hst] = invoices.sum { |i| i.sales_tax_value || 0 }
     hst_charged += details[:inv_hst]
     puts " #{invoices.length} invoices"
 
     # 2. Bills - HST reclaimed on purchases
     print "Fetching bills..."
     bills = client.bills(from_date: from_date, to_date: to_date)
-    details[:bills_hst] = bills.sum { |b| b["sales_tax_value"].to_f.abs }
+    details[:bills_hst] = bills.sum { |b| (b.sales_tax_value || 0).abs }
     hst_reclaimed += details[:bills_hst]
     puts " #{bills.length} bills"
 
     # 3. Expenses - HST reclaimed
     print "Fetching expenses..."
     expenses = client.expenses(from_date: from_date, to_date: to_date)
-    details[:exp_hst] = expenses.select { |e| e["sales_tax_value"] }.sum { |e| e["sales_tax_value"].to_f.abs }
+    details[:exp_hst] = expenses.sum { |e| e.hst_amount }
     hst_reclaimed += details[:exp_hst]
     puts " #{expenses.length} expenses"
 
-    # 4. Bank transaction explanations
+    # 4. Bank transaction explanations (still raw hashes - no model yet)
     print "Fetching bank transactions..."
-    accounts = client.bank_accounts.select { |a| a["status"] == "active" }
+    accounts = client.bank_accounts.select(&:active?)
     details[:bank_charged] = 0.0
     details[:bank_reclaimed] = 0.0
     total_txns = 0
 
     accounts.each do |acc|
-      exps = client.bank_transaction_explanations(acc["url"], from_date: from_date, to_date: to_date)
+      exps = client.bank_transaction_explanations(acc.url, from_date: from_date, to_date: to_date)
       total_txns += exps.length
       exps.each do |e|
         stv = e["sales_tax_value"]
@@ -907,7 +906,7 @@ class CLI < Thor
     contact = client.find_contact_by_name(input)
     raise Thor::Error, "Contact not found: #{input}" unless contact
 
-    extract_id(contact["url"])
+    contact.id
   end
 
   def op_read(ref)
