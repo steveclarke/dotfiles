@@ -189,6 +189,11 @@ alias src="cd ~/src/"
 alias sand="cd ~/src/sandbox/"
 alias cun="cd ~/src/myunio/unio/"
 
+# Hugo - executive coach assistant
+hugo() {
+  cd ~/src/hugo && claude "$@"
+}
+
 # Dotfiles (requires DOTFILES_DIR to be set)
 alias dot="cd \$DOTFILES_DIR/"
 alias dotf="cd \$DOTFILES_DIR/configs/fish/.config/fish/"
