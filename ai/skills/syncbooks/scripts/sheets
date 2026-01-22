@@ -26,14 +26,13 @@ class GoogleSheetsClient
   # 1Password references
   OP_CLIENT_ID = "op://Employee/Google Sheets API - SyncBooks/client id"
   OP_CLIENT_SECRET = "op://Employee/Google Sheets API - SyncBooks/client secret"
-
-  # Default dev spreadsheet
-  DEFAULT_SPREADSHEET_ID = "11r5cE8_iXMUzh2H6IOUsfh-SKRlS4HtuvBjF9-zIFDQ"
+  OP_SPREADSHEET_ID = "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id"
+  OP_SPREADSHEET_ID_DEV = "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id-dev"
 
   attr_reader :spreadsheet_id
 
-  def initialize(spreadsheet_id: nil)
-    @spreadsheet_id = spreadsheet_id || DEFAULT_SPREADSHEET_ID
+  def initialize(spreadsheet_id: nil, dev: false)
+    @spreadsheet_id = spreadsheet_id || load_spreadsheet_id(dev: dev)
     load_config!
     raise "Google Sheets not configured. Run 'sheets auth' first." if @access_token.nil? || @access_token.empty?
   end
@@ -60,6 +59,13 @@ class GoogleSheetsClient
     result.empty? ? nil : result
   rescue
     nil
+  end
+
+  def load_spreadsheet_id(dev:)
+    ref = dev ? OP_SPREADSHEET_ID_DEV : OP_SPREADSHEET_ID
+    id = op_read(ref)
+    raise "Could not load spreadsheet ID from 1Password (#{ref})" unless id
+    id
   end
 
   def save_credentials!
@@ -263,9 +269,10 @@ class CLI < Thor
   # === Read/Write Commands ===
 
   desc "read RANGE", "Read cells from spreadsheet (e.g., 'Main!E2:E10')"
-  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (defaults to dev sheet)"
+  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (overrides default)"
+  option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
   def read(range)
-    data = client(spreadsheet_id: options[:spreadsheet]).read(range)
+    data = client(spreadsheet_id: options[:spreadsheet], dev: options[:dev]).read(range)
     values = data["values"] || []
 
     if values.empty?
@@ -280,19 +287,20 @@ class CLI < Thor
   end
 
   desc "write RANGE VALUE", "Write to a cell (e.g., 'Main!E2' '1234.56')"
-  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (defaults to dev sheet)"
-  option :force, aliases: "-f", type: :boolean, default: false, desc: "Skip dev sheet safety check"
+  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (overrides default)"
+  option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+  option :force, aliases: "-f", type: :boolean, default: false, desc: "Skip production safety check"
   def write(range, value)
-    c = client(spreadsheet_id: options[:spreadsheet])
+    c = client(spreadsheet_id: options[:spreadsheet], dev: options[:dev])
 
-    unless options[:force] || c.dev_spreadsheet?
+    unless options[:force] || options[:dev]
       raise Thor::Error, <<~ERROR
         SAFETY CHECK FAILED
 
-        Write operations are blocked for non-dev spreadsheets.
+        Write operations are blocked for production spreadsheet.
         Spreadsheet title: "#{c.title}"
 
-        To write to this spreadsheet, use --force flag.
+        Use --dev flag to write to dev spreadsheet, or --force to write to production.
       ERROR
     end
 
@@ -306,9 +314,10 @@ class CLI < Thor
   # === Info Commands ===
 
   desc "summary", "Show key financial metrics from spreadsheet"
-  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (defaults to dev sheet)"
+  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (overrides default)"
+  option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
   def summary
-    c = client(spreadsheet_id: options[:spreadsheet])
+    c = client(spreadsheet_id: options[:spreadsheet], dev: options[:dev])
 
     # Fetch all key cells in one batch
     data = c.read("Main!A2:B11")
@@ -354,9 +363,10 @@ class CLI < Thor
   end
 
   desc "info", "Show spreadsheet info"
-  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (defaults to dev sheet)"
+  option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (overrides default)"
+  option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
   def info
-    c = client(spreadsheet_id: options[:spreadsheet])
+    c = client(spreadsheet_id: options[:spreadsheet], dev: options[:dev])
     data = c.metadata
 
     puts "Spreadsheet Info"
@@ -375,8 +385,8 @@ class CLI < Thor
 
   private
 
-  def client(spreadsheet_id: nil)
-    @client ||= GoogleSheetsClient.new(spreadsheet_id: spreadsheet_id)
+  def client(spreadsheet_id: nil, dev: false)
+    @client ||= GoogleSheetsClient.new(spreadsheet_id: spreadsheet_id, dev: dev)
   end
 
   def op_read(ref)
