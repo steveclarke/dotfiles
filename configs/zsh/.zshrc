@@ -273,7 +273,7 @@ fi
 #
 # See: https://www.funtoo.org/Funtoo:Keychain
 
-if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -o interactive ]] && command -v keychain >/dev/null 2>&1; then
+if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]] && [[ -o interactive ]] && command -v keychain >/dev/null 2>&1; then
     # Only load keychain if SSH keys exist
     ssh_keys=()
     missing_keys=()
