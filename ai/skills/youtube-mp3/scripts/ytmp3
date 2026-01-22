@@ -1,0 +1,372 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+end
+
+require "json"
+require "fileutils"
+require "open3"
+
+# Service class for YouTube/MP3 operations
+class YouTubeService
+  STAGING_DIR = File.expand_path("~/Music/staging")
+
+  def self.staging_dir = STAGING_DIR
+
+  # Fetch playlist metadata
+  def self.playlist_info(url)
+    info = {}
+
+    # Get title and count
+    out, = run("yt-dlp", "--flat-playlist",
+      "--print", "%(playlist_title)s",
+      "--print", "%(playlist_count)s",
+      url)
+    lines = out.strip.split("\n")
+    info[:album] = lines[0]
+    info[:track_count] = lines[1].to_i
+
+    # Get artist from first track
+    out, = run("yt-dlp",
+      "--print", "%(artist)s",
+      "--print", "%(album)s",
+      "--playlist-items", "1",
+      url)
+    lines = out.strip.split("\n")
+    info[:artist] = lines[0] unless lines[0].to_s.empty?
+
+    # Get track listing
+    out, = run("yt-dlp", "--flat-playlist",
+      "--print", "%(playlist_index)s\t%(title)s",
+      url)
+    info[:tracks] = out.strip.split("\n").map do |line|
+      num, title = line.split("\t", 2)
+      {number: num.to_i, title: title}
+    end
+
+    info
+  end
+
+  # Download playlist to staging
+  def self.download(url, output_dir: nil)
+    output_dir ||= File.join(STAGING_DIR, "download_#{Time.now.to_i}")
+    FileUtils.mkdir_p(output_dir)
+
+    system("yt-dlp", "-x", "--audio-format", "mp3", "--audio-quality", "0",
+      "-o", "%(playlist_index)s - %(title)s.%(ext)s",
+      url,
+      chdir: output_dir)
+
+    output_dir
+  end
+
+  # List MP3 files in a directory
+  def self.list_mp3s(dir)
+    Dir.glob(File.join(dir, "*.mp3")).sort
+  end
+
+  # Tag a single file
+  def self.tag_file(file, artist:, album:, year:, genre:, track:, total:, title:)
+    run("eyeD3",
+      "-a", artist,
+      "-A", album,
+      "-Y", year.to_s,
+      "--recording-date", year.to_s,
+      "-G", genre,
+      "-n", track.to_s,
+      "-N", total.to_s,
+      "-t", title,
+      file)
+  end
+
+  # Tag all files in a directory
+  def self.tag_all(dir, artist:, album:, year:, genre:)
+    files = list_mp3s(dir)
+    total = files.count
+
+    files.each do |file|
+      basename = File.basename(file)
+      match = basename.match(/^(\d+) - (.+)\.mp3$/)
+      next unless match
+
+      track_num = match[1].to_i
+      title = match[2]
+
+      tag_file(file,
+        artist: artist,
+        album: album,
+        year: year,
+        genre: genre,
+        track: track_num,
+        total: total,
+        title: title)
+    end
+  end
+
+  # Download cover art
+  def self.download_cover(url, output_path)
+    system("curl", "-sL", url, "-o", output_path)
+    File.exist?(output_path) && File.size(output_path) > 1000
+  end
+
+  # Embed cover art in file
+  def self.embed_cover(file, cover_path)
+    run("eyeD3", "--add-image", "#{cover_path}:FRONT_COVER", file)
+  end
+
+  # Embed cover in all files
+  def self.embed_cover_all(dir, cover_path)
+    list_mp3s(dir).each { |f| embed_cover(f, cover_path) }
+  end
+
+  # Rename files to final structure
+  def self.finalize(dir, artist:, album:)
+    final_dir = File.join(STAGING_DIR, artist, "#{artist} - #{album}")
+    FileUtils.mkdir_p(final_dir)
+
+    list_mp3s(dir).each do |file|
+      basename = File.basename(file)
+      match = basename.match(/^(\d+) - (.+)\.mp3$/)
+      next unless match
+
+      track_num = match[1]
+      title = match[2]
+
+      # Strip artist prefix if present (YouTube format: "## - Artist - Title")
+      title = title.sub(/^#{Regexp.escape(artist)}\s*-\s*/, "")
+
+      # Sanitize: replace full-width punctuation with ASCII equivalents
+      title = title.delete("？").tr("！", "!").tr("：", ":").tr("＆", "&")
+
+      new_name = "#{track_num} #{title} - #{artist}.mp3"
+
+      FileUtils.mv(file, File.join(final_dir, new_name))
+    end
+
+    # Move cover if exists
+    cover = File.join(dir, "folder.jpg")
+    FileUtils.mv(cover, File.join(final_dir, "folder.jpg")) if File.exist?(cover)
+
+    # Clean up empty source dir
+    FileUtils.rmdir(dir) if Dir.empty?(dir)
+
+    final_dir
+  end
+
+  # View tags on a file
+  def self.view_tags(file)
+    out, = run("eyeD3", file)
+    out
+  end
+
+  def self.run(*args)
+    stdout, stderr, status = Open3.capture3(*args)
+    unless status.success?
+      warn "Command failed: #{args.join(" ")}"
+      warn stderr unless stderr.empty?
+    end
+    [stdout, status.success?]
+  end
+end
+
+# Thor CLI
+class CLI < Thor
+  DEFAULT_GENRE = "Christian Rock"
+
+  desc "info URL", "Show playlist info without downloading"
+  def info(url)
+    say "Fetching playlist info...", :cyan
+    info = YouTubeService.playlist_info(url)
+
+    puts ""
+    say "Album:  #{info[:album]}", :green
+    say "Artist: #{info[:artist] || "(unknown)"}", :green
+    say "Tracks: #{info[:track_count]}", :green
+    puts ""
+    say "Track listing:", :yellow
+    info[:tracks].each do |t|
+      puts "  #{t[:number].to_s.rjust(2)}. #{t[:title]}"
+    end
+  end
+
+  desc "download URL", "Download playlist to staging directory"
+  option :output, aliases: "-o", desc: "Output directory name (default: auto-generated)"
+  def download(url)
+    # Get info first to name the folder
+    say "Fetching playlist info...", :cyan
+    info = YouTubeService.playlist_info(url)
+
+    output_name = options[:output] || info[:album]&.gsub(/[^a-zA-Z0-9\s-]/, "")&.strip || "download_#{Time.now.to_i}"
+    output_dir = File.join(YouTubeService.staging_dir, output_name)
+
+    if Dir.exist?(output_dir) && !Dir.empty?(output_dir)
+      say "Directory already exists: #{output_dir}", :red
+      return
+    end
+
+    say "Downloading to: #{output_dir}", :cyan
+    puts ""
+
+    YouTubeService.download(url, output_dir: output_dir)
+
+    puts ""
+    say "Download complete!", :green
+    say "Files saved to: #{output_dir}", :green
+    puts ""
+    say "Next steps:", :yellow
+    say "  ytmp3 tag '#{output_dir}' --artist 'Artist' --album 'Album' --year 1995"
+  end
+
+  desc "staging", "List albums in staging directory"
+  def staging
+    staging = YouTubeService.staging_dir
+    unless Dir.exist?(staging)
+      say "Staging directory doesn't exist: #{staging}", :red
+      return
+    end
+
+    entries = Dir.children(staging).sort
+    if entries.empty?
+      say "Staging directory is empty", :yellow
+      return
+    end
+
+    say "Staging directory: #{staging}", :cyan
+    puts ""
+
+    entries.each do |entry|
+      path = File.join(staging, entry)
+      next unless File.directory?(path)
+
+      mp3_count = Dir.glob(File.join(path, "**/*.mp3")).count
+      has_cover = File.exist?(File.join(path, "folder.jpg")) ||
+        Dir.glob(File.join(path, "**/folder.jpg")).any?
+
+      status = []
+      status << "#{mp3_count} tracks" if mp3_count > 0
+      status << "has cover" if has_cover
+
+      puts "  #{entry}/"
+      puts "    #{status.join(", ")}" unless status.empty?
+    end
+  end
+
+  desc "tag DIR", "Tag all MP3 files in directory"
+  option :artist, aliases: "-a", required: true, desc: "Artist name"
+  option :album, aliases: "-A", required: true, desc: "Album name"
+  option :year, aliases: "-y", required: true, desc: "Release year"
+  option :genre, aliases: "-g", default: DEFAULT_GENRE, desc: "Genre"
+  def tag(dir)
+    dir = File.expand_path(dir)
+    unless Dir.exist?(dir)
+      say "Directory not found: #{dir}", :red
+      return
+    end
+
+    files = YouTubeService.list_mp3s(dir)
+    if files.empty?
+      say "No MP3 files found in: #{dir}", :red
+      return
+    end
+
+    say "Tagging #{files.count} files...", :cyan
+    say "  Artist: #{options[:artist]}", :green
+    say "  Album:  #{options[:album]}", :green
+    say "  Year:   #{options[:year]}", :green
+    say "  Genre:  #{options[:genre]}", :green
+    puts ""
+
+    YouTubeService.tag_all(dir,
+      artist: options[:artist],
+      album: options[:album],
+      year: options[:year],
+      genre: options[:genre])
+
+    say "Tagged #{files.count} files", :green
+    puts ""
+    say "Next: ytmp3 cover '#{dir}' --url 'COVER_URL'"
+  end
+
+  desc "cover DIR", "Download and embed album cover"
+  option :url, aliases: "-u", desc: "Cover art URL"
+  option :file, aliases: "-f", desc: "Local cover art file"
+  def cover(dir)
+    dir = File.expand_path(dir)
+    unless Dir.exist?(dir)
+      say "Directory not found: #{dir}", :red
+      return
+    end
+
+    cover_path = File.join(dir, "folder.jpg")
+
+    if options[:url]
+      say "Downloading cover art...", :cyan
+      unless YouTubeService.download_cover(options[:url], cover_path)
+        say "Failed to download cover art", :red
+        return
+      end
+      say "Downloaded: #{cover_path}", :green
+    elsif options[:file]
+      FileUtils.cp(File.expand_path(options[:file]), cover_path)
+      say "Copied: #{cover_path}", :green
+    else
+      say "Provide --url or --file", :red
+      return
+    end
+
+    files = YouTubeService.list_mp3s(dir)
+    say "Embedding cover in #{files.count} files...", :cyan
+    YouTubeService.embed_cover_all(dir, cover_path)
+
+    say "Cover art embedded!", :green
+    puts ""
+    say "Next: ytmp3 finalize '#{dir}' --artist 'Artist' --album 'Album'"
+  end
+
+  desc "finalize DIR", "Rename files to final structure"
+  option :artist, aliases: "-a", required: true, desc: "Artist name"
+  option :album, aliases: "-A", required: true, desc: "Album name"
+  def finalize(dir)
+    dir = File.expand_path(dir)
+    unless Dir.exist?(dir)
+      say "Directory not found: #{dir}", :red
+      return
+    end
+
+    say "Finalizing...", :cyan
+    final_dir = YouTubeService.finalize(dir,
+      artist: options[:artist],
+      album: options[:album])
+
+    say "Complete!", :green
+    say "Files moved to: #{final_dir}", :green
+    puts ""
+    say "Contents:", :yellow
+    Dir.glob(File.join(final_dir, "*")).sort.each do |f|
+      puts "  #{File.basename(f)}"
+    end
+  end
+
+  desc "show FILE", "Show tags on an MP3 file"
+  def show(file)
+    file = File.expand_path(file)
+    unless File.exist?(file)
+      say "File not found: #{file}", :red
+      return
+    end
+
+    puts YouTubeService.view_tags(file)
+  end
+
+  desc "version", "Show version"
+  def version
+    puts "ytmp3 0.1.0"
+  end
+end
+
+CLI.start(ARGV)
