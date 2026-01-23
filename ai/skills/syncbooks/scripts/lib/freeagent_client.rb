@@ -29,17 +29,17 @@ module SyncBooks
     # Contacts
     def contacts(view: "active")
       data = get("/contacts?view=#{view}")["contacts"] || []
-      parse_collection(data, Models::Contact)
+      parse_collection(data, Models::FreeAgent::Contact)
     end
 
     def contact(id)
       data = get("/contacts/#{id}")["contact"]
-      Models::Contact.from_hash(data)
+      Models::FreeAgent::Contact.from_hash(data)
     end
 
     def create_contact(attrs)
       data = post("/contacts", {contact: attrs})["contact"]
-      Models::Contact.from_hash(data)
+      Models::FreeAgent::Contact.from_hash(data)
     end
 
     def find_contact_by_name(name)
@@ -50,17 +50,17 @@ module SyncBooks
     def invoices(view: "recent", nested_invoice_items: true)
       params = "view=#{view}&nested_invoice_items=#{nested_invoice_items}"
       data = get("/invoices?#{params}")["invoices"] || []
-      parse_collection(data, Models::Invoice)
+      parse_collection(data, Models::FreeAgent::Invoice)
     end
 
     def invoice(id)
       data = get("/invoices/#{id}")["invoice"]
-      Models::Invoice.from_hash(data)
+      Models::FreeAgent::Invoice.from_hash(data)
     end
 
     def create_invoice(attrs)
       data = post("/invoices", {invoice: attrs})["invoice"]
-      Models::Invoice.from_hash(data)
+      Models::FreeAgent::Invoice.from_hash(data)
     end
 
     def mark_invoice_sent(id)
@@ -69,30 +69,30 @@ module SyncBooks
 
     def invoices_by_date(from_date:, to_date:)
       data = get_all_pages("/invoices?from_date=#{from_date}&to_date=#{to_date}")
-      parse_collection(data, Models::Invoice)
+      parse_collection(data, Models::FreeAgent::Invoice)
     end
 
     # Bills
     def bills(from_date:, to_date:)
       data = get_all_pages("/bills?from_date=#{from_date}&to_date=#{to_date}")
-      parse_collection(data, Models::Bill)
+      parse_collection(data, Models::FreeAgent::Bill)
     end
 
     def bills_by_view(view:)
       data = get("/bills?view=#{view}")["bills"] || []
-      parse_collection(data, Models::Bill)
+      parse_collection(data, Models::FreeAgent::Bill)
     end
 
     # Expenses
     def expenses(from_date:, to_date:)
       data = get_all_pages("/expenses?from_date=#{from_date}&to_date=#{to_date}")
-      parse_collection(data, Models::Expense)
+      parse_collection(data, Models::FreeAgent::Expense)
     end
 
     # Bank accounts
     def bank_accounts
       data = get("/bank_accounts")["bank_accounts"] || []
-      parse_collection(data, Models::BankAccount)
+      parse_collection(data, Models::FreeAgent::BankAccount)
     end
 
     def bank_transaction_explanations(bank_account_url, from_date:, to_date:)
@@ -105,13 +105,13 @@ module SyncBooks
       url = "/projects"
       url += "?contact=#{BASE_URL}/contacts/#{contact_id}" if contact_id
       data = get(url)["projects"] || []
-      parse_collection(data, Models::Project)
+      parse_collection(data, Models::FreeAgent::Project)
     end
 
     # Company
     def company
       data = get("/company")["company"]
-      Models::Company.from_hash(data)
+      Models::FreeAgent::Company.from_hash(data)
     end
 
     private

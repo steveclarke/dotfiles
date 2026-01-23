@@ -18,14 +18,17 @@ scripts/
     ├── whmcs_client.rb          # WHMCS API client
     ├── models.rb                # Model loader
     └── models/
-        ├── bank_account.rb      # FreeAgent
-        ├── bill.rb              # FreeAgent
-        ├── company.rb           # FreeAgent
-        ├── contact.rb           # FreeAgent
-        ├── expense.rb           # FreeAgent
-        ├── invoice.rb           # FreeAgent
-        ├── project.rb           # FreeAgent
-        └── whmcs/               # WHMCS namespace
+        ├── freeagent.rb         # FreeAgent namespace loader
+        ├── freeagent/
+        │   ├── bank_account.rb
+        │   ├── bill.rb
+        │   ├── company.rb
+        │   ├── contact.rb
+        │   ├── expense.rb
+        │   ├── invoice.rb
+        │   └── project.rb
+        ├── whmcs.rb             # WHMCS namespace loader
+        └── whmcs/
             ├── client.rb
             ├── invoice.rb
             └── transaction.rb
@@ -43,40 +46,53 @@ All API responses should be wrapped in Shale model classes. This provides:
 
 **Pattern:**
 ```ruby
-# models/example.rb
-class Example < Shale::Mapper
-  attribute :url, :string
-  attribute :name, :string
-  attribute :amount, :float
-  attribute :status, :string
+# models/servicename/example.rb
+module SyncBooks
+  module Models
+    module ServiceName
+      class Example < Shale::Mapper
+        attribute :url, :string
+        attribute :name, :string
+        attribute :amount, :float
+        attribute :status, :string
 
-  # Extract ID from FreeAgent-style URLs
-  def id
-    url&.split("/")&.last
-  end
+        # Extract ID from FreeAgent-style URLs
+        def id
+          url&.split("/")&.last
+        end
 
-  # Computed display value
-  def display_amount
-    "$#{"%.2f" % (amount || 0)}"
-  end
+        # Computed display value
+        def display_amount
+          "$#{"%.2f" % (amount || 0)}"
+        end
 
-  # Status helpers
-  def active?
-    status == "Active"
+        # Status helpers
+        def active?
+          status == "Active"
+        end
+      end
+    end
   end
 end
+```
+
+**Namespace loader:**
+```ruby
+# models/servicename.rb
+require_relative "servicename/example"
+require_relative "servicename/other"
 ```
 
 **Client usage:**
 ```ruby
 def things
   data = get("/things")["things"] || []
-  parse_collection(data, Models::Thing)
+  parse_collection(data, Models::ServiceName::Thing)
 end
 
 def thing(id)
   data = get("/things/#{id}")["thing"]
-  Models::Thing.from_hash(data)
+  Models::ServiceName::Thing.from_hash(data)
 end
 ```
 
