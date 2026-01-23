@@ -18,7 +18,11 @@ module SyncBooks
         txns = client.transactions(limit: options[:limit])
 
         if options[:json]
-          puts JSON.pretty_generate(txns)
+          data = txns.map do |t|
+            { id: t.id, date: t.date, gateway: t.gateway, description: t.description,
+              amount_in: t.amount_in, amount_out: t.amount_out, invoice_id: t.invoiceid }
+          end
+          puts JSON.pretty_generate(data)
           return
         end
 
@@ -32,18 +36,18 @@ module SyncBooks
 
         rows = txns.map do |t|
           [
-            t["id"],
-            t["date"],
-            t["gateway"] || "-",
-            t["description"]&.slice(0, 30) || "-",
-            UI.money(t["amountin"].to_f - t["amountout"].to_f)
+            t.id,
+            t.display_date,
+            t.gateway || "-",
+            t.description&.slice(0, 30) || "-",
+            UI.money(t.net_amount)
           ]
         end
         UI.table(rows, columns: ["ID", "Date", "Gateway", "Description", "Amount"])
 
         UI.blank
-        total_in = txns.sum { |t| t["amountin"].to_f }
-        total_out = txns.sum { |t| t["amountout"].to_f }
+        total_in = txns.sum(&:amount_in)
+        total_out = txns.sum(&:amount_out)
         UI.muted("#{txns.length} transactions • In: #{UI.money(total_in)} • Out: #{UI.money(total_out)}")
       end
 
@@ -55,7 +59,11 @@ module SyncBooks
         invs = client.invoices(status: options[:status], limit: options[:limit])
 
         if options[:json]
-          puts JSON.pretty_generate(invs)
+          data = invs.map do |i|
+            { id: i.id, reference: i.reference, client: i.client_name, date: i.date,
+              due_date: i.duedate, status: i.status, total: i.total_value }
+          end
+          puts JSON.pretty_generate(data)
           return
         end
 
@@ -70,25 +78,38 @@ module SyncBooks
 
         rows = invs.map do |i|
           [
-            i["id"],
-            i["invoicenum"] || i["id"],
-            i["date"],
-            i["duedate"],
-            i["status"],
-            UI.money(i["total"].to_f)
+            i.id,
+            i.reference,
+            i.date,
+            i.duedate,
+            i.status,
+            UI.money(i.total_value)
           ]
         end
         UI.table(rows, columns: ["ID", "Number", "Date", "Due", "Status", "Total"])
 
         UI.blank
-        total = invs.sum { |i| i["total"].to_f }
+        total = invs.sum(&:total_value)
         UI.muted("#{invs.length} invoices • Total: #{UI.money(total)}")
       end
 
       desc "invoice ID", "Show invoice details"
       def invoice(id)
         inv = client.invoice(id)
-        puts JSON.pretty_generate(inv)
+        puts JSON.pretty_generate(
+          id: inv.id,
+          reference: inv.reference,
+          client: inv.client_name,
+          date: inv.date,
+          due_date: inv.duedate,
+          status: inv.status,
+          subtotal: inv.subtotal_value,
+          tax: inv.tax_value,
+          total: inv.total_value,
+          currency: inv.currencycode,
+          payment_method: inv.paymentmethod,
+          notes: inv.notes
+        )
       end
 
       desc "clients", "List clients"
@@ -99,7 +120,10 @@ module SyncBooks
         cls = client.clients(limit: options[:limit], search: options[:search])
 
         if options[:json]
-          puts JSON.pretty_generate(cls)
+          data = cls.map do |c|
+            { id: c.id, name: c.name, email: c.email, status: c.status, created: c.datecreated }
+          end
+          puts JSON.pretty_generate(data)
           return
         end
 
@@ -112,14 +136,7 @@ module SyncBooks
         end
 
         rows = cls.map do |c|
-          name = [c["firstname"], c["lastname"]].compact.join(" ")
-          name = c["companyname"] if c["companyname"] && !c["companyname"].empty?
-          [
-            c["id"],
-            name,
-            c["email"],
-            c["status"]
-          ]
+          [c.id, c.name, c.email, c.status]
         end
         UI.table(rows, columns: ["ID", "Name", "Email", "Status"])
 
@@ -130,7 +147,16 @@ module SyncBooks
       desc "client ID", "Show client details"
       def client_detail(id)
         c = client.client(id)
-        puts JSON.pretty_generate(c)
+        puts JSON.pretty_generate(
+          id: c.id,
+          name: c.name,
+          email: c.email,
+          phone: c.phonenumber,
+          address: c.full_address,
+          status: c.status,
+          created: c.datecreated,
+          notes: c.notes
+        )
       end
       map "client" => :client_detail
 

@@ -615,30 +615,47 @@ module SyncBooks
 
     desc "company", "Show company info"
     def company
-      data = fa_client.company
+      c = fa_client.company
       puts JSON.pretty_generate(
-        name: data["name"],
-        type: data["type"],
-        currency: data["currency"],
-        country: data["company_registration_number"],
-        sales_tax_registration_number: data["sales_tax_registration_number"]
+        name: c.name,
+        type: c.type,
+        currency: c.currency,
+        registration_number: c.company_registration_number,
+        hst_number: c.hst_number,
+        hst_status: c.sales_tax_registration_status
       )
     end
 
     desc "projects", "List projects"
     option :contact, aliases: "-c", desc: "Filter by contact ID"
+    option :json, type: :boolean, default: false, desc: "Output as JSON"
     def projects
-      data = fa_client.projects(contact_id: options[:contact]).map do |p|
-        {
-          id: extract_id(p["url"]),
-          name: p["name"],
-          contact_id: extract_id(p["contact"]),
-          status: p["status"],
-          budget: p["budget"],
-          currency: p["currency"]
-        }
+      projs = fa_client.projects(contact_id: options[:contact])
+
+      if options[:json]
+        data = projs.map do |p|
+          { id: p.id, name: p.name, contact_id: p.contact_id, status: p.status,
+            budget: p.display_budget, currency: p.currency }
+        end
+        puts JSON.pretty_generate(data)
+        return
       end
-      puts JSON.pretty_generate(data)
+
+      UI.header("Projects")
+      UI.blank
+
+      if projs.empty?
+        UI.muted("No projects found.")
+        return
+      end
+
+      rows = projs.map do |p|
+        [p.id, p.name, p.status, p.display_budget || "-", p.currency]
+      end
+      UI.table(rows, columns: ["ID", "Name", "Status", "Budget", "Currency"])
+
+      UI.blank
+      UI.muted("#{projs.length} projects")
     end
 
     private

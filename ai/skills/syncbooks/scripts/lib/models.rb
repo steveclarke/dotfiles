@@ -4,9 +4,12 @@ require "shale"
 
 require_relative "models/bank_account"
 require_relative "models/bill"
+require_relative "models/company"
 require_relative "models/contact"
 require_relative "models/expense"
 require_relative "models/invoice"
+require_relative "models/project"
+require_relative "models/whmcs"
 
 module SyncBooks
   module Models

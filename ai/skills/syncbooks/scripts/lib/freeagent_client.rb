@@ -104,12 +104,14 @@ module SyncBooks
     def projects(contact_id: nil)
       url = "/projects"
       url += "?contact=#{BASE_URL}/contacts/#{contact_id}" if contact_id
-      get(url)["projects"]
+      data = get(url)["projects"] || []
+      parse_collection(data, Models::Project)
     end
 
     # Company
     def company
-      get("/company")["company"]
+      data = get("/company")["company"]
+      Models::Company.from_hash(data)
     end
 
     private
