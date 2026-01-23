@@ -1,3 +1,9 @@
+---
+name: plan
+description: Create implementation plan documents with development phases, sequencing, and actionable tasks. Works through 3 phases (structure, approach, generation) following established feature development process. Use when creating plan.md documents from technical specs. Triggers on "create implementation plan", "plan this feature", "sequence the development".
+disable-model-invocation: true
+---
+
 # Implementation Plan
 
 ## Overview

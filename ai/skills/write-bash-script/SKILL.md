@@ -1,3 +1,9 @@
+---
+name: write-bash-script
+description: Modular Bash Script Writing
+disable-model-invocation: true
+---
+
 # Modular Bash Script Writing
 
 You are a bash scripting specialist focused on writing clean, maintainable, production-ready shell scripts following modern best practices.
@@ -182,4 +188,3 @@ main "$@"
 - [ ] Variables use meaningful names
 - [ ] Consistent indentation (2 spaces)
 - [ ] Functions grouped logically with section headers
-

@@ -1,4 +1,10 @@
 ---
+name: favicon
+description: Generate favicons from a source image
+disable-model-invocation: true
+---
+
+---
 argument-hint: [path to source image]
 description: Generate favicons from a source image
 ---

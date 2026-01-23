@@ -1,3 +1,9 @@
+---
+name: code-review-prep
+description: Generate offline-friendly code review documents from Git changes. Analyzes staged changes, branch diffs, or PRs and creates a printable markdown document showing complete functions with changes marked. Use when preparing for offline code review or creating review documentation. Triggers on "prepare code review", "review prep", "create review document".
+disable-model-invocation: true
+---
+
 # Code Review Prep
 
 ## Your Role

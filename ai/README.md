@@ -1,10 +1,10 @@
 # AI Resources
 
-Shared resources for AI coding tools. One place to manage prompts, skills, and agents that work across Cursor, Claude Code, and OpenCode.
+Shared resources for AI coding tools. One place to manage skills and agents that work across Cursor, Claude Code, and OpenCode.
 
 ## Why Use This?
 
-Most AI tools store settings in their own folders. This creates a problem: you end up copying the same prompts and skills between tools.
+Most AI tools store settings in their own folders. This creates a problem: you end up copying the same skills between tools.
 
 This setup fixes that. You write a skill once, and all your AI tools can use it.
 
@@ -13,7 +13,6 @@ This setup fixes that. You write a skill once, and all your AI tools can use it.
 | Folder | What It Does |
 |--------|--------------|
 | `agents/` | Agent settings (model, tools, behavior) |
-| `commands/` | Prompt templates you can reuse |
 | `guides/` | Process docs and how-to guides |
 | `skills/` | Skills that teach agents new tasks |
 
@@ -24,38 +23,24 @@ All AI tools share the same files through symlinks:
 ```
 ai/
 ├── agents/       ← Agent settings
-├── commands/     ← Prompt templates
 ├── guides/       ← Process docs
 └── skills/       ← Agent skills
 
 ~/.cursor/
-├── commands → ai/commands
 └── skills → ai/skills
 
 ~/.claude/
 ├── agents → ai/agents
-├── commands → ai/commands
 └── skills → ai/skills
 
 ~/.config/opencode/
 ├── agent → ai/agents
-├── command → ai/commands
 └── skill → ai/skills
 ```
 
 After you run `stow`, all tools see the same files.
 
 ## Quick Start
-
-### Add a Command
-
-Create a markdown file in `ai/commands/`:
-
-```bash
-touch ai/commands/my-prompt.md
-```
-
-All tools can now use this prompt template.
 
 ### Add a Skill
 
@@ -90,7 +75,6 @@ bash configs/stow.sh
 
 | Path | Purpose |
 |------|---------|
-| `ai/commands/*.md` | Prompt templates. Markdown files with reusable prompts. |
 | `ai/skills/*/SKILL.md` | Agent skills. Folders with instructions agents can learn. |
 | `ai/agents/*.md` | Agent configs. Model and tool settings. |
 | `ai/guides/*.md` | Process docs. Workflows and best practices. |
@@ -100,8 +84,6 @@ bash configs/stow.sh
 > [!TIP]
 > Keep content generic. Don't add project-specific details that won't work elsewhere.
 
-**Commands**: Add prompt templates to `commands/`. Use them for tasks you repeat often.
-
 **Skills**: Add skill folders to `skills/`. Each skill needs a `SKILL.md` file with YAML frontmatter. Skills can include scripts and reference docs.
 
 **Agents**: Add agent definitions to `agents/`. These control which model and tools an agent uses.
@@ -110,8 +92,8 @@ bash configs/stow.sh
 
 ## Supported Tools
 
-| Tool | Commands | Skills | Agents |
-|------|----------|--------|--------|
-| Cursor | Yes | Yes | No |
-| Claude Code | Yes | Yes | Yes |
-| OpenCode | Yes | Yes | Yes |
+| Tool | Skills | Agents |
+|------|--------|--------|
+| Cursor | Yes | No |
+| Claude Code | Yes | Yes |
+| OpenCode | Yes | Yes |

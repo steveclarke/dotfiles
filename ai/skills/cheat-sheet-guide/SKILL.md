@@ -1,3 +1,9 @@
+---
+name: cheat-sheet-guide
+description: Create concise, scannable quick-reference guides (50-100 lines) for technical topics. Use when developers need fast answers about project-specific paths, commands, and patterns. Triggers on "create cheat sheet", "quick reference guide", "where does X live", "what commands for Y".
+disable-model-invocation: true
+---
+
 # Cheat Sheet Guide
 
 ## Your Role
@@ -126,4 +132,3 @@ Before finalizing:
 ## Key Principles
 
 You write quick references, not tutorials. Assume competence. Keep it scannable. Reference real files. Link to docs for details. Stay under 100 lines.
-
