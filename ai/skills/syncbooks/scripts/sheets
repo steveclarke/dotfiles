@@ -16,18 +16,41 @@ require "fileutils"
 require "webrick"
 require "uri"
 
+# Shared config - same as freeagent script
+class SyncBooksConfig
+  CONFIG_PATH = File.expand_path("~/.config/syncbooks/config.json")
+
+  def self.load
+    return {} unless File.exist?(CONFIG_PATH)
+    JSON.parse(File.read(CONFIG_PATH))
+  rescue
+    {}
+  end
+
+  def self.get(key)
+    load[key]
+  end
+
+  # Get cached credential with optional env fallback
+  def self.credential(key, fallback_env: nil)
+    value = get(key)
+    return value if value && !value.empty?
+
+    if fallback_env
+      value = ENV[fallback_env]
+      return value if value && !value.empty?
+    end
+
+    nil
+  end
+end
+
 class GoogleSheetsClient
   BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets"
   AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
   TOKEN_URL = "https://oauth2.googleapis.com/token"
   CREDENTIALS_PATH = File.expand_path("~/.local/share/syncbooks/credentials.json")
   SCOPES = "https://www.googleapis.com/auth/spreadsheets"
-
-  # 1Password references
-  OP_CLIENT_ID = "op://Employee/Google Sheets API - SyncBooks/client id"
-  OP_CLIENT_SECRET = "op://Employee/Google Sheets API - SyncBooks/client secret"
-  OP_SPREADSHEET_ID = "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id"
-  OP_SPREADSHEET_ID_DEV = "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id-dev"
 
   attr_reader :spreadsheet_id
 
@@ -46,25 +69,18 @@ class GoogleSheetsClient
       @token_expiry = gs["token_expiry"]
     end
 
-    @client_id = op_read(OP_CLIENT_ID) || ENV["SYNCBOOKS_GOOGLE_CLIENT_ID"]
-    @client_secret = op_read(OP_CLIENT_SECRET) || ENV["SYNCBOOKS_GOOGLE_CLIENT_SECRET"]
+    # Get credentials from config cache (set by 'freeagent setup')
+    @client_id = SyncBooksConfig.credential("google_client_id", fallback_env: "SYNCBOOKS_GOOGLE_CLIENT_ID")
+    @client_secret = SyncBooksConfig.credential("google_client_secret", fallback_env: "SYNCBOOKS_GOOGLE_CLIENT_SECRET")
 
     @access_token ||= ENV["SYNCBOOKS_GOOGLE_API_KEY"]
     @refresh_token ||= ENV["SYNCBOOKS_GOOGLE_REFRESH_TOKEN"]
   end
 
-  def op_read(ref)
-    warn "Fetching #{ref.split("/").last} from 1Password..."
-    result = `op read '#{ref}' 2>/dev/null`.chomp
-    result.empty? ? nil : result
-  rescue
-    nil
-  end
-
   def load_spreadsheet_id(dev:)
-    ref = dev ? OP_SPREADSHEET_ID_DEV : OP_SPREADSHEET_ID
-    id = op_read(ref)
-    raise "Could not load spreadsheet ID from 1Password (#{ref})" unless id
+    key = dev ? "spreadsheet_id_dev" : "spreadsheet_id"
+    id = SyncBooksConfig.credential(key)
+    raise "Spreadsheet ID not configured. Run 'freeagent setup' first." unless id
     id
   end
 
@@ -197,11 +213,12 @@ class CLI < Thor
       return
     end
 
-    client_id = op_read(GoogleSheetsClient::OP_CLIENT_ID)
-    client_secret = op_read(GoogleSheetsClient::OP_CLIENT_SECRET)
+    # Get credentials from config cache (set by 'freeagent setup')
+    client_id = SyncBooksConfig.credential("google_client_id")
+    client_secret = SyncBooksConfig.credential("google_client_secret")
 
     unless client_id && client_secret
-      raise Thor::Error, "Could not load credentials from 1Password. Ensure op CLI is authenticated."
+      raise Thor::Error, "Credentials not configured. Run 'freeagent setup' first."
     end
 
     puts "Google Sheets OAuth Configuration"
@@ -387,14 +404,6 @@ class CLI < Thor
 
   def client(spreadsheet_id: nil, dev: false)
     @client ||= GoogleSheetsClient.new(spreadsheet_id: spreadsheet_id, dev: dev)
-  end
-
-  def op_read(ref)
-    warn "Fetching #{ref.split("/").last} from 1Password..."
-    result = `op read '#{ref}' 2>/dev/null`.chomp
-    result.empty? ? nil : result
-  rescue
-    nil
   end
 
   def wait_for_callback
