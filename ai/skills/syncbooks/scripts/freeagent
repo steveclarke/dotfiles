@@ -23,6 +23,16 @@ require_relative "lib/models"
 class SyncBooksConfig
   CONFIG_PATH = File.expand_path("~/.config/syncbooks/config.json")
 
+  # 1Password references for setup
+  OP_REFS = {
+    "freeagent_client_id" => "op://Employee/FreeAgent API - SyncBooks/username",
+    "freeagent_client_secret" => "op://Employee/FreeAgent API - SyncBooks/credential",
+    "google_client_id" => "op://Employee/Google Sheets API - SyncBooks/client id",
+    "google_client_secret" => "op://Employee/Google Sheets API - SyncBooks/client secret",
+    "spreadsheet_id" => "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id",
+    "spreadsheet_id_dev" => "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id-dev"
+  }.freeze
+
   def self.load
     return {} unless File.exist?(CONFIG_PATH)
     JSON.parse(File.read(CONFIG_PATH))
@@ -43,6 +53,53 @@ class SyncBooksConfig
     config = load
     config[key] = value
     save(config)
+  end
+
+  # Fetch all static credentials from 1Password and cache them
+  def self.setup!(quiet: false)
+    config = load
+
+    OP_REFS.each do |key, ref|
+      puts "  Fetching #{key}..." unless quiet
+      result = `op read '#{ref}' 2>/dev/null`.chomp
+      if result.empty?
+        raise "Failed to fetch #{key} from 1Password (#{ref})"
+      end
+      config[key] = result
+    end
+
+    save(config)
+    config
+  end
+
+  # Check if setup has been run
+  def self.setup_complete?
+    config = load
+    OP_REFS.keys.all? { |key| config[key] && !config[key].empty? }
+  end
+
+  # Get cached credential, or fetch from 1Password if not cached
+  def self.credential(key, fallback_env: nil)
+    # First try config cache
+    value = get(key)
+    return value if value && !value.empty?
+
+    # Fall back to environment variable
+    if fallback_env
+      value = ENV[fallback_env]
+      return value if value && !value.empty?
+    end
+
+    # Finally try 1Password (and warn about it)
+    ref = OP_REFS[key]
+    if ref
+      warn "Config not set up. Run 'freeagent setup' to cache credentials."
+      warn "Fetching #{key} from 1Password..."
+      result = `op read '#{ref}' 2>/dev/null`.chomp
+      return result unless result.empty?
+    end
+
+    nil
   end
 
   # HST period helpers
@@ -77,6 +134,130 @@ class SyncBooksConfig
     quarter = ((date.month - 1) / 3) + 1
     "Q#{quarter} #{date.year}"
   end
+
+  # Last sync tracking
+  def self.last_sync
+    ts = get("last_sync")
+    ts ? Time.parse(ts) : nil
+  end
+
+  def self.last_sync=(time)
+    set("last_sync", time.utc.iso8601)
+  end
+end
+
+# Lightweight Google Sheets client for sync (avoids shelling out)
+class GoogleSheetsClient
+  BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets"
+  TOKEN_URL = "https://oauth2.googleapis.com/token"
+  CREDENTIALS_PATH = File.expand_path("~/.local/share/syncbooks/credentials.json")
+
+  attr_reader :spreadsheet_id
+
+  def initialize(dev: false)
+    @spreadsheet_id = SyncBooksConfig.credential(dev ? "spreadsheet_id_dev" : "spreadsheet_id")
+    raise "Spreadsheet ID not configured. Run 'freeagent setup' first." unless @spreadsheet_id
+    load_config!
+    raise "Google Sheets not configured. Run 'sheets auth' first." if @access_token.nil? || @access_token.empty?
+  end
+
+  def load_config!
+    if File.exist?(CREDENTIALS_PATH)
+      creds = JSON.parse(File.read(CREDENTIALS_PATH))
+      gs = creds["google_sheets"] || {}
+      @access_token = gs["access_token"]
+      @refresh_token = gs["refresh_token"]
+      @token_expiry = gs["token_expiry"]
+    end
+
+    @client_id = SyncBooksConfig.credential("google_client_id")
+    @client_secret = SyncBooksConfig.credential("google_client_secret")
+  end
+
+  def write(range, value)
+    encoded_range = URI.encode_www_form_component(range)
+    body = {values: [[value]]}
+    put("/#{@spreadsheet_id}/values/#{encoded_range}?valueInputOption=USER_ENTERED", body)
+  end
+
+  def title
+    data = get("/#{@spreadsheet_id}?fields=properties.title")
+    data.dig("properties", "title")
+  end
+
+  private
+
+  def get(endpoint, retry_count: 0)
+    response = HTTParty.get("#{BASE_URL}#{endpoint}", headers: auth_headers)
+    result = handle_response(response, retry_count: retry_count)
+    return get(endpoint, retry_count: retry_count + 1) if result == :retry
+    result
+  end
+
+  def put(endpoint, body, retry_count: 0)
+    response = HTTParty.put(
+      "#{BASE_URL}#{endpoint}",
+      headers: auth_headers.merge("Content-Type" => "application/json"),
+      body: body.to_json
+    )
+    result = handle_response(response, retry_count: retry_count)
+    return put(endpoint, body, retry_count: retry_count + 1) if result == :retry
+    result
+  end
+
+  def auth_headers
+    {"Authorization" => "Bearer #{@access_token}"}
+  end
+
+  def handle_response(response, retry_count: 0)
+    return response.parsed_response if response.success?
+
+    if response.code == 401 && can_refresh? && retry_count == 0
+      refresh_token!
+      return :retry
+    end
+
+    error = response.parsed_response&.dig("error", "message") || response.body
+    raise "Google Sheets API error: #{response.code} - #{error}"
+  end
+
+  def can_refresh?
+    @refresh_token && @client_id && @client_secret
+  end
+
+  def refresh_token!
+    response = HTTParty.post(
+      TOKEN_URL,
+      headers: {"Content-Type" => "application/x-www-form-urlencoded"},
+      body: {
+        grant_type: "refresh_token",
+        refresh_token: @refresh_token,
+        client_id: @client_id,
+        client_secret: @client_secret
+      }
+    )
+
+    if response.success?
+      data = response.parsed_response
+      @access_token = data["access_token"]
+      @refresh_token = data["refresh_token"] if data["refresh_token"]
+      @token_expiry = (Time.now + (data["expires_in"] || 3600)).utc.to_s
+      save_credentials!
+    else
+      raise "Failed to refresh Google token: #{response.body}"
+    end
+  end
+
+  def save_credentials!
+    creds = File.exist?(CREDENTIALS_PATH) ? JSON.parse(File.read(CREDENTIALS_PATH)) : {}
+    creds["google_sheets"] ||= {}
+    creds["google_sheets"]["access_token"] = @access_token
+    creds["google_sheets"]["refresh_token"] = @refresh_token
+    creds["google_sheets"]["token_expiry"] = @token_expiry
+    FileUtils.mkdir_p(File.dirname(CREDENTIALS_PATH))
+    File.write(CREDENTIALS_PATH, JSON.pretty_generate(creds))
+    File.chmod(0o600, CREDENTIALS_PATH)
+  end
 end
 
 class FreeAgentClient
@@ -84,13 +265,9 @@ class FreeAgentClient
   TOKEN_URL = "https://api.freeagent.com/v2/token_endpoint"
   CREDENTIALS_PATH = File.expand_path("~/.local/share/syncbooks/credentials.json")
 
-  # 1Password references
-  OP_CLIENT_ID = "op://Employee/FreeAgent API - SyncBooks/username"
-  OP_CLIENT_SECRET = "op://Employee/FreeAgent API - SyncBooks/credential"
-
   def initialize
     load_config!
-    raise "FreeAgent not configured. Run initial OAuth setup first." if @access_token.nil? || @access_token.empty?
+    raise "FreeAgent not configured. Run 'freeagent auth' first." if @access_token.nil? || @access_token.empty?
   end
 
   def load_config!
@@ -103,21 +280,13 @@ class FreeAgentClient
       @token_expiry = fa["token_expiry"]
     end
 
-    # Get client credentials from 1Password (primary) or env vars (fallback)
-    @client_id = op_read(OP_CLIENT_ID) || ENV["FREEAGENT_CLIENT_ID"]
-    @client_secret = op_read(OP_CLIENT_SECRET) || ENV["FREEAGENT_CLIENT_SECRET"]
+    # Get client credentials from config cache (set by 'freeagent setup')
+    @client_id = SyncBooksConfig.credential("freeagent_client_id", fallback_env: "FREEAGENT_CLIENT_ID")
+    @client_secret = SyncBooksConfig.credential("freeagent_client_secret", fallback_env: "FREEAGENT_CLIENT_SECRET")
 
     # Fall back to env vars for tokens if not in credentials file
     @access_token ||= ENV["FREEAGENT_API_KEY"]
     @refresh_token ||= ENV["FREEAGENT_REFRESH_TOKEN"]
-  end
-
-  def op_read(ref)
-    warn "Fetching #{ref.split("/").last} from 1Password..."
-    result = `op read '#{ref}' 2>/dev/null`.chomp
-    result.empty? ? nil : result
-  rescue
-    nil
   end
 
   def save_credentials!
@@ -335,6 +504,36 @@ class CLI < Thor
     true
   end
 
+  # === Setup Commands ===
+
+  desc "setup", "Cache all credentials from 1Password (run once)"
+  option :refresh, type: :boolean, default: false, desc: "Force refresh from 1Password"
+  def setup
+    if SyncBooksConfig.setup_complete? && !options[:refresh]
+      puts "Setup already complete. Use --refresh to re-fetch from 1Password."
+      puts ""
+      puts "Config file: #{SyncBooksConfig::CONFIG_PATH}"
+      return
+    end
+
+    puts "SyncBooks Setup"
+    puts "=" * 50
+    puts ""
+    puts "Fetching credentials from 1Password..."
+    puts ""
+
+    SyncBooksConfig.setup!
+
+    puts ""
+    puts "Setup complete!"
+    puts "Config saved to: #{SyncBooksConfig::CONFIG_PATH}"
+    puts ""
+    puts "Next steps:"
+    puts "  1. Run 'freeagent auth' if you haven't authenticated with FreeAgent"
+    puts "  2. Run 'sheets auth' if you haven't authenticated with Google Sheets"
+    puts "  3. Run 'freeagent sync' to sync data to your spreadsheet"
+  end
+
   # === Auth Commands ===
 
   desc "auth", "Configure FreeAgent OAuth credentials"
@@ -346,9 +545,9 @@ class CLI < Thor
       return
     end
 
-    # Get client credentials from 1Password
-    client_id = op_read(FreeAgentClient::OP_CLIENT_ID)
-    client_secret = op_read(FreeAgentClient::OP_CLIENT_SECRET)
+    # Get client credentials from config cache
+    client_id = SyncBooksConfig.credential("freeagent_client_id")
+    client_secret = SyncBooksConfig.credential("freeagent_client_secret")
 
     unless client_id && client_secret
       raise Thor::Error, "Could not load credentials from 1Password. Ensure op CLI is authenticated."
@@ -706,88 +905,98 @@ class CLI < Thor
   end
 
   desc "sync", "Sync FreeAgent data to Google Sheets"
-  option :force, aliases: "-f", type: :boolean, default: false, desc: "Allow writes to non-dev spreadsheets"
+  option :quiet, aliases: "-q", type: :boolean, default: false, desc: "Minimal output"
+  option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
   def sync
-    sheets_script = File.expand_path("../sheets", __FILE__)
+    q = options[:quiet]
 
-    puts "Syncing FreeAgent data to Google Sheets"
-    puts "=" * 50
-    puts ""
+    unless q
+      puts "Syncing FreeAgent data to Google Sheets"
+      puts "=" * 50
+      puts ""
+    end
 
     # 1. Calculate HST
     from_date = SyncBooksConfig.hst_period_start.to_s
     to_date = Date.today.to_s
-    puts "HST Period: #{from_date} to #{to_date}"
-    puts ""
 
-    hst_charged, hst_reclaimed, _details = calculate_hst(from_date, to_date)
-    puts ""
+    unless q
+      puts "HST Period: #{from_date} to #{to_date}"
+      puts ""
+    end
+
+    hst_charged, hst_reclaimed, _details = calculate_hst(from_date, to_date, quiet: q)
+    puts "" unless q
 
     # 2. Get balance
-    print "Fetching balance..."
+    print "Fetching balance..." unless q
     accounts = client.bank_accounts.select(&:active?)
     balance_total = accounts.sum { |a| a.current_balance || 0 }
-    puts " $#{"%.2f" % balance_total}"
+    puts " $#{"%.2f" % balance_total}" unless q
 
     # 3. Get outstanding invoices (open + overdue)
-    print "Fetching open invoices..."
+    print "Fetching open invoices..." unless q
     open_invoices = client.invoices(view: "open")
     open_total = open_invoices.sum { |i| i.total_value || 0 }
-    puts " #{open_invoices.length} invoices ($#{"%.2f" % open_total})"
+    puts " #{open_invoices.length} invoices ($#{"%.2f" % open_total})" unless q
 
-    print "Fetching overdue invoices..."
+    print "Fetching overdue invoices..." unless q
     overdue_invoices = client.invoices(view: "overdue")
     overdue_total = overdue_invoices.sum { |i| i.total_value || 0 }
-    puts " #{overdue_invoices.length} invoices ($#{"%.2f" % overdue_total})"
+    puts " #{overdue_invoices.length} invoices ($#{"%.2f" % overdue_total})" unless q
 
     invoices_total = open_total + overdue_total
 
     # 4. Get outstanding bills (open + overdue)
-    print "Fetching open bills..."
+    print "Fetching open bills..." unless q
     open_bills = client.bills_by_view(view: "open")
     open_bills_total = open_bills.sum { |b| b.total_value || 0 }
-    puts " #{open_bills.length} bills ($#{"%.2f" % open_bills_total})"
+    puts " #{open_bills.length} bills ($#{"%.2f" % open_bills_total})" unless q
 
-    print "Fetching overdue bills..."
+    print "Fetching overdue bills..." unless q
     overdue_bills = client.bills_by_view(view: "overdue")
     overdue_bills_total = overdue_bills.sum { |b| b.total_value || 0 }
-    puts " #{overdue_bills.length} bills ($#{"%.2f" % overdue_bills_total})"
+    puts " #{overdue_bills.length} bills ($#{"%.2f" % overdue_bills_total})" unless q
 
     bills_total = open_bills_total + overdue_bills_total
-    puts ""
+    puts "" unless q
 
-    # 3. Write to sheets
-    puts "-" * 50
-    puts "Writing to Google Sheets..."
-    puts ""
+    # 5. Write to Google Sheets (using inline client - no shell outs)
+    unless q
+      puts "-" * 50
+      puts "Writing to Google Sheets..."
+      puts ""
+    end
 
-    force_flag = options[:force] ? "--force" : ""
+    sheets = GoogleSheetsClient.new(dev: options[:dev])
 
-    # E2: HST Collected
-    `#{sheets_script} write "Main!E2" "#{format("%.2f", hst_charged)}" #{force_flag} 2>&1`
-    puts "  E2 (HST Collected):    $#{"%.2f" % hst_charged}"
+    writes = {
+      "Main!E2" => {label: "HST Collected", value: hst_charged},
+      "Main!E3" => {label: "HST Reclaimed", value: hst_reclaimed},
+      "Main!E6" => {label: "Available COH", value: balance_total},
+      "Main!E9" => {label: "FA Invoices", value: invoices_total},
+      "Main!B4" => {label: "Outstanding Bills", value: bills_total}
+    }
 
-    # E3: HST Reclaimed
-    `#{sheets_script} write "Main!E3" "#{format("%.2f", hst_reclaimed)}" #{force_flag} 2>&1`
-    puts "  E3 (HST Reclaimed):    $#{"%.2f" % hst_reclaimed}"
+    writes.each do |range, data|
+      sheets.write(range, format("%.2f", data[:value]))
+      puts "  #{range.ljust(12)} #{data[:label].ljust(20)} $#{"%.2f" % data[:value]}" unless q
+    end
 
-    # E6: Available COH
-    `#{sheets_script} write "Main!E6" "#{format("%.2f", balance_total)}" #{force_flag} 2>&1`
-    puts "  E6 (Available COH):    $#{"%.2f" % balance_total}"
+    # 6. Track last sync
+    SyncBooksConfig.last_sync = Time.now
 
-    # E9: FA Invoices (outstanding)
-    `#{sheets_script} write "Main!E9" "#{format("%.2f", invoices_total)}" #{force_flag} 2>&1`
-    puts "  E9 (FA Invoices):      $#{"%.2f" % invoices_total}"
+    puts "" unless q
+    puts "=" * 50 unless q
 
-    # B4: Outstanding Bills
-    `#{sheets_script} write "Main!B4" "#{format("%.2f", bills_total)}" #{force_flag} 2>&1`
-    puts "  B4 (Outstanding Bills): $#{"%.2f" % bills_total}"
-
-    puts ""
-    puts "=" * 50
-    puts "Sync complete!"
-    puts ""
-    puts "Run 'sheets summary' to see updated cash position."
+    if q
+      # Quiet mode: single line summary
+      puts "Synced: COH $#{"%.2f" % balance_total} | HST owing $#{"%.2f" % (hst_charged - hst_reclaimed)} | Invoices $#{"%.2f" % invoices_total}"
+    else
+      puts "Sync complete! (#{Time.now.strftime("%Y-%m-%d %H:%M")})"
+      puts ""
+      puts "Run 'sheets summary' to see updated cash position."
+    end
   end
 
   desc "balance", "Show total balance across all bank accounts"
@@ -832,34 +1041,34 @@ class CLI < Thor
 
   private
 
-  def calculate_hst(from_date, to_date)
+  def calculate_hst(from_date, to_date, quiet: false)
     hst_charged = 0.0
     hst_reclaimed = 0.0
     details = {}
 
     # 1. Invoices - HST charged on sales
-    print "Fetching invoices..."
+    print "Fetching invoices..." unless quiet
     invoices = client.invoices_by_date(from_date: from_date, to_date: to_date)
     details[:inv_hst] = invoices.sum { |i| i.sales_tax_value || 0 }
     hst_charged += details[:inv_hst]
-    puts " #{invoices.length} invoices"
+    puts " #{invoices.length} invoices" unless quiet
 
     # 2. Bills - HST reclaimed on purchases
-    print "Fetching bills..."
+    print "Fetching bills..." unless quiet
     bills = client.bills(from_date: from_date, to_date: to_date)
     details[:bills_hst] = bills.sum { |b| (b.sales_tax_value || 0).abs }
     hst_reclaimed += details[:bills_hst]
-    puts " #{bills.length} bills"
+    puts " #{bills.length} bills" unless quiet
 
     # 3. Expenses - HST reclaimed
-    print "Fetching expenses..."
+    print "Fetching expenses..." unless quiet
     expenses = client.expenses(from_date: from_date, to_date: to_date)
     details[:exp_hst] = expenses.sum { |e| e.hst_amount }
     hst_reclaimed += details[:exp_hst]
-    puts " #{expenses.length} expenses"
+    puts " #{expenses.length} expenses" unless quiet
 
     # 4. Bank transaction explanations (still raw hashes - no model yet)
-    print "Fetching bank transactions..."
+    print "Fetching bank transactions..." unless quiet
     accounts = client.bank_accounts.select(&:active?)
     details[:bank_charged] = 0.0
     details[:bank_reclaimed] = 0.0
@@ -881,7 +1090,7 @@ class CLI < Thor
         end
       end
     end
-    puts " #{total_txns} transactions"
+    puts " #{total_txns} transactions" unless quiet
 
     hst_charged += details[:bank_charged]
     hst_reclaimed += details[:bank_reclaimed]
@@ -907,14 +1116,6 @@ class CLI < Thor
     raise Thor::Error, "Contact not found: #{input}" unless contact
 
     contact.id
-  end
-
-  def op_read(ref)
-    warn "Fetching #{ref.split("/").last} from 1Password..."
-    result = `op read '#{ref}' 2>/dev/null`.chomp
-    result.empty? ? nil : result
-  rescue
-    nil
   end
 
   def wait_for_callback
