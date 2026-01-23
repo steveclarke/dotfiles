@@ -11,10 +11,10 @@ Daily accounting sync between FreeAgent and Google Sheets.
 
 ```bash
 # Sync all FreeAgent data to your Cash On-hand spreadsheet
-scripts/freeagent sync
+scripts/syncbooks sync
 
 # Quiet mode (minimal output)
-scripts/freeagent sync --quiet
+scripts/syncbooks sync --quiet
 ```
 
 One command syncs everything. Zero 1Password prompts after initial setup.
@@ -36,7 +36,7 @@ HST is calculated from the configured period start date through today.
 Run once to cache credentials from 1Password:
 
 ```bash
-scripts/freeagent setup
+scripts/syncbooks setup
 ```
 
 This stores client IDs, secrets, and spreadsheet IDs in config so daily syncs don't prompt for 1Password.
@@ -44,48 +44,47 @@ This stores client IDs, secrets, and spreadsheet IDs in config so daily syncs do
 Then authenticate with each service (opens browser for OAuth):
 
 ```bash
-scripts/freeagent auth   # FreeAgent OAuth
-scripts/sheets auth      # Google Sheets OAuth
+scripts/syncbooks auth fa      # FreeAgent OAuth
+scripts/syncbooks auth sheets  # Google Sheets OAuth
 ```
 
 ## HST Period Management
 
 ```bash
 # Show current period
-scripts/freeagent hst-status
+scripts/syncbooks hst-status
 
 # Set period start (e.g., beginning of quarter)
-scripts/freeagent hst-set 2025-10-01
+scripts/syncbooks hst-set 2025-10-01
 
 # After remitting quarterly HST, advance to next quarter
-scripts/freeagent hst-paid
+scripts/syncbooks hst-paid
 ```
 
 ## View Data (Without Syncing)
 
 ```bash
 # Bank account balances
-scripts/freeagent balance
+scripts/syncbooks balance
 
 # HST report with breakdown
-scripts/freeagent hst
+scripts/syncbooks hst
 
 # Spreadsheet summary
-scripts/sheets summary
+scripts/syncbooks sheets summary
 
 # Open invoices
-scripts/freeagent invoices --view open
+scripts/syncbooks invoices --view open
 ```
 
-## Reference: All Commands
+## Command Reference
 
-### FreeAgent
+### Top-Level Commands
 
 | Command | Description |
 |---------|-------------|
 | `sync` | Sync all data to Google Sheets |
 | `setup` | Cache 1Password credentials (run once) |
-| `auth` | OAuth authentication |
 | `balance` | Show bank account totals |
 | `hst` | HST report for current period |
 | `hst-status` | Show HST period config |
@@ -97,16 +96,24 @@ scripts/freeagent invoices --view open
 | `contact ID` | Show contact details |
 | `create-invoice` | Create new invoice |
 | `create-contact` | Create new contact |
+| `company` | Show company info |
+| `projects` | List projects |
 
-### Google Sheets
+### Auth Subcommands
 
 | Command | Description |
 |---------|-------------|
-| `auth` | OAuth authentication |
-| `info` | Show spreadsheet metadata |
-| `summary` | Show cash position summary |
-| `read RANGE` | Read cells (e.g., "Main!E2:E10") |
-| `write RANGE VALUE` | Write to cell (requires --force for production) |
+| `auth fa` | FreeAgent OAuth authentication |
+| `auth sheets` | Google Sheets OAuth authentication |
+
+### Sheets Subcommands
+
+| Command | Description |
+|---------|-------------|
+| `sheets info` | Show spreadsheet metadata |
+| `sheets summary` | Show cash position summary |
+| `sheets read RANGE` | Read cells (e.g., "Main!E2:E10") |
+| `sheets write RANGE VALUE` | Write to cell (requires --force for production) |
 
 ## Configuration Files
 
@@ -119,11 +126,11 @@ scripts/freeagent invoices --view open
 
 ```bash
 # Re-fetch from 1Password (if credentials changed)
-scripts/freeagent setup --refresh
+scripts/syncbooks setup --refresh
 
 # Re-authenticate OAuth (if tokens invalid)
-scripts/freeagent auth
-scripts/sheets auth
+scripts/syncbooks auth fa
+scripts/syncbooks auth sheets
 ```
 
 ## Notes
@@ -131,4 +138,4 @@ scripts/sheets auth
 - Contact names are matched case-insensitively
 - Invoices are created as Draft by default; use `--send` to mark as sent
 - Default currency is CAD, default tax rate is 15% (HST)
-- Run `scripts/freeagent --help` for full command usage
+- Run `scripts/syncbooks --help` for full command usage
