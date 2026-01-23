@@ -17,9 +17,13 @@ module SyncBooks
     end
 
     # Get recent transactions
+    # Note: WHMCS GetTransactions doesn't respect limitnum, so we slice client-side
     def transactions(limit: 25)
-      response = api_call("GetTransactions", limitnum: limit)
-      response["transactions"]&.dig("transaction") || []
+      response = api_call("GetTransactions")
+      txns = response["transactions"]&.dig("transaction") || []
+      # Sort by date descending and take most recent
+      txns = txns.sort_by { |t| t["date"] || "" }.reverse
+      txns.first(limit)
     end
 
     # Get invoices
