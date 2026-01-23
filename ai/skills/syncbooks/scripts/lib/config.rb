@@ -15,7 +15,10 @@ module SyncBooks
       "google_client_id" => "op://Employee/Google Sheets API - SyncBooks/client id",
       "google_client_secret" => "op://Employee/Google Sheets API - SyncBooks/client secret",
       "spreadsheet_id" => "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id",
-      "spreadsheet_id_dev" => "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id-dev"
+      "spreadsheet_id_dev" => "op://Employee/Google Sheets API - SyncBooks/cash-on-hand-sheet-id-dev",
+      "whmcs_api_url" => "op://Employee/WHMCS API - SyncBooks Daily Accounting/API URL",
+      "whmcs_identifier" => "op://Employee/WHMCS API - SyncBooks Daily Accounting/identifier",
+      "whmcs_secret" => "op://Employee/WHMCS API - SyncBooks Daily Accounting/secret"
     }.freeze
 
     class << self

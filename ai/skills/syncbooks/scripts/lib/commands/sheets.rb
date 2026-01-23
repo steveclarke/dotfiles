@@ -109,6 +109,105 @@ module SyncBooks
         UI.table(recv_rows, columns: ["Item", "Amount"])
       end
 
+      # === Granular Update Commands ===
+
+      desc "update:coh", "Update only Available Cash On Hand from FreeAgent"
+      option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+      def update_coh
+        print "Fetching balance from FreeAgent... "
+        accounts = fa_client.bank_accounts.select(&:active?)
+        balance_total = accounts.sum { |a| a.current_balance || 0 }
+        puts UI.money(balance_total)
+
+        c = client(dev: options[:dev])
+        c.write("Main!E6", format("%.2f", balance_total))
+        UI.success("Updated Main!E6 (Available COH): #{UI.money(balance_total)}")
+      end
+      map "update:coh" => :update_coh
+
+      desc "update:hst", "Update only HST Collected/Reclaimed from FreeAgent"
+      option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+      def update_hst
+        from_date = Config.hst_period_start.to_s
+        to_date = Date.today.to_s
+        UI.muted("HST Period: #{from_date} to #{to_date}")
+        UI.blank
+
+        hst_charged, hst_reclaimed = calculate_hst_values(from_date, to_date)
+
+        c = client(dev: options[:dev])
+        c.write("Main!E2", format("%.2f", hst_charged))
+        c.write("Main!E3", format("%.2f", hst_reclaimed))
+
+        UI.success("Updated Main!E2 (HST Collected): #{UI.money(hst_charged)}")
+        UI.success("Updated Main!E3 (HST Reclaimed): #{UI.money(hst_reclaimed)}")
+        UI.blank
+        UI.info("Net HST Owing", UI.money(hst_charged - hst_reclaimed))
+      end
+      map "update:hst" => :update_hst
+
+      desc "update:receivables", "Update only FA Invoices (open + overdue) from FreeAgent"
+      option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+      def update_receivables
+        print "Fetching open invoices... "
+        open_invoices = fa_client.invoices(view: "open")
+        open_total = open_invoices.sum { |i| i.total_value || 0 }
+        puts "#{open_invoices.length} invoices (#{UI.money(open_total)})"
+
+        print "Fetching overdue invoices... "
+        overdue_invoices = fa_client.invoices(view: "overdue")
+        overdue_total = overdue_invoices.sum { |i| i.total_value || 0 }
+        puts "#{overdue_invoices.length} invoices (#{UI.money(overdue_total)})"
+
+        invoices_total = open_total + overdue_total
+
+        c = client(dev: options[:dev])
+        c.write("Main!E9", format("%.2f", invoices_total))
+        UI.success("Updated Main!E9 (FA Invoices): #{UI.money(invoices_total)}")
+      end
+      map "update:receivables" => :update_receivables
+
+      desc "update:bills", "Update only Outstanding Bills (open + overdue) from FreeAgent"
+      option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+      def update_bills
+        print "Fetching open bills... "
+        open_bills = fa_client.bills_by_view(view: "open")
+        open_total = open_bills.sum { |b| b.total_value || 0 }
+        puts "#{open_bills.length} bills (#{UI.money(open_total)})"
+
+        print "Fetching overdue bills... "
+        overdue_bills = fa_client.bills_by_view(view: "overdue")
+        overdue_total = overdue_bills.sum { |b| b.total_value || 0 }
+        puts "#{overdue_bills.length} bills (#{UI.money(overdue_total)})"
+
+        bills_total = open_total + overdue_total
+
+        c = client(dev: options[:dev])
+        c.write("Main!B4", format("%.2f", bills_total))
+        UI.success("Updated Main!B4 (Outstanding Bills): #{UI.money(bills_total)}")
+      end
+      map "update:bills" => :update_bills
+
+      desc "update:all", "Update all metrics from FreeAgent (same as 'syncbooks sync')"
+      option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
+      def update_all
+        UI.header("Updating All Metrics")
+        UI.blank
+
+        invoke :update_hst, [], dev: options[:dev]
+        UI.blank
+        invoke :update_coh, [], dev: options[:dev]
+        UI.blank
+        invoke :update_receivables, [], dev: options[:dev]
+        UI.blank
+        invoke :update_bills, [], dev: options[:dev]
+
+        Config.last_sync = Time.now
+        UI.blank
+        UI.success("All metrics updated! (#{Time.now.strftime("%Y-%m-%d %H:%M")})")
+      end
+      map "update:all" => :update_all
+
       desc "info", "Show spreadsheet info"
       option :spreadsheet, aliases: "-s", desc: "Spreadsheet ID (overrides default)"
       option :dev, type: :boolean, default: false, desc: "Use dev spreadsheet"
@@ -134,6 +233,62 @@ module SyncBooks
 
       def client(spreadsheet_id: nil, dev: false)
         @client ||= GoogleSheetsClient.new(spreadsheet_id: spreadsheet_id, dev: dev)
+      end
+
+      def fa_client
+        @fa_client ||= FreeAgentClient.new
+      end
+
+      def calculate_hst_values(from_date, to_date)
+        hst_charged = 0.0
+        hst_reclaimed = 0.0
+
+        print "Fetching invoices... "
+        invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
+        inv_hst = invoices.sum { |i| i.sales_tax_value || 0 }
+        hst_charged += inv_hst
+        puts "#{invoices.length} invoices"
+
+        print "Fetching bills... "
+        bills = fa_client.bills(from_date: from_date, to_date: to_date)
+        bills_hst = bills.sum { |b| (b.sales_tax_value || 0).abs }
+        hst_reclaimed += bills_hst
+        puts "#{bills.length} bills"
+
+        print "Fetching expenses... "
+        expenses = fa_client.expenses(from_date: from_date, to_date: to_date)
+        exp_hst = expenses.sum { |e| e.hst_amount }
+        hst_reclaimed += exp_hst
+        puts "#{expenses.length} expenses"
+
+        print "Fetching bank transactions... "
+        accounts = fa_client.bank_accounts.select(&:active?)
+        bank_charged = 0.0
+        bank_reclaimed = 0.0
+        total_txns = 0
+
+        accounts.each do |acc|
+          exps = fa_client.bank_transaction_explanations(acc.url, from_date: from_date, to_date: to_date)
+          total_txns += exps.length
+          exps.each do |e|
+            stv = e["sales_tax_value"]
+            next unless stv
+
+            val = stv.to_f.abs
+            cat = e["category"]&.split("/")&.last.to_i
+            if cat < 100
+              bank_charged += val
+            else
+              bank_reclaimed += val
+            end
+          end
+        end
+        puts "#{total_txns} transactions"
+
+        hst_charged += bank_charged
+        hst_reclaimed += bank_reclaimed
+
+        [hst_charged, hst_reclaimed]
       end
     end
   end

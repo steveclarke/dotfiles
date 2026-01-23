@@ -1,11 +1,11 @@
 ---
 name: syncbooks
-description: Daily accounting reconciliation with FreeAgent and Google Sheets. Use when user asks about invoices, contacts, accounting, FreeAgent, cash position, HST report, Google Sheets, spreadsheet updates, or financial reconciliation. Triggers on "syncbooks", "freeagent", "invoice", "contact", "accounting", "reconciliation", "cash position", "HST", "spreadsheet", "sheets", "sync my accounting".
+description: Daily accounting reconciliation with FreeAgent, WHMCS, and Google Sheets. Use when user asks about invoices, contacts, accounting, FreeAgent, WHMCS, cash position, HST report, Google Sheets, spreadsheet updates, or financial reconciliation. Triggers on "syncbooks", "freeagent", "whmcs", "invoice", "contact", "accounting", "reconciliation", "cash position", "HST", "spreadsheet", "sheets", "sync my accounting".
 ---
 
 # SyncBooks
 
-Daily accounting sync between FreeAgent and Google Sheets.
+Daily accounting sync between FreeAgent, WHMCS, and Google Sheets.
 
 ## Daily Use
 
@@ -15,6 +15,12 @@ scripts/syncbooks sync
 
 # Quiet mode (minimal output)
 scripts/syncbooks sync --quiet
+
+# Quick status check (from last sync)
+scripts/syncbooks status
+
+# Live status (fetch from FreeAgent)
+scripts/syncbooks status --live
 ```
 
 One command syncs everything. Zero 1Password prompts after initial setup.
@@ -48,6 +54,16 @@ scripts/syncbooks auth fa      # FreeAgent OAuth
 scripts/syncbooks auth sheets  # Google Sheets OAuth
 ```
 
+## Command Aliases
+
+All service commands have short aliases for faster typing:
+
+| Full Command | Alias | Example |
+|--------------|-------|---------|
+| `freeagent X` | `fa X` | `scripts/syncbooks fa balance` |
+| `sheets X` | `sh X` | `scripts/syncbooks sh summary` |
+| `whmcs X` | `wh X` | `scripts/syncbooks wh transactions` |
+
 ## HST Period Management
 
 ```bash
@@ -64,6 +80,9 @@ scripts/syncbooks hst-paid
 ## View Data (Without Syncing)
 
 ```bash
+# Quick status check
+scripts/syncbooks status
+
 # Bank account balances
 scripts/syncbooks balance
 
@@ -75,6 +94,9 @@ scripts/syncbooks sheets summary
 
 # Open invoices
 scripts/syncbooks invoices --view open
+
+# WHMCS transactions
+scripts/syncbooks whmcs transactions
 ```
 
 ## Command Reference
@@ -84,6 +106,7 @@ scripts/syncbooks invoices --view open
 | Command | Description |
 |---------|-------------|
 | `sync` | Sync all data to Google Sheets |
+| `status` | Quick financial position check (--live for fresh data) |
 | `setup` | Cache 1Password credentials (run once) |
 | `balance` | Show bank account totals |
 | `hst` | HST report for current period |
@@ -106,7 +129,7 @@ scripts/syncbooks invoices --view open
 | `auth fa` | FreeAgent OAuth authentication |
 | `auth sheets` | Google Sheets OAuth authentication |
 
-### Sheets Subcommands
+### Sheets Subcommands (`sheets` or `sh`)
 
 | Command | Description |
 |---------|-------------|
@@ -114,6 +137,33 @@ scripts/syncbooks invoices --view open
 | `sheets summary` | Show cash position summary |
 | `sheets read RANGE` | Read cells (e.g., "Main!E2:E10") |
 | `sheets write RANGE VALUE` | Write to cell (requires --force for production) |
+| `sheets update:coh` | Update only Available Cash On Hand |
+| `sheets update:hst` | Update only HST Collected/Reclaimed |
+| `sheets update:receivables` | Update only FA Invoices |
+| `sheets update:bills` | Update only Outstanding Bills |
+| `sheets update:all` | Update all metrics (same as sync) |
+
+### WHMCS Subcommands (`whmcs` or `wh`)
+
+| Command | Description |
+|---------|-------------|
+| `whmcs transactions` | List recent transactions |
+| `whmcs invoices` | List invoices (--status: Paid, Unpaid, Cancelled) |
+| `whmcs invoice ID` | Show invoice details |
+| `whmcs clients` | List clients (--search to filter) |
+| `whmcs client ID` | Show client details |
+| `whmcs test` | Test API connection |
+
+### FreeAgent Alias (`fa`)
+
+| Command | Description |
+|---------|-------------|
+| `fa balance` | Show bank account totals |
+| `fa invoices` | List invoices |
+| `fa contacts` | List contacts |
+| `fa hst` | HST report |
+| `fa company` | Show company info |
+| `fa projects` | List projects |
 
 ## Configuration Files
 
@@ -138,4 +188,5 @@ scripts/syncbooks auth sheets
 - Contact names are matched case-insensitively
 - Invoices are created as Draft by default; use `--send` to mark as sent
 - Default currency is CAD, default tax rate is 15% (HST)
+- All table outputs support `--json` for machine-readable output
 - Run `scripts/syncbooks --help` for full command usage
