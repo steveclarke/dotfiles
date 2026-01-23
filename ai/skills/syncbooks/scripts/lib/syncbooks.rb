@@ -9,6 +9,7 @@ end
 require_relative "config"
 require_relative "credentials"
 require_relative "oauth_server"
+require_relative "ui"
 require_relative "freeagent_client"
 require_relative "google_sheets_client"
 require_relative "models"

@@ -67,40 +67,46 @@ module SyncBooks
         data = c.read("Main!D2:E14")
         assets = data["values"] || []
 
-        puts "Cash Position Summary"
-        puts "=" * 50
-        puts ""
+        UI.header("Cash Position Summary")
+        UI.blank
 
-        # Liabilities section (column A-B)
-        puts "LIABILITIES"
-        puts "-" * 50
-        puts format("  %-30s %15s", "HST Owing:", liabilities.dig(0, 1) || "-")
-        puts format("  %-30s %15s", "Payroll Remittance:", liabilities.dig(1, 1) || "-")
-        puts format("  %-30s %15s", "Outstanding Bills:", liabilities.dig(2, 1) || "-")
-        puts format("  %-30s %15s", "Expenses Due (Steve):", liabilities.dig(7, 1) || "-")
-        puts format("  %-30s %15s", "Expenses Due (Clint):", liabilities.dig(8, 1) || "-")
-        puts "-" * 50
-        puts format("  %-30s %15s", "TOTAL LIABILITIES:", liabilities.dig(9, 1) || "-")
-        puts ""
+        # Liabilities section
+        UI.section("Liabilities")
+        liab_rows = [
+          ["HST Owing", liabilities.dig(0, 1) || "-"],
+          ["Payroll Remittance", liabilities.dig(1, 1) || "-"],
+          ["Outstanding Bills", liabilities.dig(2, 1) || "-"],
+          ["Expenses Due (Steve)", liabilities.dig(7, 1) || "-"],
+          ["Expenses Due (Clint)", liabilities.dig(8, 1) || "-"],
+          ["TOTAL", liabilities.dig(9, 1) || "-"]
+        ]
+        UI.table(liab_rows, columns: ["Item", "Amount"])
 
-        # Assets section (column D-E)
-        puts "POSITION"
-        puts "-" * 50
-        puts format("  %-30s %15s", "HST Collected:", assets.dig(0, 1) || "-")
-        puts format("  %-30s %15s", "HST Reclaimed:", assets.dig(1, 1) || "-")
-        puts ""
-        puts format("  %-30s %15s", "Available COH:", assets.dig(4, 1) || "-")
-        puts format("  %-30s %15s", "Net COH:", assets.dig(5, 1) || "-")
-        puts ""
-        puts format("  %-30s %15s", "FA Invoices:", assets.dig(7, 1) || "-")
-        puts format("  %-30s %15s", "WHMCS Invoices:", assets.dig(8, 1) || "-")
-        puts format("  %-30s %15s", "Total Invoices:", assets.dig(9, 1) || "-")
-        puts ""
-        puts format("  %-30s %15s", "Potentially Available:", assets.dig(10, 1) || "-")
-        puts format("  %-30s %15s", "WIP:", assets.dig(11, 1) || "-")
-        puts "=" * 50
-        puts format("  %-30s %15s", "TOTAL WITH WIP:", assets.dig(12, 1) || "-")
-        puts "=" * 50
+        UI.blank
+
+        # Position section
+        UI.section("Cash Position")
+        pos_rows = [
+          ["HST Collected", assets.dig(0, 1) || "-"],
+          ["HST Reclaimed", assets.dig(1, 1) || "-"],
+          ["Available COH", assets.dig(4, 1) || "-"],
+          ["Net COH", assets.dig(5, 1) || "-"]
+        ]
+        UI.table(pos_rows, columns: ["Item", "Amount"])
+
+        UI.blank
+
+        # Receivables section
+        UI.section("Receivables")
+        recv_rows = [
+          ["FA Invoices", assets.dig(7, 1) || "-"],
+          ["WHMCS Invoices", assets.dig(8, 1) || "-"],
+          ["Total Invoices", assets.dig(9, 1) || "-"],
+          ["Potentially Available", assets.dig(10, 1) || "-"],
+          ["WIP", assets.dig(11, 1) || "-"],
+          ["TOTAL WITH WIP", assets.dig(12, 1) || "-"]
+        ]
+        UI.table(recv_rows, columns: ["Item", "Amount"])
       end
 
       desc "info", "Show spreadsheet info"

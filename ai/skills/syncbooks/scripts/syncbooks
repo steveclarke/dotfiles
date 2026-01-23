@@ -9,6 +9,7 @@ gemfile do
   gem "httparty"
   gem "webrick"
   gem "shale"
+  gem "gum"
 end
 
 require "json"
@@ -154,11 +155,29 @@ module SyncBooks
 
     desc "contacts", "List contacts"
     option :view, default: "active", desc: "View: active, all, clients, suppliers"
+    option :json, type: :boolean, default: false, desc: "Output as JSON"
     def contacts
-      data = fa_client.contacts(view: options[:view]).map do |c|
-        {id: c.id, name: c.display_name, email: c.email, status: c.status}
+      ctcs = fa_client.contacts(view: options[:view])
+
+      if options[:json]
+        data = ctcs.map { |c| {id: c.id, name: c.display_name, email: c.email, status: c.status} }
+        puts JSON.pretty_generate(data)
+        return
       end
-      puts JSON.pretty_generate(data)
+
+      UI.header("Contacts (#{options[:view]})")
+      UI.blank
+
+      if ctcs.empty?
+        UI.muted("No contacts found.")
+        return
+      end
+
+      rows = ctcs.map { |c| [c.id, c.display_name, c.email || "-", c.status] }
+      UI.table(rows, columns: ["ID", "Name", "Email", "Status"])
+
+      UI.blank
+      UI.muted("#{ctcs.length} contacts")
     end
 
     desc "contact ID", "Show contact details"
@@ -218,20 +237,36 @@ module SyncBooks
 
     desc "invoices", "List invoices"
     option :view, default: "recent", desc: "View: recent, open, all, overdue, draft"
+    option :json, type: :boolean, default: false, desc: "Output as JSON"
     def invoices
-      data = fa_client.invoices(view: options[:view]).map do |inv|
-        {
-          id: inv.id,
-          reference: inv.reference,
-          contact_id: inv.contact_id,
-          dated_on: inv.dated_on,
-          due_on: inv.due_on,
-          status: inv.status,
-          total: inv.display_total,
-          currency: inv.currency
-        }
+      invs = fa_client.invoices(view: options[:view])
+
+      if options[:json]
+        data = invs.map do |inv|
+          {id: inv.id, reference: inv.reference, contact_id: inv.contact_id,
+           dated_on: inv.dated_on, due_on: inv.due_on, status: inv.status,
+           total: inv.display_total, currency: inv.currency}
+        end
+        puts JSON.pretty_generate(data)
+        return
       end
-      puts JSON.pretty_generate(data)
+
+      UI.header("Invoices (#{options[:view]})")
+      UI.blank
+
+      if invs.empty?
+        UI.muted("No invoices found.")
+        return
+      end
+
+      rows = invs.map do |inv|
+        [inv.reference || inv.id, inv.dated_on, inv.due_on, inv.status, inv.display_total]
+      end
+      UI.table(rows, columns: ["Ref", "Date", "Due", "Status", "Total"])
+
+      UI.blank
+      total = invs.sum { |i| i.total_value || 0 }
+      UI.muted("#{invs.length} invoices • Total: #{UI.money(total)}")
     end
 
     desc "invoice ID", "Show invoice details"
@@ -314,7 +349,7 @@ module SyncBooks
       accounts = fa_client.bank_accounts.select(&:active?)
 
       if accounts.empty?
-        puts "No active bank accounts found."
+        UI.warning("No active bank accounts found.")
         return
       end
 
@@ -329,22 +364,26 @@ module SyncBooks
 
       currency = accounts.first.currency || "CAD"
 
-      puts "FreeAgent Total Balance"
-      puts "=" * 50
-      puts ""
-      puts "Active Accounts:"
-      accounts.each do |a|
-        puts "  %-30s %s %12.2f" % [a.name, a.currency, a.current_balance || 0]
+      UI.header("FreeAgent Balance")
+      UI.blank
+
+      # Account rows
+      rows = accounts.map do |a|
+        [a.name, a.currency, UI.money(a.current_balance || 0)]
       end
-      puts ""
-      puts "-" * 50
-      puts "Total by Type:"
-      puts "  %-30s %s %12.2f" % ["Bank Accounts:", currency, bank_total]
-      puts "  %-30s %s %12.2f" % ["Credit Cards:", currency, credit_total]
-      puts "  %-30s %s %12.2f" % ["PayPal:", currency, paypal_total]
-      puts ""
-      puts "%-32s %s %12.2f" % ["TOTAL BALANCE:", currency, total]
-      puts "=" * 50
+      UI.table(rows, columns: ["Account", "Currency", "Balance"])
+
+      UI.blank
+      UI.section("Totals by Type")
+      totals = [
+        ["Bank Accounts", currency, UI.money(bank_total)],
+        ["Credit Cards", currency, UI.money(credit_total)],
+        ["PayPal", currency, UI.money(paypal_total)]
+      ]
+      UI.table(totals, columns: ["Type", "Currency", "Balance"])
+
+      UI.blank
+      UI.success("Total: #{UI.money(total)} #{currency}")
     end
 
     # === HST ===
@@ -359,32 +398,35 @@ module SyncBooks
       period_start = Config.hst_period_start
       quarter_name = Config.quarter_name(period_start)
 
-      puts "HST Report: #{from_date} to #{to_date}"
-      puts "Period start: #{period_start} (#{quarter_name})"
-      puts "=" * 60
-      puts ""
+      UI.header("HST Report")
+      UI.blank
+      UI.info("Period", "#{from_date} to #{to_date} (#{quarter_name})")
+      UI.blank
 
       hst_charged, hst_reclaimed, details = calculate_hst(from_date, to_date)
 
-      puts ""
-      puts "-" * 60
-      puts "BREAKDOWN"
-      puts "-" * 60
-      puts ""
-      puts "HST Charged (on sales):"
-      puts "  Invoices:                      $%12.2f" % details[:inv_hst]
-      puts "  Bank transactions (income):    $%12.2f" % details[:bank_charged]
-      puts "  %-30s $%12.2f" % ["TOTAL CHARGED:", hst_charged]
-      puts ""
-      puts "HST Reclaimed (on purchases):"
-      puts "  Bills:                         $%12.2f" % details[:bills_hst]
-      puts "  Expenses:                      $%12.2f" % details[:exp_hst]
-      puts "  Bank transactions (expenses):  $%12.2f" % details[:bank_reclaimed]
-      puts "  %-30s $%12.2f" % ["TOTAL RECLAIMED:", hst_reclaimed]
-      puts ""
-      puts "=" * 60
-      puts "%-32s $%12.2f" % ["NET HST OWING TO CRA:", hst_charged - hst_reclaimed]
-      puts "=" * 60
+      UI.blank
+      UI.section("HST Charged (on sales)")
+      charged_rows = [
+        ["Invoices", UI.money(details[:inv_hst])],
+        ["Bank transactions (income)", UI.money(details[:bank_charged])],
+        ["TOTAL CHARGED", UI.money(hst_charged)]
+      ]
+      UI.table(charged_rows, columns: ["Source", "Amount"])
+
+      UI.blank
+      UI.section("HST Reclaimed (on purchases)")
+      reclaimed_rows = [
+        ["Bills", UI.money(details[:bills_hst])],
+        ["Expenses", UI.money(details[:exp_hst])],
+        ["Bank transactions (expenses)", UI.money(details[:bank_reclaimed])],
+        ["TOTAL RECLAIMED", UI.money(hst_reclaimed)]
+      ]
+      UI.table(reclaimed_rows, columns: ["Source", "Amount"])
+
+      UI.blank
+      net_owing = hst_charged - hst_reclaimed
+      UI.success("Net HST Owing to CRA: #{UI.money(net_owing)}")
     end
 
     desc "hst-paid", "Mark HST quarter as paid and advance to next quarter"
