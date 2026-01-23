@@ -23,7 +23,8 @@ module SyncBooks
       txns = response["transactions"]&.dig("transaction") || []
       # Sort by date descending and take most recent
       txns = txns.sort_by { |t| t["date"] || "" }.reverse
-      txns.first(limit)
+      txns = txns.first(limit)
+      parse_collection(txns, Models::WHMCS::Transaction)
     end
 
     # Get invoices
@@ -31,13 +32,14 @@ module SyncBooks
       params = { limitnum: limit }
       params[:status] = status if status
       response = api_call("GetInvoices", **params)
-      response["invoices"]&.dig("invoice") || []
+      data = response["invoices"]&.dig("invoice") || []
+      parse_collection(data, Models::WHMCS::Invoice)
     end
 
     # Get single invoice details
     def invoice(id)
       response = api_call("GetInvoice", invoiceid: id)
-      response
+      Models::WHMCS::Invoice.from_hash(response)
     end
 
     # Get clients
@@ -45,16 +47,17 @@ module SyncBooks
       params = { limitnum: limit }
       params[:search] = search if search
       response = api_call("GetClients", **params)
-      response["clients"]&.dig("client") || []
+      data = response["clients"]&.dig("client") || []
+      parse_collection(data, Models::WHMCS::Client)
     end
 
     # Get single client details
     def client(id)
       response = api_call("GetClientsDetails", clientid: id, stats: true)
-      response
+      Models::WHMCS::Client.from_hash(response)
     end
 
-    # Get orders
+    # Get orders (returns raw data - less commonly used)
     def orders(limit: 25, status: nil)
       params = { limitnum: limit }
       params[:status] = status if status
@@ -62,7 +65,7 @@ module SyncBooks
       response["orders"]&.dig("order") || []
     end
 
-    # Get products/services for a client
+    # Get products/services for a client (returns raw data)
     def client_products(client_id)
       response = api_call("GetClientsProducts", clientid: client_id)
       response["products"]&.dig("product") || []
@@ -77,6 +80,11 @@ module SyncBooks
     end
 
     private
+
+    def parse_collection(data, model_class)
+      return [] if data.nil? || data.empty?
+      data.map { |item| model_class.from_hash(item) }
+    end
 
     def api_call(action, **params)
       body = {
