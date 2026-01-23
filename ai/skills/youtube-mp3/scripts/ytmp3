@@ -97,6 +97,9 @@ class YouTubeService
       track_num = match[1].to_i
       title = match[2]
 
+      # Strip artist prefix if present (YouTube format: "## - Artist - Title")
+      title = title.sub(/^#{Regexp.escape(artist)}\s*-\s*/, "")
+
       tag_file(file,
         artist: artist,
         album: album,
