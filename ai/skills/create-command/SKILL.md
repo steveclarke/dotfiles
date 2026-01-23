@@ -1,3 +1,9 @@
+---
+name: create-command
+description: Create well-structured AI coding assistant commands/skills with clear role framing, step-by-step guidance, and quality checklists. Use when building new commands or skills for Claude, Cursor, or similar AI tools. Triggers on "create a command", "write a skill", "new AI command".
+disable-model-invocation: true
+---
+
 # AI Command Creation Assistant
 
 ## Role & Context

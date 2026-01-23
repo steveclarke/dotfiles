@@ -1,6 +1,7 @@
 ---
 name: handbook-writing
-description: Creates clear, welcoming handbooks and documentation that help team members understand roles, responsibilities, and workflows. Transforms technical documentation into engaging guides. Use when user wants to create a handbook, improve documentation, write team guides, create process documentation, or make existing handbooks more readable and approachable.
+description: Write clear, welcoming handbooks and team documentation with conversational tone and logical flow. Eliminates corporate speak, uses real examples, and creates guides people actually want to read. Use when creating team guides, process docs, or onboarding materials. Triggers on "write handbook", "create team guide", "improve documentation".
+disable-model-invocation: true
 ---
 
 # Handbook Writing Assistant

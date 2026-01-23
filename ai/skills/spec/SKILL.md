@@ -1,3 +1,9 @@
+---
+name: spec
+description: Technical Specification
+disable-model-invocation: true
+---
+
 # Technical Specification
 
 ## Overview

@@ -1,3 +1,9 @@
+---
+name: vision
+description: Vision Document
+disable-model-invocation: true
+---
+
 # Vision Document
 
 ## Overview

@@ -1,3 +1,9 @@
+---
+name: obsidian-vault-context
+description: Work with Steve's Obsidian vault at /Users/steve/Documents/Main using direct file operations. Knows folder structure, daily note format (YYYY-MM-DD.md), and research capture templates. Use when reading/writing Obsidian notes or capturing research. Triggers on "obsidian", "daily note", "vault", "capture research".
+disable-model-invocation: true
+---
+
 # Obsidian Vault Context
 
 ## Key Concept

@@ -1,3 +1,9 @@
+---
+name: requirements
+description: Requirements
+disable-model-invocation: true
+---
+
 # Requirements
 
 ## Overview

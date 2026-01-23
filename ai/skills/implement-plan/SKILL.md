@@ -1,3 +1,9 @@
+---
+name: implement-plan
+description: Execute implementation plans incrementally with verification at each step. Works through numbered sections one at a time, sanity-checks assumptions against the codebase, and stops on inconsistencies. Use when implementing a pre-defined plan document. Triggers on "implement this plan", "execute step 3.1", "resume plan at section 4".
+disable-model-invocation: true
+---
+
 # Implement Plan
 
 ## Overview

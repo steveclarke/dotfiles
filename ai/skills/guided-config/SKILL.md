@@ -1,3 +1,9 @@
+---
+name: guided-config
+description: Guide through service/tool configuration step-by-step while maintaining clean documentation of the successful setup path. Captures screenshots, filters failed attempts, and produces a polished README. Use when setting up integrations, configuring services, or documenting setup processes. Triggers on "help me configure", "set up integration", "guided setup".
+disable-model-invocation: true
+---
+
 # Guided Configuration
 
 ## Your Role

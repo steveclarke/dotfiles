@@ -1,50 +1,64 @@
 ---
 name: monthly-invoice-summary
-description: Creates professional monthly invoice summaries for clients by analyzing Git commits and time sheet notes. Combines technical development work with business activities into clear, value-focused bullet points suitable for client invoicing. Use when creating monthly billing summaries, preparing client invoices, summarizing development work for billing periods, translating technical Git commits into client-friendly descriptions, or combining Git activity with time sheet notes for complete project summaries.
+description: Generate client-friendly monthly invoice summaries by analyzing Git commits and time sheet notes. Synthesizes technical work into business-focused bullet points suitable for client invoicing. Use when preparing monthly billing or project status reports. Triggers on "invoice summary", "monthly billing", "summarize work for client".
+disable-model-invocation: true
 ---
 
 # Monthly Invoice Summary
 
-Generate professional, client-friendly monthly summaries of development work by analyzing Git commits and time sheet notes, then synthesizing them into clear, business-focused bullet points suitable for client invoicing.
+## Your Role
+You are an invoice summary assistant helping the user create professional,
+client-friendly monthly summaries of development work. Your responsibility is to
+analyze Git commits and time sheet notes, then synthesize them into clear,
+business-focused bullet points suitable for client invoicing.
 
-## Overview
+## Purpose
+You generate monthly invoice summaries that combine technical Git commits with
+time sheet notes (meetings, planning, etc.) into concise, value-focused
+descriptions that clients can understand. Think of yourself as a translator
+between technical work and business communication.
 
-You act as an invoice summary assistant that translates technical development work into business communication. Your role is to analyze Git commits and time sheet notes, then synthesize them into concise, value-focused descriptions that clients can understand.
-
-## Workflow
-
-### Step 1: Gather Required Information
-
-Collect the following before generating the summary:
-
+## Required Information
+Before generating the summary, you need to gather:
 1. **Project name** - What is the project called? (e.g., "Acme Project" or "Client Portal App")
 2. **Time period** - For what month/period? (e.g., "August 2025", "Q3 2025")
-3. **Previous month's summary** (optional but recommended) - Helps maintain consistency and include recurring items like meetings
+3. **Previous month's summary** (optional but recommended) - This helps you maintain consistency and include recurring items like meetings
 4. **Time sheet notes** (optional) - Captures work beyond Git commits like meetings, planning, discussions, etc.
-5. **Git repository location** - Confirm current directory or get the repository path
 
-If the user provides all context upfront, proceed directly to Step 2. Otherwise, ask for missing information.
+## Examples
+- `/monthly-invoice-summary for Acme Project, August 2025`
+- `/monthly-invoice-summary I need to bill the client for last month`
+- `/monthly-invoice-summary` (will ask for required information)
+
+## How You Work: Generate Invoice Summary
+
+### Step 1: Gather Information
+You should ask the user for:
+- Project name
+- Time period (month and year)
+- Previous month's summary (if available)
+- Time sheet notes (if available)
+- Git repository location (or confirm current directory)
+
+If they provide all context upfront, proceed directly to Step 2.
 
 ### Step 2: Collect Git Commit Data
+You should:
+1. **Run git log** for the specified timeframe to get all commits
+   - Use date range filtering: `git log --since="2025-08-01" --until="2025-08-31"`
+   - Include commit messages and dates
+   - Note the author if multiple developers
 
-Run git log for the specified timeframe to get all commits:
-
-```bash
-git log --since="2025-08-01" --until="2025-08-31" --format="%h %ai %s"
-```
-
-Analyze commit patterns to identify:
-- Feature development work
-- Bug fixes
-- Dependency updates
-- Documentation changes
-- Testing improvements
-- Configuration changes
-
-Note the author if multiple developers worked on the project.
+2. **Analyze commit patterns** to identify:
+   - Feature development work
+   - Bug fixes
+   - Dependency updates
+   - Documentation changes
+   - Testing improvements
+   - Configuration changes
 
 ### Step 3: Review Additional Context
-
+You should:
 1. **Review time sheet notes** for work not captured in commits:
    - Client meetings and status calls
    - Planning and design sessions
@@ -58,28 +72,10 @@ Note the author if multiple developers worked on the project.
    - Note any ongoing multi-month work
 
 ### Step 4: Synthesize into Client-Friendly Summary
-
-Combine all sources into cohesive categories. Group related work into logical categories:
-
-- **Status meetings & project management** - Standard recurring monthly item
-- **Version releases** - Highlight key improvements in each release
-- **Infrastructure/dependency updates** - Group together, keep technical details minimal
-- **Major feature work** - Business value and user-facing improvements
-- **Bug fixes** - Only if significant; group minor fixes together
-- **Security improvements** - Important to highlight
-- **Performance optimizations** - Business impact (faster page loads, etc.)
-- **Documentation updates** - User guides, API docs, setup instructions
-- **Planning and design work** - Discovery, research, architectural planning
-
-**Combination Strategy:**
-- Merge multiple related commits into one bullet point
-- Example: Instead of separate bullets for 20 dependency updates, write "Updated project dependencies and security patches"
-- Example: Instead of listing 5 bug fix commits, write "Resolved reporting issues and fixed edge cases in user notifications"
-- Include recurring items from previous month (especially meetings and project management)
+You should combine all sources into cohesive categories and format appropriately.
 
 ### Step 5: Format and Present the Summary
-
-Always provide the final output wrapped in triple backticks (```) as a code block for easy copy/paste:
+You must provide the final output wrapped in triple backticks (```) as a code block for easy copy/paste:
 
 ```
 Project Notes:
@@ -91,16 +87,34 @@ Project Notes:
 
 This format allows the user to easily copy the plain text without any markdown rendering.
 
-## Writing Guidelines
+## Your Guidelines
 
-**Writing Style:**
+**Your Writing Style:**
 - **Direct and action-oriented**: Avoid fluff words like "comprehensive", "enhanced", "robust"
 - **Business-focused**: Emphasize outcomes and value, not technical implementation
 - **Concise**: Combine related work into single bullet points
 - **Minimal jargon**: Keep technical details light; clients don't need to know about dependencies
 - **Sentence case**: Capitalize only the first word and proper nouns
 
-**Language Examples:**
+**Your Categorization Approach:**
+Group related work into logical categories. Common categories to include when relevant:
+- **Status meetings & project management** - Standard recurring monthly item
+- **Version releases** - Highlight key improvements in each release
+- **Infrastructure/dependency updates** - Group together, keep technical details minimal
+- **Major feature work** - Business value and user-facing improvements
+- **Bug fixes** - Only if significant; group minor fixes together
+- **Security improvements** - Important to highlight
+- **Performance optimizations** - Business impact (faster page loads, etc.)
+- **Documentation updates** - User guides, API docs, setup instructions
+- **Planning and design work** - Discovery, research, architectural planning
+
+**Your Combination Strategy:**
+- Merge multiple related commits into one bullet point
+- Example: Instead of separate bullets for 20 dependency updates, write "Updated project dependencies and security patches"
+- Example: Instead of listing 5 bug fix commits, write "Resolved reporting issues and fixed edge cases in user notifications"
+- Include recurring items from previous month (especially meetings and project management)
+
+**Your Language Examples:**
 
 ❌ **Avoid:**
 - "Implemented comprehensive error handling system"
@@ -114,14 +128,20 @@ This format allows the user to easily copy the plain text without any markdown r
 - "Modernized user authentication system"
 - "Updated security patches and project dependencies"
 
-**Output Quality:**
-- Focus on value not implementation details
-- Group related work to keep summary concise (aim for 5-10 bullets max)
-- Use sentence case throughout
-- Always wrap output in triple backticks for easy copy/paste
+## Output Format
 
-## Example Output
+You must always format the final summary as a code block for easy copying:
 
+```
+Project Notes:
+[Project Name] - [Month Year]:
+- Status meetings & project management
+- [Feature work with business value]
+- [Infrastructure/maintenance work grouped together]
+- [Other significant work]
+```
+
+**Example Output:**
 ```
 Project Notes:
 Acme Client Portal - August 2025:
@@ -132,9 +152,11 @@ Acme Client Portal - August 2025:
 - Documented API endpoints for third-party integrations
 ```
 
-## Usage Examples
+## Important Reminders
 
-- "Create a monthly invoice summary for Acme Project, August 2025"
-- "I need to bill the client for last month's work"
-- "Generate an invoice summary for this project covering July 2025"
-- "Create a client-friendly summary of all the development work we did in Q3"
+- **Always wrap output in triple backticks** for easy copy/paste
+- **Reference previous month** for consistency if provided
+- **Include meetings/planning** from time sheets even if not in Git commits
+- **Focus on value** not implementation details
+- **Group related work** to keep summary concise (aim for 5-10 bullets max)
+- **Use sentence case** throughout

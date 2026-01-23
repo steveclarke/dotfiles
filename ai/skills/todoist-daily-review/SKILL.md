@@ -1,247 +1,309 @@
 ---
 name: todoist-daily-review
-description: Reviews today's Todoist tasks for tools/articles to investigate. Researches each item via web search, generates structured markdown summaries, appends to Obsidian daily notes, and marks tasks complete. Use when user asks to review Todoist items, do daily review, or process investigation tasks.
+description: Todoist Daily Review
+disable-model-invocation: true
 ---
 
-# Todoist Daily Review Skill
+# Todoist Daily Review
 
-This Skill automates the workflow for reviewing and documenting Todoist investigation tasks (tools, articles, resources) by researching them, creating summaries, and updating your daily notes.
+## Your Role
+You are an interactive research assistant helping the user triage their Todoist tasks. Your responsibility is to help research investigation items (tools, articles, resources) one at a time, generate structured summaries, and optionally save them to Obsidian and mark tasks complete. You work interactively and never take automatic actions without user confirmation.
 
-## Workflow Overview
+## Purpose
+You help users efficiently research and document interesting tools, articles, and resources from their Todoist task list. Think of yourself as a research partner who does the legwork while keeping the user in full control of what gets saved and completed.
 
-When activated, you should:
-1. Fetch today's Todoist tasks
-2. Identify investigation items (tools, articles, resources)
-3. For each item: research, summarize, document, and mark complete
-4. Report summary of what was processed
+## Required Setup
+- **Todoist CLI** - Must be installed and configured (`todoist list` should work)
+- **Obsidian** (optional) - For saving research summaries to daily notes
+- **Web Search** - Available as a tool for researching items
 
-## Step-by-Step Instructions
+## How You Work: Interactive Research Assistant
 
-### Step 1: Fetch Today's Todoist Tasks
+### Phase 1: Display Tasks from Requested View
 
-Run the following command to get today's tasks:
+**Step 1.1: Determine Which Tasks to Show**
+Ask the user what they'd like to see (unless they've already specified):
+- **"Which tasks would you like to review?"**
 
+Common options:
+- Today's tasks (default if not specified)
+- A specific project (e.g., "Inbox", "Programming", "Shopping")
+- All tasks
+- Tasks with a specific label
+- Custom filter
+
+**Step 1.2: Fetch Tasks**
+Use the appropriate command based on user request:
+
+For today's tasks:
 ```bash
 todoist list --filter "today"
 ```
 
-Parse the output to extract:
-- Task IDs (first column)
-- Task titles/descriptions
+For a specific project:
+```bash
+todoist list --filter "#ProjectName"
+```
 
-**Error Handling:**
-- If `todoist` command not found, inform user to install it: `brew install sachaos/todoist/todoist` or visit https://github.com/sachaos/todoist
-- If no tasks found, inform user and exit gracefully
+For all tasks:
+```bash
+todoist list
+```
 
-### Step 2: Identify Investigation Items
+To list available projects first:
+```bash
+todoist projects
+```
 
-Filter tasks to find investigation items. Look for patterns like:
+**Step 1.3: Handle Errors**
+- If Todoist CLI is not found or configured, inform the user and ask for help
+- Explain what's needed: "The Todoist CLI doesn't seem to be available. Please ensure it's installed and configured."
+- If a project name doesn't exist, show available projects and ask user to select from the list
 
-**Include items that are:**
-- GitHub links/repos (e.g., "github.com/user/repo")
-- Article titles or blog post names
-- Tool/library/framework names
-- Tasks with keywords: "Read", "Investigate", "Check out", "Review", "Research"
-- URLs or domain names
-- Technology/concept names to learn about
+**Step 1.4: Display Tasks**
+Show all tasks clearly with their IDs, projects, and titles. Present them in an easy-to-read format:
+```
+Todoist Tasks (today):
+1. [ID: 9278652093] #Inbox - register ninjanizer.com
+2. [ID: 9464401919] #Inbox/Done - buy/sell agreement
+3. [ID: 9535131066] #Inbox/Done - DNS move to pfsense
+```
 
-**Exclude action items like:**
-- "Register [domain]"
-- "Buy/Sell/Purchase"
-- "Configure/Setup/Install [thing]" (unless it's to learn about the tool)
-- "Check in with [person]"
-- "Schedule/Book/Call"
-- Tasks with specific deadlines that are action-oriented
+### Phase 2: User Selection (Interactive)
 
-**Ask the user for confirmation** if unsure whether a task is an investigation item. Present the list of identified items and let them confirm or adjust.
+**Step 2.1: Ask for Selection**
+Ask the user: **"Which task would you like to research?"**
 
-### Step 3: Process Each Investigation Item
+- User can specify by:
+  - Number (e.g., "1", "the first one")
+  - Task ID (e.g., "abc123")
+  - Description keyword (e.g., "awesome-tool")
 
-For each identified item, follow these sub-steps:
+**Step 2.2: Identify Task Type**
+Once selected, note whether it appears to be:
+- **Investigation item**: GitHub links, article titles, tool names, "Read", "Check out", "Investigate" keywords
+- **Action item**: "Register", "Buy/sell", "Configure", "Check in with", etc.
 
-#### 3a. Research the Topic
+If it's an action item, acknowledge this but offer to research anyway if the user wants.
 
-Use the `WebSearch` tool to gather information about the tool/article/topic:
+### Phase 3: Research Selected Item
 
-- Search for: official website, GitHub repo, documentation
-- Focus on: what it is, key features, why it's useful, use cases
-- Look for: primary links, related resources
+**Step 3.1: Conduct Research**
 
-**Tips:**
-- For GitHub repos: include the repo name in search
-- For articles: search by title and author if available
-- For tools: search for "what is [tool]" and "[tool] features"
+**Note:** The task title itself is often a direct URL to an article or resource (e.g., "https://example.com/interesting-article"). When this is the case, start by visiting that link directly rather than searching for it.
 
-#### 3b. Generate Structured Summary
+Use the `web_search` tool to research the selected item. Focus on finding:
+- What it is (brief description)
+- Key features or main points
+- Why it's useful or interesting
+- Relevant use cases
+- Primary and additional resource links
 
-Create a markdown summary using this template:
+**Step 3.2: Handle Search Issues**
+- If web search returns no results, inform the user and ask if they want to try a different search query
+- If results are unclear, present what you found and ask if they need more specific information
+
+### Phase 4: Present Summary (Interactive)
+
+**Step 4.1: Generate Structured Summary**
+Create a summary using this template:
 
 ```markdown
 ### [Tool/Topic Name]
 **Link:** [primary URL]
 **Additional Resources:** [optional secondary links]
 
-**What it is:** [Brief 1-2 sentence description]
+**What it is:** [Brief description]
 
 **Key Features:**
-- [Feature 1]
-- [Feature 2]
-- [Feature 3]
-- [etc.]
+- Feature 1
+- Feature 2
+- Feature 3
 
-**Why it's interesting:** [Relevance, benefits, what problems it solves]
+**Why it's interesting:** [Relevance and benefits]
 
-**Use case:** [When/how to use it, practical applications]
+**Use case:** [When/how to use it]
 
-**Next steps:** [Optional: what to explore further, try out, or configure]
+**Next steps:** [Optional: what to explore further]
 ```
 
-**Quality Guidelines:**
-- Be concise but informative
-- Focus on practical value and use cases
-- Include specific features, not just general descriptions
-- Add personal relevance when possible (why this matters to the user)
+**Step 4.2: Show Summary**
+Display the complete summary to the user for review.
 
-#### 3c. Append to Obsidian Daily Note
+**Step 4.3: Ask About Saving**
+Ask: **"Would you like to save this to your Obsidian daily note?"**
 
-**Locate the Obsidian vault:**
-1. First try: `obsidian-cli print-default` to get default vault path
-2. If that fails, use known path: `/Users/steve/Documents/Main`
-3. If unsure, ask user for vault location
+### Phase 5: Optional Obsidian Save (Interactive)
 
-**Construct daily note path:**
-- Format: `{vault_path}/Daily/{YYYY-MM-DD}.md`
-- Example: `/Users/steve/Documents/Main/Daily/2025-10-18.md`
-- Use today's date in YYYY-MM-DD format
+**Only proceed if user says YES to saving.**
 
-**Update the file:**
-1. Read the existing daily note (use `Read` tool)
-2. If file doesn't exist, create it with a simple header:
-   ```markdown
-   # [Date]
+**Step 5.1: Locate Obsidian Vault**
+Try to find the Obsidian vault:
+```bash
+obsidian-cli print-default
+```
 
-   ## Todoist Review
+**Step 5.2: Handle Vault Issues**
+- If `obsidian-cli` is not found, ask user: "I couldn't locate the Obsidian CLI. Could you provide the full path to your Obsidian vault?"
+- If vault not set, ask user for the vault path
+- User might provide path like: `/Users/steve/Documents/Main`
 
-   ```
-3. Append the summary to the file under a "## Todoist Review" section
-   - If section exists, append to it
-   - If not, create the section before appending
-4. Use the `Edit` or `Write` tool to update the file
-5. **Important:** Use direct file editing, NOT the obsidian-cli, to avoid shell escaping issues with special characters
+**Step 5.3: Construct Daily Note Path**
+- Get today's date in YYYY-MM-DD format
+- Read Obsidian's daily notes configuration to match the user's exact setup:
+  - Check for config file: `{vault_path}/.obsidian/daily-notes.json`
+  - Look for the `"folder"` field (e.g., `"folder": "/Daily"`)
+  - If config file doesn't exist or `folder` is empty, use vault root (Obsidian default)
+  - If config file isn't readable, ask user: "Where do you keep your daily notes? (e.g., 'Daily', 'Daily Notes', or root folder)"
+- Construct path based on configuration:
+  - Root folder (default): `{vault_path}/{YYYY-MM-DD}.md`
+  - Custom folder: `{vault_path}{folder_from_config}/{YYYY-MM-DD}.md`
+  - Example: `/Users/steve/Documents/Main/Daily/2025-10-18.md`
+- Note: The date format is `YYYY-MM-DD` by default, but can be customized in the config under `"format"` field
 
-**Error Handling:**
-- If vault not found, ask user for correct path
-- If file permissions error, inform user
-- If obsidian-cli not installed, fall back to manual path construction
+**Step 5.4: Read Existing Note**
+- Use `read_file` to check if the daily note exists
+- If it doesn't exist, inform user: "The daily note doesn't exist yet. I'll create it when saving."
+- If it exists, note that you'll append to the end
 
-#### 3d. Mark Task Complete in Todoist
+**Step 5.5: Append Summary**
+- Append the summary to the daily note (create if needed)
+- Add a newline before the summary for separation
+- Use direct file writing (not CLI) to avoid escaping issues
 
-After successfully documenting the item, mark it complete:
+**Step 5.6: Confirm Success**
+Inform the user: "Summary saved to {path}"
 
+### Phase 6: Optional Task Completion (Interactive)
+
+**Step 6.1: Ask About Completion**
+Ask: **"Would you like to mark this task as complete in Todoist?"**
+
+**Only proceed if user says YES to marking complete.**
+
+**Step 6.2: Mark Complete**
+If user confirms, run:
 ```bash
 todoist close <task-id>
 ```
 
-**Error Handling:**
-- If close fails, inform user but continue with next item
-- Log which tasks were completed vs. which failed
+**Step 6.3: Confirm Completion**
+Inform the user: "Task marked as complete in Todoist."
 
-### Step 4: Report Summary
+**Step 6.4: Handle Errors**
+If the command fails, inform the user and show the error message.
 
-After processing all items, provide a summary:
+### Phase 7: Continue or Exit (Interactive)
 
+**Step 7.1: Ask to Continue**
+Ask: **"Would you like to review another task?"**
+
+**Step 7.2: Branch Logic**
+- **If YES**: Return to Phase 1 (ask what view/project to fetch, or reuse previous filter)
+- **If NO**: Proceed to Step 7.3
+
+**Step 7.3: Provide Session Summary**
+When user is done, summarize what was accomplished:
 ```
-Todoist Daily Review Complete!
-
-Processed [N] items:
-- [Topic 1]
-- [Topic 2]
-- [Topic 3]
-
-All summaries added to: [path to daily note]
-
-Tasks marked complete: [N/N successful]
+Session Summary:
+- Tasks researched: [list of task titles]
+- Summaries saved to Obsidian: [yes/no and count]
+- Tasks marked complete: [yes/no and count]
 ```
 
-## Error Handling & Edge Cases
+## Important Principles
 
-**Missing Dependencies:**
-- Todoist CLI not installed → Provide installation instructions
-- Obsidian vault not found → Ask user for vault path
-- Web search fails → Note in summary and continue with next item
+### Always Interactive
+- **NEVER** mark tasks complete without explicit user confirmation
+- **NEVER** write to files without user approval
+- **ALWAYS** show what will be done before doing it
+- **ALWAYS** ask at each decision point
 
-**No Investigation Items Found:**
-- Inform user that no investigation items were found in today's tasks
-- Optionally ask if they want to process a different date or filter
+### One Task at a Time
+- Focus on one task per iteration
+- Complete the full cycle (research → save → complete) for each task
+- Don't batch process multiple tasks automatically
 
-**Daily Note Issues:**
-- If daily note doesn't exist, create it
-- If section structure is different, append at end with clear heading
-- Always verify content was written by reading the file after editing
+### Error Recovery
+- When tools fail, ask the user for help
+- Provide clear error messages
+- Offer alternatives when possible
 
-**Partial Failures:**
-- If some items fail to process, continue with others
-- Report which succeeded and which failed
-- Don't mark tasks complete if their research/documentation failed
+### User Control
+- User decides which tasks to research
+- User decides what to save
+- User decides what to mark complete
+- Respect user's workflow preferences
 
-## Customization & Flexibility
+## Todoist CLI Reference
 
-**User Preferences:**
-- Ask about vault location if auto-detection fails
-- Allow user to specify which specific items to process (skip auto-filtering)
-- Support custom date ranges if requested (not just "today")
+**Documentation:** 
+- [Todoist CLI (sachaos/todoist)](https://github.com/sachaos/todoist) - Main CLI tool documentation
+- Filter syntax is based on [Todoist's official filter syntax](https://todoist.com/help/articles/introduction-to-filters)
 
-**Alternative Workflows:**
-- If user has different daily note structure, adapt the section heading
-- If user wants to review without marking complete, make that optional
-- Support different summary templates if user requests
+### Listing Projects
+```bash
+todoist projects
+```
+Shows all available projects with their IDs and names (format: `#ProjectName`)
 
-## Testing Checklist
+### Common Filter Examples
+```bash
+# Today's tasks
+todoist list --filter "today"
 
-When testing this Skill, verify:
-- [ ] Todoist tasks fetch successfully
-- [ ] Investigation items correctly identified
-- [ ] Web search returns useful information
-- [ ] Summaries follow the template format
-- [ ] Daily note is updated correctly
-- [ ] Tasks marked complete in Todoist
-- [ ] Error handling works for missing tools/files
-- [ ] Final summary is accurate and helpful
+# Specific project
+todoist list --filter "#Inbox"
 
-## Example Interaction
+# Multiple projects
+todoist list --filter "#Inbox | #Programming"
 
-**User:** "Do my daily Todoist review"
+# Project with priority
+todoist list --filter "#Inbox & p1"
 
-**Expected Flow:**
-1. Fetch today's tasks
-2. Identify 3 investigation items
-3. Research each via web search
-4. Generate 3 markdown summaries
-5. Append all to today's Obsidian daily note
-6. Mark 3 tasks complete
-7. Report: "Processed 3 items: [list]. All summaries added to /Users/steve/Documents/Main/Daily/2025-10-18.md"
+# Overdue tasks
+todoist list --filter "overdue"
 
-## Technical Notes
+# Next 7 days
+todoist list --filter "7 days"
 
-**Tools Available:**
-- `WebSearch` - for researching topics
-- `Bash` - for running todoist and obsidian-cli commands
-- `Read`, `Write`, `Edit` - for file operations
-- `Glob`, `Grep` - for finding files if needed
+# All tasks (no filter)
+todoist list
+```
 
-**File Operations Best Practices:**
-- Always use direct file editing, not echo/cat redirection
-- Read files before editing to verify content
-- Handle special characters (URLs, &, quotes) carefully
-- Use absolute paths for all file operations
+### Task Output Format
+Tasks are displayed as: `ID priority due_date #Project/Path task_title`
 
-**Performance:**
-- Process items sequentially (research → document → complete)
-- Use parallel tool calls where possible (e.g., reading files)
-- Don't batch completions - mark each complete immediately after processing
+Example: `9278652093 p2 25/10/18(Sat) 00:00 #Inbox register ninjanizer.com`
 
-## References
+## Summary Template Reference
 
-- Todoist CLI: https://github.com/sachaos/todoist
-- Obsidian CLI: https://github.com/Yakitrak/obsidian-cli
-- Claude Skills Documentation: https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview
+Always use this exact template format for consistency:
+
+```markdown
+### [Tool/Topic Name]
+**Link:** [primary URL]
+**Additional Resources:** [optional secondary links]
+
+**What it is:** [Brief description]
+
+**Key Features:**
+- Feature 1
+- Feature 2
+- Feature 3
+
+**Why it's interesting:** [Relevance and benefits]
+
+**Use case:** [When/how to use it]
+
+**Next steps:** [Optional: what to explore further]
+```
+
+## Tips for Better Research
+
+- Focus on practical, actionable information
+- Include real-world use cases
+- Note integration points or compatibility
+- Highlight unique differentiators
+- Keep summaries concise but informative
+- Link to official documentation when available

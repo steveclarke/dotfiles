@@ -1,13 +1,16 @@
 ---
 name: bruno-endpoint-creation
-description: Comprehensive guide for creating REST API endpoints in Bruno. Use when working with Bruno collections, creating .bru files, configuring API endpoints, setting up authentication, writing pre/post-request scripts, organizing Bruno collections, or testing REST APIs with Bruno.
+description: Create professional Bruno REST API endpoint configurations with proper authentication, environment setup, and documentation. Use when setting up API testing with Bruno, creating new endpoints, or configuring collection-level authentication. Triggers on "create Bruno endpoint", "Bruno API testing", "set up Bruno collection".
+disable-model-invocation: true
 ---
 
-# Bruno REST API Endpoint Creation
+# Bruno REST API Endpoint Creation Command
 
-Follow these patterns when creating Bruno REST API endpoints for professional API testing and documentation.
+## Expert REST API Endpoint Configuration for Bruno
 
-## Environment Configuration
+As a REST API expert, when creating Bruno endpoints, follow these proven patterns for professional API testing and documentation:
+
+### 1. Environment Configuration Best Practices
 
 **Development Environment (Local.bru):**
 ```
@@ -35,7 +38,7 @@ vars:secret [
 - Never hardcode sensitive values in production configs
 - Use descriptive variable names that match your API's naming conventions
 
-## RESTful Endpoint Structure
+### 2. RESTful Endpoint Structure
 
 **Standard CRUD Operations Pattern:**
 ```
@@ -47,7 +50,7 @@ PUT    /api/v1/resources/:id      # Replace specific resource
 DELETE /api/v1/resources/:id      # Delete specific resource
 ```
 
-## Authentication Configuration
+### 3. Authentication Configuration
 
 **Collection-Level Authentication (Recommended):**
 
@@ -95,7 +98,7 @@ headers {
 - Cleaner endpoint files - focus on request logic
 - Consistent authentication across all endpoints
 
-## Request Configuration
+### 4. Request Configuration
 
 **Standard Request Structure:**
 ```
@@ -132,11 +135,12 @@ params:query {
 }
 ```
 
-## Response Handling & Scripts
+### 5. Response Handling & Scripts
 
 **Post-Response Scripts for Data Extraction:**
 
 Use `bru.setVar()` to store values in runtime variables for use across requests in the same run:
+
 ```javascript
 script:post-response {
   // After creating a resource, store its ID in runtime variable
@@ -168,7 +172,7 @@ script:pre-request {
 }
 ```
 
-## Error Handling & Validation
+### 6. Error Handling & Validation
 
 **Expected Status Codes:**
 - `200` - Success (GET, PATCH, PUT)
@@ -197,7 +201,7 @@ script:post-response {
 }
 ```
 
-## Documentation Standards
+### 7. Documentation Standards
 
 **Comprehensive Endpoint Documentation:**
 ```
@@ -226,7 +230,7 @@ docs {
 }
 ```
 
-## Collection Organization
+### 8. Collection Organization
 
 **Recommended Folder Structure:**
 ```
@@ -248,63 +252,9 @@ Bruno Collection/
     └── Health Check.bru
 ```
 
-## Dynamic Variables
+### 9. Advanced Patterns
 
-Built-in placeholders for test data (no scripts needed):
-```
-{{$guid}}            {{$timestamp}}       {{$randomInt}}
-{{$randomEmail}}     {{$randomFirstName}} {{$randomLastName}}
-{{$randomFullName}}  {{$randomPhoneNumber}}
-{{$randomCity}}      {{$randomCountry}}
-```
-
-## Declarative Variable Blocks
-
-Alternative to scripts for simple variable assignment:
-```bru
-vars:pre-request {
-  apiKey: secret123
-}
-
-vars:post-response {
-  userId: {{res.body.id}}
-}
-```
-
-## Advanced Patterns
-
-**Request Chaining:**
-```javascript
-script:post-response {
-  // Chain to next request in workflow
-  bru.setNextRequest("Verify Resource");
-}
-```
-
-**Cookie Management:**
-```javascript
-const jar = bru.cookies.jar();
-jar.setCookie(url, "sessionId", "abc123");
-jar.getCookie(url, "sessionId");
-jar.deleteCookie(url, "sessionId");
-```
-
-**Additional bru Methods:**
-```javascript
-bru.sleep(1000);              // Pause execution (rate limiting)
-bru.getProcessEnv("API_KEY"); // Access system env vars
-bru.cwd();                    // Current working directory
-```
-
-**Request Manipulation:**
-```javascript
-req.setUrl(newUrl);
-req.setHeader("X-Custom", "value");
-req.setBody({ key: "value" });
-req.setTimeout(5000);
-```
-
-**Pagination:**
+**Pagination Support:**
 ```
 params:query {
   page: 1
@@ -320,10 +270,23 @@ params:query {
   search: "search term"
   status: active
   created_after: "2024-01-01"
+  tags: "tag1,tag2"
 }
 ```
 
-## Testing Strategy
+**Bulk Operations:**
+```
+body:json {
+  {
+    "resources": [
+      {"field1": "value1"},
+      {"field1": "value2"}
+    ]
+  }
+}
+```
+
+### 10. Testing Strategy
 
 **Test Sequence:**
 1. Health Check (no auth required)
@@ -340,7 +303,7 @@ params:query {
 - Staging: Integration testing with real data
 - Production: Read-only operations and health checks
 
-## Security Considerations
+### 11. Security Considerations
 
 **Never Include in Version Control:**
 - API keys
@@ -353,7 +316,7 @@ params:query {
 - Use different credentials per environment
 - Rotate secrets regularly
 
-## Performance Testing
+### 12. Performance Testing
 
 **Load Testing Headers:**
 ```
@@ -371,3 +334,5 @@ script:post-response {
   }
 }
 ```
+
+This comprehensive approach ensures your Bruno collections are professional, maintainable, and follow REST API best practices while providing excellent developer experience and thorough testing coverage.
