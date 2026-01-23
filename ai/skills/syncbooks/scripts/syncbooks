@@ -27,9 +27,57 @@ module SyncBooks
       true
     end
 
-    # Register subcommands
+    # Register subcommands with aliases
     register Commands::Auth, "auth", "auth SUBCOMMAND", "Authentication commands"
     register Commands::Sheets, "sheets", "sheets SUBCOMMAND", "Google Sheets commands"
+    register Commands::Sheets, "sh", "sh SUBCOMMAND", "Google Sheets commands (alias)"
+    register Commands::WHMCS, "whmcs", "whmcs SUBCOMMAND", "WHMCS billing commands"
+    register Commands::WHMCS, "wh", "wh SUBCOMMAND", "WHMCS billing commands (alias)"
+
+    # FreeAgent alias - maps fa:X to freeagent X commands
+    desc "fa SUBCOMMAND", "FreeAgent commands (alias for balance, invoices, contacts, etc.)"
+    subcommand "fa", Class.new(Thor) {
+      def self.exit_on_failure?
+        true
+      end
+
+      desc "balance", "Show total balance across all bank accounts"
+      def balance
+        SyncBooks::CLI.new.balance
+      end
+
+      desc "invoices", "List invoices"
+      option :view, default: "recent", desc: "View: recent, open, all, overdue, draft"
+      option :json, type: :boolean, default: false, desc: "Output as JSON"
+      def invoices
+        SyncBooks::CLI.new.invoke(:invoices, [], options)
+      end
+
+      desc "contacts", "List contacts"
+      option :view, default: "active", desc: "View: active, all, clients, suppliers"
+      option :json, type: :boolean, default: false, desc: "Output as JSON"
+      def contacts
+        SyncBooks::CLI.new.invoke(:contacts, [], options)
+      end
+
+      desc "hst", "Calculate HST report"
+      option :from, aliases: "-f", desc: "Start date (YYYY-MM-DD)"
+      option :to, aliases: "-t", desc: "End date (YYYY-MM-DD)"
+      def hst
+        SyncBooks::CLI.new.invoke(:hst, [], options)
+      end
+
+      desc "company", "Show company info"
+      def company
+        SyncBooks::CLI.new.company
+      end
+
+      desc "projects", "List projects"
+      option :contact, aliases: "-c", desc: "Filter by contact ID"
+      def projects
+        SyncBooks::CLI.new.invoke(:projects, [], options)
+      end
+    }
 
     # === Setup ===
 
@@ -148,6 +196,83 @@ module SyncBooks
         puts "Sync complete! (#{Time.now.strftime("%Y-%m-%d %H:%M")})"
         puts ""
         puts "Run 'syncbooks sheets summary' to see updated cash position."
+      end
+    end
+
+    # === Status ===
+
+    desc "status", "Quick financial position check (from last sync or live)"
+    option :live, aliases: "-l", type: :boolean, default: false, desc: "Fetch live data instead of cached"
+    def status
+      UI.header("Financial Status")
+      UI.blank
+
+      last_sync = Config.last_sync
+      if last_sync
+        UI.muted("Last sync: #{last_sync.strftime("%Y-%m-%d %H:%M")}")
+      else
+        UI.muted("No sync recorded")
+      end
+      UI.blank
+
+      if options[:live]
+        # Fetch live data
+        accounts = fa_client.bank_accounts.select(&:active?)
+        balance_total = accounts.sum { |a| a.current_balance || 0 }
+
+        open_invoices = fa_client.invoices(view: "open")
+        overdue_invoices = fa_client.invoices(view: "overdue")
+        invoices_total = open_invoices.sum { |i| i.total_value || 0 } +
+                         overdue_invoices.sum { |i| i.total_value || 0 }
+
+        open_bills = fa_client.bills_by_view(view: "open")
+        overdue_bills = fa_client.bills_by_view(view: "overdue")
+        bills_total = open_bills.sum { |b| b.total_value || 0 } +
+                      overdue_bills.sum { |b| b.total_value || 0 }
+
+        from_date = Config.hst_period_start.to_s
+        to_date = Date.today.to_s
+        hst_charged, hst_reclaimed, _details = calculate_hst(from_date, to_date, quiet: true)
+        hst_net = hst_charged - hst_reclaimed
+
+        rows = [
+          ["Available COH", UI.money(balance_total)],
+          ["HST Owing", UI.money(hst_net)],
+          ["Net COH (after HST)", UI.money(balance_total - hst_net)],
+          ["Outstanding Bills", UI.money(bills_total)],
+          ["Open Invoices", UI.money(invoices_total)]
+        ]
+        UI.table(rows, columns: ["Metric", "Amount"])
+
+        UI.blank
+        net_position = balance_total - hst_net - bills_total
+        UI.success("Net Position (COH - HST - Bills): #{UI.money(net_position)}")
+      else
+        # Read from spreadsheet
+        sheets = GoogleSheetsClient.new
+        data = sheets.read("Main!D2:E14")
+        assets = data["values"] || []
+
+        data = sheets.read("Main!A2:B11")
+        liabilities = data["values"] || []
+
+        coh = liabilities.dig(9, 1)&.gsub(/[^\d.-]/, "")&.to_f || 0
+        net_coh = assets.dig(5, 1)&.gsub(/[^\d.-]/, "")&.to_f || 0
+        hst_owing = liabilities.dig(0, 1)&.gsub(/[^\d.-]/, "")&.to_f || 0
+        bills = liabilities.dig(2, 1)&.gsub(/[^\d.-]/, "")&.to_f || 0
+        invoices = assets.dig(9, 1)&.gsub(/[^\d.-]/, "")&.to_f || 0
+
+        rows = [
+          ["Available COH", assets.dig(4, 1) || "-"],
+          ["HST Owing", liabilities.dig(0, 1) || "-"],
+          ["Net COH", assets.dig(5, 1) || "-"],
+          ["Outstanding Bills", liabilities.dig(2, 1) || "-"],
+          ["Open Invoices", assets.dig(9, 1) || "-"]
+        ]
+        UI.table(rows, columns: ["Metric", "Amount"])
+
+        UI.blank
+        UI.muted("Use --live to fetch current data from FreeAgent")
       end
     end
 
