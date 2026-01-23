@@ -6,6 +6,7 @@ require "bundler/inline"
 gemfile do
   source "https://rubygems.org"
   gem "thor"
+  gem "gum"
 end
 
 require "json"
@@ -165,6 +166,36 @@ class YouTubeService
   def self.view_tags(file)
     out, = run("eyeD3", file)
     out
+  end
+
+  # Parse ID3 tags from a file into a hash
+  def self.read_tags(file)
+    out, = run("eyeD3", file)
+    tags = {}
+
+    out.each_line do |line|
+      case line
+      when /^title:\s*(.+)$/
+        tags[:title] = $1.strip
+      when /^artist:\s*(.+)$/
+        tags[:artist] = $1.strip
+      when /^album:\s*(.+)$/
+        tags[:album] = $1.strip
+      when /^recording date:\s*(.+)$/
+        tags[:year] = $1.strip
+      when /^track:\s*(\d+)\/(\d+)\s+genre:\s*(.+?)\s*\(id/
+        tags[:track] = $1.to_i
+        tags[:total] = $2.to_i
+        tags[:genre] = $3.strip
+      when /^track:\s*(\d+)\/(\d+)/
+        tags[:track] = $1.to_i
+        tags[:total] = $2.to_i
+      when /FRONT_COVER Image:/
+        tags[:cover] = true
+      end
+    end
+
+    tags
   end
 
   def self.run(*args)
@@ -347,12 +378,10 @@ class CLI < Thor
       album: options[:album])
 
     say "Complete!", :green
-    say "Files moved to: #{final_dir}", :green
     puts ""
-    say "Contents:", :yellow
-    Dir.glob(File.join(final_dir, "*")).sort.each do |f|
-      puts "  #{File.basename(f)}"
-    end
+
+    # Show directory structure
+    display_summary(final_dir)
   end
 
   desc "show FILE", "Show tags on an MP3 file"
@@ -366,9 +395,75 @@ class CLI < Thor
     puts YouTubeService.view_tags(file)
   end
 
+  desc "summary DIR", "Display album summary with ID3 tags"
+  def summary(dir)
+    dir = File.expand_path(dir)
+    unless Dir.exist?(dir)
+      say "Directory not found: #{dir}", :red
+      return
+    end
+
+    files = YouTubeService.list_mp3s(dir)
+    if files.empty?
+      say "No MP3 files found in: #{dir}", :red
+      return
+    end
+
+    display_summary(dir)
+  end
+
   desc "version", "Show version"
   def version
-    puts "ytmp3 0.1.0"
+    puts "ytmp3 0.2.0"
+  end
+
+  private
+
+  def display_summary(dir)
+    # Header
+    puts Gum.style(
+      " #{File.basename(File.dirname(dir))} / #{File.basename(dir)} ",
+      foreground: "#7D56F4",
+      bold: true,
+      border: :rounded,
+      border_foreground: "#7D56F4",
+      padding: "0 1"
+    )
+    puts ""
+
+    # Build table data
+    files = YouTubeService.list_mp3s(dir).sort
+    has_cover = File.exist?(File.join(dir, "folder.jpg"))
+
+    rows = files.map do |file|
+      tags = YouTubeService.read_tags(file)
+      [
+        tags[:track]&.to_s&.rjust(2) || "?",
+        tags[:title] || File.basename(file, ".mp3"),
+        tags[:artist] || "-",
+        tags[:year] || "-",
+        tags[:genre] || "-",
+        tags[:cover] ? "✓" : "-"
+      ]
+    end
+
+    # Display table (use tab separator to handle commas in titles)
+    Gum.table(
+      rows,
+      columns: ["#", "Title", "Artist", "Year", "Genre", "Art"],
+      print: true,
+      border: :rounded,
+      header_foreground: "#7D56F4",
+      separator: "\t"
+    )
+    puts ""
+
+    # Summary line
+    puts Gum.style(
+      "#{files.count} tracks#{has_cover ? " • folder.jpg present" : " • no cover art"}",
+      faint: true
+    )
+    puts Gum.style("Location: #{dir}", faint: true)
   end
 end
 
