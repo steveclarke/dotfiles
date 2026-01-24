@@ -671,10 +671,12 @@ module SyncBooks
       details = {}
 
       print "Fetching invoices..." unless quiet
-      invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
+      all_invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
+      # Exclude draft invoices - they haven't been sent yet so no HST is due
+      invoices = all_invoices.reject { |i| i.status == "Draft" }
       details[:inv_hst] = invoices.sum { |i| i.sales_tax_value || 0 }
       hst_charged += details[:inv_hst]
-      puts " #{invoices.length} invoices" unless quiet
+      puts " #{invoices.length} invoices (#{all_invoices.length - invoices.length} drafts excluded)" unless quiet
 
       print "Fetching bills..." unless quiet
       bills = fa_client.bills(from_date: from_date, to_date: to_date)
