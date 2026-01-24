@@ -86,6 +86,25 @@ module SyncBooks
       parse_collection(data, Models::FreeAgent::Invoice)
     end
 
+    def written_off_invoices_by_period(from_date:, to_date:)
+      # Written-off invoices may have been created years ago but written off recently.
+      # We need to query a broad date range and filter by written_off_date.
+      # Query last 3 years of invoices to catch old write-offs.
+      from = Date.parse(from_date.to_s)
+      to = Date.parse(to_date.to_s)
+      start_year = from.year - 3
+      all_invoices = get_all_pages("/invoices?from_date=#{start_year}-01-01&to_date=#{to_date}")
+      parsed = parse_collection(all_invoices, Models::FreeAgent::Invoice)
+
+      # Filter to written-off invoices where written_off_date falls within the period
+      parsed.select do |inv|
+        inv.status == "Written-off" &&
+          inv.written_off_date &&
+          inv.written_off_date >= from &&
+          inv.written_off_date <= to
+      end
+    end
+
     # Bills
     def bills(from_date:, to_date:)
       data = get_all_pages("/bills?from_date=#{from_date}&to_date=#{to_date}")

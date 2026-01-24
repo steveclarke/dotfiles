@@ -545,6 +545,7 @@ module SyncBooks
         ["Bills", UI.money(details[:bills_hst])],
         ["Expenses", UI.money(details[:exp_hst])],
         ["Bank transactions (expenses)", UI.money(details[:bank_reclaimed])],
+        ["Bad debt relief (write-offs)", UI.money(details[:bad_debt_hst])],
         ["TOTAL RECLAIMED", UI.money(hst_reclaimed)]
       ]
       UI.table(reclaimed_rows, columns: ["Source", "Amount"])
@@ -686,6 +687,12 @@ module SyncBooks
       details[:exp_hst] = expenses.sum { |e| e.hst_amount }
       hst_reclaimed += details[:exp_hst]
       puts " #{expenses.length} expenses" unless quiet
+
+      print "Fetching bad debt relief..." unless quiet
+      written_off = fa_client.written_off_invoices_by_period(from_date: from_date, to_date: to_date)
+      details[:bad_debt_hst] = written_off.sum { |i| i.sales_tax_value || 0 }
+      hst_reclaimed += details[:bad_debt_hst]
+      puts " #{written_off.length} write-offs ($#{"%.2f" % details[:bad_debt_hst]} HST)" unless quiet
 
       print "Fetching bank transactions..." unless quiet
       accounts = fa_client.bank_accounts.select(&:active?)
