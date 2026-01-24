@@ -86,6 +86,8 @@ stow_package "Fish shell" "fish"
 
 stow_package "Ruby" "ruby"
 
+stow_package "Node (default npm packages)" "node"
+
 ensure_dir "${HOME}/.config/nvim"
 stow_package "Neovim" "nvim"
 

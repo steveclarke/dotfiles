@@ -1,0 +1,6 @@
+# Default npm packages installed with every node version (via mise)
+# See: https://mise.jdx.dev/mise-cookbook/nodejs.html
+
+skills
+yarn
+playwright
