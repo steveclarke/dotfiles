@@ -1,22 +1,22 @@
 ---
-name: capture-skill
-description: Capture learnings, patterns, or workflows from the current conversation into a new or existing skill. Use when the user wants to save what was learned, discovered, or built during a conversation as a reusable skill for future sessions.
+name: extract-skill
+description: Extract learnings, patterns, or workflows from the current conversation into a new or existing skill. Use when the user wants to "extract a skill" or save something learned, discovered, or built during a conversation as a reusable skill for future sessions.
 ---
 
-# Capture Skill from Conversation
+# Extract Skill from Conversation
 
 This skill helps you extract knowledge, patterns, and workflows from the current conversation and persist them as a reusable skill.
 
 ## When to Use
 
-- The user says "capture this as a skill" or "save this for next time"
+- The user says "extract a skill", "extract this as a skill", or "save this for next time"
 - A useful workflow, pattern, or piece of domain knowledge emerged during the conversation
 - The user wants to update an existing skill with new learnings
 - The conversation uncovered non-obvious steps, gotchas, or best practices worth preserving
 
-## Capture Process
+## Extraction Process
 
-### Phase 1: Identify What to Capture
+### Phase 1: Identify What to Extract
 
 Review the conversation for:
 
@@ -26,7 +26,7 @@ Review the conversation for:
 4. **Patterns**: Code patterns, command sequences, or templates that worked well
 5. **Decision rationale**: Why certain approaches were chosen over alternatives
 
-Summarize what you plan to capture and confirm with the user before proceeding.
+Summarize what you plan to extract and confirm with the user before proceeding.
 
 ### Phase 2: Decide Destination
 
@@ -42,7 +42,7 @@ If the user already specified a skill or the destination is obvious from context
 
 ### Phase 3: Draft the Skill Content
 
-When capturing into a **new skill**:
+When extracting into a **new skill**:
 
 1. Choose a descriptive name (lowercase, hyphens, max 64 chars)
 2. Write a specific description including WHAT and WHEN (third person)
@@ -81,7 +81,7 @@ The goal is to transform a messy conversation into clean, reusable instructions.
 3. Check that the description is specific and includes trigger terms
 4. Confirm with the user that the captured content is accurate
 
-## Example: Capturing a Debugging Workflow
+## Example: Extracting a Debugging Workflow
 
 If a conversation involved debugging a tricky deployment issue, the captured skill might look like:
 
@@ -111,11 +111,11 @@ description: Debug Kubernetes deployment failures including CrashLoopBackOff, im
 - Check imagePullSecrets are configured for private registries
 ```
 
-Note how this captures the diagnostic sequence and common solutions without any conversation artifacts.
+Note how this extracts the diagnostic sequence and common solutions without any conversation artifacts.
 
 ## Handling Edge Cases
 
-**Conversation had multiple topics**: Ask which specific learning to capture, or suggest creating separate skills for distinct topics.
+**Conversation had multiple topics**: Ask which specific learning to extract, or suggest creating separate skills for distinct topics.
 
 **Learning is too small for a skill**: Suggest creating a Cursor rule (`.cursor/rules/`) instead, which is better suited for single-line or short guidelines.
 
