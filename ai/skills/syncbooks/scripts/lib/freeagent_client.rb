@@ -43,7 +43,10 @@ module SyncBooks
     end
 
     def find_contact_by_name(name)
-      contacts.find { |c| c.name&.downcase == name.downcase }
+      # Search with pagination to find all contacts
+      data = get_all_pages("/contacts?view=all")
+      all_contacts = parse_collection(data, Models::FreeAgent::Contact)
+      all_contacts.find { |c| c.name&.downcase == name.downcase }
     end
 
     # Invoices
@@ -56,6 +59,17 @@ module SyncBooks
     def invoice(id)
       data = get("/invoices/#{id}")["invoice"]
       Models::FreeAgent::Invoice.from_hash(data)
+    end
+
+    def find_invoice_by_reference(reference)
+      # Search across invoice views to find by reference number
+      # Valid FreeAgent views: open, overdue, draft (not "recent" or "all")
+      %w[open overdue draft].each do |view|
+        invs = invoices(view: view)
+        found = invs.find { |i| i.reference == reference.to_s }
+        return found if found
+      end
+      nil
     end
 
     def create_invoice(attrs)
