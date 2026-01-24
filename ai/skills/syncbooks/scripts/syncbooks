@@ -305,9 +305,9 @@ module SyncBooks
       UI.muted("#{ctcs.length} contacts")
     end
 
-    desc "contact ID", "Show contact details"
-    def contact(id)
-      c = fa_client.contact(id)
+    desc "contact ID_OR_NAME", "Show contact details (accepts ID or name)"
+    def contact(input)
+      c = resolve_contact_for_display(input)
       puts JSON.pretty_generate(
         id: c.id,
         organisation_name: c.organisation_name,
@@ -394,9 +394,9 @@ module SyncBooks
       UI.muted("#{invs.length} invoices • Total: #{UI.money(total)}")
     end
 
-    desc "invoice ID", "Show invoice details"
+    desc "invoice ID", "Show invoice details (accepts ID or reference number)"
     def invoice(id)
-      inv = fa_client.invoice(id)
+      inv = resolve_invoice(id)
       puts JSON.pretty_generate(
         id: inv.id,
         reference: inv.reference,
@@ -724,6 +724,44 @@ module SyncBooks
       raise Thor::Error, "Contact not found: #{input}" unless contact
 
       contact.id
+    end
+
+    def resolve_contact_for_display(input)
+      # If it's a numeric ID, fetch directly
+      if input.match?(/^\d+$/)
+        begin
+          return fa_client.contact(input)
+        rescue RuntimeError => e
+          if e.message.include?("404")
+            raise Thor::Error, "Contact not found with ID '#{input}'."
+          end
+          raise
+        end
+      end
+
+      # Otherwise search by name
+      contact = fa_client.find_contact_by_name(input)
+      raise Thor::Error, "Contact not found: '#{input}'. Try searching with 'syncbooks contacts' first." unless contact
+      contact
+    end
+
+    def resolve_invoice(input)
+      # Short numbers (<=5 digits) are likely reference numbers, longer are FreeAgent IDs
+      if input.match?(/^\d+$/) && input.length <= 5
+        inv = fa_client.find_invoice_by_reference(input)
+        raise Thor::Error, "Invoice not found with reference '#{input}'. Try using the full FreeAgent ID instead." unless inv
+        return inv
+      end
+
+      # Try as FreeAgent ID
+      begin
+        fa_client.invoice(input)
+      rescue RuntimeError => e
+        if e.message.include?("404")
+          raise Thor::Error, "Invoice not found with ID '#{input}'. If this is a reference number, it may not be in recent/open/overdue/draft views."
+        end
+        raise
+      end
     end
 
     def extract_id(url)
