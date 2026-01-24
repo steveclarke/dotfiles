@@ -1,6 +1,8 @@
 # Cross-platform CLI tools
 # Core development tools
 
+brew "steveclarke/tap/superthread"
+
 brew "act"
 brew "aichat"
 brew "atuin"
