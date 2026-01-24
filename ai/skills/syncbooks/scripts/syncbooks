@@ -131,37 +131,8 @@ module SyncBooks
         puts ""
       end
 
-      hst_charged, hst_reclaimed, _details = calculate_hst(from_date, to_date, quiet: q)
-      puts "" unless q
-
-      print "Fetching balance..." unless q
-      accounts = fa_client.bank_accounts.select(&:active?)
-      balance_total = accounts.sum { |a| a.current_balance || 0 }
-      puts " $#{"%.2f" % balance_total}" unless q
-
-      print "Fetching open invoices..." unless q
-      open_invoices = fa_client.invoices(view: "open")
-      open_total = open_invoices.sum { |i| i.total_value || 0 }
-      puts " #{open_invoices.length} invoices ($#{"%.2f" % open_total})" unless q
-
-      print "Fetching overdue invoices..." unless q
-      overdue_invoices = fa_client.invoices(view: "overdue")
-      overdue_total = overdue_invoices.sum { |i| i.total_value || 0 }
-      puts " #{overdue_invoices.length} invoices ($#{"%.2f" % overdue_total})" unless q
-
-      invoices_total = open_total + overdue_total
-
-      print "Fetching open bills..." unless q
-      open_bills = fa_client.bills_by_view(view: "open")
-      open_bills_total = open_bills.sum { |b| b.total_value || 0 }
-      puts " #{open_bills.length} bills ($#{"%.2f" % open_bills_total})" unless q
-
-      print "Fetching overdue bills..." unless q
-      overdue_bills = fa_client.bills_by_view(view: "overdue")
-      overdue_bills_total = overdue_bills.sum { |b| b.total_value || 0 }
-      puts " #{overdue_bills.length} bills ($#{"%.2f" % overdue_bills_total})" unless q
-
-      bills_total = open_bills_total + overdue_bills_total
+      summary = FinancialSummary.new(fa_client)
+      data = summary.fetch_all(hst_from_date: from_date, hst_to_date: to_date, quiet: q)
       puts "" unless q
 
       unless q
@@ -173,16 +144,16 @@ module SyncBooks
       sheets = GoogleSheetsClient.new(dev: options[:dev])
 
       writes = {
-        "Main!E2" => {label: "HST Collected", value: hst_charged},
-        "Main!E3" => {label: "HST Reclaimed", value: hst_reclaimed},
-        "Main!E6" => {label: "Available COH", value: balance_total},
-        "Main!E9" => {label: "FA Invoices", value: invoices_total},
-        "Main!B4" => {label: "Outstanding Bills", value: bills_total}
+        "Main!E2" => {label: "HST Collected", value: data.hst_charged},
+        "Main!E3" => {label: "HST Reclaimed", value: data.hst_reclaimed},
+        "Main!E6" => {label: "Available COH", value: data.balance},
+        "Main!E9" => {label: "FA Invoices", value: data.invoices_total},
+        "Main!B4" => {label: "Outstanding Bills", value: data.bills_total}
       }
 
-      writes.each do |range, data|
-        sheets.write(range, format("%.2f", data[:value]))
-        puts "  #{range.ljust(12)} #{data[:label].ljust(20)} $#{"%.2f" % data[:value]}" unless q
+      writes.each do |range, info|
+        sheets.write(range, format("%.2f", info[:value]))
+        puts "  #{range.ljust(12)} #{info[:label].ljust(20)} $#{"%.2f" % info[:value]}" unless q
       end
 
       Config.last_sync = Time.now
@@ -191,7 +162,7 @@ module SyncBooks
       puts "=" * 50 unless q
 
       if q
-        puts "Synced: COH $#{"%.2f" % balance_total} | HST owing $#{"%.2f" % (hst_charged - hst_reclaimed)} | Invoices $#{"%.2f" % invoices_total}"
+        puts "Synced: COH $#{"%.2f" % data.balance} | HST owing $#{"%.2f" % data.hst_net} | Invoices $#{"%.2f" % data.invoices_total}"
       else
         puts "Sync complete! (#{Time.now.strftime("%Y-%m-%d %H:%M")})"
         puts ""
@@ -216,37 +187,24 @@ module SyncBooks
       UI.blank
 
       if options[:live]
-        # Fetch live data
-        accounts = fa_client.bank_accounts.select(&:active?)
-        balance_total = accounts.sum { |a| a.current_balance || 0 }
-
-        open_invoices = fa_client.invoices(view: "open")
-        overdue_invoices = fa_client.invoices(view: "overdue")
-        invoices_total = open_invoices.sum { |i| i.total_value || 0 } +
-                         overdue_invoices.sum { |i| i.total_value || 0 }
-
-        open_bills = fa_client.bills_by_view(view: "open")
-        overdue_bills = fa_client.bills_by_view(view: "overdue")
-        bills_total = open_bills.sum { |b| b.total_value || 0 } +
-                      overdue_bills.sum { |b| b.total_value || 0 }
-
-        from_date = Config.hst_period_start.to_s
-        to_date = Date.today.to_s
-        hst_charged, hst_reclaimed, _details = calculate_hst(from_date, to_date, quiet: true)
-        hst_net = hst_charged - hst_reclaimed
+        summary = FinancialSummary.new(fa_client)
+        data = summary.fetch_all(
+          hst_from_date: Config.hst_period_start.to_s,
+          hst_to_date: Date.today.to_s,
+          quiet: true
+        )
 
         rows = [
-          ["Available COH", UI.money(balance_total)],
-          ["HST Owing", UI.money(hst_net)],
-          ["Net COH (after HST)", UI.money(balance_total - hst_net)],
-          ["Outstanding Bills", UI.money(bills_total)],
-          ["Open Invoices", UI.money(invoices_total)]
+          ["Available COH", UI.money(data.balance)],
+          ["HST Owing", UI.money(data.hst_net)],
+          ["Net COH (after HST)", UI.money(data.balance - data.hst_net)],
+          ["Outstanding Bills", UI.money(data.bills_total)],
+          ["Open Invoices", UI.money(data.invoices_total)]
         ]
         UI.table(rows, columns: ["Metric", "Amount"])
 
         UI.blank
-        net_position = balance_total - hst_net - bills_total
-        UI.success("Net Position (COH - HST - Bills): #{UI.money(net_position)}")
+        UI.success("Net Position (COH - HST - Bills): #{UI.money(data.net_position)}")
       else
         # Read from spreadsheet
         sheets = GoogleSheetsClient.new
