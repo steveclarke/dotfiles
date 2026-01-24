@@ -1,11 +1,6 @@
----
-name: youtube-mp3
-description: Download YouTube playlists as properly tagged MP3s for Steve's music library. Use when Steve wants to download music from YouTube, tag MP3 files, or add albums to his collection.
----
+# YouTube Playlist to MP3
 
-# YouTube Playlist to MP3 Skill
-
-Composable CLI for downloading YouTube playlists as properly tagged MP3s.
+Download YouTube playlists as properly tagged MP3s for a music library.
 
 ## Commands
 
@@ -48,14 +43,14 @@ ytmp3 tag ~/Music/staging/Perfecta \
 ytmp3 cover ~/Music/staging/Perfecta \
   --url "https://f4.bcbits.com/img/a2043159314_10.jpg"
 
-# 6. Finalize to Steve's naming convention
+# 6. Finalize to naming convention
 ytmp3 finalize ~/Music/staging/Perfecta \
   --artist "Adam Again" \
   --album "Perfecta"
 # => Files moved to: ~/Music/staging/Adam Again/Adam Again - Perfecta/
 ```
 
-## Steve's Naming Convention
+## Naming Convention
 
 Final structure:
 ```
@@ -113,7 +108,7 @@ Saves as `folder.jpg` and embeds in all tracks.
 
 ### `ytmp3 finalize DIR`
 
-Renames files to Steve's convention and reorganizes.
+Renames files to naming convention and reorganizes.
 
 Required options:
 - `-a, --artist NAME` — Artist name
