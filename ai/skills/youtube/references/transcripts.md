@@ -1,21 +1,6 @@
----
-name: youtube-transcript
-description: Download YouTube video transcripts when user provides a YouTube URL or asks to download/get/fetch a transcript from YouTube. Also use when user wants to transcribe or get captions/subtitles from a YouTube video.
-allowed-tools: Bash,Read,Write
----
-
 # YouTube Transcript Downloader
 
-This skill helps download transcripts (subtitles/captions) from YouTube videos using yt-dlp.
-
-## When to Use This Skill
-
-Activate this skill when the user:
-- Provides a YouTube URL and wants the transcript
-- Asks to "download transcript from YouTube"
-- Wants to "get captions" or "get subtitles" from a video
-- Asks to "transcribe a YouTube video"
-- Needs text content from a YouTube video
+Download transcripts (subtitles/captions) from YouTube videos using yt-dlp.
 
 ## How It Works
 
@@ -407,9 +392,9 @@ echo "✓ Complete!"
 
 ### Best Practices:
 
-- ✅ Always check what's available before attempting download (`--list-subs`)
-- ✅ Verify success at each step before proceeding to next
-- ✅ Ask user before large downloads (audio files, Whisper models)
-- ✅ Clean up temporary files after processing
-- ✅ Provide clear feedback about what's happening at each stage
-- ✅ Handle errors gracefully with helpful messages
+- Always check what's available before attempting download (`--list-subs`)
+- Verify success at each step before proceeding to next
+- Ask user before large downloads (audio files, Whisper models)
+- Clean up temporary files after processing
+- Provide clear feedback about what's happening at each stage
+- Handle errors gracefully with helpful messages
