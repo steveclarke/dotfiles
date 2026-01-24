@@ -528,31 +528,31 @@ module SyncBooks
       UI.info("Period", "#{from_date} to #{to_date} (#{quarter_name})")
       UI.blank
 
-      hst_charged, hst_reclaimed, details = calculate_hst(from_date, to_date)
+      calculator = HstCalculator.new(fa_client)
+      result = calculator.calculate(from_date: from_date, to_date: to_date)
 
       UI.blank
       UI.section("HST Charged (on sales)")
       charged_rows = [
-        ["Invoices", UI.money(details[:inv_hst])],
-        ["Bank transactions (income)", UI.money(details[:bank_charged])],
-        ["TOTAL CHARGED", UI.money(hst_charged)]
+        ["Invoices", UI.money(result.invoice_hst)],
+        ["Bank transactions (income)", UI.money(result.bank_charged)],
+        ["TOTAL CHARGED", UI.money(result.charged)]
       ]
       UI.table(charged_rows, columns: ["Source", "Amount"])
 
       UI.blank
       UI.section("HST Reclaimed (on purchases)")
       reclaimed_rows = [
-        ["Bills", UI.money(details[:bills_hst])],
-        ["Expenses", UI.money(details[:exp_hst])],
-        ["Bank transactions (expenses)", UI.money(details[:bank_reclaimed])],
-        ["Bad debt relief (write-offs)", UI.money(details[:bad_debt_hst])],
-        ["TOTAL RECLAIMED", UI.money(hst_reclaimed)]
+        ["Bills", UI.money(result.bills_hst)],
+        ["Expenses", UI.money(result.expenses_hst)],
+        ["Bank transactions (expenses)", UI.money(result.bank_reclaimed)],
+        ["Bad debt relief (write-offs)", UI.money(result.bad_debt_hst)],
+        ["TOTAL RECLAIMED", UI.money(result.reclaimed)]
       ]
       UI.table(reclaimed_rows, columns: ["Source", "Amount"])
 
       UI.blank
-      net_owing = hst_charged - hst_reclaimed
-      UI.success("Net HST Owing to CRA: #{UI.money(net_owing)}")
+      UI.success("Net HST Owing to CRA: #{UI.money(result.net_owing)}")
     end
 
     desc "hst-paid", "Mark HST quarter as paid and advance to next quarter"
@@ -663,67 +663,6 @@ module SyncBooks
 
     def fa_client
       @fa_client ||= FreeAgentClient.new
-    end
-
-    def calculate_hst(from_date, to_date, quiet: false)
-      hst_charged = 0.0
-      hst_reclaimed = 0.0
-      details = {}
-
-      print "Fetching invoices..." unless quiet
-      all_invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
-      # Exclude draft invoices - they haven't been sent yet so no HST is due
-      invoices = all_invoices.reject { |i| i.status == "Draft" }
-      details[:inv_hst] = invoices.sum { |i| i.sales_tax_value || 0 }
-      hst_charged += details[:inv_hst]
-      puts " #{invoices.length} invoices (#{all_invoices.length - invoices.length} drafts excluded)" unless quiet
-
-      print "Fetching bills..." unless quiet
-      bills = fa_client.bills(from_date: from_date, to_date: to_date)
-      details[:bills_hst] = bills.sum { |b| (b.sales_tax_value || 0).abs }
-      hst_reclaimed += details[:bills_hst]
-      puts " #{bills.length} bills" unless quiet
-
-      print "Fetching expenses..." unless quiet
-      expenses = fa_client.expenses(from_date: from_date, to_date: to_date)
-      details[:exp_hst] = expenses.sum { |e| e.hst_amount }
-      hst_reclaimed += details[:exp_hst]
-      puts " #{expenses.length} expenses" unless quiet
-
-      print "Fetching bad debt relief..." unless quiet
-      written_off = fa_client.written_off_invoices_by_period(from_date: from_date, to_date: to_date)
-      details[:bad_debt_hst] = written_off.sum { |i| i.sales_tax_value || 0 }
-      hst_reclaimed += details[:bad_debt_hst]
-      puts " #{written_off.length} write-offs ($#{"%.2f" % details[:bad_debt_hst]} HST)" unless quiet
-
-      print "Fetching bank transactions..." unless quiet
-      accounts = fa_client.bank_accounts.select(&:active?)
-      details[:bank_charged] = 0.0
-      details[:bank_reclaimed] = 0.0
-      total_txns = 0
-
-      accounts.each do |acc|
-        exps = fa_client.bank_transaction_explanations(acc.url, from_date: from_date, to_date: to_date)
-        total_txns += exps.length
-        exps.each do |e|
-          stv = e["sales_tax_value"]
-          next unless stv
-
-          val = stv.to_f.abs
-          cat = e["category"]&.split("/")&.last.to_i
-          if cat < 100
-            details[:bank_charged] += val
-          else
-            details[:bank_reclaimed] += val
-          end
-        end
-      end
-      puts " #{total_txns} transactions" unless quiet
-
-      hst_charged += details[:bank_charged]
-      hst_reclaimed += details[:bank_reclaimed]
-
-      [hst_charged, hst_reclaimed, details]
     end
 
     def resolve_contact(input)
