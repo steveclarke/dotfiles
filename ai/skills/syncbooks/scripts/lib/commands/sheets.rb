@@ -244,10 +244,12 @@ module SyncBooks
         hst_reclaimed = 0.0
 
         print "Fetching invoices... "
-        invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
+        all_invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
+        # Exclude draft invoices - they haven't been sent yet so no HST is due
+        invoices = all_invoices.reject { |i| i.status == "Draft" }
         inv_hst = invoices.sum { |i| i.sales_tax_value || 0 }
         hst_charged += inv_hst
-        puts "#{invoices.length} invoices"
+        puts "#{invoices.length} invoices (#{all_invoices.length - invoices.length} drafts excluded)"
 
         print "Fetching bills... "
         bills = fa_client.bills(from_date: from_date, to_date: to_date)
