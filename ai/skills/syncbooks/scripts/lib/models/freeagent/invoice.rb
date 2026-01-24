@@ -23,6 +23,7 @@ module SyncBooks
         attribute :dated_on, :date
         attribute :due_on, :date
         attribute :paid_on, :date
+        attribute :written_off_date, :date
         attribute :payment_terms_in_days, :integer
         attribute :involves_sales_tax, :boolean
         attribute :send_reminder_emails, :boolean
