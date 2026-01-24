@@ -240,57 +240,9 @@ module SyncBooks
       end
 
       def calculate_hst_values(from_date, to_date)
-        hst_charged = 0.0
-        hst_reclaimed = 0.0
-
-        print "Fetching invoices... "
-        all_invoices = fa_client.invoices_by_date(from_date: from_date, to_date: to_date)
-        # Exclude draft invoices - they haven't been sent yet so no HST is due
-        invoices = all_invoices.reject { |i| i.status == "Draft" }
-        inv_hst = invoices.sum { |i| i.sales_tax_value || 0 }
-        hst_charged += inv_hst
-        puts "#{invoices.length} invoices (#{all_invoices.length - invoices.length} drafts excluded)"
-
-        print "Fetching bills... "
-        bills = fa_client.bills(from_date: from_date, to_date: to_date)
-        bills_hst = bills.sum { |b| (b.sales_tax_value || 0).abs }
-        hst_reclaimed += bills_hst
-        puts "#{bills.length} bills"
-
-        print "Fetching expenses... "
-        expenses = fa_client.expenses(from_date: from_date, to_date: to_date)
-        exp_hst = expenses.sum { |e| e.hst_amount }
-        hst_reclaimed += exp_hst
-        puts "#{expenses.length} expenses"
-
-        print "Fetching bank transactions... "
-        accounts = fa_client.bank_accounts.select(&:active?)
-        bank_charged = 0.0
-        bank_reclaimed = 0.0
-        total_txns = 0
-
-        accounts.each do |acc|
-          exps = fa_client.bank_transaction_explanations(acc.url, from_date: from_date, to_date: to_date)
-          total_txns += exps.length
-          exps.each do |e|
-            stv = e["sales_tax_value"]
-            next unless stv
-
-            val = stv.to_f.abs
-            cat = e["category"]&.split("/")&.last.to_i
-            if cat < 100
-              bank_charged += val
-            else
-              bank_reclaimed += val
-            end
-          end
-        end
-        puts "#{total_txns} transactions"
-
-        hst_charged += bank_charged
-        hst_reclaimed += bank_reclaimed
-
-        [hst_charged, hst_reclaimed]
+        calculator = HstCalculator.new(fa_client)
+        result = calculator.calculate(from_date: from_date, to_date: to_date)
+        [result.charged, result.reclaimed]
       end
     end
   end
