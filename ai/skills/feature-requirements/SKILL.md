@@ -1,5 +1,5 @@
 ---
-name: requirements
+name: feature-requirements
 description: Requirements
 disable-model-invocation: true
 ---

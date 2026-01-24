@@ -1,5 +1,5 @@
 ---
-name: vision
+name: feature-vision
 description: Vision Document
 disable-model-invocation: true
 ---

@@ -1,5 +1,5 @@
 ---
-name: spec
+name: feature-spec
 description: Technical Specification
 disable-model-invocation: true
 ---
