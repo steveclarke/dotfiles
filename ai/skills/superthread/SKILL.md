@@ -75,7 +75,7 @@ suth boards list_delete LIST_ID
 suth cards get CARD_ID                        # Get card details
 suth cards create --title "Task" -l LIST -b BOARD
 suth cards update CARD_ID --title "New title" --priority 1
-suth cards delete CARD_ID -f                  # Delete (with --force)
+suth cards delete CARD_ID -y                  # Delete (with -y to confirm)
 suth cards duplicate CARD_ID                  # Duplicate card
 suth cards assigned USER                      # Cards assigned to user
 suth cards assigned me                        # Cards assigned to me
@@ -85,16 +85,16 @@ suth cards assign CARD_ID USER                # Assign user
 suth cards unassign CARD_ID USER              # Unassign user
 
 # Relationships
-suth cards link CARD_ID OTHER --type=blocks   # Link cards
-suth cards unlink CARD_ID OTHER               # Unlink cards
+suth cards link --card CARD --related OTHER --type=blocks
+suth cards unlink --card CARD --related OTHER
 
 # Checklists
 suth cards add-checklist CARD_ID --title "Tasks"
-suth cards edit-checklist CARD_ID CL_ID --title "Updated"
-suth cards rm-checklist CARD_ID CL_ID -f
-suth cards add-item CARD_ID CL_ID --title "Do thing"
-suth cards edit-item CARD_ID CL_ID ITEM_ID --checked
-suth cards rm-item CARD_ID CL_ID ITEM_ID -f
+suth cards edit-checklist --card CARD --checklist CL --title "Updated"
+suth cards remove-checklist --card CARD --checklist CL -y
+suth cards add-item --card CARD --checklist CL --title "Do thing"
+suth cards edit-item --card CARD --checklist CL --item ITEM --checked
+suth cards remove-item --card CARD --checklist CL --item ITEM -y
 
 # Tags
 suth cards tags                               # List available tags
@@ -143,8 +143,10 @@ suth pages delete PAGE_ID
 
 # Comments
 suth comments get COMMENT_ID
-suth comments create --card_id CARD --content "Note"
+suth comments create --card CARD --content "Note"
 suth comments reply COMMENT_ID --content "Reply"
+suth comments update-reply --comment COMMENT --reply REPLY --content "New"
+suth comments delete-reply --comment COMMENT --reply REPLY
 
 # Notes
 suth notes list
@@ -167,5 +169,5 @@ suth tags delete TAG
 - Most commands accept **names or IDs** for spaces, boards, users
 - Use `-s SPACE` to help resolve ambiguous board names
 - Use `--json` for scripted output: `suth cards assigned me --json`
-- Destructive commands need `-f` or `--force` to skip confirmation
+- Use `-y` or `--yes` to auto-confirm prompts (for scripts/agents)
 - Priority levels: 1=Urgent, 2=High, 3=Medium, 4=Low
