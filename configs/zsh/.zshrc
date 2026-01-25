@@ -191,7 +191,23 @@ alias cun="cd ~/src/myunio/unio/"
 
 # Hugo - executive coach assistant
 hugo() {
-  cd ~/src/hugo && claude "$@"
+  if [[ ! -d ~/src/hugo ]]; then
+    echo "Error: ~/src/hugo directory not found" >&2
+    return 1
+  fi
+  case "$1" in
+    -h|--help)
+      echo "hugo          - cd to ~/src/hugo and open claude"
+      echo "hugo [prompt] - cd to ~/src/hugo and open claude with prompt"
+      echo "hugo cd|-d    - cd to ~/src/hugo only"
+      ;;
+    cd|-d)
+      cd ~/src/hugo
+      ;;
+    *)
+      cd ~/src/hugo && claude "$@"
+      ;;
+  esac
 }
 
 # Dotfiles (requires DOTFILES_DIR to be set)
