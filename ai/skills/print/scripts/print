@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+#
+# print - Print files with sensible defaults (double-sided, b&w)
+#
+# Usage:
+#   print <file> [options]
+#
+# Options:
+#   -d, --printer <name>   Printer name (default: system default)
+#   -n, --copies <count>   Number of copies (default: 1)
+#   -P, --pages <range>    Page range (e.g., 1-5 or 1,3,7)
+#   --single-sided         Print single-sided (override duplex default)
+#   --color                Print in color (override b&w default)
+#   --landscape            Print in landscape orientation
+#   --fit                  Fit to page
+#   -l, --list             List available printers
+#   -h, --help             Show this help
+
+set -euo pipefail
+
+# Defaults
+DUPLEX="two-sided-long-edge"
+COLOR_MODEL="Gray"
+PRINTER=""
+COPIES=""
+PAGES=""
+LANDSCAPE=""
+FIT=""
+
+usage() {
+    cat <<EOF
+Usage: print <file> [options]
+
+Print files with sensible defaults (double-sided, black & white).
+
+Options:
+  -d, --printer <name>   Printer name (default: system default)
+  -n, --copies <count>   Number of copies (default: 1)
+  -P, --pages <range>    Page range (e.g., 1-5 or 1,3,7)
+  --single-sided         Print single-sided (override duplex default)
+  --color                Print in color (override b&w default)
+  --landscape            Print in landscape orientation
+  --fit                  Fit to page
+  -l, --list             List available printers
+  -h, --help             Show this help
+
+Examples:
+  print document.pdf                     # Double-sided, b&w, default printer
+  print document.pdf -d HP_LaserJet      # Specific printer
+  print document.pdf -n 3                # 3 copies
+  print document.pdf --single-sided      # Single-sided
+  print document.pdf --color             # Color output
+  print document.pdf -P 1-5              # Pages 1-5 only
+EOF
+}
+
+list_printers() {
+    echo "Available printers:"
+    echo
+    lpstat -p -d 2>/dev/null || echo "No printers found. Is CUPS running?"
+}
+
+# Parse arguments
+FILE=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -l|--list)
+            list_printers
+            exit 0
+            ;;
+        -d|--printer)
+            PRINTER="$2"
+            shift 2
+            ;;
+        -n|--copies)
+            COPIES="$2"
+            shift 2
+            ;;
+        -P|--pages)
+            PAGES="$2"
+            shift 2
+            ;;
+        --single-sided)
+            DUPLEX="one-sided"
+            shift
+            ;;
+        --color)
+            COLOR_MODEL="Color"
+            shift
+            ;;
+        --landscape)
+            LANDSCAPE="yes"
+            shift
+            ;;
+        --fit)
+            FIT="yes"
+            shift
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            usage
+            exit 1
+            ;;
+        *)
+            if [[ -z "$FILE" ]]; then
+                FILE="$1"
+            else
+                echo "Error: Multiple files not supported. Got: $FILE and $1" >&2
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Validate file
+if [[ -z "$FILE" ]]; then
+    echo "Error: No file specified" >&2
+    usage
+    exit 1
+fi
+
+if [[ ! -f "$FILE" ]]; then
+    echo "Error: File not found: $FILE" >&2
+    exit 1
+fi
+
+# Build lp command
+LP_OPTS=()
+LP_OPTS+=("-o" "sides=$DUPLEX")
+LP_OPTS+=("-o" "ColorModel=$COLOR_MODEL")
+
+[[ -n "$PRINTER" ]] && LP_OPTS+=("-d" "$PRINTER")
+[[ -n "$COPIES" ]] && LP_OPTS+=("-n" "$COPIES")
+[[ -n "$PAGES" ]] && LP_OPTS+=("-P" "$PAGES")
+[[ -n "$LANDSCAPE" ]] && LP_OPTS+=("-o" "landscape")
+[[ -n "$FIT" ]] && LP_OPTS+=("-o" "fit-to-page")
+
+# Print
+echo "Printing: $FILE"
+echo "Options: ${LP_OPTS[*]}"
+lp "${LP_OPTS[@]}" "$FILE"

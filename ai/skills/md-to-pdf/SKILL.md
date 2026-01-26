@@ -71,6 +71,29 @@ graph TD
 
 The diagram will render as a graphic in the PDF.
 
+## Printing
+
+If the user wants to print the PDF, use the `/print` skill after generating.
+
+**Workflow decision:**
+
+| User intent | Action |
+|-------------|--------|
+| "Convert to PDF" | Keep the PDF |
+| "Print this markdown" | Generate PDF → print with `/print` → delete PDF |
+| "Create a PDF and print it" | Keep the PDF, also print |
+
+When printing is the goal (not the PDF itself), delete the PDF after printing:
+
+```bash
+# Generate, print, cleanup
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs doc.md
+~/.claude/skills/print/scripts/print doc.pdf
+rm doc.pdf
+```
+
+The `/print` skill handles double-sided and b&w defaults automatically.
+
 ## Alias (Optional)
 
 Add to your shell profile:
