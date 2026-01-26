@@ -15,6 +15,35 @@ brew install todoist
 brew install --HEAD todoist
 ```
 
+## Task Creation Best Practices
+
+When creating tasks from the user's verbal descriptions:
+
+1. **Extract a clean, actionable title** — don't dump raw text verbatim
+2. **Capture context in the description** — the "why", rationale, acceptance criteria
+3. **Don't lose information** — everything the user says should be captured (title or description)
+
+Example:
+- User says: "Configure staging so we can CC emails for preview, so developers and clients can review what gets sent"
+- **Title:** "Add email CC option to staging paperless emails"
+- **Description:** "Allow CCing multiple email addresses so developers and clients can preview what emails get generated and review the content."
+
+### Adding Descriptions (API Required)
+
+The CLI doesn't support descriptions. After creating a task, use the REST API:
+
+```bash
+# Get task ID from CLI output, then:
+curl -X POST "https://api.todoist.com/rest/v2/tasks/{task_id}" \
+  -H "Authorization: Bearer $(jq -r .token ~/.config/todoist/config.json)" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Your description here"}'
+```
+
+**Note:** API priority values are inverted from CLI display: API `4` = P1 (highest), API `1` = P4 (lowest).
+
+---
+
 ## Command Syntax
 
 **Important:** Flags must come BEFORE the task content.
