@@ -11,6 +11,45 @@ end
 
 require "json"
 require "time"
+require "fileutils"
+
+module TokenCache
+  STATE_DIR = File.expand_path("~/.local/state/time-tracking")
+  TTL_SECONDS = 24 * 60 * 60  # 24 hours
+
+  def self.get(provider, op_ref)
+    token_file = File.join(STATE_DIR, "#{provider}_token")
+
+    # Check if cached token exists and is fresh
+    if File.exist?(token_file)
+      age = Time.now - File.mtime(token_file)
+      if age < TTL_SECONDS
+        return File.read(token_file).chomp
+      end
+    end
+
+    # Fetch from 1Password and cache
+    warn "Fetching #{provider.capitalize} API key from 1Password..."
+    token = `op read '#{op_ref}'`.chomp
+    raise "Failed to get API token from 1Password" if token.empty?
+
+    # Write to cache
+    FileUtils.mkdir_p(STATE_DIR)
+    File.write(token_file, token)
+    File.chmod(0o600, token_file)  # Restrict permissions
+
+    token
+  end
+
+  def self.clear(provider = nil)
+    if provider
+      token_file = File.join(STATE_DIR, "#{provider}_token")
+      File.delete(token_file) if File.exist?(token_file)
+    else
+      FileUtils.rm_rf(STATE_DIR)
+    end
+  end
+end
 
 module TimeTracking
   class BaseClient
@@ -54,6 +93,14 @@ module TimeTracking
       raise NotImplementedError
     end
 
+    def create_project(name:, billable:, is_private:)
+      raise NotImplementedError
+    end
+
+    def tags
+      raise NotImplementedError
+    end
+
     protected
 
     def parse_datetime(str)
@@ -79,7 +126,22 @@ module TimeTracking
     end
 
     def projects
-      get("/workspaces/#{workspace_id}/projects")
+      # Use /me/projects to include private projects the user can access
+      get("/me/projects")
+    end
+
+    def create_project(name:, billable: false, is_private: false)
+      payload = {
+        name: name,
+        active: true,
+        is_private: is_private,
+        billable: billable
+      }
+      post("/workspaces/#{workspace_id}/projects", payload)
+    end
+
+    def tags
+      get("/workspaces/#{workspace_id}/tags")
     end
 
     def entries(days: 7)
@@ -136,12 +198,7 @@ module TimeTracking
     private
 
     def token
-      @token ||= begin
-        warn "Fetching Toggl API key from 1Password..."
-        `op read '#{OP_REF}'`.chomp.tap do |t|
-          raise "Failed to get API token from 1Password" if t.empty?
-        end
-      end
+      @token ||= TokenCache.get("toggl", OP_REF)
     end
 
     def auth
@@ -267,12 +324,7 @@ module TimeTracking
     end
 
     def token
-      @token ||= begin
-        warn "Fetching Clockify API key from 1Password..."
-        `op read '#{OP_REF}'`.chomp.tap do |t|
-          raise "Failed to get API token from 1Password" if t.empty?
-        end
-      end
+      @token ||= TokenCache.get("clockify", OP_REF)
     end
 
     def headers
@@ -551,6 +603,57 @@ class CLI < Thor
   def delete(entry_id)
     client.delete_entry(entry_id)
     puts "Entry #{entry_id} deleted."
+  end
+
+  desc "project:create NAME", "Create a new project"
+  option :billable, aliases: "-b", type: :boolean, default: false
+  option :private, type: :boolean, default: false, desc: "Make project private"
+  map "project:create" => :project_create
+  def project_create(name)
+    unless toggl?
+      puts "Project creation only supported for Toggl currently."
+      return
+    end
+
+    project = client.create_project(
+      name: name,
+      billable: options[:billable],
+      is_private: options[:private]
+    )
+
+    puts JSON.pretty_generate(
+      id: project["id"],
+      name: project["name"],
+      active: project["active"],
+      billable: project["billable"],
+      is_private: project["is_private"]
+    )
+    puts "Project created successfully."
+  end
+
+  desc "tags", "List all tags"
+  def tags
+    unless toggl?
+      puts "Tags listing only supported for Toggl currently."
+      return
+    end
+
+    data = client.tags.map { |t| {id: t["id"], name: t["name"]} }
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "cache:clear", "Clear cached API tokens (will re-fetch from 1Password on next use)"
+  map "cache:clear" => :cache_clear
+  def cache_clear
+    TokenCache.clear(toggl? ? "toggl" : "clockify")
+    puts "Token cache cleared for #{options[:provider]}."
+  end
+
+  desc "cache:clear:all", "Clear all cached API tokens"
+  map "cache:clear:all" => :cache_clear_all
+  def cache_clear_all
+    TokenCache.clear
+    puts "All token caches cleared."
   end
 
   private
