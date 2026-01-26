@@ -12,6 +12,7 @@ end
 require "json"
 require "time"
 require "fileutils"
+require "uri"
 
 module TokenCache
   STATE_DIR = File.expand_path("~/.local/state/time-tracking")
@@ -66,7 +67,12 @@ module TimeTracking
     end
 
     def find_project(name)
-      projects.find { |p| p["name"].downcase == name.downcase }
+      # Search by name parameter to include private projects
+      search_projects(name).find { |p| p["name"].downcase == name.downcase }
+    end
+
+    def search_projects(name)
+      raise NotImplementedError
     end
 
     def entries(days:)
@@ -142,6 +148,10 @@ module TimeTracking
 
     def tags
       get("/workspaces/#{workspace_id}/tags")
+    end
+
+    def search_projects(name)
+      get("/workspaces/#{workspace_id}/projects?name=#{URI.encode_www_form_component(name)}")
     end
 
     def entries(days: 7)
@@ -266,6 +276,11 @@ module TimeTracking
 
     def projects
       get("/workspaces/#{workspace_id}/projects")
+    end
+
+    def search_projects(name)
+      # Clockify doesn't have a name search param, filter locally
+      projects.select { |p| p["name"].downcase.include?(name.downcase) }
     end
 
     def entries(days: 7)
