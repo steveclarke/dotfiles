@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+#
+# md-to-pdf — Convert markdown to PDF using Chrome
+#
+# Usage:
+#   md-to-pdf input.md                     # Creates input.pdf
+#   md-to-pdf input.md output.pdf          # Custom output name
+#   md-to-pdf input.md --open              # Open after creating
+#   md-to-pdf input.md -o out.pdf --open   # Both
+#   md-to-pdf input.md --style custom.css  # Custom stylesheet
+#
+
+set -e
+
+# Default styles (GitHub-flavored)
+DEFAULT_STYLE='
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: #24292e;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+h3 { font-size: 1.25em; }
+
+p, ul, ol, table, pre, blockquote {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+ul, ol {
+  padding-left: 2em;
+}
+
+li + li {
+  margin-top: 0.25em;
+}
+
+pre {
+  background: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+}
+
+:not(pre) > code {
+  background: #f6f8fa;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+blockquote {
+  border-left: 4px solid #dfe2e5;
+  padding: 0 16px;
+  color: #6a737d;
+  margin-left: 0;
+}
+
+/* Obsidian-style callouts */
+blockquote p:first-child {
+  margin-top: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #dfe2e5;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+th {
+  background: #f6f8fa;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background: #f6f8fa;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eaecef;
+  margin: 24px 0;
+}
+
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Print-specific */
+@media print {
+  body {
+    max-width: none;
+    padding: 0;
+  }
+}
+'
+
+# Parse arguments
+INPUT=""
+OUTPUT=""
+OPEN_AFTER=false
+CUSTOM_STYLE=""
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --open|-O)
+      OPEN_AFTER=true
+      shift
+      ;;
+    --style)
+      CUSTOM_STYLE="$2"
+      shift 2
+      ;;
+    -o)
+      OUTPUT="$2"
+      shift 2
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+    *)
+      if [ -z "$INPUT" ]; then
+        INPUT="$1"
+      elif [ -z "$OUTPUT" ]; then
+        OUTPUT="$1"
+      fi
+      shift
+      ;;
+  esac
+done
+
+# Validate input
+if [ -z "$INPUT" ]; then
+  echo "Usage: md-to-pdf input.md [output.pdf] [--open] [--style file.css]"
+  exit 1
+fi
+
+if [ ! -f "$INPUT" ]; then
+  echo "File not found: $INPUT"
+  exit 1
+fi
+
+# Check for marked
+if ! command -v marked &> /dev/null; then
+  echo "Error: 'marked' is required. Install with: npm install -g marked"
+  exit 1
+fi
+
+# Find Chrome
+if [ -f "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+  CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+elif [ -f "/Applications/Chromium.app/Contents/MacOS/Chromium" ]; then
+  CHROME="/Applications/Chromium.app/Contents/MacOS/Chromium"
+elif command -v google-chrome &> /dev/null; then
+  CHROME="google-chrome"
+elif command -v chromium &> /dev/null; then
+  CHROME="chromium"
+else
+  echo "Error: Chrome or Chromium not found"
+  exit 1
+fi
+
+# Determine output filename
+if [ -z "$OUTPUT" ]; then
+  OUTPUT="${INPUT%.md}.pdf"
+fi
+
+# Get absolute path for input (Chrome needs it)
+INPUT_ABS="$(cd "$(dirname "$INPUT")" && pwd)/$(basename "$INPUT")"
+OUTPUT_ABS="$(cd "$(dirname "$OUTPUT")" 2>/dev/null && pwd)/$(basename "$OUTPUT")" || OUTPUT_ABS="$(pwd)/$OUTPUT"
+
+# Create temp HTML file
+HTML_FILE=$(mktemp /tmp/md-to-pdf.XXXXXX.html)
+trap "rm -f $HTML_FILE" EXIT
+
+# Get styles
+if [ -n "$CUSTOM_STYLE" ] && [ -f "$CUSTOM_STYLE" ]; then
+  STYLE=$(cat "$CUSTOM_STYLE")
+else
+  STYLE="$DEFAULT_STYLE"
+fi
+
+# Build HTML
+{
+  echo '<!DOCTYPE html>'
+  echo '<html><head>'
+  echo '<meta charset="utf-8">'
+  echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
+  echo "<style>$STYLE</style>"
+  echo '</head><body>'
+  marked "$INPUT_ABS"
+  echo '</body></html>'
+} > "$HTML_FILE"
+
+# Render to PDF
+"$CHROME" \
+  --headless \
+  --disable-gpu \
+  --no-pdf-header-footer \
+  --print-to-pdf="$OUTPUT_ABS" \
+  "file://$HTML_FILE" \
+  2>/dev/null
+
+echo "Created: $OUTPUT"
+
+# Open if requested
+if [ "$OPEN_AFTER" = true ]; then
+  open "$OUTPUT_ABS"
+fi
