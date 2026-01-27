@@ -1,34 +1,38 @@
+# Ghostty Config
+# Multiplexing handled by tmux — Ghostty just renders
+
 font-family = "JetBrains Mono NF"
 font-size = 13
 
 theme = Catppuccin Macchiato
 
+# Make Option key behave as Alt for terminal apps (Neovim, tmux, etc.)
+macos-option-as-alt = true
+
+# Local overrides (optional)
+config-file = "?local/macos.conf"
+
 # --------------
-# Keybinds
+# Keybinds (disabled — using tmux instead)
+# Uncomment if you want Ghostty-native splits without tmux
 # --------------
 
 # Split navigation
-keybind = shift+alt+left=goto_split:left
-keybind = shift+alt+h=goto_split:left
-keybind = shift+alt+right=goto_split:right
-keybind = shift+alt+l=goto_split:right
-keybind = shift+alt+down=goto_split:down
-keybind = shift+alt+j=goto_split:down
-keybind = shift+alt+up=goto_split:up
-keybind = shift+alt+k=goto_split:up
+# keybind = shift+alt+left=goto_split:left
+# keybind = shift+alt+h=goto_split:left
+# keybind = shift+alt+right=goto_split:right
+# keybind = shift+alt+l=goto_split:right
+# keybind = shift+alt+down=goto_split:down
+# keybind = shift+alt+j=goto_split:down
+# keybind = shift+alt+up=goto_split:up
+# keybind = shift+alt+k=goto_split:up
 
 # Split manipulation
-keybind = shift+alt+d=new_split:down
-keybind = shift+alt+u=new_split:up
-keybind = shift+alt+]=new_split:right
-keybind = shift+alt+[=new_split:left
+# keybind = shift+alt+d=new_split:down
+# keybind = shift+alt+u=new_split:up
+# keybind = shift+alt+]=new_split:right
+# keybind = shift+alt+[=new_split:left
 
-keybind = shift+alt+t=new_tab
+# keybind = shift+alt+t=new_tab
 
-keybind = ctrl+enter=toggle_maximize
-
-config-file = "?local/macos.conf"
-
-# Make Option key behave as Alt key for terminal applications
-# This allows Neovim to recognize Alt key combinations like <A-j> and <A-k>
-macos-option-as-alt = true
+# keybind = ctrl+enter=toggle_maximize
