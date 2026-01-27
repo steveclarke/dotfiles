@@ -1,5 +1,6 @@
 {
   "includeCoAuthoredBy": false,
+  "model": "sonnet",
   "hooks": {
     "Notification": [
       {
@@ -13,7 +14,6 @@
       }
     ]
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
