@@ -7,19 +7,57 @@ description: Interact with Todoist via MCP. Use when adding tasks, listing tasks
 
 ## Setup
 
-The official Todoist MCP server from Doist provides reliable, full-featured access to Todoist.
+There are two ways to configure the Todoist MCP server. The **NPX version with API token** is recommended for daily use.
 
-### 1. Add the MCP Server
+### Option 1: NPX with API Token (Recommended)
+
+This version uses a Todoist API token and doesn't require re-authentication. Best for regular use.
+
+**1. Get your API token:**
+- Go to [Todoist Settings → Integrations → Developer](https://app.todoist.com/app/settings/integrations/developer)
+- Copy your API token (or generate a new one)
+
+**2. Add to `~/.claude.json` at the top level:**
+
+```json
+{
+  "mcpServers": {
+    "todoist": {
+      "command": "npx",
+      "args": ["-y", "@doist/todoist-ai"],
+      "env": {
+        "TODOIST_API_KEY": "your-api-token-here"
+      }
+    }
+  }
+}
+```
+
+**Important:** The environment variable must be `TODOIST_API_KEY` (not `TODOIST_API_TOKEN`).
+
+**3. Restart Claude Code** to pick up the new configuration.
+
+### Option 2: HTTP with OAuth (Alternative)
+
+This version uses OAuth and requires periodic re-authentication (session expires after ~1 hour). Useful if you don't want to store a token.
 
 ```bash
 claude mcp add --transport http todoist https://ai.todoist.net/mcp
 ```
 
-### 2. Authenticate
+In Claude Code, run `/mcp` to open the MCP panel. Click on Todoist and complete the OAuth flow.
 
-In Claude Code, run `/mcp` to open the MCP panel. Click on Todoist and complete the OAuth flow to authenticate your account.
+**Note:** The OAuth session times out frequently. If you get connection errors, re-authenticate via `/mcp`.
 
-**Note:** The OAuth session can timeout during long sessions. If you get connection errors, re-authenticate via `/mcp`.
+---
+
+## Troubleshooting
+
+**MCP shows "failed" or won't connect:**
+1. Verify the env variable is `TODOIST_API_KEY` (not `TODOIST_API_TOKEN`)
+2. Regenerate your API token at [Todoist Developer Settings](https://app.todoist.com/app/settings/integrations/developer) — old tokens may have expired
+3. Restart Claude Code after config changes
+4. Test with `mcp__todoist__user-info` to verify connection
 
 ---
 
