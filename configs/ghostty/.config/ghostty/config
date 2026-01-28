@@ -36,3 +36,6 @@ config-file = "?local/macos.conf"
 # keybind = shift+alt+t=new_tab
 
 # keybind = ctrl+enter=toggle_maximize
+
+# Claude Code multi-line input (Shift+Enter sends legacy escape sequence)
+keybind = shift+enter=text:\x1b\r
