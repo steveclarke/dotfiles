@@ -30,9 +30,10 @@
 # This runs early to avoid loading plugins twice (they load inside tmux instead)
 # Each Ghostty window gets its own independent tmux session.
 # To revert to shared session: change to `exec tmux new-session -A -s main`
-if [[ -z "$TMUX" && "$TERM_PROGRAM" == "ghostty" ]] && command -v tmux >/dev/null 2>&1; then
-    exec tmux new-session
-fi
+# DISABLED: Cross-machine tmux compatibility issues between Mac Studio and MacBook Pro
+# if [[ -z "$TMUX" && "$TERM_PROGRAM" == "ghostty" ]] && command -v tmux >/dev/null 2>&1; then
+#     exec tmux new-session
+# fi
 
 # =============================================================================
 # ZINIT PLUGIN MANAGER
