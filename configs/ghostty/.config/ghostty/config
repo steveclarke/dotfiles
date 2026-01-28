@@ -37,5 +37,5 @@ config-file = "?local/macos.conf"
 
 # keybind = ctrl+enter=toggle_maximize
 
-# Claude Code multi-line input (Shift+Enter sends legacy escape sequence)
-keybind = shift+enter=text:\x1b\r
+# Claude Code multi-line input (sends newline character)
+keybind = shift+enter=text:\n
