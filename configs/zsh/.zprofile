@@ -77,6 +77,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # - Troubleshooting: https://mise.jdx.dev/troubleshooting.html
 # =============================================================================
 
+# Bun global bin (used for tools like qmd that only install via bun)
+case ":$PATH:" in
+  *":$HOME/.bun/bin:"*) ;;
+  *) export PATH="$HOME/.bun/bin:$PATH" ;;
+esac
+
 if command -v mise >/dev/null 2>&1; then
   # Guard: skip if shims are already on PATH (prevents double-prepending)
   case ":$PATH:" in

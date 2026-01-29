@@ -212,12 +212,16 @@ hugo() {
   fi
   case "$1" in
     -h|--help)
-      echo "hugo          - cd to ~/src/hugo and open claude"
-      echo "hugo [prompt] - cd to ~/src/hugo and open claude with prompt"
-      echo "hugo cd|-d    - cd to ~/src/hugo only"
+      echo "hugo              - cd to ~/src/hugo and open claude"
+      echo "hugo [prompt]     - cd to ~/src/hugo and open claude with prompt"
+      echo "hugo cd|-d        - cd to ~/src/hugo only"
+      echo "hugo -r|--resume  - cd to ~/src/hugo and resume last session"
       ;;
     cd|-d)
       cd ~/src/hugo
+      ;;
+    -r|--resume)
+      cd ~/src/hugo && claude --resume
       ;;
     *)
       cd ~/src/hugo && claude "$@"
