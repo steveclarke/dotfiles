@@ -15,7 +15,7 @@ require "fileutils"
 require "uri"
 
 module TokenCache
-  STATE_DIR = File.expand_path("~/.local/state/time-tracking")
+  STATE_DIR = File.expand_path("~/.local/state/steveos/time-tracking")
   TTL_SECONDS = 24 * 60 * 60  # 24 hours
 
   def self.get(provider, op_ref)
