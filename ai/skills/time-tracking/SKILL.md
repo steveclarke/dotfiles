@@ -47,7 +47,7 @@ scripts/track tags
 - Authentication via 1Password:
   - Toggl: `op://Employee/Toggl/api key`
   - Clockify: `op://Employee/Clockify/Saved on app.clockify.me/apikey`
-- **Token caching**: API tokens are cached in `~/.local/state/time-tracking/` for 24 hours to avoid repeated 1Password prompts
+- **Token caching**: API tokens are cached in `~/.local/state/steveos/time-tracking/` for 24 hours to avoid repeated 1Password prompts
 - Run `scripts/track --help` for full usage
 
 ## Cache Management

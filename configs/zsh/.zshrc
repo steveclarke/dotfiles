@@ -361,3 +361,8 @@ export PATH="/Users/steve/.antigravity/antigravity/bin:$PATH"
 
 # opencode
 export PATH=/Users/steve/.opencode/bin:$PATH
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/steve/.lmstudio/bin"
+# End of LM Studio CLI section
+
