@@ -149,15 +149,15 @@ async function renderToPdf() {
   // Inject page numbering
   const contentWithPageNumbers = injectPageNumbering(originalContent, filename)
 
-  // Create temp directory and file
-  const tempDir = mkdtempSync(join(tmpdir(), "md-to-pdf-"))
-  const tempFilePath = join(tempDir, filename)
+  // Use source file's directory as notebook path so relative image paths resolve
+  const sourceDir = dirname(inputPath)
+  const tempFilePath = join(sourceDir, `.~${filename}`)
   writeFileSync(tempFilePath, contentWithPageNumbers, "utf-8")
 
   try {
     // Initialize crossnote
     const notebook = await Notebook.init({
-      notebookPath: tempDir,
+      notebookPath: sourceDir,
       config: {
         previewTheme: "github-light.css",
         codeBlockTheme: "github.css",
@@ -174,7 +174,7 @@ async function renderToPdf() {
     })
 
     // Render to PDF
-    const engine = notebook.getNoteMarkdownEngine(filename)
+    const engine = notebook.getNoteMarkdownEngine(`.~${filename}`)
     const generatedPath = await engine.chromeExport({
       fileType: "pdf",
       runAllCodeChunks: false,
@@ -183,6 +183,13 @@ async function renderToPdf() {
     // Copy to output location
     copyFileSync(generatedPath, outputPath)
 
+    // Remove crossnote's generated PDF (it lives next to the temp markdown file)
+    try {
+      unlinkSync(generatedPath)
+    } catch {
+      // Ignore cleanup errors
+    }
+
     console.log(`Created: ${outputPath}`)
 
     // Open if requested
@@ -190,7 +197,7 @@ async function renderToPdf() {
       exec(`open "${outputPath}"`)
     }
   } finally {
-    // Cleanup temp file
+    // Cleanup temp markdown file
     try {
       unlinkSync(tempFilePath)
     } catch {
