@@ -262,10 +262,10 @@ fi
 # =============================================================================
 
 if command -v fzf >/dev/null 2>&1; then
-    zinit light Aloxaf/fzf-tab
+    # zinit light Aloxaf/fzf-tab
     eval "$(fzf --zsh)"
-    zstyle ':completion:*' menu no
-    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+    # zstyle ':completion:*' menu no
+    # zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 fi
 
 
