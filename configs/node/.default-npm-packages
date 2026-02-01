@@ -5,3 +5,5 @@ skills
 yarn
 playwright
 pnpm
+@slidev/cli
+
