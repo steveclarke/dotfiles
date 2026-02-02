@@ -116,6 +116,7 @@ module TimeTracking
 
   class TogglClient < BaseClient
     BASE_URL = "https://api.track.toggl.com/api/v9"
+    REPORTS_URL = "https://api.track.toggl.com/reports/api/v3"
     OP_REF = "op://Employee/Toggl/api key"
 
     def initialize
@@ -205,6 +206,38 @@ module TimeTracking
       delete("/workspaces/#{workspace_id}/time_entries/#{entry_id}")
     end
 
+    def clients
+      get("/workspaces/#{workspace_id}/clients")
+    end
+
+    def find_client(name)
+      clients.find { |c| c["name"].downcase == name.downcase }
+    end
+
+    def projects(client_id: nil)
+      path = "/workspaces/#{workspace_id}/projects"
+      path += "?client_ids=#{client_id}" if client_id
+      get(path)
+    end
+
+    def find_project(name, client_id: nil)
+      projects(client_id: client_id).find { |p| p["name"].downcase == name.downcase }
+    end
+
+    def export_detailed(start_date:, end_date:, client_ids: nil, project_ids: nil, format: "xlsx")
+      payload = {start_date: start_date, end_date: end_date}
+      payload[:client_ids] = client_ids if client_ids
+      payload[:project_ids] = project_ids if project_ids
+      response = HTTParty.post(
+        "#{REPORTS_URL}/workspace/#{workspace_id}/search/time_entries.#{format}",
+        basic_auth: auth,
+        headers: {"Content-Type" => "application/json"},
+        body: payload.to_json
+      )
+      raise "Toggl Reports API error: #{response.code} - #{response.body}" unless response.success?
+      response.body
+    end
+
     private
 
     def token
@@ -254,6 +287,7 @@ module TimeTracking
 
   class ClockifyClient < BaseClient
     BASE_URL = "https://api.clockify.me/api/v1"
+    REPORTS_URL = "https://reports.api.clockify.me/v1"
     OP_REF = "op://Employee/Clockify/Saved on app.clockify.me/apikey"
 
     def initialize
@@ -327,6 +361,32 @@ module TimeTracking
 
     def delete_entry(entry_id)
       delete("/workspaces/#{workspace_id}/time-entries/#{entry_id}")
+    end
+
+    def clients
+      get("/workspaces/#{workspace_id}/clients")
+    end
+
+    def find_client(name)
+      clients.find { |c| c["name"].downcase == name.downcase }
+    end
+
+    def export_detailed(start_date:, end_date:, client_ids: nil, project_ids: nil, format: "xlsx")
+      payload = {
+        dateRangeStart: "#{start_date}T00:00:00.000",
+        dateRangeEnd: "#{end_date}T23:59:59.000",
+        exportType: format.upcase,
+        detailedFilter: {page: 1, pageSize: 1000}
+      }
+      payload[:clients] = {ids: client_ids, contains: "CONTAINS", status: "ALL"} if client_ids
+      payload[:projects] = {ids: project_ids, contains: "CONTAINS", status: "ALL"} if project_ids
+      response = HTTParty.post(
+        "#{REPORTS_URL}/workspaces/#{workspace_id}/reports/detailed",
+        headers: headers,
+        body: payload.to_json
+      )
+      raise "Clockify Reports API error: #{response.code} - #{response.body}" unless response.success?
+      response.body
     end
 
     private
@@ -655,6 +715,75 @@ class CLI < Thor
 
     data = client.tags.map { |t| {id: t["id"], name: t["name"]} }
     puts JSON.pretty_generate(data)
+  end
+
+  desc "clients", "List all clients (Toggl only)"
+  def clients
+    unless toggl?
+      puts "Client listing only supported for Toggl currently."
+      return
+    end
+    data = client.clients.map { |c| {id: c["id"], name: c["name"], archived: c["archived"]} }
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "projects", "List projects (Toggl only)"
+  option :client, aliases: "-c", desc: "Filter by client name"
+  def projects
+    unless toggl?
+      puts "Project listing only supported for Toggl currently."
+      return
+    end
+    client_id = nil
+    if options[:client]
+      found = client.find_client(options[:client])
+      raise Thor::Error, "Client not found: #{options[:client]}" unless found
+      client_id = found["id"]
+    end
+    data = client.projects(client_id: client_id).map { |p| {id: p["id"], name: p["name"], client_id: p["client_id"], active: p["active"]} }
+    puts JSON.pretty_generate(data)
+  end
+
+  desc "export FILENAME", "Export detailed report as XLSX or CSV"
+  option :client, aliases: "-c", desc: "Client name(s) to filter by (comma-separated for multiple)"
+  option :project, aliases: "-p", desc: "Project name(s) to filter by, comma-separated (Toggl only)"
+  option :project_ids, desc: "Project ID(s) to filter by, comma-separated (Toggl only)"
+  option :start_date, aliases: "-s", required: true, desc: "Start date (YYYY-MM-DD)"
+  option :end_date, aliases: "-e", required: true, desc: "End date (YYYY-MM-DD)"
+  option :format, aliases: "-f", default: "xlsx", desc: "Export format: xlsx or csv"
+  def export(filename)
+    client_ids = nil
+    if options[:client]
+      client_names = options[:client].split(",").map(&:strip)
+      client_ids = client_names.map do |name|
+        found = client.find_client(name)
+        raise Thor::Error, "Client not found: #{name}" unless found
+        found["id"]
+      end
+    end
+
+    project_ids = nil
+    if options[:project_ids] && toggl?
+      project_ids = options[:project_ids].split(",").map { |id| id.strip.to_i }
+    elsif options[:project] && toggl?
+      project_names = options[:project].split(",").map(&:strip)
+      project_ids = project_names.map do |name|
+        found = client.find_project(name)
+        raise Thor::Error, "Project not found: #{name}" unless found
+        found["id"]
+      end
+    end
+
+    data = client.export_detailed(
+      start_date: options[:start_date],
+      end_date: options[:end_date],
+      client_ids: client_ids,
+      project_ids: project_ids,
+      format: options[:format]
+    )
+
+    File.binwrite(filename, data)
+    puts "Exported to #{filename} (#{File.size(filename)} bytes)"
   end
 
   desc "cache:clear", "Clear cached API tokens (will re-fetch from 1Password on next use)"
