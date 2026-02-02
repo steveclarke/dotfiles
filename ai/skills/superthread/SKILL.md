@@ -103,13 +103,21 @@ suth boards delete-list LIST_ID
 
 ```bash
 suth cards list -b BOARD                      # List cards on a board
+  # Options: --space, --list, --include-archived, --since DATE, --updated-since DATE
 suth cards get CARD_ID [-o]                   # Get card details (--open for browser)
-suth cards create --title "Task" -l LIST -b BOARD
+  # Options: --raw, --no-content
+suth cards create --title "Task" -l LIST -b BOARD [options]
+  # Options: --content HTML, --parent-card ID, --epic ID,
+  #          --sprint SPRINT_ID, --project PROJECT_ID,
+  #          --start-date TIMESTAMP, --due-date TIMESTAMP,
+  #          --priority N, --owner USER
 suth cards update CARD_ID --title "New title" --priority 1
 suth cards delete CARD_ID                     # Delete card
 suth cards duplicate CARD_ID                  # Duplicate card
 suth cards assigned USER                      # Cards assigned to user
 suth cards assigned me                        # Cards assigned to me
+  # Options: --board, --space, --project, --include-archived,
+  #          --since DATE, --updated-since DATE
 
 # Members
 suth cards assign CARD_ID USER                # Assign user
@@ -118,14 +126,6 @@ suth cards unassign CARD_ID USER              # Unassign user
 # Relationships
 suth cards link --card CARD --related OTHER --type blocks
 suth cards unlink --card CARD --related OTHER
-
-# Checklists
-suth cards add-checklist CARD_ID --title "Tasks"
-suth cards edit-checklist --card CARD --checklist CL --title "Updated"
-suth cards remove-checklist --card CARD --checklist CL
-suth cards add-item --card CARD --checklist CL --title "Do thing" [--checked]
-suth cards edit-item --card CARD --checklist CL --item ITEM --title "New"
-suth cards remove-item --card CARD --checklist CL --item ITEM
 
 # Tags
 suth cards tags                               # List available tags
@@ -164,10 +164,47 @@ suth comments get COMMENT_ID [-o]             # Get comment (opens parent card)
 suth comments create --card CARD --content "Note"
 suth comments update COMMENT_ID --content "Updated"
 suth comments delete COMMENT_ID
-suth comments reply COMMENT_ID --content "Reply"
-suth comments replies COMMENT_ID              # Get replies to a comment
-suth comments update-reply --comment COMMENT --reply REPLY --content "New"
-suth comments delete-reply --comment COMMENT --reply REPLY
+```
+
+### Replies
+
+```bash
+suth replies list COMMENT_ID                  # List replies to a comment
+suth replies get REPLY_ID                     # Get reply details
+suth replies create COMMENT_ID --content "Reply text"
+suth replies update REPLY_ID --content "Updated"
+suth replies delete REPLY_ID
+```
+
+### Checklists
+
+Checklists are a separate subcommand, not under `cards`:
+
+```bash
+suth checklists list -c CARD_ID              # List checklists on a card
+suth checklists get CHECKLIST -c CARD_ID     # Get checklist details
+suth checklists create --title "Tasks" -c CARD_ID
+suth checklists update CHECKLIST --title "New Title" -c CARD_ID
+suth checklists delete CHECKLIST -c CARD_ID
+
+# Items
+suth checklists add-item CHECKLIST --title "Do thing" -c CARD_ID [--checked]
+suth checklists update-item ITEM_ID --checklist CL -c CARD_ID --title "New"
+suth checklists remove-item ITEM_ID --checklist CL -c CARD_ID
+suth checklists check ITEM_ID --checklist CL -c CARD_ID
+suth checklists uncheck ITEM_ID --checklist CL -c CARD_ID
+```
+
+### Lists
+
+Board list (column) management as a separate subcommand:
+
+```bash
+suth lists list -b BOARD                     # List columns on board
+suth lists get LIST_ID                       # Get list details
+suth lists create --title "In Progress" -b BOARD
+suth lists update LIST_ID --title "Done"
+suth lists delete LIST_ID
 ```
 
 ### Notes
@@ -209,6 +246,18 @@ suth config init                              # Create default config file
 suth config show                              # Show current configuration
 suth config set KEY VALUE                     # Set a config value
 suth config path                              # Show config file path
+```
+
+### Activity
+
+```bash
+suth activity                                 # Show recent activity across workspace
+```
+
+### Discovery
+
+```bash
+suth tree                                     # Print tree of all available commands
 ```
 
 ### Shell Completion
