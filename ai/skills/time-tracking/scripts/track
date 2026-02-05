@@ -318,8 +318,8 @@ module TimeTracking
     end
 
     def entries(days: 7)
-      start_date = (Date.today - days).iso8601
-      end_date = Date.today.iso8601
+      start_date = (Date.today - days).to_time.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+      end_date = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
       get("/workspaces/#{workspace_id}/user/#{user_id}/time-entries?start=#{start_date}&end=#{end_date}")
     end
 
