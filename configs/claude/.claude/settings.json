@@ -1,4 +1,33 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "WebSearch",
+      "WebFetch",
+      "Skill(*)",
+      "mcp__plugin_context7_context7__*",
+      "mcp__todoist__*",
+      "mcp__Printer__*"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git push)",
+      "Bash(git commit *)",
+      "Bash(git reset *)",
+      "Bash(git rebase *)",
+      "Bash(git merge *)",
+      "Bash(rm -rf *)",
+      "Bash(rm -r *)",
+      "Bash(rm *)"
+    ]
+  },
   "includeCoAuthoredBy": false,
   "hooks": {
     "Notification": [
