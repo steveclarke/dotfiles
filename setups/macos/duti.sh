@@ -24,7 +24,7 @@ done
 CURSOR_ID="com.todesktop.230313mzl4w4u92"
 
 echo "Setting Cursor as default for code files..."
-for ext in js ts rb py css html json sql dockerfile svg; do
+for ext in js ts rb py css json sql dockerfile svg; do
   duti -s "$CURSOR_ID" ".$ext" all
 done
 
