@@ -2,8 +2,8 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash",
       "Read",
@@ -28,7 +28,6 @@
       "Bash(rm *)"
     ]
   },
-  "includeCoAuthoredBy": false,
   "hooks": {
     "Notification": [
       {
@@ -52,5 +51,6 @@
     "context7@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true
-  }
+  },
+  "fastMode": true
 }
