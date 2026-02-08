@@ -51,6 +51,5 @@
     "context7@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true
-  },
-  "fastMode": true
+  }
 }
