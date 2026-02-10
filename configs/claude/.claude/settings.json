@@ -2,8 +2,8 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash",
       "Read",
@@ -26,9 +26,9 @@
       "Bash(rm -rf *)",
       "Bash(rm -r *)",
       "Bash(rm *)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
-  "includeCoAuthoredBy": false,
   "hooks": {
     "Notification": [
       {
@@ -46,6 +46,10 @@
     "type": "command",
     "command": "~/.claude/statusline.sh",
     "padding": 0
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": ["Working"]
   },
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
