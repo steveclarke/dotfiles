@@ -126,6 +126,11 @@ ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
 cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
+config_banner "Skills CLI"
+ensure_dir "${HOME}/.agents"
+rm -f "${HOME}/.agents/skills"
+ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.agents/skills"
+
 ensure_dir "${HOME}/.config/opencode"
 rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
 ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
