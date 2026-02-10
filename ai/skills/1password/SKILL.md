@@ -57,11 +57,11 @@ op read "op://Vault/Item/private key?ssh-format=openssh"        # SSH key
 "Field Name[delete]"            # Remove a field
 ```
 
-Default (no suffix) = concealed. Always be explicit.
+Default (no suffix) = concealed. **Always be explicit about field types.**
 
 ### Principles
 
-1. **Only conceal actual secrets** — Client IDs, URLs, usernames are NOT secrets
+1. **Only conceal actual secrets** — passwords, API keys, tokens. URLs, usernames, client IDs, hostnames, ports, and other non-sensitive identifiers must use `[text]` or `[url]`. If someone would read it aloud in a meeting, it's not a secret.
 2. **Use clear, descriptive field names** — Match the source terminology
 3. **Include context** — Add account info, notes, and details
 4. **Clean up template cruft** — Remove or set default fields from templates
@@ -101,6 +101,18 @@ op item create --category="Database" --title="Production DB - ServiceName" --vau
   "username[text]=app_user" \
   "password[concealed]=secret-password" \
   "notesPlain=Read replica. Primary is on port 5433."
+```
+
+### Editing Existing Items
+
+When adding fields to existing items with `op item edit`, the same type rules apply — **always specify the field type explicitly**:
+
+```bash
+# WRONG — defaults to concealed, hides the URL and username
+op item edit "My Item" "Section.URL=https://example.com" "Section.username=admin"
+
+# RIGHT — only the password is concealed
+op item edit "My Item" "Section.URL[url]=https://example.com" "Section.username[text]=admin" "Section.password[concealed]=secret"
 ```
 
 ### Handling Template Fields
