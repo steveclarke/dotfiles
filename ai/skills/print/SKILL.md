@@ -1,3 +1,8 @@
+---
+name: print
+description: Print files on Mac or Linux using the `lp` command with sensible defaults (double-sided, black & white). Supports PDF, markdown (via md-to-pdf conversion), and common print options like copies, page ranges, color, and printer selection.
+---
+
 # Print
 
 Print files on Mac or Linux using the `lp` command with sensible defaults.
