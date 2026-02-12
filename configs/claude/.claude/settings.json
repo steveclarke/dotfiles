@@ -27,7 +27,6 @@
       "Bash(rm -r *)",
       "Bash(rm *)"
     ],
-    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "Notification": [
@@ -49,7 +48,9 @@
   },
   "spinnerVerbs": {
     "mode": "replace",
-    "verbs": ["Working"]
+    "verbs": [
+      "Working"
+    ]
   },
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
