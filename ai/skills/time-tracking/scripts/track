@@ -180,7 +180,7 @@ module TimeTracking
     end
 
     def stop_entry(entry_id)
-      put("/workspaces/#{workspace_id}/time_entries/#{entry_id}/stop", {})
+      patch("/workspaces/#{workspace_id}/time_entries/#{entry_id}/stop", {})
     end
 
     def create_entry(description:, project_id:, start_time:, stop_time:, billable: true, tags: nil)
@@ -221,7 +221,10 @@ module TimeTracking
     end
 
     def find_project(name, client_id: nil)
-      projects(client_id: client_id).find { |p| p["name"].downcase == name.downcase }
+      # Use server-side name filter to avoid Toggl's 151-project page limit
+      results = search_projects(name)
+      results = results.select { |p| p["client_id"] == client_id } if client_id
+      results.find { |p| p["name"].downcase == name.downcase }
     end
 
     def export_detailed(start_date:, end_date:, client_ids: nil, project_ids: nil, format: "xlsx")
@@ -265,6 +268,16 @@ module TimeTracking
 
     def put(endpoint, body)
       response = HTTParty.put(
+        "#{BASE_URL}#{endpoint}",
+        basic_auth: auth,
+        headers: {"Content-Type" => "application/json"},
+        body: body.to_json
+      )
+      handle_response(response)
+    end
+
+    def patch(endpoint, body)
+      response = HTTParty.patch(
         "#{BASE_URL}#{endpoint}",
         basic_auth: auth,
         headers: {"Content-Type" => "application/json"},

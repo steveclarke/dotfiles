@@ -46,16 +46,16 @@
     "command": "~/.claude/statusline.sh",
     "padding": 0
   },
-  "spinnerVerbs": {
-    "mode": "replace",
-    "verbs": [
-      "Working"
-    ]
-  },
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Working"
+    ]
   }
 }
