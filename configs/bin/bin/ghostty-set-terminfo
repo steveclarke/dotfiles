@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ -z "$1" ]; then
   echo "Usage: $0 <server-name>"
@@ -8,4 +8,4 @@ fi
 SERVER_NAME="$1"
 
 # Run the command
-infocmp -x | ssh "$SERVER_NAME" -- tic -x -
+infocmp -x xterm-ghostty | ssh "$SERVER_NAME" -- tic -x -
