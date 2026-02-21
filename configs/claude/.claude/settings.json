@@ -60,12 +60,16 @@
     "swift-lsp@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "slack@claude-plugins-official": true
+    "slack@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true
   },
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
       "Working"
     ]
-  }
+  },
+  "model": "opus[1m]"
 }
