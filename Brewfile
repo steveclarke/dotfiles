@@ -1,6 +1,7 @@
 # Cross-platform CLI tools
 # Core development tools
 
+brew "searlsco/tap/turbocommit"
 brew "steveclarke/tap/superthread"
 
 brew "act"
