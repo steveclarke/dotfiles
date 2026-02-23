@@ -1,5 +1,5 @@
 ---
-name: rails-patterns
+name: real-world-rails
 description: Research how production Rails apps solve architectural problems using the Real World Rails repository. Use when the user wants to know how other apps handle something, find patterns, or compare approaches. Triggers on "rails patterns", "how do other apps", "real world rails", "research how apps do".
 ---
 
@@ -7,13 +7,15 @@ description: Research how production Rails apps solve architectural problems usi
 
 ## What This Is
 
-The **Real World Rails** repository is a collection of 170+ production Rails
+The **Real World Rails** repository is a collection of 200+ production Rails
 application source code. The `apps/` directory contains the full source of
 each app — models, migrations, schema, controllers, views, concerns, gems.
+The `engines/` directory contains Rails engines.
 
-Notable apps in the collection include Redmine, GitLab, Discourse, Mastodon,
-Chatwoot, Forem, Spree, Solidus, Fat Free CRM, Loomio, Locomotive CMS, and
-Camaleon CMS, among many others.
+Notable apps in the collection include Discourse, Mastodon, GitLab, Chatwoot,
+Gumroad, Spree, Solidus, Redmine, Canvas LMS, Loomio, Fat Free CRM,
+Locomotive CMS, Camaleon CMS, and many others. Recent additions include
+37signals apps: Upright (monitoring), Fizzy (kanban), and Campfire (chat).
 
 ## Locating the Repository
 
