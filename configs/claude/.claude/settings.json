@@ -39,16 +39,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "turbocommit run"
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
