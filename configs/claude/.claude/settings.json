@@ -60,6 +60,5 @@
     "verbs": [
       "Working"
     ]
-  },
-  "model": "opus[1m]"
+  }
 }
