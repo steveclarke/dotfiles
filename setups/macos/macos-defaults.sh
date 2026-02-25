@@ -91,6 +91,12 @@ defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryCli
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
+# Disable Look Up & Data Detectors (dictionary popup on force click / three-finger tap)
+# Prevents the dictionary/thesaurus popup from appearing when selecting text
+# System default: macOS shows dictionary lookup on force click or three-finger tap
+defaults write NSGlobalDomain com.apple.trackpad.forceClick -bool false
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerTapGesture -int 0
+
 # Increase sound quality for Bluetooth headphones/headsets
 # Increases audio quality for Bluetooth devices by raising minimum bitpool value
 # System default: macOS uses lower bitpool value which can result in lower audio quality
