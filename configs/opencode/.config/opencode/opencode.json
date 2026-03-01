@@ -26,5 +26,16 @@
       "git mv *": "ask",
       "git restore *": "ask"
     }
+  },
+  "mcp": {
+    "pencil": {
+      "command": [
+        "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
+        "--app",
+        "desktop"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
   }
 }
