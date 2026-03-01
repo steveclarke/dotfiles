@@ -130,9 +130,32 @@ Next steps:
 - **.ai**: AI/ML products
 - **.app**: Mobile or web applications
 - **.co**: Alternative to .com
+- **.click**: Action-oriented, great for tools where users click to do something
+- **.link**: Clean, trustworthy for link-based products
 - **.xyz**: Modern, creative projects
 - **.design**: Creative/design agencies
 - **.tech**: Technology companies
+- **.today**: Timely, action-oriented
+
+### Domain Hacks
+
+Split a word across the name and TLD to spell something out:
+
+| TLD | Example | Reads as |
+|-----|---------|----------|
+| `.al` | `approv.al` | "approval" |
+| `.de` | `deci.de` | "decide" |
+| `.se` | `respon.se` | "response" |
+| `.it` | `approve.it` | "approve it" |
+| `.do` | `approve.do` | "approve do" |
+| `.to` | `greenlight.to` | "greenlight to" |
+| `.is` | `what.is` | "what is" |
+| `.ly` | `quick.ly` | "quickly" |
+| `.er` | `develop.er` | "developer" |
+| `.es` | `not.es` | "notes" |
+| `.in` | `log.in` | "log in" |
+
+**Note:** Many domain hack TLDs are ccTLDs without RDAP support — check availability at a registrar directly.
 
 ## Advanced Features
 
@@ -206,19 +229,15 @@ When suggesting domains, I'll note:
 
 ## Implementation Notes
 
-When checking domain availability:
+### Checking Availability
 
-1. **First**: Check if `whois` command-line utility is available (`which whois` or `command -v whois`)
-2. **If available**: Use `whois <domain>` to check availability (fastest, most reliable, no API limits)
-3. **If not available**: Fall back to web-based domain availability APIs or services
-4. **Note**: Some TLDs may have different whois servers or rate limiting; handle gracefully
+**Primary tool:** `rdap` CLI (OpenRDAP) — modern replacement for `whois`. Returns structured JSON, works much better with newer TLDs (.click, .app, .today). Install: `go install github.com/openrdap/rdap/cmd/rdap@latest`. Use `--json` flag for machine-readable output.
 
-Example whois check:
-```bash
-whois example.com
-# Look for "No match" or "NOT FOUND" in output for available domains
-# Look for registration details for taken domains
-```
+**Fallback:** `whois` CLI if `rdap` is not installed.
+
+**Key statuses:** "pending delete" means the domain is expiring and may become available soon — worth monitoring.
+
+**RDAP limitations:** Some ccTLDs have no RDAP servers (`.al`, `.do`, `.so`, `.to`) — must check at a registrar directly.
 
 ## Related Tools
 
