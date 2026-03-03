@@ -36,11 +36,12 @@ suth cards assigned me
 
 ```
 -a, --account NAME    Use specific account for this command
--w, --workspace ID    Workspace ID (or use config/env var)
+-w, --workspace ID    Workspace (ID or name)
 -y, --yes             Skip confirmation prompts (for scripts/agents)
 -v, --verbose         Detailed logging
 -q, --quiet           Minimal logging
 --json                Output in JSON format (default is table)
+--limit N             Max items to show (default: 50)
 ```
 
 ## Command Reference
@@ -102,26 +103,34 @@ suth boards delete-list LIST_ID
 ### Cards
 
 ```bash
+# Listing
 suth cards list -b BOARD                      # List cards on a board
-  # Options: --space, --list, --include-archived, --since DATE, --updated-since DATE
-suth cards get CARD_ID [-o]                   # Get card details (--open for browser)
-  # Options: --raw, --no-content
-suth cards create --title "Task" -l LIST -b BOARD [options]
-  # Options: --content HTML, --parent-card ID, --epic ID,
-  #          --sprint SPRINT_ID, --project PROJECT_ID,
-  #          --start-date TIMESTAMP, --due-date TIMESTAMP,
-  #          --priority N, --owner USER
-suth cards update CARD_ID --title "New title" --priority 1
-suth cards delete CARD_ID                     # Delete card
-suth cards duplicate CARD_ID                  # Duplicate card
+suth cards list --sprint SPRINT -s SPACE      # List cards in a sprint
+  # Options: --list, --include-archived, --since DATE, --updated-since DATE
 suth cards assigned USER                      # Cards assigned to user
 suth cards assigned me                        # Cards assigned to me
   # Options: --board, --space, --project, --include-archived,
   #          --since DATE, --updated-since DATE
 
+# CRUD
+suth cards get CARD [-o]                      # Get card details (--open for browser)
+  # Options: --raw, --no-content
+suth cards create --title "Task" -l LIST -b BOARD [options]
+  # Options: --content HTML, --parent-card ID, --epic ID,
+  #          --sprint SPRINT -s SPACE (alternative to --board),
+  #          --start-date TIMESTAMP, --due-date TIMESTAMP,
+  #          --priority N, --owner USER
+suth cards update CARD [options]
+  # Options: --title, --list LIST, --board BOARD, --sprint SPRINT -s SPACE,
+  #          --position N, --priority N, --epic ID, --archived/--no-archived
+  # Note: list names auto-resolve for both board and sprint cards.
+  #   Moving to a sprint requires --sprint and -s (space).
+suth cards delete CARD                        # Delete card
+suth cards duplicate CARD                     # Duplicate card
+
 # Members
-suth cards assign CARD_ID USER                # Assign user
-suth cards unassign CARD_ID USER              # Unassign user
+suth cards assign CARD USER                   # Assign user
+suth cards unassign CARD USER                 # Unassign user
 
 # Relationships
 suth cards link --card CARD --related OTHER --type blocks
@@ -129,51 +138,51 @@ suth cards unlink --card CARD --related OTHER
 
 # Tags
 suth cards tags                               # List available tags
-suth cards tag CARD_ID tag1,tag2              # Add tags
-suth cards untag CARD_ID tag1                 # Remove tag
+suth cards tag CARD tag1,tag2                 # Add tags
+suth cards untag CARD tag1                    # Remove tag
 ```
 
 ### Projects (Epics)
 
 ```bash
 suth projects list                            # List roadmap projects
-suth projects get PROJECT_ID [-o]             # Get project details
+suth projects get PROJECT [-o]                # Get project details
 suth projects create --title "Q1" -l LIST [-b BOARD]
-suth projects update PROJECT_ID --title "New"
-suth projects delete PROJECT_ID
-suth projects add_card PROJECT_ID CARD_ID     # Link card to project
-suth projects remove_card PROJECT_ID CARD_ID  # Unlink card
+suth projects update PROJECT --title "New"
+suth projects delete PROJECT
+suth projects add_card PROJECT CARD           # Link card to project
+suth projects remove_card PROJECT CARD        # Unlink card
 ```
 
 ### Pages
 
 ```bash
 suth pages list [-s SPACE]                    # List pages
-suth pages get PAGE_ID [-o]                   # Get page details
+suth pages get PAGE [-o]                      # Get page details
 suth pages create -s SPACE [--title "Doc"]    # Create page
-suth pages update PAGE_ID --title "New title" # Update page
-suth pages duplicate PAGE_ID -s SPACE         # Duplicate page
-suth pages archive PAGE_ID                    # Archive page
-suth pages delete PAGE_ID                     # Delete page
+suth pages update PAGE --title "New title"    # Update page
+suth pages duplicate PAGE -s SPACE            # Duplicate page
+suth pages archive PAGE                       # Archive page
+suth pages delete PAGE                        # Delete page
 ```
 
 ### Comments
 
 ```bash
-suth comments get COMMENT_ID [-o]             # Get comment (opens parent card)
+suth comments get COMMENT [-o]               # Get comment (opens parent card)
 suth comments create --card CARD --content "Note"
-suth comments update COMMENT_ID --content "Updated"
-suth comments delete COMMENT_ID
+suth comments update COMMENT --content "Updated"
+suth comments delete COMMENT
 ```
 
 ### Replies
 
 ```bash
-suth replies list COMMENT_ID                  # List replies to a comment
-suth replies get REPLY_ID                     # Get reply details
-suth replies create COMMENT_ID --content "Reply text"
-suth replies update REPLY_ID --content "Updated"
-suth replies delete REPLY_ID
+suth replies list COMMENT                     # List replies to a comment
+suth replies get REPLY                        # Get reply details
+suth replies create COMMENT --content "Reply text"
+suth replies update REPLY --content "Updated"
+suth replies delete REPLY
 ```
 
 ### Checklists
@@ -181,18 +190,18 @@ suth replies delete REPLY_ID
 Checklists are a separate subcommand, not under `cards`:
 
 ```bash
-suth checklists list -c CARD_ID              # List checklists on a card
-suth checklists get CHECKLIST -c CARD_ID     # Get checklist details
-suth checklists create --title "Tasks" -c CARD_ID
-suth checklists update CHECKLIST --title "New Title" -c CARD_ID
-suth checklists delete CHECKLIST -c CARD_ID
+suth checklists list -c CARD                 # List checklists on a card
+suth checklists get CHECKLIST -c CARD        # Get checklist details
+suth checklists create --title "Tasks" -c CARD
+suth checklists update CHECKLIST --title "New Title" -c CARD
+suth checklists delete CHECKLIST -c CARD
 
 # Items
-suth checklists add-item CHECKLIST --title "Do thing" -c CARD_ID [--checked]
-suth checklists update-item ITEM_ID --checklist CL -c CARD_ID --title "New"
-suth checklists remove-item ITEM_ID --checklist CL -c CARD_ID
-suth checklists check ITEM_ID --checklist CL -c CARD_ID
-suth checklists uncheck ITEM_ID --checklist CL -c CARD_ID
+suth checklists add-item CHECKLIST --title "Do thing" -c CARD [--checked]
+suth checklists update-item ITEM --checklist CL -c CARD --title "New"
+suth checklists remove-item ITEM --checklist CL -c CARD
+suth checklists check ITEM --checklist CL -c CARD
+suth checklists uncheck ITEM --checklist CL -c CARD
 ```
 
 ### Lists
@@ -201,26 +210,26 @@ Board list (column) management as a separate subcommand:
 
 ```bash
 suth lists list -b BOARD                     # List columns on board
-suth lists get LIST_ID                       # Get list details
+suth lists get LIST                          # Get list details
 suth lists create --title "In Progress" -b BOARD
-suth lists update LIST_ID --title "Done"
-suth lists delete LIST_ID
+suth lists update LIST --title "Done"
+suth lists delete LIST
 ```
 
 ### Notes
 
 ```bash
 suth notes list                               # List notes
-suth notes get NOTE_ID [-o]                   # Get note details
+suth notes get NOTE [-o]                      # Get note details
 suth notes create --title "Meeting" [--transcript "..."]
-suth notes delete NOTE_ID
+suth notes delete NOTE
 ```
 
 ### Sprints
 
 ```bash
 suth sprints list -s SPACE                    # List sprints in space
-suth sprints get SPRINT_ID -s SPACE           # Get sprint details
+suth sprints get SPRINT -s SPACE              # Get sprint details
 ```
 
 ### Search
@@ -283,10 +292,11 @@ suth completion fish                          # Generate fish completion script
 
 ## Tips
 
-- Most commands accept **names or IDs** for spaces, boards, lists, users, and tags
-- Use `-s SPACE` to help resolve ambiguous board/list names
+- Most commands accept **names or IDs** for spaces, boards, lists, sprints, users, and tags
+- Use `-s SPACE` to help resolve ambiguous board/list/sprint names
 - Use `--json` for scripted output: `suth cards assigned me --json`
 - Use `me` as a user reference: `suth cards assigned me`
 - Use `-o` to open any resource in your browser: `suth cards get CARD -o`
 - Use `-y` to skip confirmation prompts (for scripts/agents)
 - Priority levels: 1=Urgent, 2=High, 3=Medium, 4=Low
+- Sprint cards auto-detect context: `suth cards update CARD -l "Done"` works without `--sprint`
