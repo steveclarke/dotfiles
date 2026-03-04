@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+#
+# plausible - Generate plausible random numbers from a sample distribution
+#
+# Usage:
+#   plausible [OPTIONS] [NUMBERS...]
+#   echo "1 2 3" | plausible [OPTIONS]
+#
+# Options:
+#   -n COUNT   Number of values to generate (default: 1)
+#   -i         Integer output (round to whole numbers)
+#   -d DIGITS  Decimal places (default: 2)
+#   -h         Show this help
+#
+# Examples:
+#   plausible 258 223 247 238 242 237 238 247 236 253 264 240 225
+#   plausible -n 5 258 223 247 238 242 237
+#   echo "258 223 247 238" | plausible -n 3
+#   plausible -n 10 -i 258 223 247 238 242
+
+set -euo pipefail
+
+usage() {
+  sed -n '3,/^$/s/^# \?//p' "$0"
+  exit 0
+}
+
+count=1
+integer=false
+decimals=2
+
+while getopts "n:id:h" opt; do
+  case $opt in
+    n) count=$OPTARG ;;
+    i) integer=true ;;
+    d) decimals=$OPTARG ;;
+    h) usage ;;
+    *) usage ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+# Collect numbers from args or stdin
+numbers=()
+if [[ $# -gt 0 ]]; then
+  for arg in "$@"; do
+    numbers+=("$arg")
+  done
+else
+  while read -r line; do
+    for word in $line; do
+      numbers+=("$word")
+    done
+  done
+fi
+
+if [[ ${#numbers[@]} -lt 2 ]]; then
+  echo "Error: Need at least 2 numbers to estimate a distribution." >&2
+  exit 1
+fi
+
+# Use awk to compute mean/stddev and generate samples via Box-Muller transform
+awk -v count="$count" -v integer="$integer" -v decimals="$decimals" '
+BEGIN {
+  srand()
+  n = ARGC - 1
+  sum = 0
+  sumsq = 0
+  min = 1e30
+  max = -1e30
+
+  for (i = 1; i <= n; i++) {
+    v = ARGV[i] + 0
+    vals[i] = v
+    sum += v
+    sumsq += v * v
+    if (v < min) min = v
+    if (v > max) max = v
+  }
+
+  mean = sum / n
+  variance = (sumsq / n) - (mean * mean)
+  stddev = sqrt(variance)
+
+  # Print stats to stderr
+  printf "Sample: n=%d, mean=%.2f, stddev=%.2f, range=[%.2f, %.2f]\n", n, mean, stddev, min, max > "/dev/stderr"
+  printf "---\n" > "/dev/stderr"
+
+  # Generate values using Box-Muller
+  for (i = 0; i < count; i++) {
+    do {
+      u1 = rand()
+    } while (u1 == 0)
+    u2 = rand()
+    z = sqrt(-2 * log(u1)) * cos(2 * 3.14159265358979 * u2)
+    val = mean + z * stddev
+
+    if (integer == "true") {
+      printf "%d\n", int(val + (val >= 0 ? 0.5 : -0.5))
+    } else {
+      printf "%." decimals "f\n", val
+    }
+  }
+}' "${numbers[@]}"
