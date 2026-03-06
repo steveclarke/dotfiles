@@ -1,6 +1,5 @@
 # macOS-specific packages
 tap "heroku/brew"
-tap "honeybadger-io/tap"
 tap "steipete/tap"
 tap "supersonic-app/supersonic"
 
@@ -28,6 +27,7 @@ cask "docker-desktop"
 cask "dropbox"
 cask "figma"
 cask "firefox"
+cask "gcloud-cli"
 cask "ghostty"
 cask "github"
 cask "google-chrome"
