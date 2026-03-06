@@ -22,6 +22,17 @@ If not found, stop and instruct the user to install it:
 - **macOS**: `brew install imagemagick`
 - **Linux**: `sudo apt install imagemagick`
 
+If the source is an SVG, also check for `rsvg-convert`:
+```bash
+which rsvg-convert
+```
+
+If not found, instruct the user to install it:
+- **macOS**: `brew install librsvg`
+- **Linux**: `sudo apt install librsvg2-bin`
+
+**Why:** ImageMagick's SVG rasterizer ignores `-background none` and renders a white canvas behind SVGs, destroying transparency. `rsvg-convert` handles SVG transparency correctly.
+
 ## Step 1: Validate Source Image
 
 1. Verify the source image exists at the provided path: `$1`
@@ -73,9 +84,36 @@ Check if the detected static assets directory exists. If not, create it.
 
 ## Step 5: Generate Favicon Files
 
-Run these ImageMagick commands to generate all favicon files. Replace `[STATIC_DIR]` with the detected static assets directory from Step 2.
+Replace `[STATIC_DIR]` with the detected static assets directory from Step 2.
 
-### favicon.ico (multi-resolution: 16x16, 32x32, 48x48)
+**IMPORTANT — SVG sources:** If the source is an SVG, you MUST use `rsvg-convert` for all PNG generation. ImageMagick's SVG rasterizer produces opaque white backgrounds even with `-background none`. Only use ImageMagick for the final ICO assembly from the already-rasterized PNGs.
+
+### For SVG sources — use rsvg-convert for PNGs:
+
+```bash
+rsvg-convert -w 96 -h 96 --background-color transparent "$1" -o [STATIC_DIR]/favicon-96x96.png
+rsvg-convert -w 180 -h 180 --background-color transparent "$1" -o [STATIC_DIR]/apple-touch-icon.png
+rsvg-convert -w 192 -h 192 --background-color transparent "$1" -o [STATIC_DIR]/web-app-manifest-192x192.png
+rsvg-convert -w 512 -h 512 --background-color transparent "$1" -o [STATIC_DIR]/web-app-manifest-512x512.png
+```
+
+Then generate ICO from the transparent PNGs (not directly from SVG):
+```bash
+rsvg-convert -w 16 -h 16 --background-color transparent "$1" -o /tmp/fav16.png
+rsvg-convert -w 32 -h 32 --background-color transparent "$1" -o /tmp/fav32.png
+rsvg-convert -w 48 -h 48 --background-color transparent "$1" -o /tmp/fav48.png
+magick /tmp/fav16.png /tmp/fav32.png /tmp/fav48.png [STATIC_DIR]/favicon.ico
+rm /tmp/fav16.png /tmp/fav32.png /tmp/fav48.png
+```
+
+Copy the SVG as favicon.svg:
+```bash
+cp "$1" [STATIC_DIR]/favicon.svg
+```
+
+### For raster sources (PNG, JPG, etc.) — use ImageMagick:
+
+#### favicon.ico (multi-resolution: 16x16, 32x32, 48x48)
 ```bash
 magick "$1" \
   \( -clone 0 -resize 16x16 \) \
@@ -85,30 +123,24 @@ magick "$1" \
   [STATIC_DIR]/favicon.ico
 ```
 
-### favicon-96x96.png
+#### favicon-96x96.png
 ```bash
 magick "$1" -resize 96x96 -background none -alpha on [STATIC_DIR]/favicon-96x96.png
 ```
 
-### apple-touch-icon.png (180x180)
+#### apple-touch-icon.png (180x180)
 ```bash
 magick "$1" -resize 180x180 -background none -alpha on [STATIC_DIR]/apple-touch-icon.png
 ```
 
-### web-app-manifest-192x192.png
+#### web-app-manifest-192x192.png
 ```bash
 magick "$1" -resize 192x192 -background none -alpha on [STATIC_DIR]/web-app-manifest-192x192.png
 ```
 
-### web-app-manifest-512x512.png
+#### web-app-manifest-512x512.png
 ```bash
 magick "$1" -resize 512x512 -background none -alpha on [STATIC_DIR]/web-app-manifest-512x512.png
-```
-
-### favicon.svg (only if source is SVG)
-If the source file has a `.svg` extension, copy it:
-```bash
-cp "$1" [STATIC_DIR]/favicon.svg
 ```
 
 ## Step 6: Create/Update site.webmanifest
