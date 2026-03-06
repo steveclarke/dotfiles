@@ -1,5 +1,6 @@
 # macOS-specific packages
 tap "heroku/brew"
+tap "honeybadger-io/tap"
 tap "steipete/tap"
 tap "supersonic-app/supersonic"
 
