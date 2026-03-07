@@ -9,7 +9,7 @@ disable-model-invocation: true
 ## Overview
 Structured command to help create vision documents by guiding through focused discovery phases and building each section systematically following our established feature development process.
 
-You are helping create a vision document following our established feature development process. First, read our feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md to understand our vision document structure and approach.
+Create a vision document following the established feature development process. First, read the feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md to understand the vision document structure and approach.
 
 Note: If the project has a local copy of the guide at @project/guides/feature-development-process.md, you may reference that instead for project-specific modifications.
 

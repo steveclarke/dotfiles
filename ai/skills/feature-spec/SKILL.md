@@ -9,7 +9,7 @@ disable-model-invocation: true
 ## Overview
 Structured command to help create concise technical specification documents by guiding through architectural decisions, system contracts, and technical design without getting bogged down in implementation details.
 
-You are helping create a technical specification document following our established feature development process. You have comprehensive context available:
+Create a technical specification document following the established feature development process. Comprehensive context available:
 
 **Required Reading**:
 - Feature development guide: @~/.local/share/dotfiles/ai/guides/feature-development-process.md

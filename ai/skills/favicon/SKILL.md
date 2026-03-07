@@ -2,7 +2,6 @@
 name: favicon
 description: Generates a complete set of favicons from a source image and updates project HTML with appropriate link tags. Use when creating favicons, app icons, or touch icons from a logo or source image. Triggers on "favicon", "app icon", "touch icon", "site icon".
 argument-hint: [path to source image]
-disable-model-invocation: true
 ---
 
 Generate a complete set of favicons from the source image at `$1` and update the project's HTML with the appropriate link tags.
