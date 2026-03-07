@@ -1,21 +1,19 @@
 ---
 name: obsidian-vault-context
-description: Work with Steve's Obsidian vault at /Users/steve/Documents/Main using direct file operations. Knows folder structure, daily note format (YYYY-MM-DD.md), and research capture templates. Use when reading/writing Obsidian notes or capturing research. Triggers on "obsidian", "daily note", "vault", "capture research".
+description: Works with the local Obsidian vault using direct file operations. Knows folder structure, daily note format (YYYY-MM-DD.md), and research capture templates. Use when reading/writing Obsidian notes or capturing research. Triggers on "obsidian", "daily note", "vault", "capture research".
 disable-model-invocation: true
 ---
 
 # Obsidian Vault Context
 
-## Key Concept
-Obsidian vaults are just folders of markdown files. Use direct file operations (read_file, write, search_replace) first. Only use obsidian-cli for UI operations or link updates.
-
-## Steve's Vault
-- **Path:** `/Users/steve/Documents/Main`
-- **Detection:** Try `obsidian-cli print-default` first, then check `/Users/steve/Documents/Main`
+## Vault Location
+- **Detection:** Run `obsidian-cli print-default` to get the vault path
+- Use direct file operations (Read, Write, Edit) — the vault is just a folder of markdown files
+- Only use obsidian-cli for UI operations or link updates
 
 ## Folder Structure
 ```
-/Users/steve/Documents/Main/
+$VAULT_PATH/
 ├── Daily/              # Daily notes (YYYY-MM-DD.md)
 ├── AI/                 # AI/LLM research
 ├── Software Development/
@@ -29,7 +27,7 @@ Obsidian vaults are just folders of markdown files. Use direct file operations (
 - **Format:** `YYYY-MM-DD.md` (e.g., `2025-10-18.md`)
 - **Location:** `/Daily/` folder
 - **No frontmatter** - clean markdown
-- **Path:** `/Users/steve/Documents/Main/Daily/{YYYY-MM-DD}.md`
+- **Path:** `$VAULT_PATH/Daily/{YYYY-MM-DD}.md`
 
 ## Research Format
 Steve captures research in daily notes using this template:
@@ -57,21 +55,13 @@ Steve captures research in daily notes using this template:
 ## Common Operations
 
 **Read daily note:**
-```python
-read_file("/Users/steve/Documents/Main/Daily/2025-10-18.md")
-```
+Use the Read tool with path `$VAULT_PATH/Daily/2025-10-18.md`
 
 **Append to daily note:**
-```python
-existing = read_file(daily_path)
-updated = existing + "\n\n### New Entry\n**Link:** ...\n"
-write(daily_path, updated)
-```
+Read the existing file first, then use the Edit tool to append new content at the end. Add `\n\n` spacing before the new section.
 
 **Create new note:**
-```python
-write("/Users/steve/Documents/Main/Topic/Note.md", "# Note\n\nContent")
-```
+Use the Write tool to create `$VAULT_PATH/Topic/Note.md` with the desired content.
 
 ## obsidian-cli (Use Sparingly)
 - `obsidian-cli print-default` - Get vault path
