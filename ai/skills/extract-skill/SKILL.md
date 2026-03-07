@@ -30,15 +30,15 @@ Summarize what you plan to extract and confirm with the user before proceeding.
 
 ### Phase 2: Decide Destination
 
-If the user already specified a skill or the destination is obvious from context, just proceed. Otherwise, use the AskQuestion tool (or ask conversationally) to clarify:
+If the user already specified a skill or the destination is obvious from context, just proceed. Otherwise, ask conversationally to clarify:
 
 1. **New or existing skill?**
-   - If existing: Which skill to update? (list relevant skills from `~/.cursor/skills/` and `.cursor/skills/`)
+   - If existing: Which skill to update? (check personal skills directory and project skills)
    - If new: What should it be named?
 
 2. **Storage location** (for new skills):
-   - Personal (`~/.cursor/skills/`) — available across all projects
-   - Project (`.cursor/skills/`) — shared with the repository
+   - Personal (user's skills directory, e.g. `~/.claude/skills/`) — available across all projects
+   - Project (project-local skills directory) — shared with the repository
 
 ### Phase 3: Draft the Skill Content
 
@@ -117,6 +117,6 @@ Note how this extracts the diagnostic sequence and common solutions without any 
 
 **Conversation had multiple topics**: Ask which specific learning to extract, or suggest creating separate skills for distinct topics.
 
-**Learning is too small for a skill**: Suggest creating a Cursor rule (`.cursor/rules/`) instead, which is better suited for single-line or short guidelines.
+**Learning is too small for a skill**: Consider whether a project instruction file (e.g. CLAUDE.md) or a brief note is more appropriate than a full skill.
 
 **Existing skill needs major rewrite**: Confirm with the user whether to restructure the existing skill or create a new one that supersedes it.

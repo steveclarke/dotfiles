@@ -1,6 +1,6 @@
 ---
 name: feature-vision
-description: Vision Document
+description: Creates vision documents through focused discovery phases, building each section systematically. Produces a vision.md covering problem statement, proposed solution, user experience, and scope boundaries following the established feature development process.
 disable-model-invocation: true
 ---
 
