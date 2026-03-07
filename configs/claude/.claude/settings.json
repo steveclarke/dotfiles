@@ -42,6 +42,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE\" == *.rb ]]; then cd \"$(git -C \"$(dirname \"$CLAUDE_FILE\")\" rev-parse --show-toplevel 2>/dev/null || dirname \"$CLAUDE_FILE\")\" && bundle exec standardrb --fix \"$CLAUDE_FILE\" 2>/dev/null; fi; exit 0",
+            "statusMessage": "Running standardrb..."
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "idle_prompt",
