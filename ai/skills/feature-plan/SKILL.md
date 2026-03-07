@@ -9,7 +9,7 @@ disable-model-invocation: true
 ## Overview
 Structured command to help create implementation plan documents by determining plan structure, sequencing development phases, and generating actionable tasks following our established planning patterns.
 
-You are helping create implementation plan documents following our established feature development process. You have comprehensive context available:
+Create implementation plan documents following the established feature development process. Comprehensive context available:
 
 **Required Reading**:
 - Feature development guide: @~/.local/share/dotfiles/ai/guides/feature-development-process.md

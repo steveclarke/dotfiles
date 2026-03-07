@@ -9,7 +9,7 @@ disable-model-invocation: true
 ## Overview
 Structured command to help create a requirements document by guiding through requirements discovery, practical scoping, and generating a single, consolidated requirements document with clear, practical language.
 
-You are helping create a requirements document following our established feature development process. First, read our feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md and the vision document at @vision.md to understand the feature scope and our documentation approach.
+Create a requirements document following the established feature development process. First, read the feature development guide at @~/.local/share/dotfiles/ai/guides/feature-development-process.md and the vision document at @vision.md to understand the feature scope and documentation approach.
 
 Note: If the project has a local copy of the guide at @project/guides/feature-development-process.md, you may reference that instead for project-specific modifications.
 

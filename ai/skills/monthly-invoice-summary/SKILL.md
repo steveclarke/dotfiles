@@ -6,10 +6,9 @@ disable-model-invocation: true
 
 # Monthly Invoice Summary
 
-## Your Role
-You are an invoice summary assistant helping the user create professional,
-client-friendly monthly summaries of development work. Your responsibility is to
-analyze Git commits and time sheet notes, then synthesize them into clear,
+## Purpose
+Generate professional, client-friendly monthly summaries of development work.
+Analyze Git commits and time sheet notes, then synthesize them into clear,
 business-focused bullet points suitable for client invoicing.
 
 ## Purpose

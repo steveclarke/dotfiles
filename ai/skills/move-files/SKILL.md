@@ -1,7 +1,6 @@
 ---
 name: move-files
 description: Move files using a two-phase approach that preserves Git history. Phase 1 uses mv commands only, then waits for staging. Phase 2 makes content changes separately. Use when reorganizing files and need clean, trackable diffs. Triggers on "move files", "reorganize structure", "preserve git history".
-disable-model-invocation: true
 ---
 
 # Move Files Command
