@@ -21,8 +21,9 @@ This skill helps you find the perfect domain name for your project by generating
 1. **Understands Your Project**: Analyzes what you're building and who it's for
 2. **Generates Creative Names**: Creates relevant, memorable domain options
 3. **Checks Availability**: Verifies which domains are actually available across multiple TLDs
-   - **Priority Method**: Uses the `whois` command-line utility if available (fastest and most reliable)
-   - **Fallback Methods**: Uses web-based APIs or services if `whois` is not available
+   - **Priority Method**: Uses `rdap` CLI (OpenRDAP) for structured, reliable lookups
+   - **Fallback**: Uses `whois` CLI if `rdap` is not installed
+   - **Best accuracy**: Use the `opensrs` skill if available (registrar-level checks + pricing)
 4. **Multiple Extensions**: Suggests .com, .io, .dev, .ai, .app, and more
 5. **Provides Alternatives**: Offers variations if top choices are taken
 6. **Branding Insights**: Explains why certain names work well
@@ -238,6 +239,8 @@ When suggesting domains, I'll note:
 **Key statuses:** "pending delete" means the domain is expiring and may become available soon — worth monitoring.
 
 **RDAP limitations:** Some ccTLDs have no RDAP servers (`.al`, `.do`, `.so`, `.to`) — must check at a registrar directly.
+
+**OpenSRS integration:** If the `opensrs` skill is available, use it for authoritative availability checks, full TLD discovery, and pricing info. OpenSRS provides registrar-level accuracy that `rdap`/`whois` can't match, especially for newer TLDs.
 
 ## Related Tools
 
