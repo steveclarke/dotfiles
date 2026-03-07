@@ -5,18 +5,11 @@ description: Write clean, modular, production-ready bash scripts with proper err
 
 # Modular Bash Script Writing
 
-Write bash scripts with clear structure, proper error handling, and modular functions.
+Follow this structure when writing bash scripts.
 
-## Core Principles
+## Script Template
 
-- **Strict mode**: Start with `set -euo pipefail`
-- **Functions over monoliths**: One function per logical operation
-- **Document at top**: Header with purpose, usage, configuration
-- **Fail fast with clarity**: Descriptive errors with fix suggestions
-
-## Script Structure
-
-Place `main()` immediately after variables so workflow is visible at file top.
+Place `main()` immediately after variables so the workflow is visible at file top.
 
 ```bash
 #!/usr/bin/env bash
@@ -93,36 +86,5 @@ main "$@"
 - **Name clearly**: Verb-based names (`setup_directory`, `validate_config`)
 - **One purpose**: If you need "and" to describe it, split it
 - **Log progress**: Start with `log "..."`, end with status
-- **Return codes**: `return 0` success, `return 1` failure
 - **Keep focused**: 5-20 lines per function
-
-## Error Handling
-
-```bash
-# Good: Clear error with context
-setup_directory() {
-  log "Creating deployment directory..."
-  if ! ssh "$HOST" "mkdir -p /app/deploy"; then
-    error "Failed to create directory on $HOST"
-  fi
-  log "Directory ready"
-}
-
-# Bad: Silent failure
-setup_directory() {
-  ssh "$HOST" "mkdir -p /app/deploy"
-}
-```
-
-## Quality Checklist
-
-- [ ] Strict mode (`set -euo pipefail`)
-- [ ] Header with overview and usage
-- [ ] Helper functions (log, info, warn, error)
-- [ ] Core logic in named functions
-- [ ] Main() shows clear flow at top
-- [ ] Error messages include context
-- [ ] No silent failures
-- [ ] Meaningful variable names
-- [ ] 2-space indentation
-- [ ] Functions grouped with section headers
+- **Group with section headers**: Use `####` dividers between logical groups

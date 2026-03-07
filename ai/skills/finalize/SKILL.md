@@ -1,13 +1,9 @@
+---
+name: finalize
+description: Post-implementation checklist for documentation, code quality, convention alignment, visual verification, and issue hygiene. Run after core work is done, before committing or merging. Use when user says "finalize", "ready to merge", "preflight check", "wrap this up", "did we miss anything", or "final review".
+---
+
 # Finalize
-
-Post-implementation checklist for documentation, code quality, convention
-alignment, visual verification, and issue hygiene. Run this after the core
-work is done and before committing, merging, or pushing.
-
-Use when: "let's finalize", "are we ready to merge?", "what's left?",
-"let's wrap this up", "let's get ready to merge", "prepare to commit",
-"run the checklist", "did we miss anything?", "preflight check",
-"is everything documented?", "let's do a final review", "clean up before merge".
 
 ## How it works
 
