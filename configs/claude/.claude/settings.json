@@ -66,12 +66,14 @@
     "slack@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true
+    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-code-plugins": true
   },
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
       "Working"
     ]
-  }
+  },
+  "effortLevel": "high"
 }
