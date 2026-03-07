@@ -125,17 +125,16 @@ Use `scripts/extract_fields.py` to get form fields from a PDF.
 
 ## Skills in This Repo
 
+Browse the `ai/skills/` directory for the full list. Each skill folder contains a `SKILL.md` with its description and trigger conditions. A few examples:
+
 ### 1password
-Fetch secrets with 1Password CLI. Keeps credentials out of chat and shell history.
+Fetch secrets and manage 1Password items via CLI.
 
-### bruno-endpoint-creation
-Create REST API endpoints in Bruno. Covers auth, request setup, and testing.
+### bash-script-writing
+Write clean, modular, production-ready bash scripts with proper error handling.
 
-### code-review
-Run thorough code reviews. Checks security, performance, and code quality.
+### time-tracking
+Manage time tracking with Toggl or Clockify. Start/stop timers, log hours, view entries.
 
-### toggl
-Track time with the Toggl CLI. Start/stop timers, log hours, view entries.
-
-### todoist-daily-review
-Review and document Todoist tasks. Researches items, writes summaries, marks complete.
+### todoist
+Interact with Todoist via MCP. Add tasks, list tasks, manage projects.
