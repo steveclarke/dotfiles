@@ -81,7 +81,8 @@
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "stripe@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
+    "security-guidance@claude-plugins-official": true,
+    "ruby-lsp@claude-plugins-official": true
   },
   "spinnerVerbs": {
     "mode": "replace",
