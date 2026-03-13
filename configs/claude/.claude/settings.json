@@ -14,7 +14,6 @@
       "Skill(*)",
       "mcp__plugin_context7_context7__*",
       "mcp__todoist__*",
-      "mcp__Printer__*",
       "mcp__pencil"
     ],
     "ask": [
@@ -71,18 +70,16 @@
     "command": "bash \"$HOME/.claude/statusline.sh\""
   },
   "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "stripe@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "ruby-lsp@claude-plugins-official": true
+    "ruby-lsp@claude-plugins-official": true,
+    "slack@claude-plugins-official": true
   },
   "spinnerVerbs": {
     "mode": "replace",
@@ -90,5 +87,6 @@
       "Working"
     ]
   },
-  "effortLevel": "high"
+  "effortLevel": "medium",
+  "voiceEnabled": true
 }
