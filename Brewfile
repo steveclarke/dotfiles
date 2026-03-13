@@ -5,6 +5,7 @@ brew "steveclarke/tap/superthread"
 
 brew "act"
 brew "aichat"
+brew "ansible"
 brew "atuin"
 brew "autoconf"
 brew "bat"
