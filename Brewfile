@@ -2,6 +2,7 @@
 # Core development tools
 
 brew "steveclarke/tap/superthread"
+brew "steveclarke/tap/outport"
 
 brew "act"
 brew "aichat"
