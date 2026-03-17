@@ -12,11 +12,6 @@ application source code. The `apps/` directory contains the full source of
 each app — models, migrations, schema, controllers, views, concerns, gems.
 The `engines/` directory contains Rails engines.
 
-Notable apps in the collection include Discourse, Mastodon, GitLab, Chatwoot,
-Gumroad, Spree, Solidus, Redmine, Canvas LMS, Loomio, Fat Free CRM,
-Locomotive CMS, Camaleon CMS, and many others. Recent additions include
-37signals apps: Upright (monitoring), Fizzy (kanban), and Campfire (chat).
-
 ## Locating the Repository
 
 Look for a directory called `real-world-rails` with an `apps/` subdirectory.
