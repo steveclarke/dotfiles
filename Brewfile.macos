@@ -1,4 +1,5 @@
 # macOS-specific packages
+tap "bwya77/tap"
 tap "heroku/brew"
 tap "steipete/tap"
 tap "supersonic-app/supersonic"
@@ -23,6 +24,7 @@ cask "codex"
 cask "codexbar"
 cask "cursor"
 cask "discord"
+cask "dockanchor"
 cask "docker-desktop"
 cask "dropbox"
 cask "figma"
