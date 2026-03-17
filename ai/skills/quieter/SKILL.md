@@ -12,20 +12,7 @@ Reduce visual intensity in designs that are too bold, aggressive, or overstimula
 
 ## MANDATORY PREPARATION
 
-### Context Gathering (Do This First)
-
-You cannot do a great job without having necessary context, such as target audience (critical), desired use-cases (critical), brand personality/tone, and everything else that a great human designer would need as well.
-
-Attempt to gather these from the current thread or codebase.
-
-1. If you don't find *exact* information and have to infer from existing design and functionality, you MUST STOP and STOP and call the AskUserQuestionTool to clarify. whether you got it right.
-2. Otherwise, if you can't fully infer or your level of confidence is medium or lower, you MUST STOP and call the AskUserQuestionTool to clarify. clarifying questions first to complete your context.
-
-Do NOT proceed until you have answers. Guessing leads to generic design.
-
-### Use frontend-design skill
-
-Use the frontend-design skill for design principles and anti-patterns. Do NOT proceed until it has executed and you know all DO's and DON'Ts.
+Use the frontend-design skill — it contains design principles, anti-patterns, and the **Context Gathering Protocol**. Follow the protocol before proceeding — if no design context exists yet, you MUST run teach-impeccable first.
 
 ---
 
@@ -47,7 +34,7 @@ Analyze what makes the design feel too intense:
    - What's working? (Don't throw away good ideas)
    - What's the core message? (Preserve what matters)
 
-If any of these are unclear from the codebase, STOP and call the AskUserQuestionTool to clarify.
+If any of these are unclear from the codebase, STOP and call the AskUserQuestion tool to clarify.
 
 **CRITICAL**: "Quieter" doesn't mean boring or generic. It means refined, sophisticated, and easier on the eyes. Think luxury, not laziness.
 
