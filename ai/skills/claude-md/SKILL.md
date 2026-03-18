@@ -71,7 +71,7 @@ Stop adding these — they waste context every session:
 ## Auditing an Existing CLAUDE.md
 
 1. Read the file alongside the README and docs it might duplicate.
-2. Apply the litmus test to each section.
+2. Apply the litmus test line by line.
 3. Report verdicts: **keep** / **cut** / **extract to separate file** (with reasoning).
 4. Suggest routing patterns for content that belongs but is too detailed.
 5. Check line count.
@@ -81,6 +81,12 @@ Stop adding these — they waste context every session:
 ## Assistant Config Detection
 
 If the CLAUDE.md defines a persona or role ("You are...", personality, coaching instructions, communication style), it is an **assistant config file** — a different use case entirely. Flag this: "This looks like an AI assistant config, not a project conventions file. The standard CLAUDE.md rules don't apply here." Do not silently skip this check.
+
+## Out of Scope
+
+- **Not a linter** — this skill guides your thinking, it does not auto-fix files.
+- **Not a template** — enforce principles, not rigid structure. CLAUDE.md format is intentionally flexible.
+- **Does not modify non-CLAUDE.md files** — if content should move to a README or docs file, recommend the move but don't make it.
 
 ## Edge Cases
 
