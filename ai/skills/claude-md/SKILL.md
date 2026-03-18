@@ -80,7 +80,7 @@ Stop adding these — they waste context every session:
 
 ## Assistant Config Detection
 
-If the CLAUDE.md defines a persona or role ("You are...", personality, coaching instructions, communication style), it is an **assistant config file** — a different use case entirely. Flag this: "This looks like an AI assistant config, not a project conventions file. The standard CLAUDE.md rules don't apply here." Do not silently skip this check.
+If the CLAUDE.md defines a persona or role ("You are...", personality, coaching instructions, communication style), it is an **assistant config file** — a different use case entirely. Flag this: "This looks like an AI assistant config, not a project conventions file. The standard CLAUDE.md rules don't apply here." Then proceed with the user's request without applying the litmus test — only structural rules (line count, routing) still apply.
 
 ## Out of Scope
 
