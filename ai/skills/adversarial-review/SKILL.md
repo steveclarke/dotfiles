@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: Spawns a fresh-eyes subagent to critique code, auto-fixes issues, iterates until only nitpicks remain. Opinionated — enforces project conventions, DRY, modularity, testability, simplicity.
+description: Use when implementation is complete and you want rigorous code review before committing. Use for features, refactors, and changes touching critical paths. Not for trivial changes — this is expensive.
 disable-model-invocation: true
 argument-hint: "[files/dirs] [--pr]"
 ---
@@ -12,6 +12,19 @@ new subagent reviews the code cold — no knowledge of why decisions were made, 
 attachment to the implementation. The main agent fixes Critical and Suggestion
 findings, then a fresh reviewer checks again. Loop stops when only Nitpicks
 remain or after 3 rounds.
+
+## When to Use
+
+- After implementation, before committing — especially for features and refactors
+- When changes touch critical paths, security-sensitive code, or complex logic
+- When you want a review that's harder than what you'd give yourself
+- Position in pipeline: `implement → /simplify → /adversarial-review → /finalize → commit`
+
+## When NOT to Use
+
+- Trivial changes, docs-only, config tweaks — use `/simplify` + `/finalize` instead
+- Mid-implementation — finish building first, then review
+- When you just want a quick sanity check — use `/code-review` instead
 
 ## Input Modes
 
@@ -142,3 +155,10 @@ Present a summary when done:
 ```
 
 If the first round returns no findings at all, report that the code passed clean and stop.
+
+## Common Mistakes
+
+- **Reusing the same subagent** for round 2 — it remembers its own findings and loses the "fresh eyes" benefit. Always spawn a new one.
+- **Diffing fixes only** instead of the full changeset — the round 2 reviewer should see everything, not just what changed since round 1.
+- **Applying every finding blindly** — you have conversation context the reviewer lacks. Use judgment. Skip findings that conflict with project conventions or prior decisions, and note why.
+- **Running this on trivial changes** — this is expensive. If you just renamed a variable, use `/simplify` + `/finalize` instead.
