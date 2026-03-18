@@ -79,7 +79,8 @@
     "superpowers@claude-plugins-official": true,
     "stripe@claude-plugins-official": true,
     "ruby-lsp@claude-plugins-official": true,
-    "slack@claude-plugins-official": true
+    "slack@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true
   },
   "spinnerVerbs": {
     "mode": "replace",
