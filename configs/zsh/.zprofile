@@ -96,3 +96,12 @@ if command -v mise >/dev/null 2>&1; then
       ;;
   esac
 fi
+
+# =============================================================================
+# ANDROID SDK (installed via `brew install --cask android-commandlinetools`)
+# =============================================================================
+export ANDROID_HOME="/opt/homebrew/share/android-commandlinetools"
+case ":$PATH:" in
+  *":$ANDROID_HOME/platform-tools:"*) ;;
+  *) export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" ;;
+esac
