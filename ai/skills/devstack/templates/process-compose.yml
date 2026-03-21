@@ -22,7 +22,6 @@
 version: "0.5"
 
 log_level: info
-theme: "Catppuccin Mocha"
 
 shell:
   shell_command: "bash"
