@@ -79,5 +79,9 @@ bin/dev                        # Start everything
 <!-- Project-specific gotchas and things agents should know -->
 - Docker Compose file is `docker-compose.yml` (not `compose.yml`)
 - process-compose uses login shell (`bash -lc`) for PATH resolution
-- Rails health check uses exec probe with curl
-- process-compose auto-loads `.env` for port variables from outport
+- Processes using mise-managed tools need `eval "$(mise activate bash)"`
+- Rails health check uses exec probe with curl (not http_get, which breaks
+  with outport's HTTPS redirect)
+- process-compose uses UDS (unix domain socket) for client communication —
+  no TCP port needed, worktree-safe by design
+- `bin/dev` sources `.env` for port variables from outport
