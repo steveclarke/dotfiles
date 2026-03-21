@@ -22,7 +22,7 @@ Look for these files and note what exists:
 |------|-------------------|
 | `Procfile.dev` | Processes to convert (web, css, js, etc.) |
 | `compose.yml` or `docker-compose.yml` | Docker services (Postgres, Redis, Mailpit, etc.) |
-| `outport.yml` or `.outport.yml` | Port management is in place |
+| `outport.yml` | Port management is in place |
 | `bin/dev` | Existing dev starter (likely Foreman) |
 | `bin/services` | Existing Docker service wrapper |
 | `bin/setup` | One-time initialization script |
@@ -33,16 +33,17 @@ Look for these files and note what exists:
 ## 3. Handle Docker Compose File Naming
 
 process-compose auto-discovers files in this order: `compose.yml`, `compose.yaml`,
-`process-compose.yml`, `process-compose.yaml`. If the project has `compose.yml`,
-it will conflict.
+`process-compose.yml`, `process-compose.yaml`. If the project has `compose.yml`
+**in the same directory** as `process-compose.yml`, it will conflict.
 
-**Action:** If `compose.yml` exists, rename it to `docker-compose.yml`:
+**Action:** If `compose.yml` exists in the project root, rename it to `docker-compose.yml`:
 ```bash
 git mv compose.yml docker-compose.yml
 ```
 Docker Compose supports both names natively. No other changes needed.
 
-If the project already uses `docker-compose.yml`, no action needed.
+If `compose.yml` is in a subdirectory (e.g., `backend/compose.yml`), no conflict
+exists — process-compose only auto-discovers in its own directory.
 
 ## 4. Author process-compose.yml
 
@@ -73,6 +74,21 @@ disable_exit_confirmation: false
 Built-in options: `Catppuccin Mocha`, `One Dark`, `Monokai`, `Cobalt`, `Material`.
 Do NOT put `theme:` in `process-compose.yml` — it will be silently ignored.
 
+### mise Activation (CRITICAL)
+
+The login shell (`bash -lc`) is not always sufficient to load mise-managed tool
+versions. Any process that uses a mise-managed tool (Ruby, Node, pnpm) MUST
+include `eval "$(mise activate bash)"` in its command:
+
+```yaml
+  rails:
+    command: eval "$(mise activate bash)" && bin/rails server -p $PORT
+```
+
+Without this, processes may pick up the macOS system Ruby (2.6) or other system
+tool versions instead of the mise-managed versions. Always add the activation
+prefix — it's harmless if mise is already active and critical when it isn't.
+
 ### Docker Services
 For each service in docker-compose.yml, create a process entry with a readiness
 probe and shutdown command:
@@ -95,6 +111,19 @@ processes:
       command: docker compose stop mailpit
 ```
 
+If the Docker Compose file is in a subdirectory (e.g., `backend/compose.yml`),
+prefix commands with `cd backend &&`:
+```yaml
+  postgres:
+    command: cd backend && docker compose up postgres
+    readiness_probe:
+      exec:
+        command: "cd backend && docker compose exec postgres pg_isready -U postgres"
+      ...
+    shutdown:
+      command: cd backend && docker compose stop postgres
+```
+
 ### Rails Server
 Use an exec probe with curl for health checks. Do NOT use http_get — the
 outport reverse proxy redirects port 80 to HTTPS, breaking the built-in
@@ -113,6 +142,14 @@ HTTP probe when it falls back to no port:
       failure_threshold: 10
 ```
 
+**Rails host authorization:** If the project uses outport's `.test` domain
+routing, Rails 8+ will block requests with "Blocked host" errors. Add this
+to `config/environments/development.rb`:
+```ruby
+config.hosts << ".projectname.test"
+```
+The leading dot is a wildcard covering all subdomains.
+
 ### CSS/JS Watchers
 Depend on rails being started (not healthy — just started):
 ```yaml
@@ -123,7 +160,7 @@ Depend on rails being started (not healthy — just started):
         condition: process_started
 
   js:
-    command: pnpm build --watch
+    command: eval "$(mise activate bash)" && pnpm build --watch
     depends_on:
       rails:
         condition: process_started
@@ -136,20 +173,40 @@ then silently dies. The process shows as "Completed" in status — easy to miss 
 it looks like a successful one-shot build. The `always` flag maps to `--watch=always`
 which keeps the watcher alive regardless of stdin.
 
-Note: Check if commands need `eval "$(mise activate bash)"` prefix. The global
-`bash -lc` login shell usually puts mise shims on PATH, but if a command uses a
-tool managed by mise (Ruby, Node, pnpm), test with `bash -lc "which <tool>"` first.
+### One-Shot Processes
+Some tasks need to run once before other processes start (e.g., building shared
+frontend layers). Use `availability` to prevent restarts and `exit_on_end: false`
+so process-compose doesn't shut down when it exits:
+```yaml
+  prepare_layers:
+    command: eval "$(mise activate bash)" && pnpm prepare:layers
+    availability:
+      restart: "no"
+      exit_on_end: false
+```
+
+Other processes can depend on it completing:
+```yaml
+  frontend:
+    command: eval "$(mise activate bash)" && pnpm dev
+    depends_on:
+      prepare_layers:
+        condition: process_completed
+```
 
 ### Environment Variables
 process-compose auto-loads `.env` from the working directory. Variables like
 `$PORT`, `$DB_PORT` from outport are available to all processes and probes.
-No additional env configuration needed.
+
+**Monorepo note:** If the `.env` file is in a subdirectory (e.g., `backend/.env`),
+`bin/dev` should source it before launching process-compose. See the bin/dev
+section below.
 
 ### Nuxt/Node Frontend
 For projects with frontend apps:
 ```yaml
   frontend:
-    command: pnpm dev
+    command: eval "$(mise activate bash)" && pnpm dev
     depends_on:
       rails:
         condition: process_healthy
@@ -169,27 +226,60 @@ For projects with frontend apps:
       command: docker compose stop redis
 ```
 
-## 5. Replace bin/dev
+## 5. Create bin/dev
 
-Replace the existing `bin/dev` (typically a Foreman wrapper) with a process-compose wrapper:
+Replace the existing `bin/dev` (if any) with a process-compose wrapper.
+
+### UDS-Only Server (CRITICAL for worktree isolation)
+
+process-compose runs an HTTP API server that client commands (`status`,
+`restart`, `logs`, `down`) connect to. By default this listens on TCP port
+8080. Multiple worktrees running simultaneously would all collide on that port.
+
+The solution is UDS (unix domain sockets) mode — two flags:
+
+- **`-U`** — use a unix socket instead of TCP. No port at all.
+- **`-u /path/to/sock`** — set a deterministic socket path. Without this,
+  the default path includes the PID and changes every run, so client
+  commands can't find the server.
+
+**IMPORTANT:** Do NOT use `--no-server`. Despite the name, it disables ALL
+servers — including UDS. In process-compose, UDS is HTTP-over-unix-socket, so
+"no server" kills UDS too. This is confirmed by the maintainer (GitHub #358).
+
+### Template
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source .env if it's not in the project root (monorepo pattern)
+# if [[ -f backend/.env ]]; then
+#   set -a
+#   source backend/.env
+#   set +a
+# fi
+
+# UDS-only server: no TCP port, deterministic socket path.
+# Uses project name for worktree isolation. If using outport,
+# COMPOSE_PROJECT_NAME is unique per worktree (e.g., "myapp-1").
+pc_sock="${TMPDIR:-/tmp}process-compose-${COMPOSE_PROJECT_NAME:-myproject}.sock"
+pc_flags=(-U -u "$pc_sock")
+
 case "${1:-}" in
-  -D)        shift; exec process-compose up -D --no-server "$@" ;;
-  stop)      exec process-compose down ;;
-  status)    exec process-compose process list --output json ;;
-  logs)      exec process-compose process logs "${2:?specify a service}" ;;
-  restart)   exec process-compose process restart "${2:?specify a service}" ;;
-  *)         exec process-compose up --no-server "$@" ;;
+  -D)        shift; process-compose up -D "${pc_flags[@]}" "$@" ;;
+  stop)      process-compose "${pc_flags[@]}" down ;;
+  status)    process-compose "${pc_flags[@]}" process list --output json ;;
+  logs)      process-compose "${pc_flags[@]}" process logs "${2:?specify a service}" ;;
+  restart)   process-compose "${pc_flags[@]}" process restart "${2:?specify a service}" ;;
+  *)         process-compose up "${pc_flags[@]}" "$@" ;;
 esac
 ```
 
-**IMPORTANT:** The `--no-server` flag disables process-compose's HTTP server (port 8080).
-Without this, multiple worktrees running simultaneously will conflict on port 8080.
-The CLI commands (status, logs, restart) use unix sockets, not HTTP, so `--no-server` is safe.
+**Adapt for your project:**
+- Uncomment the `.env` sourcing if port variables aren't in the project root
+- Replace `myproject` with your project name (or use `COMPOSE_PROJECT_NAME`
+  if outport is managing it)
 
 Make it executable: `chmod +x bin/dev`
 
@@ -227,12 +317,18 @@ Run through this checklist before committing:
 
 1. Dry-run: `process-compose up --dry-run` (validates config)
 2. Start: `bin/dev -D` (headless)
-3. Wait: `process-compose project is-ready --wait`
+3. Wait: `sleep 15` (give services time to start)
 4. Status: `bin/dev status` (JSON — all services running/healthy)
 5. Health: `curl -sf http://127.0.0.1:$PORT/up` (200 OK)
 6. Logs: `bin/dev logs rails` (shows recent output)
 7. Restart: `bin/dev restart rails` (restarts and comes back healthy)
-8. Stop: `bin/dev stop` (clean shutdown, all ports freed)
+8. Stop: `bin/dev stop` (clean shutdown)
+
+**If client commands fail** (connection refused, socket not found), check:
+- Is the server actually running? (`pgrep -f process-compose`)
+- Does the socket file exist? (`ls ${TMPDIR}process-compose-*.sock`)
+- Are you running `bin/dev` from the project root? (socket path is relative)
+- Did you accidentally use `--no-server`? (removes ALL servers including UDS)
 
 ## 10. Commit
 
