@@ -86,7 +86,7 @@ processes:
   # These depend on rails being started (not healthy — just started).
 
   css:
-    command: eval "$(mise activate bash)" && bin/rails tailwindcss:watch
+    command: eval "$(mise activate bash)" && bin/rails 'tailwindcss:watch[always]'
     depends_on:
       rails:
         condition: process_started
