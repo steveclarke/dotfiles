@@ -35,7 +35,7 @@ If `DEVSTACK.md` exists, these are the standard commands:
 | Logs | `bin/dev logs <service>` |
 | Restart service | `bin/dev restart <service>` |
 | Wait for healthy | `process-compose project is-ready --wait` |
-| REST API | `curl -s http://localhost:8080/processes` |
+| REST API | `curl -s http://localhost:8080/processes` (only if `--no-server` is not used) |
 
 Always read `DEVSTACK.md` for project-specific details — the commands above
 are conventions, not guarantees.
