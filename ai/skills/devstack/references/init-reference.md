@@ -61,9 +61,14 @@ shell:
 ```
 
 **TUI Theme:** The default theme is washed out on dark terminals. Themes are a
-**user setting**, not a project config — they go in `~/.config/process-compose/settings.yaml`:
+**user setting**, not a project config. On macOS, the settings file is at
+`~/Library/Application Support/process-compose/settings.yaml` (NOT `~/.config/`):
 ```yaml
-theme: "Catppuccin Mocha"
+theme: Catppuccin Mocha
+sort:
+    by: RESTARTS
+    isReversed: false
+disable_exit_confirmation: false
 ```
 Built-in options: `Catppuccin Mocha`, `One Dark`, `Monokai`, `Cobalt`, `Material`.
 Do NOT put `theme:` in `process-compose.yml` — it will be silently ignored.
