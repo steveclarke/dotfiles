@@ -129,6 +129,13 @@ Depend on rails being started (not healthy — just started):
         condition: process_started
 ```
 
+**CRITICAL — Tailwind CSS v4 `always` flag:** The `[always]` argument is required.
+Tailwind v4's watch mode (`-w`) exits when stdin is closed. Process-compose doesn't
+provide stdin to processes, so without `always` the CSS watcher does an initial build
+then silently dies. The process shows as "Completed" in status — easy to miss because
+it looks like a successful one-shot build. The `always` flag maps to `--watch=always`
+which keeps the watcher alive regardless of stdin.
+
 Note: Check if commands need `eval "$(mise activate bash)"` prefix. The global
 `bash -lc` login shell usually puts mise shims on PATH, but if a command uses a
 tool managed by mise (Ruby, Node, pnpm), test with `bash -lc "which <tool>"` first.

@@ -31,7 +31,7 @@ bin/dev stop
 | Check status | `bin/dev status` |
 | Tail logs | `bin/dev logs <service>` |
 | Restart one service | `bin/dev restart <service>` |
-| REST API (JSON) | `curl -s http://localhost:8080/processes` |
+| REST API (JSON) | `curl -s http://localhost:8080/processes` (only if `--no-server` is not used) |
 | Wait for healthy | `process-compose project is-ready --wait` |
 
 ## Creating Worktrees
@@ -97,7 +97,7 @@ Agents MUST verify before claiming services are up:
 
 1. Run `bin/dev status` and check JSON output
 2. Every process with `has_ready_probe: true` should show `is_ready: "Ready"`
-3. Every process should show `is_running: true` (except one-shot processes like CSS/JS builds which show "Completed" — this is normal)
+3. Every process should show `is_running: true` — if CSS shows "Completed" instead of "Running", the Tailwind watcher exited (see init-reference.md for the `always` flag fix)
 4. Hit the app's health endpoint: `curl -sf http://127.0.0.1:${PORT}/up`
 
 Do NOT tell the user "it's running" based solely on "I started it." Verify.
