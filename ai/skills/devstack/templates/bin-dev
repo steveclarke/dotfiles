@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  -D)        shift; exec process-compose up -D "$@" ;;
+  stop)      exec process-compose down ;;
+  status)    exec process-compose process list --output json ;;
+  logs)      exec process-compose process logs "${2:?specify a service}" ;;
+  restart)   exec process-compose process restart "${2:?specify a service}" ;;
+  *)         exec process-compose up "$@" ;;
+esac

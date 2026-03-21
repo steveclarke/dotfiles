@@ -1,0 +1,107 @@
+# process-compose.yml — Dev stack orchestration
+#
+# Manages all dev services: Docker (Postgres, Redis, Mailpit), Rails, and
+# asset watchers. Replaces Foreman/Procfile.dev with health checks,
+# dependency ordering, and headless daemon mode for AI agents.
+#
+# Usage:
+#   bin/dev          # TUI (human)
+#   bin/dev -D       # Headless (agent)
+#   bin/dev stop     # Shutdown
+#
+# GOTCHA: Docker Compose file must be named docker-compose.yml (not compose.yml).
+# process-compose auto-discovers compose.yml first, causing conflicts.
+#
+# GOTCHA: Shell must be bash -lc (login shell) for Docker, mise, and Homebrew
+# to be on PATH.
+#
+# GOTCHA: Use exec probes with curl for Rails health checks, not http_get.
+# The outport reverse proxy redirects port 80 to HTTPS, breaking the built-in
+# HTTP probe when it falls back to portless URLs.
+
+version: "0.5"
+
+log_level: info
+
+shell:
+  shell_command: "bash"
+  shell_argument: "-lc"
+
+environment:
+  - "RUBY_DEBUG_OPEN=true"
+  - "RUBY_DEBUG_LAZY=true"
+
+# process-compose auto-loads .env from the working directory.
+# Variables like $PORT, $DB_PORT from outport are available to all
+# processes and probes. No additional env configuration needed.
+
+processes:
+  # --- Docker Services ---
+  # Add one entry per service in docker-compose.yml.
+  # Each needs a readiness_probe and shutdown command.
+
+  postgres:
+    command: docker compose up postgres
+    readiness_probe:
+      exec:
+        command: "docker compose exec postgres pg_isready -U postgres"
+      initial_delay_seconds: 2
+      period_seconds: 3
+      failure_threshold: 10
+    shutdown:
+      command: docker compose stop postgres
+
+  # Uncomment if your project uses Redis:
+  # redis:
+  #   command: docker compose up redis
+  #   readiness_probe:
+  #     exec:
+  #       command: "docker compose exec redis redis-cli ping"
+  #     initial_delay_seconds: 1
+  #     period_seconds: 3
+  #     failure_threshold: 10
+  #   shutdown:
+  #     command: docker compose stop redis
+
+  mailpit:
+    command: docker compose up mailpit
+    shutdown:
+      command: docker compose stop mailpit
+
+  # --- Application ---
+
+  rails:
+    command: eval "$(mise activate bash)" && bin/rails server -p $PORT
+    depends_on:
+      postgres:
+        condition: process_healthy
+    readiness_probe:
+      exec:
+        command: "curl -sf http://127.0.0.1:${PORT}/up"
+      initial_delay_seconds: 3
+      period_seconds: 5
+      failure_threshold: 10
+
+  # --- Asset Watchers ---
+  # These depend on rails being started (not healthy — just started).
+
+  css:
+    command: eval "$(mise activate bash)" && bin/rails tailwindcss:watch
+    depends_on:
+      rails:
+        condition: process_started
+
+  # Uncomment if your project uses a JS bundler:
+  # js:
+  #   command: pnpm build --watch
+  #   depends_on:
+  #     rails:
+  #       condition: process_started
+
+  # --- Frontend (Nuxt/Node) ---
+  # Uncomment if your project has a separate frontend:
+  # frontend:
+  #   command: pnpm dev
+  #   depends_on:
+  #     rails:
+  #       condition: process_healthy
