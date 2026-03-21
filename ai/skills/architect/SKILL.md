@@ -242,5 +242,436 @@ Update state to record teach is complete:
 
 ---
 
-*Phases 2-6 (Sweep, Deep Dive, Assess, Plan, Execute) are defined in
-subsequent sections of this skill file.*
+## Phase 2: Sweep — Broad Architectural Scan
+
+A quick, broad scan across 7 architectural lenses. Uses a single Sonnet
+subagent for cost/speed — this is a triage pass, not a deep analysis.
+
+### Step 1: Load Config
+
+```bash
+CONFIG=$("$ARCHITECT" config "$SLUG")
+```
+
+Extract key fields for the subagent prompt:
+
+```bash
+FRAMEWORK=$(echo "$CONFIG" | jq -r '.framework')
+PHILOSOPHY=$(echo "$CONFIG" | jq -r '.philosophy')
+```
+
+### Step 2: Determine Scope
+
+If a `<target>` was passed, the sweep scopes to that subsystem only. Build a
+scope instruction:
+
+- **No target:** `"Scan the entire project at ROOT."`
+- **Target is a path** (starts with `/`, `./`, or a directory that exists): `"Focus your scan on ROOT/<target> and its interactions with the rest of the codebase."`
+- **Target is a description** (e.g., "the dispatch system"): `"Focus your scan on the subsystem described as: <target>. Identify the relevant files and directories first, then analyze."`
+
+### Step 3: Dispatch Sweep Agent
+
+Dispatch a single subagent using the Agent tool:
+
+```
+Agent(model: "sonnet", description: "Sweep: broad architectural scan of {SLUG}")
+```
+
+The prompt must be **fully self-contained** — the subagent has no conversation
+context. Include everything it needs:
+
+````
+You are an architectural reviewer performing a broad sweep of a codebase.
+Your job is to triage — identify areas that need deeper analysis, not to
+do the deep analysis yourself.
+
+## Project
+
+- **Root:** {ROOT}
+- **Framework:** {FRAMEWORK}
+- **Philosophy:** {PHILOSOPHY}
+- **Full config:** {CONFIG}
+
+## Scope
+
+{scope_instruction}
+
+## Sampling Strategy
+
+Do NOT read every file. Be strategic:
+
+1. **Directory structure first** — run `ls` and `find` (depth-limited) to
+   understand the layout
+2. **Key entry points** — main config files, route definitions, application
+   entry points, schema files
+3. **Representative files per layer** — pick 2-3 files from each major
+   directory (models, controllers, views, services, composables, etc.)
+4. **Boundary files** — files that connect layers or modules (routers,
+   registries, factories, dependency injection setup)
+5. **Large files** — check file sizes, sample the biggest ones (often
+   where coupling and cohesion issues live)
+
+Budget: aim for ~30-50 files sampled total, more for large codebases.
+
+## Architectural Lenses
+
+Evaluate the codebase through each of these 7 lenses:
+
+### 1. Structural Organization
+- Directory layout and file grouping — by layer, by feature, or mixed?
+- Separation of concerns — is business logic separated from framework plumbing?
+- Naming conventions — consistent? Descriptive? Following framework idioms?
+- Co-location — are related files near each other or scattered?
+
+### 2. Design Patterns
+- GoF patterns in use: adapter, strategy, facade, observer, factory, etc.
+- Are patterns applied appropriately or forced where simpler code would do?
+- Missing patterns — places where a well-known pattern would reduce complexity
+- Over-patterned code — unnecessary abstraction layers, pattern-for-pattern's-sake
+
+### 3. Composition & Inheritance
+- Inheritance depth — deep hierarchies are a red flag
+- Composable units — are behaviors composed via mixins/modules/composables or
+  hardcoded into class hierarchies?
+- Mixin/concern sprawl — too many small mixins that fragment understanding
+
+### 4. Coupling & Cohesion
+- Module dependencies — who depends on whom? Are there clear layers?
+- Boundary clarity — can you change one module without touching three others?
+- God objects — classes/modules that know too much or do too much
+- Circular dependencies — A depends on B depends on A
+
+### 5. Framework Alignment
+- Convention adherence — is the team using the framework the way it was designed?
+- Reinvented wheels — building custom solutions for things the framework provides
+- Framework-specific anti-patterns (e.g., Rails: SQL in views, callbacks doing
+  business logic, skip_before_action sprawl; Vue: mutating props, massive
+  computed properties, v-if/v-for on same element)
+
+### 6. API & Interface Design
+- Internal API consistency — do similar operations have similar interfaces?
+- Method signatures — clear parameter names? Reasonable arity? Options hashes
+  vs. keyword args?
+- Public surface area — is the public API minimal and intentional, or does
+  everything leak?
+
+### 7. Duplication & Reuse
+- Copy-paste patterns — similar code in multiple places that should be shared
+- Inconsistent approaches — the same problem solved differently in different places
+- Missing shared code — utilities or patterns that should be extracted
+
+## Output Format
+
+Return your findings as a JSON object. Be concise in notes — this is triage,
+not a full report. Include file_pointers so the deep dive knows where to look.
+
+```json
+{
+  "timestamp": "<current ISO timestamp>",
+  "scope": "<'full' or the target description>",
+  "files_sampled": <number of files you read>,
+  "lenses": {
+    "structural_organization": {
+      "health": "green|yellow|red",
+      "notes": "Brief summary — what you found, why this rating",
+      "file_pointers": ["paths/that/illustrate/the/finding"]
+    },
+    "design_patterns": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    },
+    "composition_inheritance": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    },
+    "coupling_cohesion": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    },
+    "framework_alignment": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    },
+    "api_interface_design": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    },
+    "duplication_reuse": {
+      "health": "green|yellow|red",
+      "notes": "...",
+      "file_pointers": ["..."]
+    }
+  }
+}
+```
+
+**Health ratings:**
+- **green** — no significant issues found, aligns with the project's stated philosophy
+- **yellow** — some concerns worth investigating, potential improvements
+- **red** — clear structural problems that affect maintainability or scalability
+
+Be honest. Green is fine — not every lens will have issues. Don't manufacture
+findings. But don't be afraid of red when it's warranted.
+
+Return ONLY the JSON object, no surrounding text.
+````
+
+### Step 4: Process Sweep Results
+
+Parse the JSON returned by the subagent. If the response is not valid JSON,
+extract JSON from the response (look for `{` to `}` block) and parse that.
+
+### Step 5: Log the Sweep
+
+```bash
+"$ARCHITECT" sweep-log "$SLUG" '<sweep_json>'
+```
+
+### Step 6: Update State
+
+```bash
+"$ARCHITECT" update-state "$SLUG" "last_sweep=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+```
+
+### Step 7: Check Stop Condition
+
+If `--sweep` was passed, present the sweep results to the user in a readable
+format and **stop**:
+
+```
+## Architectural Sweep — {project_name}
+
+| Lens | Health | Notes |
+|------|--------|-------|
+| Structural Organization | :green_circle: | ... |
+| Design Patterns | :yellow_circle: | ... |
+| ... | ... | ... |
+
+**Flagged for deep dive:** Design Patterns, Coupling & Cohesion
+**Files sampled:** N
+
+Run `/architect` (without --sweep) to continue with deep analysis.
+```
+
+If `--sweep` was NOT passed, proceed to Phase 3.
+
+---
+
+## Phase 3: Deep Dive — Parallel Lens Analysis
+
+For each lens flagged yellow or red in the sweep, dispatch a dedicated Sonnet
+subagent for detailed analysis. All flagged lenses run **in parallel**.
+
+### Step 1: Identify Flagged Lenses
+
+From the sweep results, collect every lens where `health` is `"yellow"` or
+`"red"`. If **all lenses are green**, skip Phase 3 entirely — proceed to
+Phase 4 with the sweep summary only. Tell the user:
+
+> "All 7 lenses came back green. No deep dives needed — proceeding to
+> assessment with the sweep results."
+
+### Step 2: Dispatch Deep Dive Agents
+
+Dispatch ALL flagged lens agents in a single message (parallel execution).
+One `Agent(model: "sonnet")` per flagged lens.
+
+For each flagged lens, build the prompt from the lens criteria below and the
+sweep data for that lens.
+
+```
+Agent(model: "sonnet", description: "Deep dive: {lens_name} analysis of {SLUG}")
+```
+
+Each deep dive agent gets a **fully self-contained** prompt:
+
+````
+You are an architectural analyst performing a deep dive on a specific
+structural dimension of a codebase. A broad sweep has already identified
+this area as needing investigation. Your job is to produce detailed,
+actionable findings.
+
+## Project
+
+- **Root:** {ROOT}
+- **Framework:** {FRAMEWORK}
+- **Philosophy:** {PHILOSOPHY}
+- **Full config:** {CONFIG}
+
+## Your Lens: {LENS_DISPLAY_NAME}
+
+### What the sweep found
+
+- **Health:** {sweep_health}
+- **Notes:** {sweep_notes}
+- **Key files to start with:** {sweep_file_pointers}
+
+### What to look for
+
+{lens_criteria}
+
+## Analysis Instructions
+
+1. Start with the file_pointers from the sweep — these are your leads
+2. Follow the dependency graph outward — what do these files import? What
+   imports them?
+3. Read the actual code, not just directory listings. You need to see
+   implementations to judge quality.
+4. Compare against the project's stated philosophy: {PHILOSOPHY}
+5. Check for patterns — one instance isn't a finding, repeated instances are
+
+## Output Format
+
+Return your findings as a structured list. Each finding MUST follow this
+exact format:
+
+```
+Finding: <concise title>
+Severity: Low | Medium | High | Critical
+Location: <file path(s) — be specific>
+What: <description of what you found>
+Why it matters: <impact on maintainability, scalability, or developer experience>
+Recommendation: <specific, actionable suggestion — not vague advice>
+```
+
+Severity definitions:
+- **Critical** — actively causing problems now, blocking team velocity, or
+  creating risk of bugs/outages. Fix soon.
+- **High** — significant structural issue that will compound over time.
+  Should be planned.
+- **Medium** — real issue but manageable. Worth addressing when touching
+  the area.
+- **Low** — minor improvement. Address opportunistically.
+
+Be specific. "Consider refactoring" is not a recommendation. "Extract the
+fee calculation from MemberPayment into a FeeCalculator service — it's
+duplicated in 3 models" is.
+
+If the sweep flagged this lens but your deep analysis finds it's actually
+fine, say so. Return an empty findings list with a note explaining why
+the flag was a false alarm.
+
+Return ONLY the findings in the format above, no surrounding text. If there
+are no findings, return: "No findings — sweep flag was a false positive."
+````
+
+#### Lens Criteria Reference
+
+Use the appropriate criteria block for each lens:
+
+**Structural Organization:**
+```
+- Directory layout: is it by layer (models/, views/, controllers/) or by
+  feature (payments/, members/, dispatch/)? Is it consistent?
+- File grouping: are related files co-located or scattered?
+- Naming: do file names follow a consistent convention? Do they match
+  their contents?
+- Separation of concerns: is presentation logic in models? Business logic
+  in controllers? Framework plumbing in domain code?
+- Dead directories: folders with stale or unused code
+```
+
+**Design Patterns:**
+```
+- Identify all GoF patterns in use: adapter, strategy, facade, observer,
+  factory, decorator, command, etc.
+- For each: is it applied correctly? Does it reduce complexity or add it?
+- Look for missing patterns: places where a Strategy would eliminate a
+  case statement, where an Adapter would decouple a dependency, where a
+  Facade would simplify a complex subsystem
+- Look for over-patterning: unnecessary indirection, AbstractFactoryFactory
+  syndrome, patterns that add layers without adding value
+```
+
+**Composition & Inheritance:**
+```
+- Map inheritance hierarchies. Flag any deeper than 3 levels.
+- Check for "inheritance for code sharing" — should these be modules/mixins/
+  composables instead?
+- Count mixins/concerns per class. Flag classes with 5+ includes/extends.
+- Look for fragmented behavior — where understanding a class requires reading
+  8 different concern files
+- Check for composition patterns: dependency injection, strategy objects,
+  decorator chains
+```
+
+**Coupling & Cohesion:**
+```
+- Map module dependencies — which modules/classes reference each other?
+- Look for circular dependencies between modules
+- Identify god objects: classes with 10+ public methods, 300+ lines, or
+  that are imported everywhere
+- Check boundary clarity: could you extract a module into a gem/package
+  without touching 20 other files?
+- Look for feature envy: methods that use more of another class's data
+  than their own
+- Check for law of demeter violations: long method chains (a.b.c.d)
+```
+
+**Framework Alignment:**
+```
+- Check convention adherence for the specific framework
+- Rails: callbacks doing business logic? N+1 queries? SQL in views?
+  skip_before_action sprawl? Models as god objects?
+- Vue/Nuxt: mutating props? Giant computed properties? Business logic in
+  components instead of composables? v-if/v-for on same element?
+- General: are framework-provided solutions being used, or is the team
+  building custom versions of built-in features?
+- Are there framework anti-patterns that the community has identified?
+```
+
+**API & Interface Design:**
+```
+- Check internal API consistency: do similar operations have similar
+  method signatures?
+- Look at method arity: methods with 4+ positional parameters are a flag
+- Check for boolean parameters that should be separate methods or enums
+- Public surface area: are classes exposing methods that should be private?
+- Look for inconsistent return types: same kind of method returning
+  different shapes in different classes
+- Check service object interfaces: do they follow a consistent pattern
+  (call/execute/perform)?
+```
+
+**Duplication & Reuse:**
+```
+- Search for copy-paste code: similar logic in multiple files
+- Check for inconsistent approaches: the same problem (e.g., date formatting,
+  error handling, validation) solved differently in different places
+- Identify extraction candidates: code that appears 3+ times and should be
+  a shared utility/concern/composable
+- Check for "almost the same" code: slight variations that could be unified
+  with a parameter
+```
+
+### Step 3: Collect Results
+
+Wait for all deep dive agents to complete. For each:
+
+- **Success:** Parse the findings from the response
+- **Failure:** Note the lens as incomplete:
+  `"Deep analysis incomplete for {lens_name} — re-run to retry."`
+
+Do NOT fail the entire skill if one agent fails. Proceed with partial results.
+The user can re-run to retry failed lenses.
+
+### Step 4: Combine Results
+
+Build a combined findings object that includes:
+
+- The sweep summary (all 7 lenses with health ratings)
+- Detailed findings from each deep dive
+- Any incomplete lenses noted
+
+Store this combined result for Phase 4 to use. This is in-memory — Phase 4
+will format it into the assessment artifact.
+
+---
+
+*Phases 4-6 (Assess, Plan, Execute) are defined in subsequent sections of
+this skill file.*
