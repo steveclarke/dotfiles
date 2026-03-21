@@ -117,7 +117,7 @@ HTTP probe when it falls back to no port:
 Depend on rails being started (not healthy — just started):
 ```yaml
   css:
-    command: eval "$(mise activate bash)" && bin/rails tailwindcss:watch
+    command: eval "$(mise activate bash)" && bin/rails 'tailwindcss:watch[always]'
     depends_on:
       rails:
         condition: process_started
