@@ -1,6 +1,6 @@
 ---
 name: outport
-description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", ".outport.yml", "port management", "env var ports", "derived values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
+description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", "outport.yml", "port management", "env var ports", "computed values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation", "tunnel", "share localhost", "public URL", "cloudflare tunnel", "outport doctor", "health check", "diagnose outport". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
 ---
 
 # Outport — Dev Port Manager
@@ -13,28 +13,30 @@ URLs just work without manual configuration.
 ## Quick Reference
 
 ```bash
-# Core workflow
-outport init              # Create .outport.yml (interactive)
-outport apply             # Allocate ports, assign hostnames, write .env
-outport a                 # Short alias for apply
-outport apply --force     # Clear and re-allocate all ports from scratch
-outport unapply           # Remove ports and clean .env files
+# Project commands
+outport init              # Create outport.yml (interactive)
+outport up                # Allocate ports, assign hostnames, write .env
+outport up --force        # Clear and re-allocate all ports from scratch
+outport down              # Remove ports and clean .env files
 
-# Inspect
+# Inspect & diagnose
 outport ports             # Show ports for current project
-outport ports --derived   # Show ports and derived values
+outport ports --computed  # Show ports and computed values
 outport ports --json      # Machine-readable output
 outport open              # Open HTTP services in browser
 outport open web          # Open a specific service
-outport status            # Show all registered projects
-outport status --check    # Show with health checks (up/down)
-outport gc                # Remove stale registry entries
+outport share             # Tunnel HTTP services to public URLs
+outport share web         # Tunnel a specific service
+outport doctor            # Check system health and project config
 
-# .test domain routing (macOS, one-time setup)
-outport setup             # Install DNS resolver and proxy daemon
-outport teardown          # Remove DNS resolver and daemon
-outport up                # Start the daemon manually
-outport down              # Stop the daemon manually
+# System commands (machine-wide)
+outport system start      # Install DNS, CA, and start the daemon
+outport system stop       # Stop the daemon
+outport system restart    # Re-write plist and restart the daemon
+outport system status     # Show all registered projects
+outport system status --check  # Show with health checks (up/down)
+outport system gc         # Remove stale registry entries
+outport system uninstall  # Remove DNS resolver, daemon, and CA
 
 # Instance management
 outport rename <old> <new>  # Rename the current instance
@@ -45,7 +47,7 @@ All commands support `--json` for machine-readable output.
 
 ## Setting Up a New Project
 
-### 1. Create `.outport.yml`
+### 1. Create `outport.yml`
 
 Run `outport init` for interactive setup, or create manually:
 
@@ -61,7 +63,7 @@ services:
     env_var: REDIS_PORT
 ```
 
-### 2. Run `outport apply`
+### 2. Run `outport up`
 
 Allocates deterministic ports (hashed from project name + service name) and
 writes them to `.env`. Same inputs always produce the same ports.
@@ -82,34 +84,36 @@ Most frameworks read `.env` natively or with minimal setup:
   if [ -f .env ]; then set -a; source .env; set +a; fi
   ```
 
-### 4. Commit `.outport.yml`, gitignore `.env`
+### 4. Commit `outport.yml`, gitignore `.env`
 
-`.outport.yml` is project config — commit it so worktrees and teammates
+`outport.yml` is project config — commit it so worktrees and teammates
 inherit it. `.env` contains allocated ports — gitignore it. Each checkout
 gets its own.
 
 ## .test Domains (DNS Proxying)
 
-Running `outport setup` once enables friendly `.test` hostnames for your
-services. After setup, `http://myapp.test` routes to your app instead of
-`http://localhost:24920`.
+Running `outport system start` once enables friendly `.test` hostnames for
+your services. After setup, `https://myapp.test` routes to your app instead
+of `http://localhost:24920`.
 
 ### How it works
 
-`outport setup` installs two components (macOS, requires sudo for DNS step):
+`outport system start` installs three components (macOS, requires sudo for DNS step):
 
 1. **DNS resolver** — `/etc/resolver/test` points `*.test` queries to a
    local DNS server on port 15353, which resolves all `*.test` names to
    `127.0.0.1`.
-2. **HTTP reverse proxy** — a LaunchAgent runs on port 80, routes requests
-   by `Host` header to the correct service port, and auto-updates when you
-   run `outport apply`. WebSocket connections are proxied transparently.
+2. **Reverse proxy** — a LaunchAgent runs on ports 80 and 443, routes
+   requests by `Host` header to the correct service port, and auto-updates
+   when you run `outport up`. WebSocket connections are proxied transparently.
+3. **Local CA** — generates a Certificate Authority for HTTPS. HTTP requests
+   on port 80 are redirected to HTTPS via 307.
 
 ```bash
-outport setup     # Install DNS + daemon (one-time, prompts for sudo)
-outport teardown  # Remove everything — reverse of setup
-outport up        # Start the daemon (if it was stopped)
-outport down      # Stop the daemon
+outport system start      # Install DNS + CA + daemon (one-time, prompts for sudo)
+outport system stop       # Stop the daemon
+outport system restart    # Re-write plist and restart the daemon
+outport system uninstall  # Remove everything — reverse of start
 ```
 
 ### Configuring .test hostnames
@@ -171,16 +175,16 @@ services:
       - frontend/.env          # Frontend needs this to construct API URLs
 ```
 
-## Derived Values
+## Computed Values
 
-Applications don't just need port numbers — they need URLs. Derived values
+Applications don't just need port numbers — they need URLs. Computed values
 compute environment variables from your service map and write finished values
 to `.env`.
 
 ### Basic syntax
 
 ```yaml
-derived:
+computed:
   API_URL:
     value: "${rails.url:direct}/api/v1"   # http://localhost:24920/api/v1
     env_file: frontend/.env
@@ -191,7 +195,7 @@ derived:
 
 - `${service_name.field}` references service fields
 - `env_file` is required (no default — you must be explicit)
-- Derived names must not collide with service `env_var` names
+- Computed names must not collide with service `env_var` names
 
 ### Template Fields
 
@@ -209,6 +213,30 @@ derived:
   backend fetches, WebSocket connections from a Node server). Always uses
   `localhost` — no proxy hop.
 
+### The `${instance}` variable and bash-style parameter expansion
+
+Computed values support bash-style parameter expansion for instance-aware
+configuration:
+
+| Variable | Main instance | Worktree instance (e.g., `bxcf`) |
+|----------|--------------|----------------------------------|
+| `${instance}` | *(empty string)* | `bxcf` |
+| `${instance:-default}` | `default` | `bxcf` |
+| `${instance:+replacement}` | *(empty string)* | `replacement` |
+| `${instance:+-${instance}}` | *(empty string)* | `-bxcf` |
+
+**Common pattern — Docker Compose project name:**
+
+```yaml
+computed:
+  COMPOSE_PROJECT_NAME:
+    value: "myapp${instance:+-${instance}}"
+    env_file: .env
+```
+
+This produces `myapp` for the main instance and `myapp-bxcf` for worktrees,
+giving each instance isolated Docker containers.
+
 ### Per-file value overrides
 
 When the same env var needs different values in different files (common in
@@ -216,7 +244,7 @@ monorepos where multiple apps share a framework convention), use the object
 syntax for `env_file` entries:
 
 ```yaml
-derived:
+computed:
   NUXT_API_BASE_URL:
     env_file:
       - file: frontend/apps/main/.env
@@ -257,7 +285,7 @@ services:
       - frontend/apps/portal/.env
       - backend/.env               # Backend needs this for CORS
 
-derived:
+computed:
   # Server-to-server API URLs (bypass proxy — use direct localhost)
   NUXT_API_BASE_URL:
     env_file:
@@ -277,12 +305,12 @@ derived:
     env_file: backend/.env
 ```
 
-After `outport apply`, every service has the right ports AND the right URLs.
+After `outport up`, every service has the right ports AND the right URLs.
 No hardcoded values survive.
 
 ## Framework Env Var Conventions
 
-When setting up derived values, knowing how frameworks map env vars to
+When setting up computed values, knowing how frameworks map env vars to
 config is essential:
 
 | Framework | Convention | Example |
@@ -293,7 +321,7 @@ config is essential:
 | **Django** | Typically reads `os.environ` directly | Name vars however your `settings.py` expects |
 | **Docker Compose** | Reads `.env` automatically | `${DB_PORT:-5432}` in `compose.yml` |
 
-The derived values feature is most powerful when it writes env vars that
+The computed values feature is most powerful when it writes env vars that
 match these framework conventions — the framework reads the value natively
 and no config code changes are needed.
 
@@ -314,8 +342,8 @@ NUXT_API_BASE_URL=http://localhost:24920/api/v1
 # --- end outport.dev ---
 ```
 
-On each `outport apply`, the fenced block is replaced with current values.
-Variables removed from `.outport.yml` disappear from the block. Everything
+On each `outport up`, the fenced block is replaced with current values.
+Variables removed from `outport.yml` disappear from the block. Everything
 outside the block is preserved.
 
 ## Multiple Instances
@@ -325,21 +353,21 @@ and its own `.test` hostname — no configuration needed:
 
 ```bash
 # Main checkout
-$ outport apply
+$ outport up
 my-app [main]
   rails  RAILS_PORT → 24920  http://my-app.test
   web    MAIN_PORT  → 21349
 
 # Worktree — different ports, different hostname, zero conflicts
-$ cd ../my-app-feature && outport apply
+$ cd ../my-app-feature && outport up
   Registered as my-app-bkrm. Use 'outport rename bkrm <name>' to rename.
 my-app [bkrm]
   rails  RAILS_PORT → 20192  http://my-app-bkrm.test
   web    MAIN_PORT  → 21133
 ```
 
-Derived values are recomputed per instance — CORS origins, API URLs, and
-all other derived values automatically use that instance's ports and
+Computed values are recomputed per instance — CORS origins, API URLs, and
+all other computed values automatically use that instance's ports and
 hostnames. Two full instances run simultaneously with no port collisions,
 no hostname collisions, and no manual configuration.
 
@@ -352,14 +380,14 @@ outport promote                   # Promote current instance to main
 
 ## Integrating with Setup Scripts
 
-Run `outport apply` early in your project's setup flow — after `.env` file
+Run `outport up` early in your project's setup flow — after `.env` file
 creation but before services start. Make it optional so developers without
 Outport aren't blocked:
 
 ```bash
 # In bin/setup or similar
 if command -v outport > /dev/null 2>&1; then
-  outport apply
+  outport up
 else
   echo "Outport not found — using default ports"
   echo "Install: brew install steveclarke/tap/outport"
@@ -369,17 +397,17 @@ fi
 ## Common Tasks
 
 ### Port conflict with another project
-Run `outport apply` in both projects. Outport's registry ensures no
+Run `outport up` in both projects. Outport's registry ensures no
 collisions across all registered projects.
 
 ### Ports are stale from an old allocation
-Run `outport apply --force` to clear and re-allocate.
+Run `outport up --force` to clear and re-allocate.
 
 ### Freeing ports from a project you're done with
-Run `outport unapply` to remove from registry and free all ports.
+Run `outport down` to remove from registry and free all ports.
 
 ### Adding a new service to an existing project
-Add it to `.outport.yml` and run `outport apply`. Existing allocations
+Add it to `outport.yml` and run `outport up`. Existing allocations
 are preserved — only the new service gets a port.
 
 ### Agent needs to know the project's URLs
@@ -387,9 +415,22 @@ Run `outport ports --json` for structured output with ports, protocols,
 and URLs.
 
 ### Services moved to different ports than expected
-Check `outport status` to see all allocations. If another project holds
-the ports you want, unapply it first, then `outport apply --force`.
+Check `outport system status` to see all allocations. If another project
+holds the ports you want, run `outport down` in it first, then
+`outport up --force` in yours.
+
+### Sharing a service with someone outside your network
+Run `outport share` to tunnel all HTTP services to public Cloudflare URLs.
+Requires `cloudflared` (`brew install cloudflared`). Press Ctrl+C to stop.
+
+### Something isn't working
+Run `outport doctor` to check DNS, daemon, certificates, registry, and
+project config. Each check shows pass/fail with a fix suggestion.
 
 ### .test domain not resolving
-Run `outport status` to verify the daemon is configured. If `outport setup`
-was never run, run it now. If the daemon is stopped, run `outport up`.
+Run `outport doctor` to diagnose. Common causes: daemon not running
+(`outport system start`) or DNS resolver missing (`outport system start`).
+
+## Bugs & Feature Requests
+
+Report bugs or request new features at https://github.com/steveclarke/outport/issues
