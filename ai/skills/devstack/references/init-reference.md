@@ -226,6 +226,34 @@ For projects with frontend apps:
       command: docker compose stop redis
 ```
 
+### Dev URLs (outport projects)
+For projects using outport, add a `urls` process that displays all allocated
+URLs and ports after the app is healthy. Create `bin/dev-urls`:
+
+```sh
+#!/usr/bin/env sh
+# Print dev URLs and ports. Runs after rails is healthy.
+
+if command -v outport > /dev/null 2>&1; then
+  outport ports
+  echo ""
+fi
+
+# Stay alive so process-compose keeps this process running
+exec tail -f /dev/null
+```
+
+```yaml
+  urls:
+    command: bin/dev-urls
+    depends_on:
+      rails:
+        condition: process_healthy
+```
+
+This gives immediate visibility into what's running and where — useful in both
+the TUI and when agents check logs.
+
 ## 5. Create bin/dev
 
 Replace the existing `bin/dev` (if any) with a process-compose wrapper.
