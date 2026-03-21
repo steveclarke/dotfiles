@@ -311,13 +311,54 @@ esac
 
 Make it executable: `chmod +x bin/dev`
 
-## 6. Clean Up Old Files
+## 6. Create bin/worktree
+
+Git worktrees let you run multiple isolated instances of the project simultaneously —
+each with its own ports, database, and dev stack. The `bin/worktree` script wraps
+`git worktree` with GitHub integration and outport port allocation.
+
+Use the template from `templates/bin-worktree`. Adapt these lines:
+
+- **`WORKTREE_ROOT`** — set to `$HOME/src/<projectname>-worktrees`
+- **`DEFAULT_BRANCH`** — set to `master` or `main` (whatever the project uses)
+
+```bash
+cp templates/bin-worktree bin/worktree
+chmod +x bin/worktree
+```
+
+**Features:**
+- **Create from name:** `bin/worktree create refactor-auth` — creates branch + worktree
+- **Create from GitHub issue:** `bin/worktree create 169` — fetches issue title, slugifies
+  it, creates branch `169-slugified-title`
+- **Create from PR:** `bin/worktree create --pr 42` — fetches the PR's branch name
+- **List:** `bin/worktree list` — shows all worktrees with paths and ports
+- **Remove:** `bin/worktree remove <name>` — stops services, removes worktree, optionally
+  deletes the branch
+- **Navigate:** `cd $(bin/worktree go 169)` — fuzzy-finds worktree by name/number
+
+On create, the script automatically runs `outport up` to allocate unique ports for
+the new instance. Each worktree gets its own `.env`, its own Docker containers
+(via `COMPOSE_PROJECT_NAME`), and its own `.test` hostname — zero conflicts.
+
+After creating a worktree, the user opens a new terminal tab and runs:
+```bash
+cd <worktree-path>
+bin/setup    # install deps, prepare DB
+bin/dev      # start everything
+```
+
+The script copies next-step instructions to the clipboard for convenience.
+
+**Requires:** `gh` CLI (for issue/PR lookups), `outport` (for port allocation).
+
+## 7. Clean Up Old Files
 
 - Remove `bin/services` if it exists (Docker is now managed by process-compose)
 - Remove `Procfile.dev` (replaced by `process-compose.yml`)
 - Add `.pc/` to `.gitignore` (process-compose runtime state directory)
 
-## 7. Update CLAUDE.md
+## 8. Update CLAUDE.md
 
 Find and update these sections:
 
@@ -334,12 +375,12 @@ Find and update these sections:
 - **Update:** "Foreman" → "process-compose" in any port loading references
 - **Add:** A pointer to `DEVSTACK.md` for full dev environment documentation
 
-## 8. Generate DEVSTACK.md
+## 9. Generate DEVSTACK.md
 
 Use the template from `templates/DEVSTACK.md`, filling in project-specific details
 by reading bin/setup, process-compose.yml, and any worktree tooling.
 
-## 9. Verify
+## 10. Verify
 
 Run through this checklist before committing:
 
@@ -358,12 +399,12 @@ Run through this checklist before committing:
 - Are you running `bin/dev` from the project root? (socket path is relative)
 - Did you accidentally use `--no-server`? (removes ALL servers including UDS)
 
-## 10. Commit
+## 11. Commit
 
 Stage all changes and commit:
 ```bash
-git add process-compose.yml bin/dev DEVSTACK.md .gitignore
+git add process-compose.yml bin/dev bin/worktree DEVSTACK.md .gitignore
 git rm bin/services Procfile.dev  # if they existed
 git add CLAUDE.md  # if updated
-git commit -m "Initialize devstack: process-compose, bin/dev wrapper, DEVSTACK.md"
+git commit -m "Initialize devstack: process-compose, bin/dev, bin/worktree, DEVSTACK.md"
 ```

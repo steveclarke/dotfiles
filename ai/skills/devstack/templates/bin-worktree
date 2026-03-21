@@ -1,0 +1,317 @@
+#!/usr/bin/env bash
+#
+# bin/worktree — Create and manage git worktrees with isolated dev environments.
+#
+# Usage:
+#   bin/worktree create <name|issue|--pr N>   Create a worktree
+#   bin/worktree list                         List active worktrees
+#   bin/worktree remove [-f] <name> [name...]  Remove worktrees (prompts for confirmation)
+#   bin/worktree go <name>                    Print the worktree path
+#
+# Create accepts three input types:
+#   <name>           Use as branch name directly (e.g., refactor-auth)
+#   <number>         GitHub issue — looks up title, slugifies, branch = 169-slugified-title
+#   --pr <number>    GitHub PR — fetches the PR's branch name
+#
+# Examples:
+#   bin/worktree create refactor-auth
+#   bin/worktree create 169
+#   bin/worktree create --pr 42
+#   bin/worktree list
+#   bin/worktree remove refactor-auth
+#   cd $(bin/worktree go 169)
+
+set -euo pipefail
+
+# ADAPT: Change to your project's worktree directory
+WORKTREE_ROOT="$HOME/src/PROJECTNAME-worktrees"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# ADAPT: Change to your project's default branch (master or main)
+DEFAULT_BRANCH="master"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+DIM='\033[2m'
+RESET='\033[0m'
+
+usage() {
+  sed -n '3,22s/^# \{0,1\}//p' "$0"
+  exit 1
+}
+
+# Slugify a GitHub issue title for use as branch/directory name (max 5 words)
+slugify() {
+  echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//' \
+    | awk -F'-' '{ for(i=1; i<=5 && i<=NF; i++) { if(i>1) printf "-"; printf $i } print "" }'
+}
+
+# Fetch issue title from GitHub
+fetch_issue_title() {
+  local issue="$1"
+  gh issue view "$issue" --json title --jq '.title' 2>/dev/null || echo ""
+}
+
+# Fetch PR branch name from GitHub
+fetch_pr_branch() {
+  local pr="$1"
+  gh pr view "$pr" --json headRefName --jq '.headRefName' 2>/dev/null || echo ""
+}
+
+# Find the worktree path by name — matches by substring/prefix against branch names
+find_worktree() {
+  local query="$1"
+  local exact_match=""
+  local prefix_match=""
+  local substring_match=""
+
+  while IFS= read -r line; do
+    local wt_path wt_branch
+    wt_path=$(echo "$line" | awk '{print $1}')
+    wt_branch=$(echo "$line" | sed 's/.*\[//' | sed 's/\]//')
+
+    # Skip the main worktree
+    if [[ "$wt_path" == "$REPO_ROOT" ]]; then
+      continue
+    fi
+
+    # Exact match on branch name
+    if [[ "$wt_branch" == "$query" ]]; then
+      exact_match="$wt_path"
+      break
+    fi
+
+    # Prefix match (e.g., "169" matches "169-refactor-auth")
+    if [[ -z "$prefix_match" && "$wt_branch" == ${query}* ]]; then
+      prefix_match="$wt_path"
+    fi
+
+    # Substring match (e.g., "refactor" matches "169-refactor-auth")
+    if [[ -z "$substring_match" && "$wt_branch" == *${query}* ]]; then
+      substring_match="$wt_path"
+    fi
+  done < <(git -C "$REPO_ROOT" worktree list)
+
+  # Return best match: exact > prefix > substring
+  local result="${exact_match:-${prefix_match:-${substring_match:-}}}"
+  if [[ -n "$result" ]]; then
+    echo "$result"
+    return 0
+  fi
+  return 1
+}
+
+# Create a worktree
+cmd_create() {
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}Error: specify a name, issue number, or --pr <number>${RESET}"
+    usage
+  fi
+
+  local branch=""
+
+  # Parse input type
+  if [[ "$1" == "--pr" ]]; then
+    # --pr <number>: fetch the PR's branch name
+    if [[ $# -lt 2 ]]; then
+      echo -e "${RED}Error: --pr requires a PR number${RESET}"
+      usage
+    fi
+    local pr_num="$2"
+    echo -e "${BOLD}━━━ PR #${pr_num} ━━━${RESET}"
+    echo -e "  ${DIM}Fetching PR branch name...${RESET}"
+    branch=$(fetch_pr_branch "$pr_num")
+    if [[ -z "$branch" ]]; then
+      echo -e "${RED}  Could not fetch PR #${pr_num}${RESET}"
+      exit 1
+    fi
+    echo -e "  ${DIM}Branch: ${branch}${RESET}"
+  elif [[ "$1" =~ ^[0-9]+$ ]]; then
+    # All digits: GitHub issue number
+    local issue="$1"
+    echo -e "${BOLD}━━━ Issue #${issue} ━━━${RESET}"
+    local title
+    title=$(fetch_issue_title "$issue")
+    if [[ -z "$title" ]]; then
+      echo -e "${RED}  Could not fetch issue #${issue}${RESET}"
+      exit 1
+    fi
+    echo -e "  ${DIM}${title}${RESET}"
+    local slug
+    slug=$(slugify "$title")
+    branch="${issue}-${slug}"
+  else
+    # Plain name: use as branch name directly
+    branch="$1"
+    echo -e "${BOLD}━━━ ${branch} ━━━${RESET}"
+  fi
+
+  local worktree_path="${WORKTREE_ROOT}/${branch}"
+
+  mkdir -p "$WORKTREE_ROOT"
+
+  # Check if worktree already exists
+  if [[ -d "$worktree_path" ]]; then
+    echo -e "  ${YELLOW}Worktree already exists at ${worktree_path}${RESET}"
+    exit 1
+  fi
+
+  # Create the worktree
+  if git -C "$REPO_ROOT" show-ref --verify --quiet "refs/heads/${branch}" 2>/dev/null; then
+    echo -e "  ${DIM}Branch ${branch} exists, reusing it${RESET}"
+    git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
+  elif git -C "$REPO_ROOT" ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+    echo -e "  ${DIM}Branch ${branch} exists on remote, checking out${RESET}"
+    git -C "$REPO_ROOT" worktree add --track -b "$branch" "$worktree_path" "origin/${branch}"
+  else
+    echo -e "  ${DIM}Creating branch ${branch} from ${DEFAULT_BRANCH}${RESET}"
+    git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$DEFAULT_BRANCH"
+  fi
+
+  # Run outport up to allocate ports
+  if command -v outport > /dev/null 2>&1; then
+    echo -e "  ${DIM}Allocating ports via outport...${RESET}"
+    (cd "$worktree_path" && outport up -y 2>&1 | sed 's/^/  /')
+  fi
+
+  echo -e "  ${GREEN}✓ Worktree created${RESET}"
+
+  # Print summary
+  echo -e "\n${BOLD}━━━ Next Steps ━━━${RESET}\n"
+  echo -e "  cd ${worktree_path}"
+  echo -e "  bin/setup"
+  echo -e "  bin/dev"
+  echo ""
+
+  # Copy context to clipboard for pasting into a new Claude session
+  local clipboard_text="Worktree created for: ${branch}
+Branch: ${branch}
+Path: ${worktree_path}
+
+Run these to get started:
+  bin/setup
+  bin/dev
+
+See DEVSTACK.md for full dev environment documentation."
+
+  if command -v pbcopy >/dev/null 2>&1; then
+    echo "$clipboard_text" | pbcopy
+    echo -e "  ${DIM}Copied to clipboard — paste into your new Claude session${RESET}"
+  fi
+}
+
+# List active worktrees
+cmd_list() {
+  echo -e "${BOLD}Active worktrees:${RESET}\n"
+
+  local found=false
+  while IFS= read -r line; do
+    local path branch
+    path=$(echo "$line" | awk '{print $1}')
+    branch=$(echo "$line" | sed 's/.*\[//' | sed 's/\]//')
+
+    # Skip the main worktree
+    if [[ "$path" == "$REPO_ROOT" ]]; then
+      continue
+    fi
+
+    found=true
+    local port
+    port=$(grep '^PORT=' "$path/.env" 2>/dev/null | cut -d= -f2 || echo "???")
+
+    echo -e "  ${CYAN}${branch}${RESET}"
+    echo -e "       ${DIM}${path}${RESET}"
+    echo -e "       ${DIM}Port: ${port}${RESET}"
+    echo ""
+  done < <(git -C "$REPO_ROOT" worktree list)
+
+  if [[ "$found" == "false" ]]; then
+    echo -e "  ${DIM}No worktrees found.${RESET}"
+  fi
+}
+
+# Remove worktrees
+cmd_remove() {
+  local force=false
+  local args=()
+  for arg in "$@"; do
+    case "$arg" in
+      --force|-f) force=true ;;
+      *) args+=("$arg") ;;
+    esac
+  done
+  set -- "${args[@]}"
+
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}Error: specify at least one worktree name${RESET}"
+    usage
+  fi
+
+  for name in "$@"; do
+    local path
+    path=$(find_worktree "$name") || {
+      echo -e "${YELLOW}No worktree found matching '${name}'${RESET}"
+      continue
+    }
+
+    local branch
+    branch=$(git -C "$REPO_ROOT" worktree list | grep "$path" | sed 's/.*\[//' | sed 's/\]//')
+
+    echo -e "${BOLD}Remove worktree?${RESET}"
+    echo -e "  ${DIM}Branch: ${branch}${RESET}"
+    echo -e "  ${DIM}Path: ${path}${RESET}"
+    read -rp "  Continue? [y/N] " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      # Stop everything
+      (cd "$path" && process-compose down 2>/dev/null || true)
+      (cd "$path" && docker compose down 2>/dev/null || true)
+      (cd "$path" && outport down 2>/dev/null || true)
+      # Remove worktree
+      if [[ "$force" == "true" ]]; then
+        git -C "$REPO_ROOT" worktree remove --force "$path"
+      else
+        git -C "$REPO_ROOT" worktree remove "$path"
+      fi
+      echo -e "  ${GREEN}✓ Removed${RESET}"
+
+      # Optionally delete the branch
+      read -rp "  Delete branch ${branch}? [y/N] " del_branch
+      if [[ "$del_branch" =~ ^[Yy]$ ]]; then
+        git -C "$REPO_ROOT" branch -d "$branch" 2>/dev/null || \
+          git -C "$REPO_ROOT" branch -D "$branch"
+        echo -e "  ${GREEN}✓ Branch deleted${RESET}"
+      fi
+    else
+      echo -e "  ${DIM}Skipped${RESET}"
+    fi
+  done
+}
+
+# Print worktree path for quick navigation
+cmd_go() {
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}Error: specify a worktree name${RESET}"
+    usage
+  fi
+
+  local name="$1"
+  local path
+  path=$(find_worktree "$name") || {
+    echo -e "${RED}No worktree found matching '${name}'${RESET}" >&2
+    return 1
+  }
+  echo "$path"
+}
+
+# Main dispatch
+case "${1:-}" in
+  create)    shift; cmd_create "$@" ;;
+  list|ls)   shift; cmd_list "$@" ;;
+  remove|rm) shift; cmd_remove "$@" ;;
+  go)        shift; cmd_go "$@" ;;
+  *)         usage ;;
+esac
