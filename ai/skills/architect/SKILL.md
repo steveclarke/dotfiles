@@ -673,5 +673,183 @@ will format it into the assessment artifact.
 
 ---
 
-*Phases 4-6 (Assess, Plan, Execute) are defined in subsequent sections of
-this skill file.*
+## Phase 4: Assess — Present Findings & Generate Artifact
+
+This phase runs in the **main conversation** (NOT a subagent) because it
+requires back-and-forth discussion with the user. The deep dive results feed
+in; the assessment artifact comes out.
+
+### Step 1: Merge Deep Dive Results
+
+Combine findings from all deep dive agents into a unified view, organized by
+lens. Include green-rated lenses from the sweep (they have no findings, but
+their health rating appears in the summary table).
+
+### Step 2: Check for Existing Assessment
+
+```bash
+CONFIG=$("$ARCHITECT" config "$SLUG")
+ARTIFACT_PATH=$(echo "$CONFIG" | jq -r '.artifact_path')
+```
+
+Check whether `$ROOT/$ARTIFACT_PATH` already exists. If it does, this is a
+**re-run**:
+
+1. Read the existing artifact
+2. Preserve the **Action Plan** section verbatim (this is user-authored content)
+3. Load the previous sweep for diffing:
+   ```bash
+   LAST_SWEEP=$("$ARCHITECT" last-sweep "$SLUG")
+   ```
+4. Diff current findings against the last sweep:
+   - **New findings** — present in current results but not in last sweep
+   - **Resolved findings** — present in last sweep but not in current results;
+     mark with `[RESOLVED]` in the artifact (append to the finding title)
+   - **Unchanged findings** — present in both; leave as-is
+5. Present the delta to the user before the full summary:
+   > "This is a re-run. Since the last assessment: **N new findings**, **N
+   > resolved**, **N unchanged**."
+
+If no existing artifact, proceed as a fresh assessment.
+
+### Step 3: Present Findings
+
+Present findings to the user, starting with the executive summary:
+
+1. **Overall health assessment** — one-sentence verdict
+2. **Biggest strengths** — what's working well (cite specific lenses/patterns)
+3. **Biggest concerns** — what needs attention (cite specific findings)
+4. **Finding counts** — total findings by severity (Critical: N, High: N,
+   Medium: N, Low: N)
+5. **Lens health table:**
+
+```
+| Lens | Health |
+|------|--------|
+| Structural Organization | Good / Needs Attention / Significant Concerns |
+| Design Patterns | ... |
+| Composition & Inheritance | ... |
+| Coupling & Cohesion | ... |
+| Framework Alignment | ... |
+| API & Interface Design | ... |
+| Duplication & Reuse | ... |
+```
+
+Health mapping from sweep ratings:
+- `green` → **Good**
+- `yellow` → **Needs Attention**
+- `red` → **Significant Concerns**
+
+Then present the detailed findings grouped by lens — each finding with its
+severity, location, description, impact, and recommendation.
+
+### Step 4: Discuss
+
+**Pause for user input** after presenting findings. Do NOT proceed to
+recommendations until the user has had a chance to:
+
+- Ask questions about specific findings
+- Challenge findings they disagree with
+- Add context you may have missed
+- Reprioritize based on business reality
+
+This is a conversation, not a dump. Wait for the user to signal they're
+satisfied with the findings before moving on.
+
+### Step 5: Build Prioritized Recommendations
+
+After discussion, group all recommendations into three tiers:
+
+- **Quick wins** — hours of work, low risk, high clarity improvement. These
+  should be things someone could pick up and do this week.
+- **Medium efforts** — days to a week of work, moderate restructuring. May
+  require coordination or affect multiple files/modules.
+- **Strategic restructuring** — weeks to months, phased approach needed. These
+  are bigger architectural shifts that need a plan.
+
+Order within each tier by impact (highest first).
+
+### Step 6: Generate the Assessment Artifact
+
+Build the artifact using the template below. Write it to `$ROOT/$ARTIFACT_PATH`.
+
+#### Assessment Artifact Template
+
+```markdown
+# Architecture Assessment — <Project Name>
+Generated: YYYY-MM-DD | Framework: Rails 8.x / Nuxt 4.x / etc.
+
+## Summary
+2-3 paragraph executive overview. Overall health, biggest strengths,
+biggest concerns.
+
+## Findings by Lens
+
+### <Lens Name>
+**Health: Good / Needs Attention / Significant Concerns**
+
+#### Finding: <title>
+- **Severity:** Low / Medium / High / Critical
+- **Location:** app/services/, app/models/
+- **What:** Description of what was found
+- **Why it matters:** Impact on maintainability, velocity, correctness
+- **Recommendation:** What to do about it
+
+(repeat per finding, per lens)
+
+## Prioritized Recommendations
+Ordered list grouped into:
+- **Quick wins** — hours, low risk, high clarity improvement
+- **Medium efforts** — days to a week, moderate restructuring
+- **Strategic restructuring** — weeks to months, phased approach needed
+
+## Action Plan
+Empty until the user decides what to act on. Populated during Phase 5
+with phased implementation strategies. Updated as phases complete.
+```
+
+**Notes on the template:**
+- Populate `<Project Name>`, date, and framework from the config
+- Fill `Summary` from the executive summary presented in Step 3
+- Fill `Findings by Lens` from the merged deep dive results
+- Fill `Prioritized Recommendations` from Step 5
+- Leave `Action Plan` empty on first run; preserve it on re-runs
+- Resolved findings are marked by appending `[RESOLVED]` to the finding
+  title, e.g., `#### Finding: God object in User model [RESOLVED]`
+- Include ALL lenses (even green ones) — green lenses get a Health line
+  but no findings beneath them
+
+### Step 7: Commit the Artifact
+
+```bash
+cd "$ROOT"
+git add "$ARTIFACT_PATH"
+git commit -m "docs: architecture assessment — $(date +%Y-%m-%d)"
+git push
+```
+
+Tell the user where the artifact was committed.
+
+### Step 8: Update State
+
+Parse the committed artifact and update project state:
+
+```bash
+PARSED=$("$ARCHITECT" parse-artifact "$SLUG")
+FINDINGS_TOTAL=$(echo "$PARSED" | jq -r '.findings_total')
+FINDINGS_RESOLVED=$(echo "$PARSED" | jq -r '.findings_resolved')
+PLAN_PHASES=$(echo "$PARSED" | jq -r '.action_plan_phases')
+PLAN_COMPLETED=$(echo "$PARSED" | jq -r '.action_plan_completed')
+
+"$ARCHITECT" update-state "$SLUG" \
+  last_full_run="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  findings_total="$FINDINGS_TOTAL" \
+  findings_resolved="$FINDINGS_RESOLVED" \
+  action_plan_phases="$PLAN_PHASES" \
+  action_plan_completed="$PLAN_COMPLETED"
+```
+
+---
+
+*Phases 5-6 (Plan, Execute) are defined in subsequent sections of this
+skill file.*
