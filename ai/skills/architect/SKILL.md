@@ -213,6 +213,7 @@ Build a JSON config object with the collected values and save it:
 ```bash
 "$ARCHITECT" init "$SLUG" '{
   "project_root": "<ROOT>",
+  "project_name": "<project name from user or basename of ROOT>",
   "framework": "<detected framework>",
   "philosophy": "<chosen philosophy>",
   "values": {
