@@ -96,26 +96,27 @@ cmd_update_state() {
   ensure_dir "$slug"
   local state_file="$ARCHITECT_DIR/$slug/state.json"
 
-  # Start with existing state or empty object
   local current="{}"
   if [ -f "$state_file" ]; then
     current="$(cat "$state_file")"
   fi
 
-  # Build jq expression from key=value pairs
-  local jq_expr="."
+  local result="$current"
   for kv in "$@"; do
     local key="${kv%%=*}"
     local val="${kv#*=}"
-    # Numbers stay as numbers, everything else is a string
-    if [[ "$val" =~ ^[0-9]+$ ]]; then
-      jq_expr="$jq_expr | .$key = $val"
+    if [[ "$val" == "true" || "$val" == "false" ]]; then
+      result="$(echo "$result" | jq --arg k "$key" --argjson v "$val" '.[$k] = $v')"
+    elif [[ "$val" =~ ^[0-9]+$ ]]; then
+      result="$(echo "$result" | jq --arg k "$key" --argjson v "$val" '.[$k] = $v')"
     else
-      jq_expr="$jq_expr | .$key = \"$val\""
+      result="$(echo "$result" | jq --arg k "$key" --arg v "$val" '.[$k] = $v')"
     fi
   done
 
-  echo "$current" | jq "$jq_expr" > "$state_file"
+  local tmp_file
+  tmp_file="$(mktemp)"
+  echo "$result" > "$tmp_file" && mv "$tmp_file" "$state_file"
   echo "Updated state for $slug"
 }
 
@@ -136,7 +137,13 @@ cmd_last_sweep() {
     exit 1
   fi
 
-  tail -1 "$cache_file"
+  local last_line
+  last_line="$(tail -1 "$cache_file")"
+  if [ -z "$last_line" ]; then
+    echo "Sweep cache is empty for $slug" >&2
+    exit 1
+  fi
+  echo "$last_line"
 }
 
 cmd_projects() {
@@ -206,7 +213,8 @@ cmd_detect() {
     configured=true
   fi
 
-  printf '{"slug":"%s","root":"%s","configured":%s}\n' "$slug" "$root" "$configured"
+  jq -n --arg slug "$slug" --arg root "$root" --argjson configured "$configured" \
+    '{"slug": $slug, "root": $root, "configured": $configured}'
 }
 
 # --- Main ---
