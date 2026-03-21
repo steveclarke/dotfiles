@@ -54,11 +54,16 @@ Always use a login shell so Docker, mise, and Homebrew are on PATH:
 version: "0.5"
 
 log_level: info
+theme: "Catppuccin Mocha"
 
 shell:
   shell_command: "bash"
   shell_argument: "-lc"
 ```
+
+Note: `theme` is optional but recommended for readability. Built-in options include
+`Catppuccin Mocha`, `One Dark`, `Monokai`, `Cobalt`, `Material`. The default theme
+is washed out and hard to read on dark terminals.
 
 ### Docker Services
 For each service in docker-compose.yml, create a process entry with a readiness
@@ -158,14 +163,18 @@ Replace the existing `bin/dev` (typically a Foreman wrapper) with a process-comp
 set -euo pipefail
 
 case "${1:-}" in
-  -D)        shift; exec process-compose up -D "$@" ;;
+  -D)        shift; exec process-compose up -D --no-server "$@" ;;
   stop)      exec process-compose down ;;
   status)    exec process-compose process list --output json ;;
   logs)      exec process-compose process logs "${2:?specify a service}" ;;
   restart)   exec process-compose process restart "${2:?specify a service}" ;;
-  *)         exec process-compose up "$@" ;;
+  *)         exec process-compose up --no-server "$@" ;;
 esac
 ```
+
+**IMPORTANT:** The `--no-server` flag disables process-compose's HTTP server (port 8080).
+Without this, multiple worktrees running simultaneously will conflict on port 8080.
+The CLI commands (status, logs, restart) use unix sockets, not HTTP, so `--no-server` is safe.
 
 Make it executable: `chmod +x bin/dev`
 
