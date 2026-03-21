@@ -87,6 +87,10 @@ No need to re-run bin/setup unless dependencies changed.
 **Check:** `process-compose process list` — if it errors, the daemon isn't running.
 **Fix:** `bin/dev -D` to start it.
 
+### Worktree removal fails with "contains modified or untracked files"
+**Cause:** The worktree has uncommitted changes.
+**Fix:** Use `bin/worktree remove -f <name>` to force removal.
+
 ## Verifying the Stack Before Telling the User It's Ready
 
 Agents MUST verify before claiming services are up:
