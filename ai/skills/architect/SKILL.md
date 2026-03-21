@@ -851,5 +851,270 @@ PLAN_COMPLETED=$(echo "$PARSED" | jq -r '.action_plan_completed')
 
 ---
 
-*Phases 5-6 (Plan, Execute) are defined in subsequent sections of this
-skill file.*
+## Phase 5: Plan — Phased Implementation Strategies
+
+This phase is **conversational** (main conversation, not a subagent). It runs
+on demand — when the user decides to act on findings, either during the assess
+conversation or in a later session.
+
+### Step 1: Load the Assessment
+
+```bash
+CONFIG=$("$ARCHITECT" config "$SLUG")
+ARTIFACT_PATH=$(echo "$CONFIG" | jq -r '.artifact_path')
+```
+
+Read the existing assessment artifact at `$ROOT/$ARTIFACT_PATH`. If it doesn't
+exist, tell the user: "No assessment found. Run `/architect` first to generate
+one." and stop.
+
+### Step 2: Ask What to Tackle
+
+Present the current findings and prioritized recommendations to the user, then
+ask which they want to act on:
+
+> "Here are your current findings and recommendations. Which ones do you want
+> to plan for? You can pick individual findings, a recommendation tier (e.g.,
+> 'all quick wins'), or a combination."
+
+Wait for the user's answer.
+
+### Step 3: Scope Each Choice
+
+For each chosen item, discuss:
+
+- **Scope of the change** — what files, modules, or layers are affected?
+- **Risk level** — is this a safe rename/extraction, or does it change behavior?
+  Could it break tests? Does it affect public APIs?
+- **Dependencies on other changes** — does this need to happen before or after
+  another planned change?
+- **Estimated effort** — hours, days, or weeks? Factor in test updates.
+
+This is conversational — work through each item with the user. Don't dump a
+plan and move on. The user may reprioritize, defer items, or combine related
+changes as the discussion unfolds.
+
+### Step 4: Build the Action Plan
+
+Once the user is satisfied with the scoping, build a phased plan in the
+`## Action Plan` section of the artifact. Each phase groups related changes
+that can be done together:
+
+```markdown
+## Action Plan
+
+### Phase 1: <title> [NOT STARTED]
+**Target findings:** Finding X, Finding Y
+**Scope:** <description of what changes and where>
+**Risk:** Low / Medium / High
+**Estimated effort:** <timeframe>
+**Dependencies:** None / Phase N must complete first
+
+### Phase 2: <title> [NOT STARTED]
+**Target findings:** Finding Z
+**Scope:** <description>
+**Risk:** <level>
+**Estimated effort:** <timeframe>
+**Dependencies:** <if any>
+```
+
+**Phase statuses:**
+- `[NOT STARTED]` — planned but not yet begun
+- `[IN PROGRESS]` — work has started (set when Phase 6 kicks off)
+- `[COMPLETE]` — execution finished and verified
+
+**Ordering:** Put quick wins and low-risk phases first. Strategic restructuring
+goes last. Respect dependency ordering — if Phase 3 depends on Phase 1, Phase 1
+must come first.
+
+### Step 5: Commit the Updated Artifact
+
+```bash
+cd "$ROOT"
+git add "$ARTIFACT_PATH"
+git commit -m "docs: architecture action plan — $(date +%Y-%m-%d)"
+git push
+```
+
+Tell the user: "Action plan committed. Run individual phases with
+`/architect` and tell me which phase to execute."
+
+### Step 6: Update State
+
+Parse the committed artifact and update project state:
+
+```bash
+PARSED=$("$ARCHITECT" parse-artifact "$SLUG")
+FINDINGS_TOTAL=$(echo "$PARSED" | jq -r '.findings_total')
+FINDINGS_RESOLVED=$(echo "$PARSED" | jq -r '.findings_resolved')
+PLAN_PHASES=$(echo "$PARSED" | jq -r '.action_plan_phases')
+PLAN_COMPLETED=$(echo "$PARSED" | jq -r '.action_plan_completed')
+
+"$ARCHITECT" update-state "$SLUG" \
+  action_plan_phases="$PLAN_PHASES" \
+  action_plan_completed="$PLAN_COMPLETED" \
+  findings_total="$FINDINGS_TOTAL" \
+  findings_resolved="$FINDINGS_RESOLVED"
+```
+
+---
+
+## Phase 6: Execute — Invoke Writing Plans for Restructuring
+
+This phase runs on demand — the user explicitly triggers it by saying something
+like "let's tackle Phase 1" or "execute the quick wins." It is never automatic.
+
+### Step 1: Identify the Target Phase
+
+Read the assessment artifact. Find the phase the user referenced. If the phase
+status is `[COMPLETE]`, tell the user it's already done and ask if they want to
+re-run it.
+
+Mark the target phase as `[IN PROGRESS]` in the artifact.
+
+### Step 2: Gather Context
+
+From the artifact, collect:
+
+- The phase title and scope description
+- The target findings it addresses (full finding details: location, what,
+  why it matters, recommendation)
+- Any dependencies — confirm predecessor phases are `[COMPLETE]`
+
+If a dependency is not complete, warn the user:
+
+> "Phase N depends on Phase M, which is still [NOT STARTED]. Do you want to
+> proceed anyway, or tackle Phase M first?"
+
+Wait for confirmation.
+
+### Step 3: Invoke Writing Plans
+
+Invoke the `superpowers:writing-plans` skill to create a detailed
+implementation plan for the phase:
+
+```
+/superpowers:writing-plans
+```
+
+Provide the skill with:
+
+- **Goal:** The phase title and scope from the action plan
+- **Context:** The full finding details (location, what, why, recommendation)
+  for every finding this phase targets
+- **Project root:** `$ROOT`
+- **Framework and philosophy:** From the architect config
+
+The writing-plans skill handles the rest — task breakdown, TDD, execution.
+
+### Step 4: Update the Artifact After Execution
+
+Once execution completes:
+
+1. Mark the phase as `[COMPLETE]` in the Action Plan:
+   ```markdown
+   ### Phase 1: <title> [COMPLETE]
+   ```
+
+2. Mark each resolved finding with `[RESOLVED]` appended to its title:
+   ```markdown
+   #### Finding: God object in User model [RESOLVED]
+   ```
+   Only mark findings as resolved if the execution actually addressed them.
+   If a finding was partially addressed, leave it unmarked and add a note.
+
+3. Commit the updated artifact:
+   ```bash
+   cd "$ROOT"
+   git add "$ARTIFACT_PATH"
+   git commit -m "docs: architecture phase complete — <phase title>"
+   git push
+   ```
+
+### Step 5: Update State
+
+```bash
+PARSED=$("$ARCHITECT" parse-artifact "$SLUG")
+FINDINGS_TOTAL=$(echo "$PARSED" | jq -r '.findings_total')
+FINDINGS_RESOLVED=$(echo "$PARSED" | jq -r '.findings_resolved')
+PLAN_PHASES=$(echo "$PARSED" | jq -r '.action_plan_phases')
+PLAN_COMPLETED=$(echo "$PARSED" | jq -r '.action_plan_completed')
+
+"$ARCHITECT" update-state "$SLUG" \
+  action_plan_phases="$PLAN_PHASES" \
+  action_plan_completed="$PLAN_COMPLETED" \
+  findings_total="$FINDINGS_TOTAL" \
+  findings_resolved="$FINDINGS_RESOLVED"
+```
+
+Tell the user what was completed and what remains:
+
+> "Phase 1 complete. N findings resolved. M phases remaining in the action plan."
+
+---
+
+## Targeted Invocation — `/architect <target>`
+
+When the user invokes `/architect` with a target (e.g., `/architect app/models`
+or `/architect the dispatch system`), the run is scoped to that subsystem.
+
+### How Scoping Works
+
+The target handling is built into the existing phases:
+
+1. **Teach** — Runs normally if needed (values apply to the whole project)
+2. **Sweep (Phase 2, Step 2)** — Scope detection already handles targets:
+   - Path targets (`app/models`, `src/features/dispatch`) scope the scan to
+     that directory tree
+   - Concept targets ("the dispatch system") instruct the sweep agent to
+     identify relevant files first, then scope
+3. **Deep Dive (Phase 3)** — Agents receive the scoped file pointers from
+   the sweep, so they naturally focus on the target area
+4. **Assess (Phase 4)** — Findings are generated only for the target scope
+
+### Merging into the Main Artifact
+
+The key difference with targeted runs is how results merge into the assessment
+artifact:
+
+**If an assessment artifact already exists:**
+
+1. Read the existing artifact
+2. For each lens, merge new findings with existing ones:
+   - **New findings** from the target scope — append to the appropriate lens
+     section. Prefix the finding title with the scope for clarity, e.g.,
+     `#### Finding: God object in User model (app/models)`
+   - **Existing findings outside the target scope** — preserve unchanged
+   - **Existing findings inside the target scope** — replace with new results
+     (the fresh analysis supersedes the old one for this area)
+3. Re-run the prioritization: integrate new findings into the existing
+   recommendation tiers
+4. Preserve the Action Plan section verbatim — targeted runs don't modify
+   existing plans
+
+**If no assessment artifact exists:**
+
+Create a new one using the standard template. Note in the Summary that this
+assessment covers only the targeted area:
+
+```markdown
+## Summary
+This assessment covers **<target description>** only, not the full codebase.
+Run `/architect` without a target for a complete assessment.
+```
+
+### Artifact Commit
+
+Same as Phase 4, Step 7:
+
+```bash
+cd "$ROOT"
+git add "$ARTIFACT_PATH"
+git commit -m "docs: architecture assessment — <target> — $(date +%Y-%m-%d)"
+git push
+```
+
+### State Update
+
+Same as Phase 4, Step 8 — parse the artifact and update state. The state
+tracks the aggregate across all runs (full and targeted).
