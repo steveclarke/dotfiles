@@ -41,7 +41,8 @@ bin/dev stop
 ## Health Check
 
 ```bash
-bin/dev status    # JSON status of all processes
+bin/dev status          # Friendly table output
+bin/dev status --json   # JSON (for agents/scripting)
 ```
 
 <!-- Describe expected output -->

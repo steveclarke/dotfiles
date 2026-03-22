@@ -297,7 +297,10 @@ pc_flags=(-U -u "$pc_sock")
 case "${1:-}" in
   -D)        shift; process-compose up -D "${pc_flags[@]}" "$@" ;;
   stop)      process-compose "${pc_flags[@]}" down ;;
-  status)    process-compose "${pc_flags[@]}" process list --output json ;;
+  status)
+    fmt="--output wide"; [[ "${2:-}" == "--json" ]] && fmt="--output json"
+    process-compose "${pc_flags[@]}" process list $fmt 2>/dev/null || { echo "Dev environment is not running. Start it with: bin/dev"; exit 1; }
+    ;;
   logs)      process-compose "${pc_flags[@]}" process logs "${2:?specify a service}" ;;
   restart)   process-compose "${pc_flags[@]}" process restart "${2:?specify a service}" ;;
   *)         process-compose up "${pc_flags[@]}" "$@" ;;

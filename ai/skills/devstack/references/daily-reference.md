@@ -28,10 +28,10 @@ bin/dev stop
 
 | Task | Command |
 |------|---------|
-| Check status | `bin/dev status` |
+| Check status | `bin/dev status` (wide table) |
+| Check status (JSON) | `bin/dev status --json` (for agents/scripting) |
 | Tail logs | `bin/dev logs <service>` |
 | Restart one service | `bin/dev restart <service>` |
-| REST API (JSON) | `curl -s http://localhost:8080/processes` (only if `--no-server` is not used) |
 | Wait for healthy | `process-compose project is-ready --wait` |
 
 ## Creating Worktrees
