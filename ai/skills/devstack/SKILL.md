@@ -37,7 +37,8 @@ If `DEVSTACK.md` exists, these are the standard commands:
 | Start (human, TUI) | `bin/dev` |
 | Start (agent, headless) | `bin/dev -D` |
 | Stop | `bin/dev stop` |
-| Status (JSON) | `bin/dev status` |
+| Status (table) | `bin/dev status` |
+| Status (JSON) | `bin/dev status --json` |
 | Logs | `bin/dev logs <service>` |
 | Restart service | `bin/dev restart <service>` |
 | Wait for healthy | `bin/dev status` (poll until all services show Ready) |
