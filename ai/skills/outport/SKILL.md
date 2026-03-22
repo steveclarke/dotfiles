@@ -205,6 +205,8 @@ computed:
 | `${rails.hostname}` | `myapp.test` (or `localhost` if no hostname set) | Hostname only |
 | `${rails.url}` | `http://myapp.test` | Browser-facing URLs (CORS, asset hosts), routed via proxy |
 | `${rails.url:direct}` | `http://localhost:24920` | Server-to-server calls that bypass the proxy |
+| `${rails.protocol}` | `http` | Protocol as declared in config |
+| `${rails.env_var}` | `PORT` | Env var name for the service |
 
 **When to use `url` vs `url:direct`:**
 - `${service.url}` — for values the browser sends (CORS origins, asset
@@ -213,13 +215,14 @@ computed:
   backend fetches, WebSocket connections from a Node server). Always uses
   `localhost` — no proxy hop.
 
-### The `${instance}` variable and bash-style parameter expansion
+### Standalone variables and bash-style parameter expansion
 
-Computed values support bash-style parameter expansion for instance-aware
-configuration:
+Computed values support standalone variables and bash-style parameter
+expansion for instance-aware configuration:
 
 | Variable | Main instance | Worktree instance (e.g., `bxcf`) |
 |----------|--------------|----------------------------------|
+| `${project_name}` | `myapp` | `myapp` |
 | `${instance}` | *(empty string)* | `bxcf` |
 | `${instance:-default}` | `default` | `bxcf` |
 | `${instance:+replacement}` | *(empty string)* | `replacement` |
@@ -230,7 +233,7 @@ configuration:
 ```yaml
 computed:
   COMPOSE_PROJECT_NAME:
-    value: "myapp${instance:+-${instance}}"
+    value: "${project_name}${instance:+-${instance}}"
     env_file: .env
 ```
 
