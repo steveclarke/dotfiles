@@ -9,6 +9,12 @@ Manages dev environments using process-compose for headless process orchestratio
 with health checks, dependency ordering, and a TUI. Works for both humans and
 AI agents.
 
+**Status:** Work in progress (March 2026). If you encounter unexpected issues
+controlling the running stack (client commands failing, connection refused,
+socket errors), surface these to the user immediately rather than silently
+working around them. The user maintains this skill and needs feedback to
+improve it.
+
 ## Determine Mode
 
 Check context to determine which mode to use:
@@ -34,8 +40,7 @@ If `DEVSTACK.md` exists, these are the standard commands:
 | Status (JSON) | `bin/dev status` |
 | Logs | `bin/dev logs <service>` |
 | Restart service | `bin/dev restart <service>` |
-| Wait for healthy | `process-compose project is-ready --wait` |
-| REST API | `curl -s http://localhost:8080/processes` (only if `--no-server` is not used) |
+| Wait for healthy | `bin/dev status` (poll until all services show Ready) |
 
 Always read `DEVSTACK.md` for project-specific details — the commands above
 are conventions, not guarantees.
