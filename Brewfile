@@ -3,6 +3,7 @@
 
 brew "steveclarke/tap/superthread"
 brew "steveclarke/tap/outport"
+brew "myunio/tap/unio"
 
 brew "act"
 brew "aichat"
