@@ -10,63 +10,83 @@ detect_os
 
 # Show usage if no command is provided
 if [ $# -eq 0 ]; then
-  echo "Usage: dotfiles [command]"
+  echo "Usage: dotfiles <command>"
+  echo ""
   echo "Commands:"
-  echo "  stow: Update config files using stow"
-  echo "  brew: Run \`brew bundle\` to install/update packages"
-  echo "  update: Run stow and brew"
+  echo "  up, update   Update everything (stow, brew, skills, mise)"
+  echo "  stow         Update config symlinks"
+  echo "  brew         Update and upgrade Homebrew packages"
+  echo "  skills       Update agent skills"
+  echo "  mise         Install/update tool versions"
   exit 1
 fi
 
-run_stow () {
-  echo "Stowing dotfiles"
+run_stow() {
+  banner "Stowing dotfiles"
   source "${DOTFILES_DIR}"/configs/stow.sh
 }
 
-run_brew () {
+run_brew() {
+  banner "Updating Homebrew"
+  brew update
+  brew upgrade
+
+  banner "Running brew bundle"
+
   if is_macos; then
-    echo "Running brew bundle (macOS)"
-    
-    # Cache sudo credentials for packages that may require it
+    # Cache sudo credentials for casks that may require it
     cache_sudo_credentials
-    
-    cd "${DOTFILES_DIR}" || exit
-    
-    # Always run main Brewfile for CLI tools
+
     if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
-      echo "Installing CLI packages from main Brewfile"
-      brew bundle --file=Brewfile
+      brew bundle --file="${DOTFILES_DIR}/Brewfile"
     fi
-    
-    # Run macOS-specific Brewfile if it exists
+
     if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
-      echo "Installing macOS packages from Brewfile.macos"
       brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
     fi
-    
-    cd - || exit
   else
-    echo "Running brew bundle (Linux)"
     cd "${DOTFILES_DIR}" || exit
     brew bundle
-    cd - || exit
+    cd - > /dev/null || exit
   fi
+
+  banner "Cleaning up Homebrew"
+  brew cleanup
+}
+
+run_skills() {
+  banner "Updating agent skills"
+  "${DOTFILES_DIR}/bin/skills-update"
+}
+
+run_mise() {
+  banner "Updating mise tools"
+  mise install
 }
 
 # check the command and run appropriate function
 case $1 in
-  update)
+  up|update)
     run_stow
     run_brew
+    run_skills
+    run_mise
     ;;
   stow)
     run_stow
     ;;
   brew)
     run_brew
-   ;;
+    ;;
+  skills)
+    run_skills
+    ;;
+  mise)
+    run_mise
+    ;;
   *)
-    echo "Invalid command"
+    echo "Unknown command: $1"
+    echo "Run 'dotfiles' for usage"
     exit 1
     ;;
 esac

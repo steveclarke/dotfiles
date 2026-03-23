@@ -84,6 +84,7 @@ All colored components use **identical compound variant formulas** — see `proj
 
 | Component | Key locals | Reference |
 |---|---|---|
+| `action_icon` | `icon` (required), `size` (xs/sm/md), `title`, `href`, `method`, `disabled`. Inline icon-only action trigger — no fixed height, flows with text. Polymorphic tag like Button. | [action_icon.md](components/action_icon.md) |
 | `alert` | `icon`, `color`, `variant` (solid/outline/soft/subtle), `close`. Sub-parts: title, description, actions. Stimulus: `kiso--alert` | [alert.md](components/alert.md) |
 | `badge` | `color`, `variant` (solid/outline/soft/subtle), `size` (xs-xl) | [badge.md](components/badge.md) |
 | `button` | `color`, `variant` (solid/outline/soft/subtle/ghost/link), `size` (xs-xl), `loading:` (spinner + disabled), `loading_auto:` (Turbo form auto-loading), `method:` (delete/post/put/patch), `form:` | [button.md](components/button.md) |
