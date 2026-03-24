@@ -29,7 +29,7 @@ Most commands accept **names or IDs** for spaces, boards, lists, sprints, users,
 
 ## Mentions
 
-Use `{{@Name}}` to mention workspace members in comments, replies, and checklist items. The name is matched case-insensitively against workspace member display names.
+Use `{{@Name}}` to mention workspace members in comments, replies, checklist items, and card/page content. The name is matched case-insensitively against workspace member display names.
 
 ```bash
 # Mention in a comment
@@ -189,9 +189,10 @@ suth cards create --title "Task" -l LIST -b BOARD
   #          --sprint SPRINT, -s SPACE, --start-date TIMESTAMP,
   #          --due-date TIMESTAMP, --priority N, --owner/-o USER
 suth cards update CARD
-  # Options: --title, --list LIST, --board BOARD, --sprint SPRINT, -s SPACE,
-  #          --position N, --priority N, --epic ID, --archived/--no-archived
+  # Options: --title, --content HTML, --list LIST, --board BOARD, --sprint SPRINT,
+  #          -s SPACE, --position N, --priority N, --epic ID, --archived/--no-archived
   # Note: list names auto-resolve. Moving to sprint requires --sprint and -s.
+  # Note: --content uses a separate PUT endpoint from other fields.
 suth cards delete CARD
 suth cards duplicate CARD --project ID -b BOARD -l LIST
   # Required: --project, --board/-b, --list/-l
@@ -235,7 +236,7 @@ suth pages get PAGE
 suth pages create -s SPACE [--title "Doc"]
   # Options: --content, --parent-page ID, --is-public
 suth pages update PAGE --title "New title"
-  # Options: --is-public, --parent-page ID, --archived
+  # Options: --content HTML, --is-public, --parent-page ID, --archived
 suth pages duplicate PAGE -s SPACE
   # Options: --title, --parent-page ID
 suth pages archive PAGE
