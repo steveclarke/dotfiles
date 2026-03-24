@@ -90,5 +90,6 @@
     ]
   },
   "effortLevel": "high",
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "autoDreamEnabled": true
 }
