@@ -1,6 +1,6 @@
 ---
 name: outport
-description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", "outport.yml", "port management", "env var ports", "computed values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation", "tunnel", "share localhost", "public URL", "cloudflare tunnel", "outport doctor", "health check", "diagnose outport". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
+description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", "outport.yml", "port management", "env var ports", "computed values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation", "tunnel", "share localhost", "public URL", "cloudflare tunnel", "outport doctor", "health check", "diagnose outport", "QR code", "mobile access", "phone testing", "LAN IP". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
 ---
 
 # Outport — Dev Port Manager
@@ -27,6 +27,8 @@ outport open              # Open HTTP services in browser
 outport open web          # Open a specific service
 outport share             # Tunnel HTTP services to public URLs
 outport share web         # Tunnel a specific service
+outport qr                # Show QR codes for mobile device access
+outport qr --tunnel       # Show QR codes with tunnel URLs
 outport doctor            # Check system health and project config
 
 # System commands (machine-wide)
@@ -421,6 +423,13 @@ and URLs.
 Check `outport system status` to see all allocations. If another project
 holds the ports you want, run `outport down` in it first, then
 `outport up --force` in yours.
+
+### Accessing dev services from a phone
+Run `outport qr` to display a QR code encoding the LAN URL for each HTTP
+service. Scan with your phone on the same Wi-Fi to open the app. Use
+`outport qr --tunnel` while `outport share` is running to get a QR for the
+public tunnel URL instead. QR codes are also available in the dashboard at
+`outport.test`.
 
 ### Sharing a service with someone outside your network
 Run `outport share` to tunnel all HTTP services to public Cloudflare URLs.

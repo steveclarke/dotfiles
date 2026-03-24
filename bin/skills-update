@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+#
+# skills-update — Update all agent skills, working around the hardcoded
+# "main" branch bug in `npx skills update` (vercel-labs/skills#373).
+#
+# Reads ~/.agents/.skill-lock.json, detects each repo's actual default
+# branch via the GitHub API, and re-adds any skill whose folder hash
+# has changed upstream.
+
+set -euo pipefail
+
+LOCK_FILE="${HOME}/.agents/.skill-lock.json"
+SKILLS_DIR="${HOME}/.agents/skills"
+
+# Colors
+RESET="\033[0m"
+DIM="\033[2m"
+TEXT="\033[38;5;145m"
+GREEN="\033[32m"
+RED="\033[31m"
+
+info()    { printf "${TEXT}%s${RESET}\n" "$1"; }
+success() { printf "  ${GREEN}✓${RESET} %s\n" "$1"; }
+fail()    { printf "  ${RED}✗${RESET} %s\n" "$1"; }
+dim()     { printf "${DIM}%s${RESET}\n" "$1"; }
+
+# Get a GitHub auth token if available (gh cli)
+get_token() {
+  gh auth token 2>/dev/null || true
+}
+
+# Resolve the default branch for a GitHub repo
+default_branch() {
+  local owner_repo="$1"
+  local token="$2"
+  local headers=(-H "Accept: application/vnd.github.v3+json" -H "User-Agent: skills-update")
+  if [[ -n "$token" ]]; then
+    headers+=(-H "Authorization: Bearer $token")
+  fi
+  curl -sf "${headers[@]}" "https://api.github.com/repos/${owner_repo}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['default_branch'])" 2>/dev/null
+}
+
+# Fetch the tree SHA for a skill folder on a given branch
+fetch_folder_hash() {
+  local owner_repo="$1"
+  local branch="$2"
+  local folder_path="$3"
+  local token="$4"
+
+  local headers=(-H "Accept: application/vnd.github.v3+json" -H "User-Agent: skills-update")
+  if [[ -n "$token" ]]; then
+    headers+=(-H "Authorization: Bearer $token")
+  fi
+
+  local url="https://api.github.com/repos/${owner_repo}/git/trees/${branch}?recursive=1"
+  local response
+  response=$(curl -sf "${headers[@]}" "$url") || return 1
+
+  if [[ -z "$folder_path" ]]; then
+    echo "$response" | python3 -c "import sys,json; print(json.load(sys.stdin)['sha'])"
+  else
+    echo "$response" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+folder = '$folder_path'
+for entry in data.get('tree', []):
+    if entry['type'] == 'tree' and entry['path'] == folder:
+        print(entry['sha'])
+        sys.exit(0)
+sys.exit(1)
+"
+  fi
+}
+
+main() {
+  if [[ ! -f "$LOCK_FILE" ]]; then
+    echo "No skill lock file found at $LOCK_FILE"
+    exit 1
+  fi
+
+  local token
+  token=$(get_token)
+
+  info "Checking for skill updates..."
+  echo
+
+  # Parse lock file into skill entries
+  local skills
+  skills=$(python3 -c "
+import json, sys
+with open('$LOCK_FILE') as f:
+    lock = json.load(f)
+for name, entry in lock.get('skills', {}).items():
+    source = entry.get('source', '')
+    source_type = entry.get('sourceType', '')
+    source_url = entry.get('sourceUrl', '')
+    skill_path = entry.get('skillPath', '')
+    folder_hash = entry.get('skillFolderHash', '')
+    branch = entry.get('branch', '')
+    if source_type == 'github' and source:
+        print(f'{name}\t{source}\t{source_url}\t{skill_path}\t{folder_hash}\t{branch}')
+")
+
+  local update_names=()
+  local update_urls=()
+  local skipped=0
+  local total=0
+
+  while IFS=$'\t' read -r name source source_url skill_path folder_hash lock_branch; do
+    [[ -z "$name" ]] && continue
+    total=$((total + 1))
+
+    # Determine the folder path from skillPath
+    local folder_path="$skill_path"
+    folder_path="${folder_path%/SKILL.md}"
+    folder_path="${folder_path%SKILL.md}"
+    folder_path="${folder_path%/}"
+
+    # Resolve actual branch
+    local branch="$lock_branch"
+    if [[ -z "$branch" ]]; then
+      branch=$(default_branch "$source" "$token" 2>/dev/null) || true
+    fi
+    if [[ -z "$branch" ]]; then
+      skipped=$((skipped + 1))
+      continue
+    fi
+
+    # Fetch current hash
+    local current_hash
+    current_hash=$(fetch_folder_hash "$source" "$branch" "$folder_path" "$token" 2>/dev/null) || {
+      skipped=$((skipped + 1))
+      continue
+    }
+
+    if [[ "$current_hash" != "$folder_hash" ]]; then
+      # Build the correct URL with the actual branch
+      local install_url="${source_url%.git}"
+      install_url="${install_url%/}"
+      if [[ -n "$folder_path" ]]; then
+        install_url="${install_url}/tree/${branch}/${folder_path}"
+      fi
+      update_names+=("$name")
+      update_urls+=("$install_url")
+    fi
+  done <<< "$skills"
+
+  dim "Checked ${total} skill(s)"
+  echo
+
+  if [[ ${#update_names[@]} -eq 0 ]]; then
+    info "✓ All skills are up to date"
+    [[ $skipped -gt 0 ]] && dim "Could not check ${skipped} skill(s)"
+    return 0
+  fi
+
+  info "Found ${#update_names[@]} update(s)"
+  echo
+
+  local success_count=0
+  local fail_count=0
+
+  for i in "${!update_names[@]}"; do
+    local name="${update_names[$i]}"
+    local install_url="${update_urls[$i]}"
+
+    info "Updating ${name}..."
+
+    if npx -y skills add "$install_url" -g -y > /dev/null 2>&1; then
+      success "Updated ${name}"
+      success_count=$((success_count + 1))
+    else
+      fail "Failed to update ${name}"
+      fail_count=$((fail_count + 1))
+    fi
+  done
+
+  echo
+  [[ $success_count -gt 0 ]] && info "✓ Updated ${success_count} skill(s)"
+  [[ $fail_count -gt 0 ]] && dim "Failed to update ${fail_count} skill(s)"
+  [[ $skipped -gt 0 ]] && dim "Could not check ${skipped} skill(s)"
+}
+
+main "$@"
