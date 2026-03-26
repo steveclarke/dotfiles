@@ -195,12 +195,29 @@ Other processes can depend on it completing:
 ```
 
 ### Environment Variables
-process-compose auto-loads `.env` from the working directory. Variables like
-`$PORT`, `$DB_PORT` from outport are available to all processes and probes.
+process-compose auto-loads `.env` and `.pc_env` from the working directory.
+Variables like `$PORT`, `$DB_PORT` from outport are available to all processes
+and probes.
 
 **Monorepo note:** If the `.env` file is in a subdirectory (e.g., `backend/.env`),
-`bin/dev` should source it before launching process-compose. See the bin/dev
-section below.
+process-compose won't auto-load it. Instead of sourcing it in `bin/dev`, use
+outport's multi-file `env_file` to write process-compose-needed variables to
+`.pc_env` as well:
+
+```yaml
+services:
+  rails:
+    env_var: RAILS_PORT
+    env_file:
+      - backend/.env    # for Rails and Docker Compose
+      - .pc_env         # for process-compose probes and commands
+```
+
+This way process-compose picks up `RAILS_PORT` from `.pc_env` alongside
+`PC_SOCKET_PATH`, and `bin/dev` stays a clean pass-through with no sourcing.
+Only port variables that process-compose references directly (in commands or
+probes) need to be in `.pc_env` — variables only used by Docker Compose or
+Rails can stay in `backend/.env` alone.
 
 ### Nuxt/Node Frontend
 For projects with frontend apps:
@@ -280,6 +297,14 @@ computed:
     value: "/tmp/process-compose-${project_name}${instance:+-${instance}}.sock"
     env_file: .pc_env
 ```
+
+**COMPOSE_PROJECT_NAME migration warning:** If the project's `compose.yml` or
+`docker-compose.yml` has an existing `name:` field, the computed
+`COMPOSE_PROJECT_NAME` must match it exactly. Docker Compose uses the project
+name to namespace volumes (e.g., `myapp_postgres_data`). A mismatch creates
+fresh empty volumes and the app will see no database. Check with
+`docker volume ls --filter name=<project>` before and after switching to
+outport-managed `COMPOSE_PROJECT_NAME`.
 
 After `outport up`, each instance gets its own `.pc_env` with a unique socket
 path. Main gets `/tmp/process-compose-myapp.sock`, worktrees get
