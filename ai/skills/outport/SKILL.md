@@ -37,7 +37,7 @@ outport system stop       # Stop the daemon
 outport system restart    # Re-write plist and restart the daemon
 outport system status     # Show all registered projects
 outport system status --check  # Show with health checks (up/down)
-outport system gc         # Remove stale registry entries
+outport system prune      # Remove stale registry entries
 outport system uninstall  # Remove DNS resolver, daemon, and CA
 
 # Instance management
@@ -58,7 +58,6 @@ name: my-project
 services:
   web:
     env_var: PORT
-    protocol: http
   postgres:
     env_var: DB_PORT
   redis:
@@ -120,23 +119,20 @@ outport system uninstall  # Remove everything — reverse of start
 
 ### Configuring .test hostnames
 
-Add `hostname` and `protocol: http` to a service to assign it a `.test`
-URL:
+Add `hostname` to a service to assign it a `.test` URL:
 
 ```yaml
 name: myapp
 services:
   web:
     env_var: PORT
-    protocol: http
-    hostname: myapp.test       # → http://myapp.test
+    hostname: myapp.test       # → https://myapp.test
   postgres:
     env_var: DB_PORT           # no hostname: port allocation only
 ```
 
 Hostname rules:
 - Must include the project name (e.g., `myapp.test`, `app.myapp.test`)
-- Requires `protocol: http` or `https`
 - Non-main instances get the instance code appended automatically (see
   [Multiple Instances](#multiple-instances))
 
@@ -157,8 +153,7 @@ myapp [bkrm]   web → 28104   http://myapp-bkrm.test
 | Field | Required | Description |
 |-------|----------|-------------|
 | `env_var` | yes | Environment variable name written to `.env` |
-| `protocol` | no | `http`, `https`, `smtp`, `postgres`, `redis`, etc. HTTP/HTTPS services show URLs in output and work with `outport open` |
-| `hostname` | no | `.test` hostname for this service (e.g., `myapp.test`). Requires `protocol: http` or `https`. Non-main instances get the instance code appended. |
+| `hostname` | no | `.test` hostname for this service (e.g., `myapp.test`). Implies HTTP. Non-main instances get the instance code appended. |
 | `preferred_port` | no | Port to try first. Falls back to hash-based allocation if already in use |
 | `env_file` | no | Where to write. String or array. Defaults to `.env` in project root |
 
@@ -171,7 +166,6 @@ array for `env_file`:
 services:
   rails:
     env_var: RAILS_PORT
-    protocol: http
     env_file:
       - backend/.env
       - frontend/.env          # Frontend needs this to construct API URLs
@@ -207,7 +201,6 @@ computed:
 | `${rails.hostname}` | `myapp.test` (or `localhost` if no hostname set) | Hostname only |
 | `${rails.url}` | `http://myapp.test` | Browser-facing URLs (CORS, asset hosts), routed via proxy |
 | `${rails.url:direct}` | `http://localhost:24920` | Server-to-server calls that bypass the proxy |
-| `${rails.protocol}` | `http` | Protocol as declared in config |
 | `${rails.env_var}` | `PORT` | Env var name for the service |
 
 **When to use `url` vs `url:direct`:**
@@ -272,19 +265,16 @@ name: myapp
 services:
   rails:
     env_var: RAILS_PORT
-    protocol: http
     hostname: myapp.test
     env_file: backend/.env
   frontend_main:
     env_var: MAIN_PORT
-    protocol: http
     hostname: app.myapp.test
     env_file:
       - frontend/apps/main/.env
       - backend/.env               # Backend needs this for CORS
   frontend_portal:
     env_var: PORTAL_PORT
-    protocol: http
     hostname: portal.myapp.test
     env_file:
       - frontend/apps/portal/.env
@@ -416,8 +406,7 @@ Add it to `outport.yml` and run `outport up`. Existing allocations
 are preserved — only the new service gets a port.
 
 ### Agent needs to know the project's URLs
-Run `outport ports --json` for structured output with ports, protocols,
-and URLs.
+Run `outport ports --json` for structured output with ports and URLs.
 
 ### Services moved to different ports than expected
 Check `outport system status` to see all allocations. If another project
