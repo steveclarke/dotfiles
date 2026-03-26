@@ -1,6 +1,6 @@
 ---
 name: outport
-description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", "outport.yml", "port management", "env var ports", "computed values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation", "tunnel", "share localhost", "public URL", "cloudflare tunnel", "outport doctor", "health check", "diagnose outport", "QR code", "mobile access", "phone testing", "LAN IP". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
+description: Manage dev ports with Outport. Use when setting up a new project, adding services, resolving port conflicts, configuring monorepo cross-service URLs, or working with worktrees and multiple instances. Triggers on "outport", "port conflict", "port allocation", "dev ports", "outport.yml", "port management", "env var ports", "computed values", "cross-service URLs", "CORS origins from ports", ".test domains", "local DNS", "reverse proxy", "cookie isolation", "tunnel", "share localhost", "public URL", "cloudflare tunnel", "outport doctor", "health check", "diagnose outport", "QR code", "mobile access", "phone testing", "LAN IP", "hostname aliases", "multiple hostnames", "subdomain routing". Also use when the user mentions running multiple instances of a project, worktree port setup, or when services need to discover each other's URLs.
 ---
 
 # Outport — Dev Port Manager
@@ -99,14 +99,16 @@ of `http://localhost:24920`.
 
 ### How it works
 
-`outport system start` installs three components (macOS, requires sudo for DNS step):
+`outport system start` installs three components (requires sudo for DNS and CA trust):
 
-1. **DNS resolver** — `/etc/resolver/test` points `*.test` queries to a
+1. **DNS resolver** — configures your OS to send `*.test` queries to a
    local DNS server on port 15353, which resolves all `*.test` names to
-   `127.0.0.1`.
-2. **Reverse proxy** — a LaunchAgent runs on ports 80 and 443, routes
+   `127.0.0.1`. On macOS this is `/etc/resolver/test`; on Linux it's a
+   systemd-resolved drop-in config.
+2. **Reverse proxy** — a daemon runs on ports 80 and 443, routes
    requests by `Host` header to the correct service port, and auto-updates
    when you run `outport up`. WebSocket connections are proxied transparently.
+   Managed by launchd on macOS, systemd on Linux.
 3. **Local CA** — generates a Certificate Authority for HTTPS. HTTP requests
    on port 80 are redirected to HTTPS via 307.
 
@@ -154,6 +156,7 @@ myapp [bkrm]   web → 28104   http://myapp-bkrm.test
 |-------|----------|-------------|
 | `env_var` | yes | Environment variable name written to `.env` |
 | `hostname` | no | `.test` hostname for this service (e.g., `myapp.test`). Implies HTTP. Non-main instances get the instance code appended. |
+| `aliases` | no | Named alternative hostnames (map of label → hostname). Each alias routes to the same port. Requires `hostname`. |
 | `preferred_port` | no | Port to try first. Falls back to hash-based allocation if already in use |
 | `env_file` | no | Where to write. String or array. Defaults to `.env` in project root |
 
@@ -202,6 +205,8 @@ computed:
 | `${rails.url}` | `http://myapp.test` | Browser-facing URLs (CORS, asset hosts), routed via proxy |
 | `${rails.url:direct}` | `http://localhost:24920` | Server-to-server calls that bypass the proxy |
 | `${rails.env_var}` | `PORT` | Env var name for the service |
+| `${rails.alias.NAME}` | `app.myapp.test` | Alias hostname by label |
+| `${rails.alias_url.NAME}` | `https://app.myapp.test` | Alias URL by label |
 
 **When to use `url` vs `url:direct`:**
 - `${service.url}` — for values the browser sends (CORS origins, asset
