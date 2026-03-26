@@ -127,8 +127,23 @@ prefix commands with `cd backend &&`:
 ### Rails Server
 Use an exec probe with curl for health checks. Do NOT use http_get — the
 outport reverse proxy redirects port 80 to HTTPS, breaking the built-in
-HTTP probe when it falls back to no port:
+HTTP probe when it falls back to no port.
+
+Use a `HEALTH_CHECK_URL` computed value in `outport.yml` instead of
+hardcoding `http://127.0.0.1:${PORT}/up` in the probe. This uses outport's
+`url:direct` template to compute the full URL, keeping process-compose free
+of port interpolation:
+
 ```yaml
+# outport.yml
+computed:
+  HEALTH_CHECK_URL:
+    value: "${rails.url:direct}/up"
+    env_file: .pc_env
+```
+
+```yaml
+# process-compose.yml
   rails:
     command: eval "$(mise activate bash)" && bin/rails server -p $PORT
     depends_on:
@@ -136,11 +151,14 @@ HTTP probe when it falls back to no port:
         condition: process_healthy
     readiness_probe:
       exec:
-        command: "curl -sf http://127.0.0.1:${PORT}/up"
+        command: "curl -sf ${HEALTH_CHECK_URL}"
       initial_delay_seconds: 3
       period_seconds: 5
       failure_threshold: 10
 ```
+
+The service name in `${rails.url:direct}` should match your outport service
+(e.g., `${web.url:direct}` if the service is named `web`).
 
 **Rails host authorization:** If the project uses outport's `.test` domain
 routing, Rails 8+ will block requests with "Blocked host" errors. Add this
