@@ -87,6 +87,14 @@ No need to re-run bin/setup unless dependencies changed.
 **Check:** `process-compose process list` — if it errors, the daemon isn't running.
 **Fix:** `bin/dev -D` to start it.
 
+### Socket not found / wrong instance
+**Symptom:** `process-compose` commands connect to the wrong worktree or fail
+with "connection refused."
+**Cause:** Missing `.pc_env` file. process-compose reads `PC_SOCKET_PATH` from
+`.pc_env` at startup to find the right socket.
+**Fix:** `outport up` — this regenerates `.pc_env` with the correct socket path
+for the current instance.
+
 ### Worktree removal fails with "contains modified or untracked files"
 **Cause:** The worktree has uncommitted changes.
 **Fix:** Use `bin/worktree remove -f <name>` to force removal.

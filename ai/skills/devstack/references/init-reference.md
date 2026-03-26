@@ -258,18 +258,36 @@ the TUI and when agents check logs.
 
 Replace the existing `bin/dev` (if any) with a process-compose wrapper.
 
-### UDS-Only Server (CRITICAL for worktree isolation)
+### Worktree Isolation via .pc_env (CRITICAL)
 
 process-compose runs an HTTP API server that client commands (`status`,
 `restart`, `logs`, `down`) connect to. By default this listens on TCP port
 8080. Multiple worktrees running simultaneously would all collide on that port.
 
-The solution is UDS (unix domain sockets) mode — two flags:
+The solution is **UDS (unix domain sockets)** with a unique socket per instance.
+process-compose loads a file called `.pc_env` from the working directory at the
+very start of its lifecycle — before CLI flags, before `.env`, before anything.
+Setting `PC_SOCKET_PATH` in `.pc_env` does two things automatically:
 
-- **`-U`** — use a unix socket instead of TCP. No port at all.
-- **`-u /path/to/sock`** — set a deterministic socket path. Without this,
-  the default path includes the PID and changes every run, so client
-  commands can't find the server.
+1. Enables UDS mode (no `-U` flag needed)
+2. Sets the socket path (no `-u` flag needed)
+
+**outport handles this.** Add a computed value to `outport.yml`:
+
+```yaml
+computed:
+  PC_SOCKET_PATH:
+    value: "/tmp/process-compose-${project_name}${instance:+-${instance}}.sock"
+    env_file: .pc_env
+```
+
+After `outport up`, each instance gets its own `.pc_env` with a unique socket
+path. Main gets `/tmp/process-compose-myapp.sock`, worktrees get
+`/tmp/process-compose-myapp-wiki.sock`, etc.
+
+This means `bin/dev` needs **zero UDS plumbing** — it's just convenience
+aliases around raw process-compose commands. Even bare `process-compose`
+commands work correctly in any worktree.
 
 **IMPORTANT:** Do NOT use `--no-server`. Despite the name, it disables ALL
 servers — including UDS. In process-compose, UDS is HTTP-over-unix-socket, so
@@ -277,40 +295,28 @@ servers — including UDS. In process-compose, UDS is HTTP-over-unix-socket, so
 
 ### Template
 
+Use the template from `templates/bin-dev`:
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Source .env if it's not in the project root (monorepo pattern)
-# if [[ -f backend/.env ]]; then
-#   set -a
-#   source backend/.env
-#   set +a
-# fi
-
-# UDS-only server: no TCP port, deterministic socket path.
-# Uses project name for worktree isolation. If using outport,
-# COMPOSE_PROJECT_NAME is unique per worktree (e.g., "myapp-1").
-pc_sock="${TMPDIR:-/tmp}process-compose-${COMPOSE_PROJECT_NAME:-myproject}.sock"
-pc_flags=(-U -u "$pc_sock")
+# process-compose reads .pc_env at startup and picks up PC_SOCKET_PATH,
+# which outport writes with a per-instance value. This auto-enables UDS
+# mode with a unique socket per worktree — no manual flags needed.
 
 case "${1:-}" in
-  -D)        shift; process-compose up -D "${pc_flags[@]}" "$@" ;;
-  stop)      process-compose "${pc_flags[@]}" down ;;
+  -D)        shift; process-compose up -D "$@" ;;
+  stop)      process-compose down ;;
   status)
     fmt="--output wide"; [[ "${2:-}" == "--json" ]] && fmt="--output json"
-    process-compose "${pc_flags[@]}" process list $fmt 2>/dev/null || { echo "Dev environment is not running. Start it with: bin/dev"; exit 1; }
+    process-compose process list $fmt 2>/dev/null || { echo "Dev environment is not running. Start it with: bin/dev"; exit 1; }
     ;;
-  logs)      process-compose "${pc_flags[@]}" process logs "${2:?specify a service}" ;;
-  restart)   process-compose "${pc_flags[@]}" process restart "${2:?specify a service}" ;;
-  *)         process-compose up "${pc_flags[@]}" "$@" ;;
+  logs)      process-compose process logs "${2:?specify a service}" ;;
+  restart)   process-compose process restart "${2:?specify a service}" ;;
+  *)         process-compose up "$@" ;;
 esac
 ```
-
-**Adapt for your project:**
-- Uncomment the `.env` sourcing if port variables aren't in the project root
-- Replace `myproject` with your project name (or use `COMPOSE_PROJECT_NAME`
-  if outport is managing it)
 
 Make it executable: `chmod +x bin/dev`
 
@@ -359,7 +365,9 @@ The script copies next-step instructions to the clipboard for convenience.
 
 - Remove `bin/services` if it exists (Docker is now managed by process-compose)
 - Remove `Procfile.dev` (replaced by `process-compose.yml`)
-- Add `.pc/` to `.gitignore` (process-compose runtime state directory)
+- Add to `.gitignore`:
+  - `.pc/` — process-compose runtime state directory
+  - `.pc_env` — per-instance socket path (written by `outport up`)
 
 ## 8. Update CLAUDE.md
 
