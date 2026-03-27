@@ -17,9 +17,6 @@
       "mcp__pencil"
     ],
     "ask": [
-      "Bash(git push *)",
-      "Bash(git push)",
-      "Bash(git commit *)",
       "Bash(git reset *)",
       "Bash(git rebase *)",
       "Bash(git merge *)",
