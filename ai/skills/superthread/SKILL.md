@@ -22,7 +22,7 @@ suth search query "term"           # Search everything
 --json              # Structured output (for scripts/agents)
 -y / --yes          # Skip confirmations
 -s SPACE            # Resolve ambiguous names (boards, lists, sprints)
-me                  # Use as user reference: suth cards assigned me
+me                  # Current user in any user argument (assigned, assign, --owner, --user, etc.)
 ```
 
 Most commands accept **names or IDs** for spaces, boards, lists, sprints, users, and tags.
@@ -128,7 +128,7 @@ suth spaces create --title "Name"
 suth spaces update SPACE --title "New Name"
   # Options: --description, --icon NAME, --icon-color "#HEX"
 suth spaces delete SPACE
-suth spaces add_member SPACE USERS [--role ROLE]   # Comma-separated users
+suth spaces add_member SPACE USERS [--role ROLE]   # IDs, names, emails, or 'me'
 suth spaces remove_member SPACE USERS
 ```
 
@@ -171,7 +171,7 @@ suth lists delete LIST
 suth cards list -b BOARD
 suth cards list --sprint SPRINT -s SPACE
   # Options: --list, --include-archived, --since DATE, --updated-since DATE, -s SPACE
-suth cards assigned USER
+suth cards assigned USER                           # USER = ID, name, email, or 'me'
 suth cards assigned me
   # Options: --board, --space, --project, --include-archived,
   #          --since DATE, --updated-since DATE
@@ -187,7 +187,7 @@ suth cards get CARD
 suth cards create --title "Task" -l LIST -b BOARD
   # Options: --content HTML, --project ID, --parent-card ID, --epic ID,
   #          --sprint SPRINT, -s SPACE, --start-date TIMESTAMP,
-  #          --due-date TIMESTAMP, --priority N, --owner/-o USER
+  #          --due-date TIMESTAMP, --priority N, --owner/-o USER (or 'me')
 suth cards update CARD
   # Options: --title, --content HTML, --list LIST, --board BOARD, --sprint SPRINT,
   #          -s SPACE, --position N, --priority N, --epic ID, --archived/--no-archived
@@ -198,8 +198,9 @@ suth cards duplicate CARD --project ID -b BOARD -l LIST
   # Required: --project, --board/-b, --list/-l
   # Options: --title, --space/-s
 
-# Members
-suth cards assign CARD USERS                       # Comma-separated
+# Members (USERS = IDs, names, emails, or 'me'; comma-separated)
+suth cards assign CARD USERS
+suth cards assign CARD me                          # Assign yourself
 suth cards unassign CARD USERS
 
 # Relationships
@@ -218,9 +219,9 @@ suth projects list
 suth projects get PROJECT
 suth projects create --title "Q1" -l LIST [-b BOARD]
   # Options: --content, --start-date TIMESTAMP, --due-date TIMESTAMP,
-  #          --priority N, --owner/-o USER, -s SPACE
+  #          --priority N, --owner/-o USER (or 'me'), -s SPACE
 suth projects update PROJECT --title "New"
-  # Options: --list/-l, --board/-b, --space/-s, --owner/-o USER,
+  # Options: --list/-l, --board/-b, --space/-s, --owner/-o USER (or 'me'),
   #          --start-date, --due-date, --priority, --archived
 suth projects delete PROJECT
 suth projects add_card PROJECT CARD
@@ -321,7 +322,7 @@ suth search query TERM
 ```bash
 suth activity                     # Recent activity (default: today)
   # Runs `show` subcommand by default
-  # Options: --since DATE, --user USER, --board/-b BOARD, --space/-s SPACE
+  # Options: --since DATE, --user USER (or 'me'), --board/-b BOARD, --space/-s SPACE
 ```
 
 ### Config & Completion
@@ -358,7 +359,7 @@ suth completion fish
 | `--list` | `-l` | List (ID or name) |
 | `--card` | `-c` | Card ID |
 | `--related` | `-r` | Related card ID |
-| `--owner` | `-o` | Owner (user ID, name, or email) |
+| `--owner` | `-o` | Owner (user ID, name, email, or 'me') |
 | `--yes` | `-y` | Skip confirmations |
 
 Priority levels: 1=Urgent, 2=High, 3=Medium, 4=Low
