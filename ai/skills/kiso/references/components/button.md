@@ -1,9 +1,10 @@
 # Button
 
 Interactive button with smart tag selection. Renders `<button>` by default,
-`<a>` when `href:` is present, `button_to` (form) when `method:` is present.
+`<a>` when `href:` is present, form+button when `method:` is present,
+`<a data-turbo-method>` when `turbo: true` + `method:` is present.
 
-**Locals:** `color:`, `variant:` (solid, outline, soft, subtle, ghost, link), `size:` (xs-xl), `block:` (true/false), `disabled:` (true/false), `type:` (button, submit, reset), `href:` (string), `method:` (delete, post, put, patch), `form:` (hash), `css_classes:`, `**component_options`
+**Locals:** `color:`, `variant:` (solid, outline, soft, subtle, ghost, link), `size:` (xs-xl), `block:` (true/false), `disabled:` (true/false), `type:` (button, submit, reset), `href:` (string), `method:` (delete, post, put, patch), `turbo:` (true/false), `form:` (hash), `css_classes:`, `**component_options`
 
 **Defaults:** `color: :primary, variant: :solid, size: :md`
 
@@ -20,8 +21,13 @@ Interactive button with smart tag selection. Renders `<button>` by default,
   Download
 <% end %>
 
-<%# DELETE via button_to (generates <form> + <button>) %>
+<%# DELETE via form (generates <form> + <button>) %>
 <%= kui(:button, href: session_path, method: :delete, variant: :ghost) do %>
+  <%= kiso_icon("log-out") %> Sign out
+<% end %>
+
+<%# DELETE via Turbo link (broadcast-safe, no CSRF token needed) %>
+<%= kui(:button, href: session_path, method: :delete, turbo: true, variant: :ghost) do %>
   <%= kiso_icon("log-out") %> Sign out
 <% end %>
 
@@ -34,6 +40,6 @@ Interactive button with smart tag selection. Renders `<button>` by default,
     form: { data: { turbo_frame: "_top" } }) { "Archive" } %>
 ```
 
-**Smart tag:** `href:` + `method:` (non-GET) → `button_to` with `form_class: "contents"`. `href:` alone → `<a>`. No `href:` → `<button>`. Do not nest inside an existing `<form>`.
+**Smart tag:** `href:` + `method:` (non-GET) → `<form>` with `class="contents"`. `href:` + `method:` + `turbo: true` → `<a data-turbo-method>` (broadcast-safe). `href:` alone → `<a>`. No `href:` → `<button>`. Do not nest form-based `method:` buttons inside an existing `<form>` — use `turbo: true` instead.
 
 **Theme module:** `Kiso::Themes::Button` (`lib/kiso/themes/button.rb`)
