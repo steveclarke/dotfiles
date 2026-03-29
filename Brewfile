@@ -74,7 +74,7 @@ brew "rust"
 brew "s3cmd"
 brew "shellcheck"
 brew "starship"
-brew "hashicorp/tap/terraform"
+brew "terraform"
 brew "the_silver_searcher"
 brew "tea"
 brew "tealdeer"  # Replacement for deprecated tldr
