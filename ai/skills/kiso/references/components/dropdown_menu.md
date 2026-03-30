@@ -2,7 +2,7 @@
 
 Popover-based menu with keyboard navigation, nested sub-menus, checkbox/radio items. 14 sub-parts matching shadcn exports.
 
-**Locals (item):** `variant:` (default/destructive), `inset:` (true/false), `disabled:` (true/false), `css_classes:`, `**component_options`
+**Locals (item):** `variant:` (default/destructive), `inset:` (true/false), `disabled:` (true/false), `href:` (string), `method:` (delete/post/put/patch), `turbo:` (true/false), `form:` (hash), `css_classes:`, `**component_options`
 
 **Defaults (item):** `variant: :default, inset: false, disabled: false`
 

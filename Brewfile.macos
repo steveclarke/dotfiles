@@ -1,4 +1,5 @@
 # macOS-specific packages
+brew "duti"
 tap "bwya77/tap"
 tap "heroku/brew"
 tap "steipete/tap"
