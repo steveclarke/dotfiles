@@ -203,6 +203,8 @@ alias ncdu="ncdu --color dark"
 alias src="cd ~/src/"
 alias sand="cd ~/src/sandbox/"
 alias cun="cd ~/src/myunio/unio/"
+alias cnj="cd ~/src/nj/nj"
+alias cop="cd ~/src/outport"
 
 # Hugo - executive coach assistant
 hugo() {
