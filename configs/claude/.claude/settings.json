@@ -26,6 +26,20 @@
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "if": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard-main-push.sh",
+            "timeout": 5,
+            "statusMessage": "Checking branch protection..."
+          }
+        ]
+      }
+    ],
     "PermissionRequest": [
       {
         "hooks": [
