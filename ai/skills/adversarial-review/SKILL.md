@@ -1,7 +1,6 @@
 ---
 name: adversarial-review
 description: Use when implementation is complete and you want rigorous code review before committing. Use for features, refactors, and changes touching critical paths. Not for trivial changes — this is expensive.
-disable-model-invocation: true
 argument-hint: "[files/dirs] [--pr]"
 ---
 
