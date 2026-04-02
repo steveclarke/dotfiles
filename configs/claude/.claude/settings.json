@@ -78,7 +78,17 @@
     "ruby-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
-    "discord@claude-plugins-official": true
+    "discord@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
   },
   "spinnerVerbs": {
     "mode": "replace",
