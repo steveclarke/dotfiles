@@ -22,7 +22,11 @@ outport down              # Remove ports and clean .env files
 # Inspect & diagnose
 outport status            # Show project status (ports, health, URLs)
 outport status --computed # Include computed values
-outport status --json     # Machine-readable output
+outport ports             # Show ports with live process info (PID, memory, uptime)
+outport ports --all       # Full machine scan (Outport + non-Outport ports)
+outport ports --down      # Include ports with no running process
+outport ports kill <svc>  # Kill process by service name or port number
+outport ports kill --orphans  # Kill all orphaned dev processes
 outport open              # Open HTTP services in browser
 outport open web          # Open a specific service
 outport share             # Tunnel HTTP services to public URLs
