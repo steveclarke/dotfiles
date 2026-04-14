@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+installing_banner "voxtype"
+
+# Omarchy's built-in dictation tool (push-to-talk voice-to-text)
+# Default binding: Super+Ctrl+X
+#
+# This runs the official omarchy installer which:
+#   - Installs voxtype-bin + wtype
+#   - Downloads the base.en Whisper model (~150MB)
+#   - Enables GPU acceleration (Vulkan) if available
+#   - Sets up systemd user service
+#   - Adds Waybar mic indicator
+#
+# Post-install:
+#   - Select a better model:  voxtype setup model
+#     Recommended: large-v3-turbo (~1.6GB, fast+accurate with GPU)
+#   - Enable GPU manually if installer failed:  sudo voxtype setup gpu --enable
+#   - Config: ~/.config/voxtype/config.toml
+#     Key settings to enable:
+#       [audio.feedback] enabled = true        (beep on record start/stop)
+#       [output.notification] on_recording_start/stop/transcription = true
+#   - Restart after config changes:  systemctl --user restart voxtype
+omarchy-voxtype-install
