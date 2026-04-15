@@ -15,6 +15,9 @@
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
 
+# Detect OS/distro (needed for is_omarchy guards when run standalone)
+detect_os
+
 # Exit on any error
 set -e
 
