@@ -1,0 +1,4 @@
+# Environment variables managed by dotfiles
+export LESS="-rF"
+export RUBY_YJIT_ENABLE=1
+export DOTFILES_DIR="$HOME/.local/share/dotfiles"

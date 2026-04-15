@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Dotfiles bash extensions
+# Sourced from ~/.bashrc (Omarchy) or ~/.bash_aliases (Ubuntu)
+
+[[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
+[[ -f ~/.config/bash/aliases ]] && source ~/.config/bash/aliases
