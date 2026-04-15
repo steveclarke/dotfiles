@@ -1,5 +1,41 @@
+# General
+alias ff=clear
+alias be="bundle exec"
+alias ncdu="ncdu --color dark"
 alias gg=lazygit
 alias lg=lazygit
-alias s="cd $HOME/src"
-alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
 alias z=zellij
+alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Networks}}\t{{.State}}'"
+
+# Navigation
+alias src="cd ~/src/"
+alias sand="cd ~/src/sandbox/"
+alias cun="cd ~/src/myunio/unio/"
+alias cnj="cd ~/src/nj/nj"
+alias cop="cd ~/src/outport"
+alias dot="cd \$DOTFILES_DIR/"
+
+# Hugo — executive coach assistant
+hugo() {
+  if [[ ! -d ~/src/hugo ]]; then
+    echo "Error: ~/src/hugo directory not found" >&2
+    return 1
+  fi
+  case "$1" in
+    -h|--help)
+      echo "hugo              - cd to ~/src/hugo and open claude"
+      echo "hugo [prompt]     - cd to ~/src/hugo and open claude with prompt"
+      echo "hugo cd|-d        - cd to ~/src/hugo only"
+      echo "hugo -r|--resume  - cd to ~/src/hugo and resume last session"
+      ;;
+    cd|-d)
+      cd ~/src/hugo
+      ;;
+    -r|--resume)
+      cd ~/src/hugo && claude --resume
+      ;;
+    *)
+      cd ~/src/hugo && claude "$@"
+      ;;
+  esac
+}
