@@ -65,10 +65,12 @@ install () {
       fi
     fi
 
-    # Run cross-platform setups
-    for setup in "${DOTFILES_DIR}"/setups/*.sh; do
-      [[ -f $setup ]] && source "$setup"
-    done
+    # Run cross-platform setups (skip on Omarchy — git and ssh handled by Omarchy/bootstrap)
+    if ! is_omarchy; then
+      for setup in "${DOTFILES_DIR}"/setups/*.sh; do
+        [[ -f $setup ]] && source "$setup"
+      done
+    fi
 
     # Run Arch-specific setups
     if [[ -d "${DOTFILES_DIR}/setups/arch" ]]; then
