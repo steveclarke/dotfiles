@@ -1,6 +1,6 @@
 # Dotfiles
 
-My personal setup scripts for Mac and Linux machines. Clone the repo, run one command, and you're done.
+My personal setup scripts for Mac, Linux, and Omarchy machines. Clone the repo, run one command, and you're done.
 
 > [!CAUTION]
 > This is my personal config. It makes lots of assumptions about how I like things set up. Feel free to browse and borrow ideas, but don't expect it to work for you out of the box.
@@ -19,6 +19,7 @@ My personal setup scripts for Mac and Linux machines. Clone the repo, run one co
 |----------|---------|
 | macOS | 10.15 (Catalina) or later |
 | Linux | Debian-based (Ubuntu, Pop!_OS, etc.) |
+| Arch | Omarchy or vanilla Arch |
 
 ## Quick Start
 
@@ -57,7 +58,7 @@ bash install.sh
 ```
 
 > [!NOTE]
-> The script detects your OS. It uses Homebrew on macOS and apt on Linux.
+> The script detects your OS. It uses Homebrew on macOS, apt on Ubuntu/Debian, and omarchy-pkg-add on Arch/Omarchy.
 
 ## What Gets Installed
 
@@ -155,4 +156,4 @@ export DATABASE_URL="postgresql://user:pass@host/db"
 
 - Repo goes in `~/.local/share/dotfiles` (or set a custom path in `.dotfilesrc`)
 - **macOS**: Xcode Command Line Tools
-- **Linux**: Debian-based distro (apt package manager)
+- **Linux**: Debian-based distro (apt) or Arch-based (Omarchy)
