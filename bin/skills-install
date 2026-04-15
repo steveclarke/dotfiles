@@ -16,41 +16,12 @@ if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
   LIST_ONLY=true
 fi
 
-# ─── My custom skills (dotfiles repo) ────────────────────────────────────────
-MY_SKILLS=(
-  "https://github.com/steveclarke/dotfiles/tree/master/ai/skills"
-)
-
-# ─── My skills from own repos ────────────────────────────────────────────────
-MY_REPOS=(
-  "https://github.com/steveclarke/kiso/tree/master/skills"
-  "https://github.com/steveclarke/outport/tree/master/skills"
-  "https://github.com/steveclarke/real-world-rails/tree/main/skills"
-  "https://github.com/steveclarke/superthread/tree/master/skills"
-)
-
-# ─── External skills (install from original authors) ─────────────────────────
-EXTERNAL=(
-  "pbakaus/impeccable"
-  "vercel-labs/agent-browser"
-  "nuxt/ui"
-  "shadcn/ui"
-  "vueuse/skills"
-  "obie/skills"
-  "maquina-app/rails-upgrade-skill"
-  "antfu/skills"
-  "shpigford/skills"
-  "intellectronica/agent-skills"
-)
-
-install_source() {
+install_all() {
   local label="$1"
   local source="$2"
-
   echo ""
   echo "=== ${label}: ${source}"
   echo ""
-
   if [[ "$LIST_ONLY" == "true" ]]; then
     npx -y skills add "$source" -g -l
   else
@@ -58,18 +29,70 @@ install_source() {
   fi
 }
 
-# Install in order: my dotfiles, my repos, external
-for source in "${MY_SKILLS[@]}"; do
-  install_source "My skills (dotfiles)" "$source"
-done
+install_specific() {
+  local label="$1"
+  local source="$2"
+  shift 2
+  local skills=("$@")
+  echo ""
+  echo "=== ${label}: ${source} (${#skills[@]} skills)"
+  echo ""
+  if [[ "$LIST_ONLY" == "true" ]]; then
+    npx -y skills add "$source" -g -l
+  else
+    for skill in "${skills[@]}"; do
+      npx -y skills add "$source" -g -y -s "$skill"
+    done
+  fi
+}
 
-for source in "${MY_REPOS[@]}"; do
-  install_source "My skills (repo)" "$source"
-done
+# ─── My custom skills (dotfiles repo) — install all ──────────────────────────
+install_all "My skills (dotfiles)" \
+  "https://github.com/steveclarke/dotfiles/tree/master/ai/skills"
 
-for source in "${EXTERNAL[@]}"; do
-  install_source "External" "$source"
-done
+# ─── My skills from own repos — install all ──────────────────────────────────
+install_all "My skills (kiso)" \
+  "https://github.com/steveclarke/kiso/tree/master/skills"
+
+install_all "My skills (outport)" \
+  "https://github.com/steveclarke/outport/tree/master/skills"
+
+install_all "My skills (real-world-rails)" \
+  "https://github.com/steveclarke/real-world-rails/tree/main/skills"
+
+install_all "My skills (superthread)" \
+  "https://github.com/steveclarke/superthread/tree/master/skills"
+
+# ─── External: pbakaus/impeccable — install all ──────────────────────────────
+install_all "External (impeccable)" \
+  "pbakaus/impeccable"
+
+# ─── External: specific skills only ─────────────────────────────────────────
+
+install_specific "External (antfu)" "antfu/skills" \
+  slidev nuxt vite vitepress vitest vue vue-best-practices \
+  vue-router-best-practices vue-testing-best-practices
+
+install_specific "External (nuxt)" "nuxt/ui" \
+  nuxt-ui
+
+install_specific "External (shadcn)" "shadcn/ui" \
+  shadcn
+
+install_specific "External (vueuse)" "vueuse/skills" \
+  vueuse-functions
+
+install_specific "External (obie)" "obie/skills" \
+  better-stimulus
+
+install_specific "External (maquina-app)" "maquina-app/rails-upgrade-skill" \
+  rails-upgrade-assistant
+
+install_specific "External (shpigford)" "shpigford/skills" \
+  favicon
+
+install_specific "External (intellectronica)" "intellectronica/agent-skills" \
+  gog-cli
 
 echo ""
 echo "✓ Done. Listing installed global skills:"
