@@ -146,4 +146,3 @@ if ! is_omarchy; then
 fi
 
 success "All configurations stowed successfully"
-exit 0
