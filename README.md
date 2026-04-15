@@ -30,10 +30,13 @@ My personal setup scripts for Mac, Linux, and Omarchy machines. Clone the repo, 
 xcode-select --install
 ```
 
-**Linux:**
+**Ubuntu/Debian:**
 ```bash
 sudo apt update && sudo apt install -y git curl
 ```
+
+**Omarchy/Arch:**
+No prerequisites — git, curl, stow, and yay are already installed.
 
 ### 2. Download the Config File
 
