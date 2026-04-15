@@ -3,10 +3,13 @@
 # Stow Configuration Script
 #
 # Symlinks dotfile configurations from the configs/ directory to $HOME
-# using GNU Stow. Handles cross-platform and Linux/macOS-specific configs.
+# using GNU Stow. Handles cross-platform configs with Omarchy awareness.
+#
+# On Omarchy, configs managed by the framework are skipped. For bash,
+# a source line is added to ~/.bashrc to hook into our config.
 #
 # Prerequisites: GNU Stow must be installed
-# Usage: bash stow.sh (or via 'dotfiles config' command)
+# Usage: bash stow.sh (or sourced by install.sh)
 #
 
 source "${HOME}"/.dotfilesrc
@@ -60,31 +63,28 @@ ensure_dir() {
 stow_package() {
   local display_name="$1"
   local stow_package="$2"
-  
+
   config_banner "${display_name}"
   do_stow "${stow_package}"
 }
 
-# Cross-platform configurations
+# =============================================================================
+# Cross-platform packages (stow on all platforms)
+# =============================================================================
+
 ensure_dir "${HOME}/bin"
-stow_package "${HOME}/bin" "bin"
+stow_package "Bin scripts" "bin"
 
-# Bash — skip on Omarchy (it manages its own bashrc)
-if ! is_omarchy; then
-  cleanup_paths "${HOME}/.bash_aliases"
-  stow_package "Bash" "bash"
-fi
+# Bash — new XDG-style layout under ~/.config/bash/
+ensure_dir "${HOME}/.config/bash"
+cleanup_paths "${HOME}/.bash_aliases"
+stow_package "Bash" "bash"
 
-ensure_dir "${HOME}/.config/tmux"
-stow_package "Tmux" "tmux"
-
-# Terminals — skip on Omarchy (it manages alacritty/ghostty configs via theming)
-if ! is_omarchy; then
-  ensure_dir "${HOME}/.config/alacritty"
-  stow_package "Alacritty" "alacritty"
-
-  ensure_dir "${HOME}/.config/ghostty"
-  stow_package "Ghostty" "ghostty"
+# On Omarchy, hook our bash config into ~/.bashrc (which is safe from updates)
+if is_omarchy; then
+  if ! grep -q 'config/bash/rc' "${HOME}/.bashrc" 2>/dev/null; then
+    echo '[[ -f ~/.config/bash/rc ]] && source ~/.config/bash/rc' >> "${HOME}/.bashrc"
+  fi
 fi
 
 ensure_dir "${HOME}/.config/fish"
@@ -94,28 +94,11 @@ stow_package "Ruby" "ruby"
 
 stow_package "Node (default npm packages)" "node"
 
-# Neovim — skip on Omarchy (it ships omarchy-nvim)
-if ! is_omarchy; then
-  ensure_dir "${HOME}/.config/nvim"
-  stow_package "Neovim" "nvim"
-fi
-
 ensure_dir "${HOME}/.config/zellij"
 stow_package "Zellij" "zellij"
 
-# Zsh — skip on Omarchy (bash is the default shell)
-if ! is_omarchy; then
-  cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
-  stow_package "zsh" "zsh"
-fi
-
-# Starship — skip on Omarchy (it manages starship config)
-if ! is_omarchy; then
-  stow_package "starship" "starship"
-fi
-
-ensure_dir "${HOME}/.local/share/fonts"
-stow_package "Fonts" "fonts"
+cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
+stow_package "Zsh" "zsh"
 
 cleanup_paths "${HOME}/.ideavimrc"
 stow_package "Idea" "idea"
@@ -123,63 +106,40 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
-# AI tool configurations
-# On Omarchy, skills are managed via npx skills (bin/skills-install)
-# On other platforms, symlink directly from dotfiles
-
 config_banner "Claude"
 ensure_dir "${HOME}/.claude"
 cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
+# =============================================================================
+# Skip on Omarchy (Omarchy manages these)
+# =============================================================================
+
 if ! is_omarchy; then
-  # Legacy symlink-based skill management (macOS/Ubuntu)
-  rm -f "${HOME}/.claude/agents" "${HOME}/.claude/commands" "${HOME}/.claude/skills"
-  ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
-  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
-  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
+  # Tmux — Omarchy manages tmux.conf
+  ensure_dir "${HOME}/.config/tmux"
+  stow_package "Tmux" "tmux"
 
-  config_banner "Cursor"
-  ensure_dir "${HOME}/.cursor"
-  rm -f "${HOME}/.cursor/commands" "${HOME}/.cursor/skills"
-  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.cursor/commands"
-  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.cursor/skills"
+  # Terminals — Omarchy manages via theming
+  ensure_dir "${HOME}/.config/alacritty"
+  stow_package "Alacritty" "alacritty"
 
-  config_banner "Skills CLI"
-  ensure_dir "${HOME}/.agents"
-  rm -f "${HOME}/.agents/skills"
-  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.agents/skills"
+  ensure_dir "${HOME}/.config/ghostty"
+  stow_package "Ghostty" "ghostty"
 
-  ensure_dir "${HOME}/.config/opencode"
-  rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
-  ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
-  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.config/opencode/command"
-  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.config/opencode/skill"
+  # Neovim — Omarchy ships its own LazyVim
+  ensure_dir "${HOME}/.config/nvim"
+  stow_package "Neovim" "nvim"
+
+  # Starship — Omarchy manages starship prompt
+  stow_package "Starship" "starship"
+
+  # Fonts — Omarchy ships JetBrains Mono NF
+  ensure_dir "${HOME}/.local/share/fonts"
+  stow_package "Fonts" "fonts"
+
+  # OpenCode — Omarchy has its own config
   stow_package "OpenCode" "opencode"
-fi
-
-# Linux-specific configurations (Ubuntu/Debian only — Omarchy uses Hyprland)
-if is_linux && ! is_omarchy; then
-  if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
-    ensure_dir "${HOME}/.config/i3"
-    stow_package "i3 Window Manager" "i3"
-    
-    ensure_dir "${HOME}/.config/picom"
-    stow_package "Picom (compositor)" "picom"
-    
-    ensure_dir "${HOME}/.config/polybar"
-    stow_package "Polybar" "polybar"
-    
-    ensure_dir "${HOME}/.config/rofi"
-    stow_package "Rofi" "rofi"
-  fi
-fi
-
-# macOS-specific configurations
-if is_macos; then
-  # macOS-specific configurations will be added here as needed
-  # For now, all existing configurations work cross-platform
-  :
 fi
 
 success "All configurations stowed successfully"
