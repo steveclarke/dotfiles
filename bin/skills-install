@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#
+# skills-install — Install all global skills from configured sources
+#
+# Installs skills non-interactively across all agents (Claude Code, OpenCode, Codex, etc.)
+# using symlinks (default behavior of skills.sh).
+#
+# Usage:
+#   skills-install          # install all skills from all sources
+#   skills-install --list   # list available skills without installing
+
+set -euo pipefail
+
+LIST_ONLY=false
+if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
+  LIST_ONLY=true
+fi
+
+# ─── My custom skills (dotfiles repo) ────────────────────────────────────────
+MY_SKILLS=(
+  "https://github.com/steveclarke/dotfiles/tree/master/ai/skills"
+)
+
+# ─── My skills from own repos ────────────────────────────────────────────────
+MY_REPOS=(
+  "https://github.com/steveclarke/kiso/tree/master/skills"
+  "https://github.com/steveclarke/outport/tree/master/skills"
+  "https://github.com/steveclarke/real-world-rails/tree/main/skills"
+  "https://github.com/steveclarke/superthread/tree/master/skills"
+)
+
+# ─── External skills (install from original authors) ─────────────────────────
+EXTERNAL=(
+  "pbakaus/impeccable"
+  "vercel-labs/agent-browser"
+  "nuxt/ui"
+  "shadcn/ui"
+  "vueuse/skills"
+  "obie/skills"
+  "maquina-app/rails-upgrade-skill"
+  "antfu/skills"
+  "shpigford/skills"
+  "intellectronica/agent-skills"
+)
+
+install_source() {
+  local label="$1"
+  local source="$2"
+
+  echo ""
+  echo "=== ${label}: ${source}"
+  echo ""
+
+  if [[ "$LIST_ONLY" == "true" ]]; then
+    npx -y skills add "$source" -g -l
+  else
+    npx -y skills add "$source" -g --all
+  fi
+}
+
+# Install in order: my dotfiles, my repos, external
+for source in "${MY_SKILLS[@]}"; do
+  install_source "My skills (dotfiles)" "$source"
+done
+
+for source in "${MY_REPOS[@]}"; do
+  install_source "My skills (repo)" "$source"
+done
+
+for source in "${EXTERNAL[@]}"; do
+  install_source "External" "$source"
+done
+
+echo ""
+echo "✓ Done. Listing installed global skills:"
+echo ""
+npx -y skills ls -g
