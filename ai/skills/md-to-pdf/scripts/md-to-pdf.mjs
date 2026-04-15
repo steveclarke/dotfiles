@@ -194,7 +194,8 @@ async function renderToPdf() {
 
     // Open if requested
     if (openAfter) {
-      exec(`open "${outputPath}"`)
+      const openCmd = process.platform === "darwin" ? "open" : "xdg-open"
+      exec(`${openCmd} "${outputPath}"`)
     }
   } finally {
     // Cleanup temp markdown file
