@@ -69,17 +69,23 @@ stow_package() {
 ensure_dir "${HOME}/bin"
 stow_package "${HOME}/bin" "bin"
 
-cleanup_paths "${HOME}/.bash_aliases"
-stow_package "Bash" "bash"
+# Bash — skip on Omarchy (it manages its own bashrc)
+if ! is_omarchy; then
+  cleanup_paths "${HOME}/.bash_aliases"
+  stow_package "Bash" "bash"
+fi
 
 ensure_dir "${HOME}/.config/tmux"
 stow_package "Tmux" "tmux"
 
-ensure_dir "${HOME}/.config/alacritty"
-stow_package "Alacritty" "alacritty"
+# Terminals — skip on Omarchy (it manages alacritty/ghostty configs via theming)
+if ! is_omarchy; then
+  ensure_dir "${HOME}/.config/alacritty"
+  stow_package "Alacritty" "alacritty"
 
-ensure_dir "${HOME}/.config/ghostty"
-stow_package "Ghostty" "ghostty"
+  ensure_dir "${HOME}/.config/ghostty"
+  stow_package "Ghostty" "ghostty"
+fi
 
 ensure_dir "${HOME}/.config/fish"
 stow_package "Fish shell" "fish"
@@ -88,16 +94,25 @@ stow_package "Ruby" "ruby"
 
 stow_package "Node (default npm packages)" "node"
 
-ensure_dir "${HOME}/.config/nvim"
-stow_package "Neovim" "nvim"
+# Neovim — skip on Omarchy (it ships omarchy-nvim)
+if ! is_omarchy; then
+  ensure_dir "${HOME}/.config/nvim"
+  stow_package "Neovim" "nvim"
+fi
 
 ensure_dir "${HOME}/.config/zellij"
 stow_package "Zellij" "zellij"
 
-cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
-stow_package "zsh" "zsh"
+# Zsh — skip on Omarchy (bash is the default shell)
+if ! is_omarchy; then
+  cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
+  stow_package "zsh" "zsh"
+fi
 
-stow_package "starship" "starship"
+# Starship — skip on Omarchy (it manages starship config)
+if ! is_omarchy; then
+  stow_package "starship" "starship"
+fi
 
 ensure_dir "${HOME}/.local/share/fonts"
 stow_package "Fonts" "fonts"
@@ -108,38 +123,43 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
-# AI tool configurations - symlinks directly to ai/ directories
-# These bypass stow because stow doesn't handle symlink-to-symlink chains well
-
-config_banner "Cursor"
-ensure_dir "${HOME}/.cursor"
-rm -f "${HOME}/.cursor/commands" "${HOME}/.cursor/skills"
-ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.cursor/commands"
-ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.cursor/skills"
+# AI tool configurations
+# On Omarchy, skills are managed via npx skills (bin/skills-install)
+# On other platforms, symlink directly from dotfiles
 
 config_banner "Claude"
 ensure_dir "${HOME}/.claude"
-rm -f "${HOME}/.claude/agents" "${HOME}/.claude/commands" "${HOME}/.claude/skills"
-ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
-ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
-ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
 cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
-config_banner "Skills CLI"
-ensure_dir "${HOME}/.agents"
-rm -f "${HOME}/.agents/skills"
-ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.agents/skills"
+if ! is_omarchy; then
+  # Legacy symlink-based skill management (macOS/Ubuntu)
+  rm -f "${HOME}/.claude/agents" "${HOME}/.claude/commands" "${HOME}/.claude/skills"
+  ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.claude/agents"
+  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.claude/commands"
+  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.claude/skills"
 
-ensure_dir "${HOME}/.config/opencode"
-rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
-ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
-ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.config/opencode/command"
-ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.config/opencode/skill"
-stow_package "OpenCode" "opencode"
+  config_banner "Cursor"
+  ensure_dir "${HOME}/.cursor"
+  rm -f "${HOME}/.cursor/commands" "${HOME}/.cursor/skills"
+  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.cursor/commands"
+  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.cursor/skills"
 
-# Linux-specific configurations
-if is_linux; then
+  config_banner "Skills CLI"
+  ensure_dir "${HOME}/.agents"
+  rm -f "${HOME}/.agents/skills"
+  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.agents/skills"
+
+  ensure_dir "${HOME}/.config/opencode"
+  rm -f "${HOME}/.config/opencode/agent" "${HOME}/.config/opencode/command" "${HOME}/.config/opencode/skill"
+  ln -s "${DOTFILES_DIR}/ai/agents" "${HOME}/.config/opencode/agent"
+  ln -s "${DOTFILES_DIR}/ai/commands" "${HOME}/.config/opencode/command"
+  ln -s "${DOTFILES_DIR}/ai/skills" "${HOME}/.config/opencode/skill"
+  stow_package "OpenCode" "opencode"
+fi
+
+# Linux-specific configurations (Ubuntu/Debian only — Omarchy uses Hyprland)
+if is_linux && ! is_omarchy; then
   if [ "${DOTFILES_CONFIG_I3^^}" = "TRUE" ]; then
     ensure_dir "${HOME}/.config/i3"
     stow_package "i3 Window Manager" "i3"
