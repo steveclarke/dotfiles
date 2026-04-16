@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 installing_banner "unio"
 
-if is_installed unio; then
-  return 0 2>/dev/null
-fi
-
 local tmpdir=$(mktemp -d)
 local arch=$(uname -m)
 local go_arch="amd64"
 [[ "$arch" == "aarch64" ]] && go_arch="arm64"
 
-# Download from private repo using gh (handles auth)
+# Download latest from private repo using gh (handles auth)
 local version=$(gh release view --repo myunio/unio --json tagName --jq '.tagName' | sed 's/^v//')
+
+# Skip if already at latest version
+if command -v unio &>/dev/null; then
+  local current=$(unio version 2>/dev/null | awk '{print $3}')
+  if [[ "$current" == "$version" ]]; then
+    success "unio ${version} already installed"
+    rm -rf "$tmpdir"
+    return 0 2>/dev/null
+  fi
+fi
+
 gh release download "v${version}" --repo myunio/unio \
   --pattern "unio_${version}_linux_${go_arch}.tar.gz" \
   --dir "$tmpdir"
