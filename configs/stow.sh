@@ -123,6 +123,12 @@ if is_omarchy; then
   ensure_dir "${HOME}/.config/voxtype"
   cleanup_paths "${HOME}/.config/voxtype/config.toml"
   stow_package "Voxtype" "voxtype"
+
+  # Waybar — workspace labels, persistent workspaces, 12h clock, accent theme variable
+  ensure_dir "${HOME}/.config/waybar"
+  ensure_dir "${HOME}/.config/omarchy/themed"
+  cleanup_paths "${HOME}/.config/waybar/config.jsonc" "${HOME}/.config/waybar/style.css" "${HOME}/.config/omarchy/themed/waybar.css.tpl"
+  stow_package "Waybar" "waybar"
 fi
 
 # =============================================================================
