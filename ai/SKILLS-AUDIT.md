@@ -1,10 +1,13 @@
 # Skills Audit — Final Classification
 
-Completed 2026-04-15. This documents the source of truth for each skill.
+Completed 2026-04-15. Updated 2026-04-16.
+
+All skills are installed via `bin/skills-install`. Custom skills live in
+`ai/skills/`. Everything else is installed from its original source.
 
 ## My Skills — Install from `steveclarke/dotfiles`
 
-These are custom skills maintained in the dotfiles repo.
+Custom skills maintained in `ai/skills/` in this repo.
 
 | Skill | Description |
 |-------|-------------|
@@ -34,7 +37,6 @@ These are custom skills maintained in the dotfiles repo.
 | time-tracking | Toggl/Clockify via scripts/track |
 | to-markdown | Convert files to markdown via markitdown |
 | todoist | Todoist MCP integration |
-| ui-review | *(archived)* |
 | youtube | YouTube transcript/mp3 |
 
 ## My Skills — Install from own repos
@@ -51,13 +53,12 @@ These are custom skills maintained in the dotfiles repo.
 | Source | Skills |
 |--------|--------|
 | `pbakaus/impeccable` | adapt, animate, arrange, audit, bolder, clarify, colorize, critique, delight, distill, extract, frontend-design, harden, impeccable, layout, normalize, onboard, optimize, overdrive, polish, quieter, shape, teach-impeccable, typeset |
-| `vercel-labs/agent-browser` | electron |
+| `antfu/skills` | slidev, nuxt, vite, vitepress, vitest, vue, vue-best-practices, vue-router-best-practices, vue-testing-best-practices |
 | `nuxt/ui` | nuxt-ui |
 | `shadcn/ui` | shadcn |
 | `vueuse/skills` | vueuse-functions |
 | `obie/skills` | better-stimulus |
 | `maquina-app/rails-upgrade-skill` | rails-upgrade-assistant |
-| `antfu/skills` | slidev |
 | `shpigford/skills` | favicon |
 | `intellectronica/agent-skills` | gog-cli |
 
@@ -72,3 +73,4 @@ Skills moved to `ai/skills-archive/`:
 - rails-upgrade-assistant (switching to maquina-app)
 - slidev (switching to antfu/skills)
 - favicon (switching to shpigford/skills)
+- electron (vercel-labs/agent-browser — dropped)
