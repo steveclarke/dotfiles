@@ -6,8 +6,9 @@ local arch=$(uname -m)
 local go_arch="amd64"
 [[ "$arch" == "aarch64" ]] && go_arch="arm64"
 
-# Download latest from private repo using gh (handles auth)
-local version=$(gh release view --repo myunio/unio --json tagName --jq '.tagName' | sed 's/^v//')
+# Find latest CLI release from private repo (cli-v* tags, not app v* tags)
+local tag=$(gh release list --repo myunio/unio --limit 20 --json tagName --jq '[.[] | select(.tagName | startswith("cli-v"))][0].tagName')
+local version=${tag#cli-v}
 
 # Skip if already at latest version
 if command -v unio &>/dev/null; then
@@ -19,7 +20,7 @@ if command -v unio &>/dev/null; then
   fi
 fi
 
-gh release download "v${version}" --repo myunio/unio \
+gh release download "${tag}" --repo myunio/unio \
   --pattern "unio_${version}_linux_${go_arch}.tar.gz" \
   --dir "$tmpdir"
 
