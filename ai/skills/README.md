@@ -1,11 +1,13 @@
-# Agent Skills
+# Custom Agent Skills
 
-Skills teach AI agents how to do specific tasks. Instead of building custom agents, you create skills that any agent can learn and use.
-
-Think of a skill like a how-to guide for a new hire. It has instructions, examples, and tools for a specific type of work.
+Skills teach AI agents how to do specific tasks. This directory contains only
+custom skills authored and maintained in this dotfiles repo. External skills
+and own-repo skills are installed from their original sources via
+`bin/skills-install`.
 
 > [!NOTE]
 > For setup and architecture, see the [AI README](../README.md).
+> For the full skill classification, see [SKILLS-AUDIT.md](../SKILLS-AUDIT.md).
 
 ## Quick Links
 
@@ -68,20 +70,13 @@ my-skill/
     └── helper.py
 ```
 
-### 4. Test It
+### 4. Deploy
+
+Run `skills-install` to install the new skill globally across all agents.
+
+### 5. Test It
 
 Ask the agent questions that match your skill's description. The agent will use the skill when it seems relevant.
-
-## Using Skills
-
-Skills are **automatic**. Agents decide when to use them based on your request and the skill's description.
-
-**Example:**
-- You: "Help me review my Todoist tasks"
-- Agent: Loads the `todoist-daily-review` skill (if the description matches)
-
-To see what skills exist:
-- Ask: "What skills are available?"
 
 ## Writing Good Skills
 
@@ -122,19 +117,3 @@ Use `scripts/extract_fields.py` to get form fields from a PDF.
 - Don't hardcode secrets (API keys, passwords)
 - Review downloaded skills before you enable them
 - Check any bundled scripts
-
-## Skills in This Repo
-
-Browse the `ai/skills/` directory for the full list. Each skill folder contains a `SKILL.md` with its description and trigger conditions. A few examples:
-
-### 1password
-Fetch secrets and manage 1Password items via CLI.
-
-### bash-script-writing
-Write clean, modular, production-ready bash scripts with proper error handling.
-
-### time-tracking
-Manage time tracking with Toggl or Clockify. Start/stop timers, log hours, view entries.
-
-### todoist
-Interact with Todoist via MCP. Add tasks, list tasks, manage projects.

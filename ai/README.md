@@ -1,48 +1,57 @@
 # AI Resources
 
-Shared resources for AI coding tools. One place to manage skills and agents that work across Cursor, Claude Code, and OpenCode.
-
-## Why Use This?
-
-Most AI tools store settings in their own folders. This creates a problem: you end up copying the same skills between tools.
-
-This setup fixes that. You write a skill once, and all your AI tools can use it.
+Shared resources for AI coding tools. Custom skills, agents, and guides maintained in this dotfiles repo.
 
 ## What's Inside
 
 | Folder | What It Does |
 |--------|--------------|
-| `agents/` | Agent settings (model, tools, behavior) |
+| `agents/` | Agent definitions (model, tools, behavior) |
 | `guides/` | Process docs and how-to guides |
-| `skills/` | Skills that teach agents new tasks |
+| `skills/` | Custom skills authored in this repo |
+| `skills-archive/` | Retired skills kept for reference |
 
-## How It Works
+## How Skills Are Installed
 
-All AI tools share the same files through symlinks:
+Skills are installed globally via `bin/skills-install`, which uses
+[`npx skills`](https://github.com/vercel-labs/skills) to install from multiple
+sources into `~/.agents/skills/` and symlink to each agent's skill directory.
 
 ```
-ai/
-├── agents/       ← Agent settings
-├── guides/       ← Process docs
-└── skills/       ← Agent skills
-
-~/.cursor/
-└── skills → ai/skills
-
-~/.claude/
-├── agents → ai/agents
-└── skills → ai/skills
-
-~/.config/opencode/
-├── agent → ai/agents
-└── skill → ai/skills
+bin/skills-install
+├── My custom skills    ← from this repo (ai/skills/)
+├── My own-repo skills  ← from steveclarke/kiso, outport, etc.
+└── External skills     ← from pbakaus/impeccable, antfu/skills, etc.
 ```
 
-After you run `stow`, all tools see the same files.
+Each agent gets individual per-skill symlinks:
+
+```
+~/.agents/skills/
+├── 1password/        ← installed skill
+├── adapt/
+└── ...
+
+~/.claude/skills/
+├── 1password → ../../.agents/skills/1password
+├── adapt → ../../.agents/skills/adapt
+└── ...
+```
+
+### Commands
+
+| Task | Command |
+|------|---------|
+| Install all skills | `skills-install` |
+| Update changed skills | `skills-update` |
+| List without installing | `skills-install --list` |
+
+See `bin/skills-install` for the full list of sources and `ai/SKILLS-AUDIT.md`
+for the classification of each skill.
 
 ## Quick Start
 
-### Add a Skill
+### Add a Custom Skill
 
 Create a folder with a `SKILL.md` file in `ai/skills/`:
 
@@ -53,6 +62,8 @@ touch ai/skills/my-skill/SKILL.md
 
 See `ai/skills/README.md` for the full skill format.
 
+Then run `skills-install` to deploy it globally.
+
 ### Add an Agent
 
 Create a markdown file in `ai/agents/`:
@@ -61,39 +72,13 @@ Create a markdown file in `ai/agents/`:
 touch ai/agents/my-agent.md
 ```
 
-### Deploy Changes
-
-Run stow to create the symlinks:
-
-```bash
-dotfiles stow
-# or
-bash configs/stow.sh
-```
-
 ## Directory Guide
 
 | Path | Purpose |
 |------|---------|
-| `ai/skills/*/SKILL.md` | Agent skills. Folders with instructions agents can learn. |
+| `ai/skills/*/SKILL.md` | Custom skills. Folders with instructions agents can learn. |
 | `ai/agents/*.md` | Agent configs. Model and tool settings. |
 | `ai/guides/*.md` | Process docs. Workflows and best practices. |
-
-## Adding New Resources
-
-> [!TIP]
-> Keep content generic. Don't add project-specific details that won't work elsewhere.
-
-**Skills**: Add skill folders to `skills/`. Each skill needs a `SKILL.md` file with YAML frontmatter. Skills can include scripts and reference docs.
-
-**Agents**: Add agent definitions to `agents/`. These control which model and tools an agent uses.
-
-**Guides**: Add process docs to `guides/`. These are for human readers, not agents.
-
-## Supported Tools
-
-| Tool | Skills | Agents |
-|------|--------|--------|
-| Cursor | Yes | No |
-| Claude Code | Yes | Yes |
-| OpenCode | Yes | Yes |
+| `bin/skills-install` | Installs all skills from all sources. |
+| `bin/skills-update` | Checks for upstream changes and updates. |
+| `ai/SKILLS-AUDIT.md` | Classification of all skills by source. |
