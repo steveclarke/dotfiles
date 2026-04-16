@@ -2,5 +2,16 @@
 # Dotfiles bash extensions
 # Sourced from ~/.bashrc (Omarchy) or ~/.bash_aliases (Ubuntu)
 
+# ble.sh — enhanced line editor (auto-suggestions, syntax highlighting)
+# Auto-complete keys:
+#   Right / C-f / End  — accept full suggestion
+#   M-Right / M-f      — accept first word only
+#   S-Return            — insert suggestion without running
+#   C-Return            — accept and run immediately
+[[ $- == *i* ]] && [[ -f /usr/share/blesh/ble.sh ]] && source /usr/share/blesh/ble.sh --attach=none
+
 [[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
 [[ -f ~/.config/bash/aliases ]] && source ~/.config/bash/aliases
+
+# ble.sh — attach after all config is loaded
+[[ ! ${BLE_VERSION-} ]] || ble-attach
