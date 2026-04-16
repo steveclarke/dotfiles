@@ -18,6 +18,7 @@ if [ $# -eq 0 ]; then
   echo "  brew         Update and upgrade Homebrew packages"
   echo "  skills       Update agent skills"
   echo "  mise         Install/update tool versions"
+  echo "  install      Run an install script (e.g. dotfiles install cloudflared)"
   exit 1
 fi
 
@@ -64,6 +65,35 @@ run_mise() {
   mise install
 }
 
+run_install() {
+  local name="$1"
+  if [[ -z "$name" ]]; then
+    echo "Usage: dotfiles install <script-name>"
+    echo "Example: dotfiles install cloudflared"
+    exit 1
+  fi
+
+  # Search for the install script across platform-specific and shared directories
+  local search_dirs=("${DOTFILES_DIR}/install/optional")
+  if is_arch; then
+    search_dirs=("${DOTFILES_DIR}/install/arch/cli" "${DOTFILES_DIR}/install/arch/apps" "${search_dirs[@]}")
+  elif is_macos; then
+    search_dirs=("${DOTFILES_DIR}/install/macos" "${search_dirs[@]}")
+  else
+    search_dirs=("${DOTFILES_DIR}/install/cli" "${DOTFILES_DIR}/install/apps" "${search_dirs[@]}")
+  fi
+
+  for dir in "${search_dirs[@]}"; do
+    if [[ -f "${dir}/${name}.sh" ]]; then
+      source "${dir}/${name}.sh"
+      return
+    fi
+  done
+
+  error "No install script found for '${name}'"
+  exit 1
+}
+
 # check the command and run appropriate function
 case $1 in
   up|update)
@@ -83,6 +113,9 @@ case $1 in
     ;;
   mise)
     run_mise
+    ;;
+  install)
+    run_install "$2"
     ;;
   *)
     echo "Unknown command: $1"

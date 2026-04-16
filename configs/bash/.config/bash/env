@@ -2,3 +2,4 @@
 export LESS="-rF"
 export RUBY_YJIT_ENABLE=1
 export DOTFILES_DIR="$HOME/.local/share/dotfiles"
+export PATH="$HOME/.local/share/dotfiles/bin:$PATH"
