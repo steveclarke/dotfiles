@@ -1,0 +1,84 @@
+# Voxtype Configuration
+#
+# Location: ~/.config/voxtype/config.toml
+# All settings can be overridden via CLI flags
+#
+# State file for external integrations (Waybar, polybar, etc.)
+# Use "auto" for default location ($XDG_RUNTIME_DIR/voxtype/state),
+# a custom path, or "disabled" to turn off. The daemon writes state
+# ("idle", "recording", "transcribing") to this file whenever it changes.
+# Required for `voxtype record toggle` and `voxtype status` commands.
+state_file = "auto"
+
+[hotkey]
+# Hotkey is configured in Hyprland. Default is Super + Ctrl + X
+enabled = false
+
+[audio]
+# Audio input device ("default" uses system default)
+# List devices with: pactl list sources short
+device = "default"
+
+# Sample rate in Hz (whisper expects 16000)
+sample_rate = 16000
+
+# Maximum recording duration in seconds (safety limit)
+max_duration_secs = 60
+
+[audio.feedback]
+enabled = true
+theme = "default"
+volume = 0.7
+
+[whisper]
+# Model to use for transcription
+# Options: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large-v3, large-v3-turbo
+# .en models are English-only but faster and more accurate for English
+# large-v3-turbo is faster than large-v3 with minimal accuracy loss (recommended for GPU)
+# Or provide absolute path to a custom .bin model file
+model = "large-v3-turbo"
+
+# Language for transcription
+# Use "en" for English, "auto" for auto-detection
+# See: https://github.com/openai/whisper#available-models-and-languages
+language = "en"
+
+# Translate non-English speech to English
+translate = false
+
+# Number of CPU threads for inference (omit for auto-detection)
+# threads = 4
+
+[output]
+# Primary output mode: "type" or "clipboard"
+# - type: Simulates keyboard input at cursor position (requires ydotool)
+# - clipboard: Copies text to clipboard (requires wl-copy)
+mode = "paste"
+paste_keys = "shift+insert"
+restore_clipboard = true
+restore_clipboard_delay_ms = 300
+
+# Post-processing command (optional)
+# Pipe transcribed text through an external command for cleanup before output.
+# The command receives text on stdin and outputs processed text on stdout.
+# Useful for LLM-based text cleanup, grammar correction, filler word removal.
+# On any failure (timeout, error), falls back to original transcription.
+#
+# [output.post_process]
+# command = "ollama run llama3.2:1b 'Clean up this dictation. Fix grammar, remove filler words. Output only the cleaned text:'"
+# timeout_ms = 30000  # 30 second timeout (generous for LLM)
+
+[output.notification]
+# Show notification when recording starts (hotkey pressed)
+on_recording_start = true
+on_recording_stop = true
+on_transcription = true
+
+# [text]
+# Text processing options (word replacements, spoken punctuation)
+#
+# Enable spoken punctuation conversion (e.g., say "period" to get ".")
+# spoken_punctuation = false
+#
+# Custom word replacements (case-insensitive)
+# replacements = { "hyperwhisper" = "hyprwhspr" }

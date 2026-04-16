@@ -115,6 +115,17 @@ cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
 # =============================================================================
+# Omarchy-only packages
+# =============================================================================
+
+if is_omarchy; then
+  # Voxtype — Omarchy updates can overwrite config with stock defaults
+  ensure_dir "${HOME}/.config/voxtype"
+  cleanup_paths "${HOME}/.config/voxtype/config.toml"
+  stow_package "Voxtype" "voxtype"
+fi
+
+# =============================================================================
 # Skip on Omarchy (Omarchy manages these)
 # =============================================================================
 
