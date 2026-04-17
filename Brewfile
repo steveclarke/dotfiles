@@ -1,6 +1,10 @@
 # Cross-platform CLI tools
 # Core development tools
 
+# Android toolchain — JDK 21 for AGP 9 + Android CLI.
+# Android CLI itself installs via `dotfiles install android-cli`.
+cask "temurin@21"
+
 brew "steveclarke/tap/superthread"
 brew "steveclarke/tap/outport"
 brew "myunio/tap/unio"
