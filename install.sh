@@ -22,7 +22,15 @@ install () {
     
     # Configure fish shell as default
     source "${DOTFILES_DIR}"/install/macos/fish.sh
-    
+
+    # Additional per-tool macOS installers (anything beyond prereq/brew/fish).
+    for installer in "${DOTFILES_DIR}"/install/macos/*.sh; do
+      case "$(basename "$installer")" in
+        prereq.sh|brew.sh|fish.sh) continue ;;
+      esac
+      [[ -f $installer ]] && source "$installer"
+    done
+
     # Run macOS-specific setups
     for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
       [[ -f $setup ]] && source "$setup"
