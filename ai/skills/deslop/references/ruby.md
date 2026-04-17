@@ -2,11 +2,10 @@
 
 ## debride — dead method detection
 
-Install:
+If not already available, install to the user's gem path (don't add it to the project's `Gemfile` for a one-off deslop run):
 
 ```bash
-gem install debride
-# or add to Gemfile: gem 'debride', group: :development
+gem list --installed debride >/dev/null 2>&1 || gem install debride
 ```
 
 Run:

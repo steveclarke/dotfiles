@@ -45,7 +45,45 @@ This skill deletes code. Before running anything:
 2. **Create a dedicated branch** — `git checkout -b deslop/YYYY-MM-DD` before any pass writes. Never run on main/master.
 3. **Commit between passes** — each pass gets its own commit so individual passes can be reverted without redoing the rest.
 4. **High-confidence only** — each subagent implements only changes it is confident about. Borderline calls go in its report for human review, not in the code.
-5. **No pass is blocking** — if a required tool isn't installed, the pass reports "skipped: missing <tool>" and moves on.
+5. **Install the tools.** If a pass's canonical tool isn't installed, **install it** — don't fall back to `grep`/`ripgrep`/manual scanning for passes that have a dedicated tool. The whole point of the skill is to use the right analyzer; grep doesn't see dynamic references, doesn't do reachability analysis, and doesn't detect cycles. See "Tool Installation Policy" below.
+
+## Tool Installation Policy
+
+Each pass has a canonical tool for its stack (see `references/passes.md` and the per-language references). When a subagent starts a pass, it must ensure the tool is available — and install it if not.
+
+**JavaScript / TypeScript — zero-install via npx**
+
+All canonical JS/TS tools run through `npx --yes` without modifying `package.json`:
+
+```bash
+npx --yes knip        # dead code
+npx --yes madge --circular src/   # circular deps
+npx --yes ts-prune    # alt: unused exports
+```
+
+`npx` downloads to the global npm cache on first run. No project changes. This is the default — don't add anything to `package.json` for a one-off deslop run.
+
+**Ruby — gem install to user gems**
+
+```bash
+gem install debride
+bundle exec srb tc     # only if sorbet/config exists in the project
+```
+
+Installs to the user's gem path. Don't add to the project's `Gemfile` for a one-off deslop run.
+
+**Go — go install to $GOPATH/bin**
+
+```bash
+go install honnef.co/go/tools/cmd/staticcheck@latest
+go install golang.org/x/tools/cmd/deadcode@latest
+```
+
+Installs a binary in `$(go env GOPATH)/bin`. Standard Go tooling practice.
+
+**If install fails** (no network, unsupported Go version, etc.): report the failure, name the tool, and skip that pass. Do **not** substitute grep. A skipped pass is an honest result; a grep-based result is misleading — it looks like an analysis but misses most of what the dedicated tool would catch.
+
+**When a pass legitimately has no tool** (e.g. circular deps in Ruby without packwerk, type consolidation without a type system): say so explicitly in the pass report. "Skipped — no type system in use" is a fine result. "Skipped — ran grep instead" is not.
 
 ## Input Parsing
 
