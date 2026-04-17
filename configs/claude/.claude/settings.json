@@ -23,22 +23,10 @@
       "Bash(rm -rf *)",
       "Bash(rm -r *)",
       "Bash(rm *)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash(git push*)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/guard-main-push.sh",
-            "timeout": 5,
-            "statusMessage": "Checking branch protection..."
-          }
-        ]
-      }
-    ],
     "PermissionRequest": [
       {
         "hooks": [
@@ -109,7 +97,8 @@
       "Working"
     ]
   },
-  "effortLevel": "high",
-  "voiceEnabled": true,
-  "autoDreamEnabled": true
+  "effortLevel": "xhigh",
+  "autoDreamEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
