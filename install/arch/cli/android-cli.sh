@@ -35,10 +35,3 @@ omarchy-pkg-add android-tools
 
 installing_banner "android-udev (USB device rules)"
 omarchy-pkg-add android-udev
-
-echo
-echo "Next steps:"
-echo "  1. Open a new shell so ANDROID_HOME / PATH pick up."
-echo "  2. android sdk install                  # install default SDK components"
-echo "  3. android skills add --all --agent=claude   # optional: agent skills"
-echo "  4. Add your user to the 'adbusers' group for USB debugging: sudo gpasswd -a \$USER adbusers"

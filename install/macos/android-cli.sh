@@ -24,9 +24,3 @@ else
   rm -f "${tmp_file}"
   error "android-cli download failed from ${url}"
 fi
-
-echo
-echo "Next steps:"
-echo "  1. Open a new shell so ANDROID_HOME / PATH pick up."
-echo "  2. android sdk install                  # install default SDK components"
-echo "  3. android skills add --all --agent=claude   # optional: agent skills"
