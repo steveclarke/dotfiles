@@ -13,12 +13,12 @@ if [ $# -eq 0 ]; then
   echo "Usage: dotfiles <command>"
   echo ""
   echo "Commands:"
-  echo "  up, update   Update everything (stow, brew, skills, mise)"
-  echo "  stow         Update config symlinks"
-  echo "  brew         Update and upgrade Homebrew packages"
-  echo "  skills       Update agent skills"
-  echo "  mise         Install/update tool versions"
-  echo "  install      Run an install script (e.g. dotfiles install cloudflared)"
+  echo "  up, update          Update everything (stow, brew, skills, mise)"
+  echo "  stow                Update config symlinks"
+  echo "  brew                Update and upgrade Homebrew packages"
+  echo "  skills [subcmd]     Manage agent skills (install, update, list, status)"
+  echo "  mise                Install/update tool versions"
+  echo "  install <name>      Run an install script (e.g. dotfiles install cloudflared)"
   exit 1
 fi
 
@@ -55,9 +55,83 @@ run_brew() {
   brew cleanup
 }
 
-run_skills() {
+SKILL_LOCK="${HOME}/.agents/.skill-lock.json"
+SKILLS_DIR="${HOME}/.agents/skills"
+
+run_skills_install() {
+  banner "Installing agent skills"
+  "${DOTFILES_DIR}/bin/skills-install"
+}
+
+run_skills_update() {
+  if [[ ! -f "$SKILL_LOCK" ]]; then
+    banner "No skill lock file — running install instead of update"
+    run_skills_install
+    return
+  fi
   banner "Updating agent skills"
   "${DOTFILES_DIR}/bin/skills-update"
+}
+
+run_skills_list() {
+  banner "Configured skill sources"
+  grep -E '^install_(all|specific) ' "${DOTFILES_DIR}/bin/skills-install" \
+    | sed -E 's/^install_(all|specific) "([^"]+)" *\\?$/  - \2/' \
+    | sed -E 's/^install_(all|specific) "([^"]+)" *"([^"]*)".*/  - \2 (\3)/'
+  echo
+  if [[ -d "$SKILLS_DIR" ]]; then
+    local count
+    count=$(find "$SKILLS_DIR" -maxdepth 1 -mindepth 1 -type d | wc -l)
+    echo "Installed: ${count} skill(s) in ${SKILLS_DIR}"
+  else
+    echo "Installed: (none — ${SKILLS_DIR} does not exist)"
+  fi
+}
+
+run_skills_status() {
+  banner "Skills status"
+  if [[ -d "$SKILLS_DIR" ]]; then
+    local count
+    count=$(find "$SKILLS_DIR" -maxdepth 1 -mindepth 1 -type d | wc -l)
+    success "${count} skill(s) installed at ${SKILLS_DIR}"
+  else
+    error "Skills dir missing: ${SKILLS_DIR}"
+  fi
+  if [[ -f "$SKILL_LOCK" ]]; then
+    success "Lock file present: ${SKILL_LOCK}"
+  else
+    error "Lock file missing — run 'dotfiles skills install' to rebuild"
+  fi
+  for agent_dir in "$HOME/.claude/skills" "$HOME/.config/opencode/skill" "$HOME/.cursor/skills" "$HOME/.codex/skills"; do
+    if [[ -e "$agent_dir" ]]; then
+      local agent_count
+      agent_count=$(find "$agent_dir" -maxdepth 1 -mindepth 1 | wc -l)
+      success "Agent dir: ${agent_dir} (${agent_count} entries)"
+    fi
+  done
+}
+
+run_skills() {
+  case "${1:-update}" in
+    install)  run_skills_install ;;
+    update)   run_skills_update ;;
+    list|ls)  run_skills_list ;;
+    status)   run_skills_status ;;
+    -h|--help|help)
+      echo "Usage: dotfiles skills <subcommand>"
+      echo ""
+      echo "Subcommands:"
+      echo "  install   Install all configured skills (idempotent)"
+      echo "  update    Pull upstream changes for installed skills (falls back to install)"
+      echo "  list      Show configured sources and installed count"
+      echo "  status    Health check: lock file, agent dirs, counts"
+      ;;
+    *)
+      error "Unknown skills subcommand: $1"
+      echo "Run 'dotfiles skills help' for usage"
+      exit 1
+      ;;
+  esac
 }
 
 run_mise() {
@@ -99,7 +173,7 @@ case $1 in
   up|update)
     run_stow
     run_brew
-    run_skills
+    run_skills_update
     run_mise
     ;;
   stow)
@@ -109,7 +183,8 @@ case $1 in
     run_brew
     ;;
   skills)
-    run_skills
+    shift
+    run_skills "$@"
     ;;
   mise)
     run_mise
