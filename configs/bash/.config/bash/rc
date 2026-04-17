@@ -13,5 +13,9 @@
 [[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
 [[ -f ~/.config/bash/aliases ]] && source ~/.config/bash/aliases
 
+# Drop fzf's default completion hook (sourced by omarchy's default bashrc).
+# It scans the filesystem and hangs ble.sh's per-keystroke auto-complete.
+complete -r -D 2>/dev/null
+
 # ble.sh — attach after all config is loaded
 [[ ! ${BLE_VERSION-} ]] || ble-attach
