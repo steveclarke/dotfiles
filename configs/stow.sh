@@ -129,6 +129,12 @@ if is_omarchy; then
   ensure_dir "${HOME}/.config/omarchy/themed"
   cleanup_paths "${HOME}/.config/waybar/config.jsonc" "${HOME}/.config/waybar/style.css" "${HOME}/.config/omarchy/themed/waybar.css.tpl"
   stow_package "Waybar" "waybar"
+
+  # Hyprland — customizations go in Omarchy's user hook files (monitors.conf,
+  # bindings.conf, autostart.conf) — never touch hyprland.conf itself, Omarchy owns it
+  ensure_dir "${HOME}/.config/hypr"
+  cleanup_paths "${HOME}/.config/hypr/monitors.conf" "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/autostart.conf" "${HOME}/.config/hypr/hypridle.conf"
+  stow_package "Hyprland" "hypr"
 fi
 
 # =============================================================================
