@@ -135,6 +135,10 @@ if is_omarchy; then
   ensure_dir "${HOME}/.config/hypr"
   cleanup_paths "${HOME}/.config/hypr/monitors.conf" "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/autostart.conf" "${HOME}/.config/hypr/hypridle.conf"
   stow_package "Hyprland" "hypr"
+
+  # Omarchy custom themes — user-authored themes under ~/.config/omarchy/themes/
+  ensure_dir "${HOME}/.config/omarchy/themes"
+  stow_package "Omarchy themes" "omarchy-themes"
 fi
 
 # =============================================================================
