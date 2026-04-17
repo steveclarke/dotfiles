@@ -71,11 +71,13 @@ intentionally distinct.
 
 ### TypeScript/JavaScript
 
-Primary tool: `knip` (https://knip.dev). If not installed, skip and report.
+Primary tool: `knip` (https://knip.dev). Run with `npx --yes` — no install needed:
 
 ```bash
-npx knip --no-gitignore --include files,exports,dependencies
+npx --yes knip --no-gitignore --include files,exports,dependencies
 ```
+
+Never substitute `grep`/`ripgrep` — they can't see dynamic imports or follow the export graph.
 
 Cross-check each flagged item against the whole codebase with ripgrep before
 removing. `knip` can miss dynamic imports, string-based module references, and
@@ -85,12 +87,14 @@ Also check: `ts-prune` for an alternative view on unused exports.
 
 ### Ruby/Rails
 
-Primary tool: `debride` (https://github.com/seattlerb/debride). If not
-installed, skip.
+Primary tool: `debride` (https://github.com/seattlerb/debride). Install it to the user's gem path if not already present — don't add to the project's Gemfile for a one-off deslop run:
 
 ```bash
-bundle exec debride app/ lib/
+gem list --installed debride >/dev/null 2>&1 || gem install debride
+debride --rails app/ lib/
 ```
+
+Never substitute `grep` — Rails metaprogramming and autoloading make manual analysis unreliable, but debride understands the common patterns.
 
 Rails has many framework callbacks and metaprogramming patterns that `debride`
 will mis-flag. Be especially cautious with:
@@ -106,11 +110,14 @@ flagging as high-confidence.
 
 ### Go
 
-Primary tool: `staticcheck -unused` or `deadcode`.
+Primary tool: `staticcheck -unused` or `deadcode`. Install if missing (both go to `$(go env GOPATH)/bin`, standard Go practice):
 
 ```bash
+command -v staticcheck >/dev/null 2>&1 || go install honnef.co/go/tools/cmd/staticcheck@latest
+command -v deadcode >/dev/null 2>&1 || go install golang.org/x/tools/cmd/deadcode@latest
+
 staticcheck -checks U1000 ./...
-# or
+# or (whole-program reachability, more precise):
 deadcode ./...
 ```
 
@@ -139,10 +146,10 @@ Needs-review:
 
 ### TypeScript/JavaScript
 
-Primary tool: `madge`.
+Primary tool: `madge` — run via `npx --yes`, no install needed:
 
 ```bash
-npx madge --circular --extensions ts,tsx,js,jsx src/
+npx --yes madge --circular --extensions ts,tsx,js,jsx src/
 ```
 
 For each cycle, propose a break strategy: move shared types to a third module,

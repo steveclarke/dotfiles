@@ -2,10 +2,10 @@
 
 ## staticcheck — dead code and more
 
-Install:
+Install to `$(go env GOPATH)/bin` if not already present (standard Go tooling practice — not a project-level change):
 
 ```bash
-go install honnef.co/go/tools/cmd/staticcheck@latest
+command -v staticcheck >/dev/null 2>&1 || go install honnef.co/go/tools/cmd/staticcheck@latest
 ```
 
 Run for dead code only (U1000 check):
@@ -31,7 +31,7 @@ Relevant checks for deslop:
 Go 1.22+ ships with a `deadcode` tool under `x/tools`:
 
 ```bash
-go install golang.org/x/tools/cmd/deadcode@latest
+command -v deadcode >/dev/null 2>&1 || go install golang.org/x/tools/cmd/deadcode@latest
 deadcode ./...
 ```
 

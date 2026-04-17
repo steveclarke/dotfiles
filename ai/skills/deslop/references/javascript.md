@@ -2,23 +2,15 @@
 
 ## knip — dead code detection
 
-Install (project-local):
+Run it with `npx --yes` — no install required, no changes to the project's `package.json`:
 
 ```bash
-npm install --save-dev knip
-# or
-pnpm add -D knip
-# or
-yarn add -D knip
+npx --yes knip
+npx --yes knip --include files,exports,dependencies,binaries
+npx --yes knip --reporter json  # machine-readable
 ```
 
-Run:
-
-```bash
-npx knip
-npx knip --include files,exports,dependencies,binaries
-npx knip --reporter json  # machine-readable
-```
+`--yes` auto-accepts the npx download prompt so it runs non-interactively. First run populates the npm cache; subsequent runs are near-instant. **Do not** `npm install --save-dev knip` for a deslop run — this is a one-off deep-clean, not a permanent project dep.
 
 Config lives in `knip.json`, `knip.jsonc`, or the `knip` key in `package.json`.
 
@@ -38,18 +30,12 @@ If ripgrep finds nothing outside the declaration, it's safer to remove.
 
 ## madge — circular dependency detection
 
-Install:
+Run with `npx --yes` — no install needed:
 
 ```bash
-npm install --save-dev madge
-```
-
-Run:
-
-```bash
-npx madge --circular src/
-npx madge --circular --extensions ts,tsx src/
-npx madge --circular --json src/  # machine-readable
+npx --yes madge --circular src/
+npx --yes madge --circular --extensions ts,tsx src/
+npx --yes madge --circular --json src/  # machine-readable
 ```
 
 For each cycle, madge prints the import chain. To break a cycle:
@@ -63,7 +49,7 @@ For each cycle, madge prints the import chain. To break a cycle:
 Alternative to knip for export-only analysis:
 
 ```bash
-npx ts-prune
+npx --yes ts-prune
 ```
 
 Less comprehensive than knip but faster for a quick scan.
