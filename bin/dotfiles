@@ -28,6 +28,11 @@ run_stow() {
 }
 
 run_brew() {
+  if ! is_installed brew; then
+    banner "Skipping Homebrew — not installed on this system"
+    return 0
+  fi
+
   banner "Updating Homebrew"
   brew update
   brew upgrade
