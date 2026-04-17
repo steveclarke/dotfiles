@@ -67,6 +67,10 @@ install_all "My skills (superthread)" \
 install_all "External (impeccable)" \
   "pbakaus/impeccable"
 
+# ─── External: android/skills — Google's Android agent skills ───────────────
+install_all "External (android)" \
+  "android/skills"
+
 # ─── External: specific skills only ─────────────────────────────────────────
 
 install_specific "External (antfu)" "antfu/skills" \
