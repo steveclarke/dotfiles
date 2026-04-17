@@ -3,3 +3,25 @@ export LESS="-rF"
 export RUBY_YJIT_ENABLE=1
 export DOTFILES_DIR="$HOME/.local/share/dotfiles"
 export PATH="$HOME/.local/share/dotfiles/bin:$PATH"
+
+# Android SDK — managed via Google's Android CLI (`android`).
+# Install: install/arch/cli/android-cli.sh + install/arch/cli/jdk.sh
+# Docs:    https://developer.android.com/tools/agents/android-cli
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+for _android_dir in \
+    "$ANDROID_HOME/cmdline-tools/latest/bin" \
+    "$ANDROID_HOME/platform-tools" \
+    "$ANDROID_HOME/emulator"; do
+    if [[ -d "$_android_dir" ]]; then
+        case ":$PATH:" in
+            *":$_android_dir:"*) ;;
+            *) PATH="$_android_dir:$PATH" ;;
+        esac
+    fi
+done
+unset _android_dir
+export PATH
+
+# JDK — Arch sets /usr/lib/jvm/default via `archlinux-java`.
+[[ -d /usr/lib/jvm/default ]] && export JAVA_HOME=/usr/lib/jvm/default
