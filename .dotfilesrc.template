@@ -18,6 +18,12 @@ export DOTFILES_GIT_USER_EMAIL=steve@sevenview.ca
 # GUI applications (set to true to install GUI apps on both macOS and Linux)
 export DOTFILES_INSTALL_GUI=true
 
+# Android SDK baseline (set to true to have `setups/android-sdk.sh` run
+# `android sdk install` with DOTFILES_ANDROID_SDK_PACKAGES on install/update).
+# Requires `dotfiles install android-cli` (and jdk on Arch) first.
+export DOTFILES_INSTALL_ANDROID_SDK=false
+# export DOTFILES_ANDROID_SDK_PACKAGES="platform-tools platforms/android-36 build-tools/36.0.0"
+
 # Platform-specific settings
 
 # Optional: Platform-specific environment variables
