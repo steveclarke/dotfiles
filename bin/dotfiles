@@ -55,22 +55,13 @@ run_brew() {
   brew cleanup
 }
 
-SKILL_LOCK="${HOME}/.agents/.skill-lock.json"
 SKILLS_DIR="${HOME}/.agents/skills"
 
+# `skills add` always fetches the latest copy, so install == update. We expose
+# both verbs so the CLI reads naturally, but they share one implementation.
 run_skills_install() {
-  banner "Installing agent skills"
+  banner "Installing/updating agent skills"
   "${DOTFILES_DIR}/bin/skills-install"
-}
-
-run_skills_update() {
-  if [[ ! -f "$SKILL_LOCK" ]]; then
-    banner "No skill lock file — running install instead of update"
-    run_skills_install
-    return
-  fi
-  banner "Updating agent skills"
-  "${DOTFILES_DIR}/bin/skills-update"
 }
 
 run_skills_list() {
@@ -97,12 +88,7 @@ run_skills_status() {
   else
     error "Skills dir missing: ${SKILLS_DIR}"
   fi
-  if [[ -f "$SKILL_LOCK" ]]; then
-    success "Lock file present: ${SKILL_LOCK}"
-  else
-    error "Lock file missing — run 'dotfiles skills install' to rebuild"
-  fi
-  for agent_dir in "$HOME/.claude/skills" "$HOME/.config/opencode/skill" "$HOME/.cursor/skills" "$HOME/.codex/skills"; do
+  for agent_dir in "$HOME/.claude/skills" "$HOME/.config/opencode/skill" "$HOME/.config/crush/skills" "$HOME/.config/goose/skills" "$HOME/.cursor/skills" "$HOME/.codex/skills"; do
     if [[ -e "$agent_dir" ]]; then
       local agent_count
       agent_count=$(find "$agent_dir" -maxdepth 1 -mindepth 1 | wc -l)
@@ -112,19 +98,18 @@ run_skills_status() {
 }
 
 run_skills() {
-  case "${1:-update}" in
-    install)  run_skills_install ;;
-    update)   run_skills_update ;;
-    list|ls)  run_skills_list ;;
-    status)   run_skills_status ;;
+  case "${1:-install}" in
+    install|update)  run_skills_install ;;
+    list|ls)         run_skills_list ;;
+    status)          run_skills_status ;;
     -h|--help|help)
       echo "Usage: dotfiles skills <subcommand>"
       echo ""
       echo "Subcommands:"
-      echo "  install   Install all configured skills (idempotent)"
-      echo "  update    Pull upstream changes for installed skills (falls back to install)"
+      echo "  install   Install/refresh all configured skills (idempotent)"
+      echo "  update    Alias for install — 'skills add' always fetches latest"
       echo "  list      Show configured sources and installed count"
-      echo "  status    Health check: lock file, agent dirs, counts"
+      echo "  status    Skills dir + agent dir counts"
       ;;
     *)
       error "Unknown skills subcommand: $1"
@@ -173,7 +158,7 @@ case $1 in
   up|update)
     run_stow
     run_brew
-    run_skills_update
+    run_skills_install
     run_mise
     ;;
   stow)
