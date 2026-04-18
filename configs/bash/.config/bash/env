@@ -3,6 +3,7 @@ export LESS="-rF"
 export RUBY_YJIT_ENABLE=1
 export DOTFILES_DIR="$HOME/.local/share/dotfiles"
 export PATH="$HOME/.local/share/dotfiles/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Android SDK — managed via Google's Android CLI (`android`).
 # Install: install/arch/cli/android-cli.sh + install/arch/cli/jdk.sh
