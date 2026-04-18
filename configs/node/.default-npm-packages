@@ -5,5 +5,6 @@ skills
 yarn
 playwright
 pnpm
+bun
 @slidev/cli
 
