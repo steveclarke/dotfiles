@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Cycle the focused monitor's scale through a custom list of values.
+# Overrides omarchy-hyprland-monitor-scaling-cycle (which is 1 / 1.6 / 2 / 3)
+# by adding 1.33 — a clean 4/3 scale that produces integer logical pixels
+# on 3840-wide 4K displays (same as macOS "looks like 2880x1620").
+
+MONITOR_INFO=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)')
+ACTIVE_MONITOR=$(echo "$MONITOR_INFO" | jq -r '.name')
+CURRENT_SCALE=$(echo "$MONITOR_INFO" | jq -r '.scale')
+WIDTH=$(echo "$MONITOR_INFO" | jq -r '.width')
+HEIGHT=$(echo "$MONITOR_INFO" | jq -r '.height')
+REFRESH_RATE=$(echo "$MONITOR_INFO" | jq -r '.refreshRate')
+
+# Cycle: 1 → 1.33 → 1.6 → 2 → 3 → 1
+CURRENT_INT=$(awk -v s="$CURRENT_SCALE" 'BEGIN { printf "%.0f", s * 100 }')
+
+case "$CURRENT_INT" in
+100) NEW_SCALE=1.333333 ;;
+133) NEW_SCALE=1.6 ;;
+160) NEW_SCALE=2 ;;
+200) NEW_SCALE=3 ;;
+*)   NEW_SCALE=1 ;;
+esac
+
+hyprctl keyword monitor "$ACTIVE_MONITOR,${WIDTH}x${HEIGHT}@${REFRESH_RATE},auto,$NEW_SCALE"
+notify-send -u low "󰍹    Display scaling set to ${NEW_SCALE}x"
