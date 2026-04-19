@@ -139,6 +139,11 @@ if is_omarchy; then
   # Omarchy custom themes — user-authored themes under ~/.config/omarchy/themes/
   ensure_dir "${HOME}/.config/omarchy/themes"
   stow_package "Omarchy themes" "omarchy-themes"
+
+  # Omarchy hooks — post-update re-enables Voxtype GPU after upgrades swap it to CPU
+  ensure_dir "${HOME}/.config/omarchy/hooks"
+  cleanup_paths "${HOME}/.config/omarchy/hooks/post-update"
+  stow_package "Omarchy hooks" "omarchy-hooks"
 fi
 
 # =============================================================================
