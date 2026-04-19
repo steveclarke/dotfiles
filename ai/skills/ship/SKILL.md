@@ -74,9 +74,15 @@ If the skill reports issues it couldn't resolve, log `failed` instead of `clean`
 
 ### Step 3b: Code Review
 
-Use the Skill tool to invoke `code-review`. This dispatches 5 parallel review
-agents, scores findings by confidence, auto-fixes mechanical issues, and asks
-for judgment on critical findings.
+Use the Skill tool to invoke `code-review:code-review` (the plugin skill).
+This dispatches 5 parallel review agents, scores findings by confidence,
+auto-fixes mechanical issues, and asks for judgment on critical findings.
+
+**Disambiguation:** If multiple code-review-style skills are available (e.g.
+a project-local skill like `*-code-review`, `review`, or
+`superpowers:requesting-code-review`), do **not** guess. Stop and ask the user
+which one to run. The intended default is `code-review:code-review`, but
+project-local review skills may be preferred in some codebases.
 
 After it completes, log the result with metadata:
 ```bash
