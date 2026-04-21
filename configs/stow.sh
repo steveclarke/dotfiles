@@ -93,6 +93,10 @@ fi
 ensure_dir "${HOME}/.config/fish"
 stow_package "Fish shell" "fish"
 
+ensure_dir "${HOME}/.config/mise"
+cleanup_paths "${HOME}/.config/mise/config.toml"
+stow_package "Mise" "mise"
+
 stow_package "Ruby" "ruby"
 
 stow_package "Node (default npm packages)" "node"

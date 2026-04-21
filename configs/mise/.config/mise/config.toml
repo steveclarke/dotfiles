@@ -1,0 +1,9 @@
+[tools]
+bun = "latest"
+node = "25.9.0"
+ruby = "3.4"
+
+[env]
+# Pin baseruby for ruby-build so ./configure doesn't probe $PATH and
+# pick up the mise ruby shim, which recurses back into `mise install`.
+RUBY_CONFIGURE_OPTS = "--with-baseruby=/usr/bin/ruby"
