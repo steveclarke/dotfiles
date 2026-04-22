@@ -104,12 +104,13 @@ stow_package "Node (default npm packages)" "node"
 ensure_dir "${HOME}/.config/zellij"
 stow_package "Zellij" "zellij"
 
-ensure_dir "${HOME}/.config/process-compose"
-stow_package "Process compose" "process-compose"
-
+# Process compose — uses XDG on Linux, ~/Library/Application Support on macOS
 if is_macos; then
-  ensure_dir "${HOME}/Library/Application Support/process-compose"
-  stow_package "Process compose (macOS)" "process-compose-macos"
+  ensure_dir "${HOME}/Library/Application Support"
+  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}/Library/Application Support" process-compose
+else
+  ensure_dir "${HOME}/.config"
+  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}/.config" process-compose
 fi
 
 cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
