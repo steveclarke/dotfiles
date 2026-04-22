@@ -107,10 +107,9 @@ stow_package "Zellij" "zellij"
 ensure_dir "${HOME}/.config/process-compose"
 stow_package "Process compose" "process-compose"
 
-# On macOS, process-compose uses ~/Library/Application Support/ instead of ~/.config/
 if is_macos; then
   ensure_dir "${HOME}/Library/Application Support/process-compose"
-  ln -sf "${HOME}/.config/process-compose/settings.yaml" "${HOME}/Library/Application Support/process-compose/settings.yaml"
+  stow_package "Process compose (macOS)" "process-compose-macos"
 fi
 
 cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
