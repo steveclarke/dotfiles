@@ -71,6 +71,34 @@ stow_package() {
   do_stow "${stow_package}"
 }
 
+# Stow a configuration package with a custom target directory
+# Args: display_name, stow_package, target_dir
+stow_package_to() {
+  local display_name="$1"
+  local stow_package="$2"
+  local target_dir="$3"
+
+  config_banner "${display_name}"
+  if ! stow -d "${DOTFILES_DIR}/configs" -t "${target_dir}" "${stow_package}"; then
+    error "Failed to stow ${stow_package}"
+    return 1
+  fi
+}
+
+# Stow a configuration package with a custom target directory
+# Args: display_name, stow_package, target_dir
+stow_package_to() {
+  local display_name="$1"
+  local stow_package="$2"
+  local target_dir="$3"
+
+  config_banner "${display_name}"
+  if ! stow -d "${DOTFILES_DIR}/configs" -t "${target_dir}" "${stow_package}"; then
+    error "Failed to stow ${stow_package}"
+    return 1
+  fi
+}
+
 # =============================================================================
 # Cross-platform packages (stow on all platforms)
 # =============================================================================
@@ -107,10 +135,10 @@ stow_package "Zellij" "zellij"
 # Process compose — uses XDG on Linux, ~/Library/Application Support on macOS
 if is_macos; then
   ensure_dir "${HOME}/Library/Application Support"
-  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}/Library/Application Support" process-compose
+  stow_package_to "Process compose" "process-compose" "${HOME}/Library/Application Support"
 else
   ensure_dir "${HOME}/.config"
-  stow -d "${DOTFILES_DIR}/configs" -t "${HOME}/.config" process-compose
+  stow_package_to "Process compose" "process-compose" "${HOME}/.config"
 fi
 
 cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
