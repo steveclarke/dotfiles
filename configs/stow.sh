@@ -104,6 +104,9 @@ stow_package "Node (default npm packages)" "node"
 ensure_dir "${HOME}/.config/zellij"
 stow_package "Zellij" "zellij"
 
+ensure_dir "${HOME}/.config/process-compose"
+stow_package "Process compose" "process-compose"
+
 cleanup_paths "${HOME}/.zshrc" "${HOME}/.zprofile"
 stow_package "Zsh" "zsh"
 
