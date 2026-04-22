@@ -1,10 +1,9 @@
 {
   "name": "md-to-pdf",
   "version": "1.0.0",
-  "type": "module",
   "description": "Convert markdown to PDF with Mermaid, math, and more",
   "bin": {
-    "md-to-pdf": "./scripts/md-to-pdf.mjs"
+    "md-to-pdf": "./scripts/md-to-pdf.cjs"
   },
   "dependencies": {
     "crossnote": "^0.9.15",

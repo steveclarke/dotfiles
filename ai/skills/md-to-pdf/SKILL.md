@@ -18,9 +18,9 @@ Converts markdown files to beautifully formatted PDFs using crossnote (same engi
 ## Usage
 
 ```bash
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs input.md              # Creates input.pdf
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs input.md output.pdf   # Custom output name
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs input.md --open       # Open after creating
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md              # Creates input.pdf
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md output.pdf   # Custom output name
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md --open       # Open after creating
 ```
 
 ## Options
@@ -47,13 +47,13 @@ Converts markdown files to beautifully formatted PDFs using crossnote (same engi
 
 ```bash
 # Quick conversion
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs README.md
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs README.md
 
 # Spec document for sharing
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs spec.md spec-v2.pdf --open
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs spec.md spec-v2.pdf --open
 
 # Multiple files
-for f in docs/*.md; do ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs "$f"; done
+for f in docs/*.md; do ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs "$f"; done
 ```
 
 ## Mermaid Example
@@ -87,7 +87,7 @@ When printing is the goal (not the PDF itself), delete the PDF after printing:
 
 ```bash
 # Generate, print, cleanup
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs doc.md
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs doc.md
 ~/.claude/skills/print/scripts/print doc.pdf
 rm doc.pdf
 ```
@@ -98,5 +98,5 @@ The `/print` skill handles double-sided and b&w defaults automatically.
 
 Add to your shell profile:
 ```bash
-alias md-to-pdf='~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs'
+alias md-to-pdf='~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs'
 ```

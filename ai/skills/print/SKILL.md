@@ -12,7 +12,7 @@ Print files on Mac or Linux using the `lp` command with sensible defaults.
 To print a markdown file, first convert it to PDF using the `/md-to-pdf` skill:
 
 ```bash
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.mjs doc.md
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs doc.md
 ~/.claude/skills/print/scripts/print doc.pdf
 rm doc.pdf  # Delete if PDF was just for printing
 ```

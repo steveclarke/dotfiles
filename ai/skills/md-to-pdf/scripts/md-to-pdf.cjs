@@ -13,15 +13,19 @@
  *   md-to-pdf input.md                     # Creates input.pdf
  *   md-to-pdf input.md output.pdf          # Custom output name
  *   md-to-pdf input.md --open              # Open after creating
+ *
+ * NOTE: This file is .cjs (CommonJS) on purpose. Crossnote's ESM build has a
+ * broken extensionless import (`bit-field/lib/render`) that modern Node
+ * rejects. Its CJS build works fine because `require()` resolves extensions.
  */
 
-import { readFileSync, writeFileSync, mkdtempSync, unlinkSync, copyFileSync, existsSync } from "fs"
-import { basename, join, resolve, dirname } from "path"
-import { tmpdir } from "os"
-import { exec } from "child_process"
-import { Notebook } from "crossnote"
-import matter from "gray-matter"
-import he from "he"
+const { readFileSync, writeFileSync, mkdtempSync, unlinkSync, copyFileSync, existsSync } = require("fs")
+const { basename, join, resolve, dirname } = require("path")
+const { tmpdir } = require("os")
+const { execFile } = require("child_process")
+const { Notebook } = require("crossnote")
+const matter = require("gray-matter")
+const he = require("he")
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -142,11 +146,9 @@ function injectPageNumbering(content, filename) {
 async function renderToPdf() {
   const chromePath = await findChrome()
 
-  // Read original content
   const originalContent = readFileSync(inputPath, "utf-8")
   const filename = basename(inputPath)
 
-  // Inject page numbering
   const contentWithPageNumbers = injectPageNumbering(originalContent, filename)
 
   // Use source file's directory as notebook path so relative image paths resolve
@@ -155,7 +157,6 @@ async function renderToPdf() {
   writeFileSync(tempFilePath, contentWithPageNumbers, "utf-8")
 
   try {
-    // Initialize crossnote
     const notebook = await Notebook.init({
       notebookPath: sourceDir,
       config: {
@@ -173,17 +174,14 @@ async function renderToPdf() {
       },
     })
 
-    // Render to PDF
     const engine = notebook.getNoteMarkdownEngine(`.~${filename}`)
     const generatedPath = await engine.chromeExport({
       fileType: "pdf",
       runAllCodeChunks: false,
     })
 
-    // Copy to output location
     copyFileSync(generatedPath, outputPath)
 
-    // Remove crossnote's generated PDF (it lives next to the temp markdown file)
     try {
       unlinkSync(generatedPath)
     } catch {
@@ -192,13 +190,13 @@ async function renderToPdf() {
 
     console.log(`Created: ${outputPath}`)
 
-    // Open if requested
     if (openAfter) {
       const openCmd = process.platform === "darwin" ? "open" : "xdg-open"
-      exec(`${openCmd} "${outputPath}"`)
+      execFile(openCmd, [outputPath], (err) => {
+        if (err) console.error(`Could not open ${outputPath}: ${err.message}`)
+      })
     }
   } finally {
-    // Cleanup temp markdown file
     try {
       unlinkSync(tempFilePath)
     } catch {
@@ -207,7 +205,6 @@ async function renderToPdf() {
   }
 }
 
-// Run
 renderToPdf().catch((err) => {
   console.error(`Error: ${err.message}`)
   process.exit(1)
