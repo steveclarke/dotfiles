@@ -20,6 +20,9 @@
       }
     }
   },
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git"
+  ],
   "permission": {
     "bash": {
       "*": "allow",
@@ -53,6 +56,11 @@
       "type": "remote",
       "url": "https://ai.todoist.net/mcp",
       "enabled": true
+    },
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "oauth": {}
     }
   }
 }
