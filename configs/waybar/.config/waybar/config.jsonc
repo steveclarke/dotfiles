@@ -3,7 +3,7 @@
   "layer": "top",
   "position": "top",
   "spacing": 0,
-  "height": 26,
+  "height": 32,
   "modules-left": [
     "custom/omarchy",
     "hyprland/workspaces"
