@@ -85,20 +85,8 @@ stow_package_to() {
   fi
 }
 
-# Stow a configuration package with a custom target directory
-# Args: display_name, stow_package, target_dir
-stow_package_to() {
-  local display_name="$1"
-  local stow_package="$2"
-  local target_dir="$3"
-
-  config_banner "${display_name}"
-  if ! stow -d "${DOTFILES_DIR}/configs" -t "${target_dir}" "${stow_package}"; then
-    error "Failed to stow ${stow_package}"
-    return 1
-  fi
-}
-
+# =============================================================================
+# Cross-platform packages (stow on all platforms)
 # =============================================================================
 # Cross-platform packages (stow on all platforms)
 # =============================================================================
