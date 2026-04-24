@@ -76,6 +76,22 @@ tooltip {
   margin-left: 8.75px;
 }
 
+#custom-ai-usage {
+  min-width: 52px;
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+  color: @accent;
+}
+
+#custom-ai-usage.warning {
+  color: #d0a85c;
+}
+
+#custom-ai-usage.critical,
+#custom-ai-usage.error {
+  color: #a55555;
+}
+
 .hidden {
   opacity: 0;
 }
