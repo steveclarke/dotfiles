@@ -1,0 +1,9 @@
+[Unit]
+Description=Refresh dotfiles AI usage cache
+Documentation=file:%h/.local/share/dotfiles/docs/omarchy-waybar-ai-usage.md
+
+[Service]
+Type=oneshot
+TimeoutStartSec=75
+Environment=PATH=%h/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.config/waybar/scripts/ai-usage-refresh.sh --refresh
