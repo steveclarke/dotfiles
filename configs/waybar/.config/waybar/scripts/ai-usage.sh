@@ -2,11 +2,26 @@
 set -u
 
 PATH="${HOME}/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin:${PATH}"
-PROVIDER_TIMEOUT_SECONDS="${DOTFILES_AI_USAGE_PROVIDER_TIMEOUT_SECONDS:-8}"
+PROVIDER_TIMEOUT_SECONDS="${DOTFILES_AI_USAGE_PROVIDER_TIMEOUT_SECONDS:-12}"
 CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}/dotfiles/ai-usage"
+CODEX_MIN_INTERVAL_SECONDS="${DOTFILES_AI_USAGE_CODEX_MIN_INTERVAL_SECONDS:-90}"
 CLAUDE_MIN_INTERVAL_SECONDS="${DOTFILES_AI_USAGE_CLAUDE_MIN_INTERVAL_SECONDS:-300}"
+LOCK_DIR="${CACHE_DIR}/refresh.lock"
+RENDER_CACHE_FILE="${CACHE_DIR}/waybar.json"
 
 main() {
+  mkdir -p "${CACHE_DIR}"
+
+  if ! acquire_refresh_lock; then
+    if read_render_cache; then
+      return 0
+    fi
+
+    emit_error "AI usage refresh already running" "Previous CodexBar usage refresh is still in progress"
+    return 0
+  fi
+  trap release_refresh_lock EXIT
+
   if ! command -v jq >/dev/null 2>&1; then
     emit_static_error "jq is missing; run dotfiles install"
     return 0
@@ -22,7 +37,7 @@ main() {
   claude_payload="$(fetch_provider claude)"
   payload="$(jq -cn --argjson codex "${codex_payload}" --argjson claude "${claude_payload}" '$codex + $claude')"
 
-  render_waybar_json "${payload}"
+  write_render_cache "$(render_waybar_json "${payload}")"
 }
 
 fetch_provider() {
@@ -52,23 +67,52 @@ fetch_provider() {
       return 0
     fi
 
-    write_provider_cache "${provider}" "${normalized_payload}"
-    printf '%s\n' "${normalized_payload}"
-    return 0
+    if provider_payload_has_error "${normalized_payload}"; then
+      message="$(provider_payload_error_message "${normalized_payload}")"
+    else
+      write_provider_cache "${provider}" "${normalized_payload}"
+      printf '%s\n' "${normalized_payload}"
+      return 0
+    fi
   fi
 
-  if (( status == 124 )); then
-    message="codexbar ${provider} ${source} usage timed out after ${PROVIDER_TIMEOUT_SECONDS}s"
-  else
-    message="$(first_nonempty "${error_output}" "codexbar ${provider} ${source} usage failed")"
+  if [[ -z ${message:-} ]]; then
+    if (( status == 124 )); then
+      message="codexbar ${provider} ${source} usage timed out after ${PROVIDER_TIMEOUT_SECONDS}s"
+    else
+      message="$(first_nonempty "${error_output}" "codexbar ${provider} ${source} usage failed")"
+    fi
   fi
   message="$(friendly_provider_error "${provider}" "${source}" "${message}")"
 
-  if [[ ${provider} == "claude" ]] && read_provider_cache_with_note "${provider}" "showing cached data; latest refresh failed"; then
+  if read_provider_cache_with_note "${provider}" "showing cached data; latest refresh failed: ${message}"; then
     return 0
   fi
 
   make_error_payload "${provider}" "${source}" "${message}"
+}
+
+acquire_refresh_lock() {
+  mkdir "${LOCK_DIR}" 2>/dev/null
+}
+
+release_refresh_lock() {
+  rmdir "${LOCK_DIR}" 2>/dev/null || true
+}
+
+read_render_cache() {
+  [[ -f ${RENDER_CACHE_FILE} ]] || return 1
+  jq -c 'select(type == "object" and (.text // "") != "")' "${RENDER_CACHE_FILE}" 2>/dev/null
+}
+
+write_render_cache() {
+  local output="$1"
+  local tmp_file
+
+  tmp_file="${RENDER_CACHE_FILE}.$$"
+  printf '%s\n' "${output}" >"${tmp_file}"
+  mv "${tmp_file}" "${RENDER_CACHE_FILE}"
+  printf '%s\n' "${output}"
 }
 
 provider_source() {
@@ -94,16 +138,21 @@ provider_cache_file() {
 
 should_use_cached_before_fetch() {
   local provider="$1"
-  local cache_file age now modified
+  local cache_file age now modified min_interval
 
-  [[ ${provider} == "claude" ]] || return 1
+  case "${provider}" in
+    codex) min_interval="${CODEX_MIN_INTERVAL_SECONDS}" ;;
+    claude) min_interval="${CLAUDE_MIN_INTERVAL_SECONDS}" ;;
+    *) return 1 ;;
+  esac
+
   cache_file="$(provider_cache_file "${provider}")"
   [[ -f ${cache_file} ]] || return 1
 
   now="$(date +%s)"
   modified="$(stat -c %Y "${cache_file}" 2>/dev/null || printf '0')"
   age=$((now - modified))
-  (( age < CLAUDE_MIN_INTERVAL_SECONDS )) || return 1
+  (( age < min_interval )) || return 1
 
   jq -e 'type == "array" and length > 0' "${cache_file}" >/dev/null 2>&1
 }
@@ -142,6 +191,18 @@ write_provider_cache() {
   tmp_file="${cache_file}.$$"
   printf '%s\n' "${payload}" >"${tmp_file}"
   mv "${tmp_file}" "${cache_file}"
+}
+
+provider_payload_has_error() {
+  local payload="$1"
+
+  printf '%s' "${payload}" | jq -e 'map(select(.error != null)) | length > 0' >/dev/null 2>&1
+}
+
+provider_payload_error_message() {
+  local payload="$1"
+
+  printf '%s' "${payload}" | jq -r 'map(.error.message? // empty) | first // "provider usage failed"' 2>/dev/null
 }
 
 is_claude_oauth_rate_limited() {
