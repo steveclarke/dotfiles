@@ -86,11 +86,11 @@
   },
   "custom/ai-usage": {
     "exec": "~/.config/waybar/scripts/ai-usage.sh",
-    "interval": 120,
+    "interval": 30,
     "return-type": "json",
     "tooltip": true,
     "signal": 11,
-    "on-click": "pkill -RTMIN+11 waybar"
+    "on-click": "~/.config/waybar/scripts/ai-usage-refresh.sh --start"
   },
   "network": {
     "format-icons": [
