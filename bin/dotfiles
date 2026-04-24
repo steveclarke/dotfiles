@@ -16,7 +16,7 @@ if [ $# -eq 0 ]; then
   echo "  up, update          Update everything (stow, brew, skills, mise)"
   echo "  stow                Update config symlinks"
   echo "  brew                Update and upgrade Homebrew packages"
-  echo "  skills [subcmd]     Manage agent skills (install, update, list, status)"
+  echo "  skills [subcmd]     Manage agent skills (install, list, status)"
   echo "  mise                Install/update tool versions"
   echo "  install <name>      Run an install script (e.g. dotfiles install cloudflared)"
   exit 1
@@ -62,10 +62,8 @@ run_brew() {
 
 SKILLS_DIR="${HOME}/.agents/skills"
 
-# `skills add` always fetches the latest copy, so install == update. We expose
-# both verbs so the CLI reads naturally, but they share one implementation.
 run_skills_install() {
-  banner "Installing/updating agent skills"
+  banner "Syncing agent skills"
   "${DOTFILES_DIR}/bin/skills-install"
 }
 
@@ -104,15 +102,14 @@ run_skills_status() {
 
 run_skills() {
   case "${1:-install}" in
-    install|update)  run_skills_install ;;
+    install)         run_skills_install ;;
     list|ls)         run_skills_list ;;
     status)          run_skills_status ;;
     -h|--help|help)
       echo "Usage: dotfiles skills <subcommand>"
       echo ""
       echo "Subcommands:"
-      echo "  install   Install/refresh all configured skills (idempotent)"
-      echo "  update    Alias for install — 'skills add' always fetches latest"
+      echo "  install   Sync all configured skills (idempotent)"
       echo "  list      Show configured sources and installed count"
       echo "  status    Skills dir + agent dir counts"
       ;;
