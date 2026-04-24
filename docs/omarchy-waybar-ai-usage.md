@@ -31,6 +31,10 @@ Claude
 
 Left-click the module to refresh immediately. Otherwise it refreshes every 120 seconds.
 
+Claude usage is cached between refreshes. The script avoids calling Anthropic's OAuth usage endpoint more than once
+every five minutes by default, because that endpoint can return `HTTP 429` under repeated polling. If Claude is
+rate-limited and a previous good value exists, the module keeps showing the cached value and adds a note to the tooltip.
+
 ## Files
 
 | File | Purpose |
@@ -62,6 +66,12 @@ The timeout defaults to eight seconds per provider:
 
 ```bash
 export DOTFILES_AI_USAGE_PROVIDER_TIMEOUT_SECONDS=8
+```
+
+Claude's minimum fetch interval defaults to five minutes:
+
+```bash
+export DOTFILES_AI_USAGE_CLAUDE_MIN_INTERVAL_SECONDS=300
 ```
 
 ## Troubleshooting
@@ -97,6 +107,9 @@ claude logout
 claude login
 pkill -RTMIN+11 waybar
 ```
+
+If it still happens after re-authentication, Anthropic is rate-limiting the usage endpoint itself. The script will use
+the last cached Claude value when possible.
 
 If the module disappears after a tooltip change, check for GTK markup warnings from Waybar. Dynamic tooltip text must
 escape `&`, `<`, and `>` because Waybar treats tooltips as markup.
