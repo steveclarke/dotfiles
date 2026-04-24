@@ -165,7 +165,7 @@ async function renderToPdf() {
         mermaidTheme: "default",
         mathRenderingOption: "KaTeX",
         printBackground: true,
-        breakOnSingleNewLine: true,
+        breakOnSingleNewLine: false,
         enableEmojiSyntax: true,
         enableWikiLinkSyntax: false,
         enableExtendedTableSyntax: false,
