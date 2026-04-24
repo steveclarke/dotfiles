@@ -31,9 +31,10 @@ Claude
 
 Left-click the module to refresh immediately. Otherwise it refreshes every 120 seconds.
 
-Claude usage is cached between refreshes. The script avoids calling Anthropic's OAuth usage endpoint more than once
-every five minutes by default, because that endpoint can return `HTTP 429` under repeated polling. If Claude is
-rate-limited and a previous good value exists, the module keeps showing the cached value and adds a note to the tooltip.
+Provider usage is cached between refreshes. The script avoids calling Codex more than once every 90 seconds and avoids
+calling Anthropic's OAuth usage endpoint more than once every five minutes by default. If a refresh fails and a previous
+good value exists, the module keeps showing the cached value and adds a note to the tooltip. Concurrent refreshes reuse
+the last rendered Waybar payload so click-refresh and interval-refresh do not pile up overlapping CodexBar probes.
 
 ## Files
 
@@ -62,15 +63,16 @@ export DOTFILES_AI_USAGE_CODEX_SOURCE=cli
 export DOTFILES_AI_USAGE_CLAUDE_SOURCE=oauth
 ```
 
-The timeout defaults to eight seconds per provider:
+The timeout defaults to 12 seconds per provider:
 
 ```bash
-export DOTFILES_AI_USAGE_PROVIDER_TIMEOUT_SECONDS=8
+export DOTFILES_AI_USAGE_PROVIDER_TIMEOUT_SECONDS=12
 ```
 
-Claude's minimum fetch interval defaults to five minutes:
+Provider minimum fetch intervals can be tuned per machine:
 
 ```bash
+export DOTFILES_AI_USAGE_CODEX_MIN_INTERVAL_SECONDS=90
 export DOTFILES_AI_USAGE_CLAUDE_MIN_INTERVAL_SECONDS=300
 ```
 
@@ -109,7 +111,8 @@ pkill -RTMIN+11 waybar
 ```
 
 If it still happens after re-authentication, Anthropic is rate-limiting the usage endpoint itself. The script will use
-the last cached Claude value when possible.
+the last cached Claude value when possible. Codex CLI failures such as `codex app-server closed stdout` get the same
+cached fallback behavior after the first successful Codex refresh.
 
 If the module disappears after a tooltip change, check for GTK markup warnings from Waybar. Dynamic tooltip text must
 escape `&`, `<`, and `>` because Waybar treats tooltips as markup.
