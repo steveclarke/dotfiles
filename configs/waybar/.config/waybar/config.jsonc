@@ -10,6 +10,7 @@
   ],
   "modules-center": [
     "clock",
+    "custom/ai-usage",
     "custom/update",
     "custom/voxtype",
     "custom/screenrecording-indicator",
@@ -82,6 +83,14 @@
     "format-alt": "{:%d %B W%V %Y}",
     "tooltip": false,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+  },
+  "custom/ai-usage": {
+    "exec": "~/.config/waybar/scripts/ai-usage.sh",
+    "interval": 120,
+    "return-type": "json",
+    "tooltip": true,
+    "signal": 11,
+    "on-click": "pkill -RTMIN+11 waybar"
   },
   "network": {
     "format-icons": [
