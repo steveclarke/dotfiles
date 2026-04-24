@@ -1,20 +1,58 @@
 #!/usr/bin/env bash
 #
-# skills-install — Install all global skills from configured sources
+# skills-install — Sync all global skills from configured sources
 #
-# Installs skills non-interactively across all agents (Claude Code, OpenCode, Codex, etc.)
-# using symlinks (default behavior of skills.sh).
+# Installs or refreshes skills non-interactively across all agents (Claude Code,
+# OpenCode, Codex, etc.) using symlinks (default behavior of skills.sh). Also
+# prunes known deprecated skills that are no longer provided by configured
+# sources.
 #
 # Usage:
-#   skills-install          # install all skills from all sources
+#   skills-install          # sync all skills from all sources
 #   skills-install --list   # list available skills without installing
 
 set -euo pipefail
+
+if [[ -z "${DOTFILES_DIR:-}" && -f "${HOME}/.dotfilesrc" ]]; then
+  source "${HOME}/.dotfilesrc"
+fi
+
+if [[ -z "${DOTFILES_DIR:-}" ]]; then
+  DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+
+source "${DOTFILES_DIR}/lib/dotfiles.sh"
 
 LIST_ONLY=false
 if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
   LIST_ONLY=true
 fi
+
+DEPRECATED_IMPECCABLE_SKILLS=(
+  adapt
+  animate
+  arrange
+  audit
+  bolder
+  clarify
+  colorize
+  critique
+  delight
+  distill
+  extract
+  frontend-design
+  harden
+  layout
+  normalize
+  onboard
+  optimize
+  overdrive
+  polish
+  quieter
+  shape
+  teach-impeccable
+  typeset
+)
 
 install_all() {
   local label="$1"
@@ -44,6 +82,34 @@ install_specific() {
       npx -y skills add "$source" -g -y -s "$skill"
     done
   fi
+}
+
+remove_deprecated_impeccable_skills() {
+  local installed_deprecated=()
+  local skill
+
+  if [[ "$LIST_ONLY" == "true" ]]; then
+    return
+  fi
+
+  if [[ "${DOTFILES_PRUNE_DEPRECATED_IMPECCABLE_SKILLS:-true}" != "true" ]]; then
+    return
+  fi
+
+  for skill in "${DEPRECATED_IMPECCABLE_SKILLS[@]}"; do
+    if [[ -e "${HOME}/.agents/skills/${skill}" ]]; then
+      installed_deprecated+=("$skill")
+    fi
+  done
+
+  if [[ "${#installed_deprecated[@]}" -eq 0 ]]; then
+    return
+  fi
+
+  echo ""
+  banner "Removing deprecated Impeccable split skills"
+  echo ""
+  npx -y skills remove -g -y "${installed_deprecated[@]}"
 }
 
 # ─── My custom skills (dotfiles repo) — install all ──────────────────────────
@@ -97,6 +163,8 @@ install_specific "External (shpigford)" "shpigford/skills" \
 
 install_specific "External (intellectronica)" "intellectronica/agent-skills" \
   gog-cli
+
+remove_deprecated_impeccable_skills
 
 echo ""
 echo "✓ Done. Listing installed global skills:"

@@ -13,9 +13,11 @@ Shared resources for AI coding tools. Custom skills, agents, and guides maintain
 
 ## How Skills Are Installed
 
-Skills are installed globally via `bin/skills-install`, which uses
-[`npx skills`](https://github.com/vercel-labs/skills) to install from multiple
-sources into `~/.agents/skills/` and symlink to each agent's skill directory.
+Skills are synced globally via `bin/skills-install`, which uses
+[`npx skills`](https://github.com/vercel-labs/skills) to install or refresh from
+multiple sources into `~/.agents/skills/` and symlink to each agent's skill
+directory. Run the same command on fresh and existing machines; it is
+idempotent and also prunes known deprecated skills.
 
 ```
 bin/skills-install
@@ -42,8 +44,7 @@ Each agent gets individual per-skill symlinks:
 
 | Task | Command |
 |------|---------|
-| Install all skills | `skills-install` |
-| Update changed skills | `skills-update` |
+| Sync all skills | `skills-install` |
 | List without installing | `skills-install --list` |
 
 See `bin/skills-install` for the full list of sources and `ai/SKILLS-AUDIT.md`
@@ -79,6 +80,5 @@ touch ai/agents/my-agent.md
 | `ai/skills/*/SKILL.md` | Custom skills. Folders with instructions agents can learn. |
 | `ai/agents/*.md` | Agent configs. Model and tool settings. |
 | `ai/guides/*.md` | Process docs. Workflows and best practices. |
-| `bin/skills-install` | Installs all skills from all sources. |
-| `bin/skills-update` | Checks for upstream changes and updates. |
+| `bin/skills-install` | Syncs all skills from configured sources. |
 | `ai/SKILLS-AUDIT.md` | Classification of all skills by source. |
