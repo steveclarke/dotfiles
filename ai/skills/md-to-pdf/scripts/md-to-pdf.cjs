@@ -113,8 +113,8 @@ function getPageNumberConfig(filename) {
       </div>
     `,
     margin: {
-      top: "1cm",
-      bottom: "1.5cm",
+      top: "1.5cm",
+      bottom: "2cm",
       left: "1cm",
       right: "1cm",
     },
