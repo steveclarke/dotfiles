@@ -94,7 +94,7 @@ function getPageNumberConfig(filename) {
       "font-size: 9px",
       "width: 100%",
       "margin: 0",
-      "padding: 0 1cm",
+      "padding: 0 1cm 8mm 1cm",
       "font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
       "display: flex",
       "justify-content: space-between",
