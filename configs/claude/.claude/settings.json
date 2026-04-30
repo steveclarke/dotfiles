@@ -87,8 +87,8 @@
   },
   "effortLevel": "xhigh",
   "autoDreamEnabled": true,
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,
-  "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true
+  "remoteControlAtStartup": true
 }

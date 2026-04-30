@@ -152,6 +152,7 @@ export DATABASE_URL="postgresql://user:pass@host/db"
 
 | Guide | Description |
 |-------|-------------|
+| [Omarchy Waybar AI Usage](docs/omarchy-waybar-ai-usage.md) | Codex and Claude usage module for Omarchy Waybar |
 | [ZSH Shell Guide](docs/zsh-shell-guide.md) | Shell startup files, shell types, OS differences |
 | [AI Resources](ai/README.md) | Prompts, skills, and agents for AI coding tools |
 
