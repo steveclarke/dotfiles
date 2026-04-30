@@ -94,7 +94,7 @@ function getPageNumberConfig(filename) {
       "font-size: 9px",
       "width: 100%",
       "margin: 0",
-      "padding: 0 1cm",
+      "padding: 0 1cm 8mm 1cm",
       "font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
       "display: flex",
       "justify-content: space-between",
@@ -113,8 +113,8 @@ function getPageNumberConfig(filename) {
       </div>
     `,
     margin: {
-      top: "1cm",
-      bottom: "1.5cm",
+      top: "1.5cm",
+      bottom: "2cm",
       left: "1cm",
       right: "1cm",
     },
@@ -165,7 +165,7 @@ async function renderToPdf() {
         mermaidTheme: "default",
         mathRenderingOption: "KaTeX",
         printBackground: true,
-        breakOnSingleNewLine: true,
+        breakOnSingleNewLine: false,
         enableEmojiSyntax: true,
         enableWikiLinkSyntax: false,
         enableExtendedTableSyntax: false,

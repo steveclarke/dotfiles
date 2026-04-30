@@ -23,6 +23,10 @@ omarchy-pkg-add jemalloc
 installing_banner "libvips"
 omarchy-pkg-add libvips
 
+# Runtime compatibility libraries
+installing_banner "libxml2-legacy"
+omarchy-pkg-add libxml2-legacy
+
 # PDF tools (used by md-to-pdf skill and mupdf-based workflows)
 installing_banner "mupdf-tools"
 omarchy-pkg-add mupdf mupdf-tools
