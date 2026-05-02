@@ -180,6 +180,107 @@
     font-weight: 700;
     color: currentColor;
   }
+
+  /* Monitor & workspace visual layout */
+  .layout-hero {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+  .monitor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .monitor {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 6px 5px;
+    background: #fafafa;
+    position: relative;
+  }
+  .monitor.primary {
+    border-color: var(--workspaces);
+    border-width: 1.5px;
+    background: white;
+    box-shadow: 0 0 0 2px var(--workspaces-bg);
+  }
+  .monitor-label {
+    font-size: 7pt;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 5px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .monitor.primary .monitor-label { color: var(--workspaces); }
+  .monitor-label .pos {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .monitor.primary .monitor-label .pos { color: var(--workspaces); }
+  .monitor-label .gpu {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .ws-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+  }
+  .ws-tile {
+    background: var(--workspaces-bg);
+    border: 1px solid #a7f3d0;
+    border-radius: 3px;
+    padding: 5px 3px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+  .monitor.primary .ws-tile {
+    background: #d1fae5;
+    border-color: var(--workspaces);
+  }
+  .ws-tile .num {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--workspaces);
+    line-height: 1;
+  }
+  .monitor.primary .ws-tile .num { color: #047857; }
+  .ws-tile .code {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 3px;
+    letter-spacing: 0.04em;
+  }
+  .ws-tile .name {
+    font-size: 6.5pt;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .ws-tile .app {
+    font-size: 6pt;
+    color: var(--muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .layout-hint {
+    font-size: 7.5pt;
+    color: var(--ink);
+    text-align: center;
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid var(--rule);
+  }
+  .layout-hint kbd { margin: 0 1px; }
 </style>
 </head>
 <body>
@@ -192,6 +293,82 @@
 </header>
 
 <div class="grid">
+
+  <section class="workspaces layout-hero">
+    <h2>Monitor &amp; Workspace Layout</h2>
+    <div class="monitor-grid">
+      <div class="monitor">
+        <div class="monitor-label"><span class="pos">Left</span> <span class="gpu">HDMI · dGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">4</span>
+            <span class="code">PR</span>
+            <span class="name">Prod</span>
+            <span class="app">Slack · Todoist · 1Password</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">5</span>
+            <span class="code">DL</span>
+            <span class="name">DevL</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">6</span>
+            <span class="code">DB</span>
+            <span class="name">Database</span>
+            <span class="app">DataGrip</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor primary">
+        <div class="monitor-label"><span class="pos">Middle · Primary</span> <span class="gpu">DP-2 · dGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">1</span>
+            <span class="code">MN</span>
+            <span class="name">Main</span>
+            <span class="app">Chrome</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">2</span>
+            <span class="code">DV</span>
+            <span class="name">Dev</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">3</span>
+            <span class="code">MC</span>
+            <span class="name">Misc</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor">
+        <div class="monitor-label"><span class="pos">Right</span> <span class="gpu">DP-4 · iGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">7</span>
+            <span class="code">DR</span>
+            <span class="name">DevR</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">8</span>
+            <span class="code">CH</span>
+            <span class="name">Chat</span>
+            <span class="app">Telegram · WhatsApp · Discord</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">9</span>
+            <span class="code">MS</span>
+            <span class="name">Music</span>
+            <span class="app">Spotify</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layout-hint">
+      <kbd>Super N</kbd> switch · <kbd>Super Shift N</kbd> move window · top-row digits and numpad both work
+    </div>
+  </section>
 
   <section class="apps">
     <h2>Apps</h2>
@@ -261,10 +438,10 @@
   <section class="workspaces">
     <h2>Workspaces</h2>
     <table>
-      <tr><td class="action">Switch to workspace N</td><td class="keys"><kbd>Super 1</kbd> … <kbd>Super 0</kbd></td></tr>
-      <tr><td class="action">Switch via numpad <span class="hint">1–6</span></td><td class="keys"><kbd>Super KP1</kbd> … <kbd>Super KP6</kbd></td></tr>
-      <tr><td class="action">Move active window to N</td><td class="keys"><kbd>Super Shift 1</kbd> … <kbd>0</kbd></td></tr>
-      <tr><td class="action">Move silently to N</td><td class="keys"><kbd>Super Shift Alt 1</kbd> … <kbd>0</kbd></td></tr>
+      <tr><td class="action">Switch to workspace N</td><td class="keys"><kbd>Super 1</kbd> … <kbd>Super 9</kbd></td></tr>
+      <tr><td class="action">Switch via numpad</td><td class="keys"><kbd>Super KP1</kbd> … <kbd>Super KP9</kbd></td></tr>
+      <tr><td class="action">Move active window to N</td><td class="keys"><kbd>Super Shift 1</kbd> … <kbd>9</kbd></td></tr>
+      <tr><td class="action">Move silently to N</td><td class="keys"><kbd>Super Shift Alt 1</kbd> … <kbd>9</kbd></td></tr>
       <tr><td class="action">Next / prev workspace</td><td class="keys"><kbd>Super Tab</kbd> <span class="sep">·</span> <kbd>Super Shift Tab</kbd></td></tr>
       <tr><td class="action">Former workspace</td><td class="keys"><kbd>Super Ctrl Tab</kbd></td></tr>
       <tr><td class="action">Scroll workspace ±1</td><td class="keys"><kbd>Super Wheel</kbd></td></tr>
@@ -329,7 +506,7 @@
     <h2>Notes</h2>
     <ul class="notes-list">
       <li><kbd>Super</kbd> = Win key. <kbd>Shift</kbd>/<kbd>Ctrl</kbd>/<kbd>Alt</kbd> escalate.</li>
-      <li>Numpad workspaces: <kbd>KP1</kbd>=Main · <kbd>KP2</kbd>=Dev1 · <kbd>KP3</kbd>=Flex1 · <kbd>KP4</kbd>=Productivity · <kbd>KP5</kbd>=Dev2 · <kbd>KP6</kbd>=Flex2</li>
+      <li>Numpad workspace keys mirror the top-row digits exactly — see the layout above.</li>
       <li>Volume / brightness: media keys with OSD. Add <kbd>Alt</kbd> for 1% precision.</li>
       <li>Resize keys: <kbd>-</kbd>/<kbd>=</kbd> for L/R, <kbd>Shift -</kbd>/<kbd>Shift =</kbd> for U/D (100px steps).</li>
       <li>Forgot a binding? <kbd>Super K</kbd> opens the live keybindings menu.</li>
