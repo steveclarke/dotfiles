@@ -4,13 +4,13 @@ return {
 		name = "catppuccin",
 		priority = 1000,
 		opts = {
-			flavour = "latte",
+			flavour = "mocha",
 		},
 	},
 	{
 		"LazyVim/LazyVim",
 		opts = {
-			colorscheme = "catppuccin-latte",
+			colorscheme = "catppuccin-mocha",
 		},
 	},
 }
