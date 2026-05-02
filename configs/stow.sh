@@ -143,6 +143,12 @@ ensure_dir "${HOME}/.claude"
 cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
+# Tmux — Omarchy ships a stock tmux.conf with no extension point, so we own
+# the file. cleanup_paths removes Omarchy's copy before stow drops in our symlink.
+ensure_dir "${HOME}/.config/tmux"
+cleanup_paths "${HOME}/.config/tmux/tmux.conf"
+stow_package "Tmux" "tmux"
+
 # =============================================================================
 # Omarchy-only packages
 # =============================================================================
@@ -185,10 +191,6 @@ fi
 # =============================================================================
 
 if ! is_omarchy; then
-  # Tmux — Omarchy manages tmux.conf
-  ensure_dir "${HOME}/.config/tmux"
-  stow_package "Tmux" "tmux"
-
   # Terminals — Omarchy manages via theming
   ensure_dir "${HOME}/.config/alacritty"
   stow_package "Alacritty" "alacritty"
