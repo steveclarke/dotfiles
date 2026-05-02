@@ -19,7 +19,7 @@
 | Action            | No-prefix         | Prefix |
 |-------------------|-------------------|--------|
 | New (in cwd)      | `Alt+c`           | `c`    |
-| Prev / Next       | `Alt+,` / `Alt+.` · `Alt+←` / `Alt+→` | — |
+| Prev / Next       | `Alt+,` / `Alt+.` · `Alt+Shift+H` / `Alt+Shift+L` · `Alt+←` / `Alt+→` | — |
 | Jump to N         | `Alt+1`..`Alt+9`  | —      |
 | Swap left / right | `Alt+Shift+←` / `Alt+Shift+→` | — |
 | Rename            | —                 | `r`    |
@@ -29,7 +29,7 @@
 
 | Action       | No-prefix           | Prefix |
 |--------------|---------------------|--------|
-| Prev / Next  | `Alt+↑` / `Alt+↓`   | `P` / `N` |
+| Prev / Next  | `Alt+Shift+K` / `Alt+Shift+J` · `Alt+↑` / `Alt+↓` | `P` / `N` |
 | New (in cwd) | —                   | `C`    |
 | Rename       | —                   | `R`    |
 | Kill         | —                   | `K`    |
@@ -39,7 +39,7 @@
 
 | Action              | Key            |
 |---------------------|----------------|
-| Popup terminal      | `Alt+p` (open) · `Ctrl+D` or `exit` (close) |
+| Popup lazygit       | `Alt+p` (open) · `q` (close)                |
 | Scratchpad toggle   | `Alt+s`        |
 | Reload config       | `Prefix q`     |
 
