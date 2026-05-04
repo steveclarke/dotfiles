@@ -158,6 +158,12 @@ provider_state_from_payload() {
       else ($window.resetDescription // null)
       end;
 
+    def reset_epoch($window):
+      if $window == null then null
+      elif $window.resetsAt != null then ($window.resetsAt | fromdateiso8601)
+      else null
+      end;
+
     .[0] as $item
     | {
         ok: true,
@@ -167,6 +173,8 @@ provider_state_from_payload() {
         session_left: remaining($item.usage.primary),
         weekly_reset: reset_text($item.usage.secondary),
         session_reset: reset_text($item.usage.primary),
+        weekly_reset_epoch: reset_epoch($item.usage.secondary),
+        session_reset_epoch: reset_epoch($item.usage.primary),
         error: null
       }
   ' <<<"${payload}"
@@ -190,6 +198,8 @@ empty_provider_state() {
       session_left: null,
       weekly_reset: null,
       session_reset: null,
+      weekly_reset_epoch: null,
+      session_reset_epoch: null,
       error: $error
     }'
 }
