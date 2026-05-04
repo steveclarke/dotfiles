@@ -165,6 +165,11 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/waybar/config.jsonc" "${HOME}/.config/waybar/style.css" "${HOME}/.config/omarchy/themed/waybar.css.tpl"
   stow_package "Waybar" "waybar"
 
+  # Mako — user template adds output= directive so notifications appear on a side
+  # monitor (keeps them off the screen-shared main monitor)
+  ensure_dir "${HOME}/.config/omarchy/themed"
+  stow_package "Mako" "mako"
+
   # Systemd user units — background refresh for Waybar AI usage
   ensure_dir "${HOME}/.config/systemd/user"
   cleanup_paths "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.service" "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.timer"
