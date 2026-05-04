@@ -5,7 +5,7 @@
   "spacing": 0,
   "height": 32,
   "modules-center": [
-    "clock",
+    "custom/clock",
     "custom/sun",
     "custom/ai-usage",
     "custom/update",
@@ -87,10 +87,11 @@
     "on-click": "omarchy-launch-or-focus-tui btop",
     "on-click-right": "alacritty"
   },
-  "clock": {
-    "format": "{:%A %I:%M %p}",
-    "format-alt": "{:%d %B W%V %Y}",
-    "tooltip": false,
+  "custom/clock": {
+    "exec": "~/.config/waybar/scripts/clock.py",
+    "interval": 30,
+    "return-type": "json",
+    "tooltip": true,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   },
   "custom/ai-usage": {
