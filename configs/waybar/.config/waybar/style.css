@@ -110,9 +110,16 @@ tooltip {
   color: #a55555;
 }
 
-#custom-idle-indicator.active,
-#custom-notification-silencing-indicator.active {
+#custom-idle-indicator.active {
   color: #a55555;
+}
+
+#custom-notification-silencing-indicator.silenced {
+  color: #a55555;
+}
+
+#custom-notification-silencing-indicator.on {
+  opacity: 0.5;
 }
 
 #custom-voxtype {

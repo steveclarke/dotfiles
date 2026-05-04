@@ -219,7 +219,7 @@
   },
   "custom/notification-silencing-indicator": {
     "on-click": "omarchy-toggle-notification-silencing",
-    "exec": "$OMARCHY_PATH/default/waybar/indicators/notification-silencing.sh",
+    "exec": "~/.config/waybar/scripts/notification-silencing.sh",
     "signal": 10,
     "return-type": "json"
   },
