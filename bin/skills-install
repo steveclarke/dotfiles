@@ -28,7 +28,8 @@ if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
   LIST_ONLY=true
 fi
 
-DEPRECATED_IMPECCABLE_SKILLS=(
+DEPRECATED_SKILLS=(
+  # Impeccable split skills (replaced by the consolidated impeccable skill)
   adapt
   animate
   arrange
@@ -52,6 +53,8 @@ DEPRECATED_IMPECCABLE_SKILLS=(
   shape
   teach-impeccable
   typeset
+  # Replaced by Doist's maintained todoist-cli skill (`td skill install <agent>`)
+  todoist
 )
 
 install_all() {
@@ -84,7 +87,7 @@ install_specific() {
   fi
 }
 
-remove_deprecated_impeccable_skills() {
+remove_deprecated_skills() {
   local installed_deprecated=()
   local skill
 
@@ -92,11 +95,11 @@ remove_deprecated_impeccable_skills() {
     return
   fi
 
-  if [[ "${DOTFILES_PRUNE_DEPRECATED_IMPECCABLE_SKILLS:-true}" != "true" ]]; then
+  if [[ "${DOTFILES_PRUNE_DEPRECATED_SKILLS:-true}" != "true" ]]; then
     return
   fi
 
-  for skill in "${DEPRECATED_IMPECCABLE_SKILLS[@]}"; do
+  for skill in "${DEPRECATED_SKILLS[@]}"; do
     if [[ -e "${HOME}/.agents/skills/${skill}" ]]; then
       installed_deprecated+=("$skill")
     fi
@@ -107,7 +110,7 @@ remove_deprecated_impeccable_skills() {
   fi
 
   echo ""
-  banner "Removing deprecated Impeccable split skills"
+  banner "Removing deprecated skills"
   echo ""
   npx -y skills remove -g -y "${installed_deprecated[@]}"
 }
@@ -164,7 +167,10 @@ install_specific "External (shpigford)" "shpigford/skills" \
 install_specific "External (intellectronica)" "intellectronica/agent-skills" \
   gog-cli
 
-remove_deprecated_impeccable_skills
+install_specific "External (doist)" "doist/todoist-cli" \
+  todoist-cli
+
+remove_deprecated_skills
 
 echo ""
 echo "✓ Done. Listing installed global skills:"

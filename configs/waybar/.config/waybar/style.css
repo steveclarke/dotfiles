@@ -72,8 +72,9 @@ tooltip {
   font-size: 13px;
 }
 
-#clock {
+#custom-clock {
   margin-left: 8.75px;
+  font-size: 13px;
 }
 
 #custom-ai-usage {
@@ -81,6 +82,15 @@ tooltip {
   margin: 0 7.5px 0 16px;
   font-size: 13px;
   color: @accent;
+}
+
+#custom-sun {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#custom-sun.sunset {
+  color: #d0a85c;
 }
 
 #custom-ai-usage.warning {
@@ -110,14 +120,30 @@ tooltip {
   color: #a55555;
 }
 
-#custom-idle-indicator.active,
-#custom-notification-silencing-indicator.active {
+#custom-idle-indicator.active {
   color: #a55555;
+}
+
+#custom-notification-silencing-indicator.silenced {
+  color: #a55555;
+}
+
+#custom-notification-silencing-indicator.on {
+  opacity: 0.5;
 }
 
 #custom-voxtype {
   min-width: 12px;
   margin: 0 0 0 7.5px;
+}
+
+#mpris {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#mpris.paused {
+  opacity: 0.6;
 }
 
 #custom-voxtype.recording {
