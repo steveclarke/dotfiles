@@ -48,6 +48,11 @@
   margin: 0 7.5px;
 }
 
+#custom-monitor {
+  min-width: 12px;
+  margin: 0 22px 0 4px;
+}
+
 #tray {
   margin-right: 16px;
 }

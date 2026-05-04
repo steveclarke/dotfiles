@@ -16,6 +16,7 @@
   ],
   "modules-right": [
     "group/tray-expander",
+    "custom/monitor",
     "bluetooth",
     "network",
     "pulseaudio",
@@ -241,6 +242,11 @@
   "tray": {
     "icon-size": 12,
     "spacing": 17
+  },
+  "custom/monitor": {
+    "format": "󰍹",
+    "tooltip-format": "Monitor controls (vdu_controls)",
+    "on-click": "env QT_SCALE_FACTOR=1.6 vdu_controls"
   },
   "custom/sun": {
     "exec": "~/.config/waybar/scripts/sun.py",
