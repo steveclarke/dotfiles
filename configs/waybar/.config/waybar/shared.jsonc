@@ -6,6 +6,7 @@
   "height": 32,
   "modules-center": [
     "clock",
+    "custom/sun",
     "custom/ai-usage",
     "custom/update",
     "custom/voxtype",
@@ -239,6 +240,12 @@
   "tray": {
     "icon-size": 12,
     "spacing": 17
+  },
+  "custom/sun": {
+    "exec": "~/.config/waybar/scripts/sun.py",
+    "interval": 300,
+    "return-type": "json",
+    "tooltip": true
   },
   "mpris": {
     "format": "{player_icon}  {dynamic}",
