@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hyprland Cheatsheet</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #e5e5e5;
+
+    --apps: #7c3aed;       /* violet */
+    --apps-bg: #f5f3ff;
+    --windows: #2563eb;    /* blue */
+    --windows-bg: #eff6ff;
+    --workspaces: #059669; /* emerald */
+    --workspaces-bg: #ecfdf5;
+    --layout: #d97706;     /* amber */
+    --layout-bg: #fffbeb;
+    --menus: #dc2626;      /* red */
+    --menus-bg: #fef2f2;
+    --system: #0891b2;     /* cyan */
+    --system-bg: #ecfeff;
+    --notes: #475569;      /* slate */
+    --notes-bg: #f8fafc;
+  }
+
+  @page { size: letter; margin: 0.3in; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 8.5pt;
+    line-height: 1.3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 17pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  h1 small {
+    font-size: 9pt;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 0;
+  }
+  .meta {
+    font-size: 8pt;
+    color: var(--muted);
+  }
+  .meta kbd { font-size: 7.5pt; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+
+  section {
+    border-left: 4px solid currentColor;
+    padding: 3px 0 5px 8px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 4px;
+  }
+
+  section.apps       { color: var(--apps); }
+  section.windows    { color: var(--windows); }
+  section.workspaces { color: var(--workspaces); }
+  section.layout     { color: var(--layout); }
+  section.menus      { color: var(--menus); }
+  section.system     { color: var(--system); }
+  section.notes      { color: var(--notes); }
+
+  h2 {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 3px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--ink);
+  }
+  td {
+    padding: 1px 0;
+    vertical-align: top;
+  }
+  td.action {
+    color: var(--ink);
+    padding-right: 6px;
+    width: 50%;
+  }
+  td.keys {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  kbd {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 7.5pt;
+    font-weight: 600;
+    background: #f3f4f6;
+    border: 1px solid #d4d4d8;
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0px 4px;
+    color: var(--ink);
+    display: inline-block;
+    line-height: 1.4;
+  }
+
+  section.apps kbd       { background: var(--apps-bg);       border-color: #ddd6fe; }
+  section.windows kbd    { background: var(--windows-bg);    border-color: #bfdbfe; }
+  section.workspaces kbd { background: var(--workspaces-bg); border-color: #a7f3d0; }
+  section.layout kbd     { background: var(--layout-bg);     border-color: #fde68a; }
+  section.menus kbd      { background: var(--menus-bg);      border-color: #fecaca; }
+  section.system kbd     { background: var(--system-bg);     border-color: #a5f3fc; }
+  section.notes kbd      { background: var(--notes-bg);      border-color: #e2e8f0; }
+
+  .sep {
+    color: var(--muted);
+    margin: 0 2px;
+    font-weight: 400;
+  }
+  .hint {
+    font-size: 7pt;
+    color: var(--muted);
+  }
+
+  .notes-list {
+    list-style: none;
+    font-size: 8pt;
+    color: var(--ink);
+  }
+  .notes-list li {
+    padding: 1px 0;
+    padding-left: 9px;
+    position: relative;
+  }
+  .notes-list li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: var(--notes);
+    font-weight: 700;
+  }
+
+  footer {
+    margin-top: 6px;
+    padding-top: 3px;
+    border-top: 1px solid var(--rule);
+    font-size: 7pt;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* "S" abbreviation for Super: visually distinct, not a letter key */
+  .S {
+    font-weight: 700;
+    color: currentColor;
+  }
+
+  /* Monitor & workspace visual layout */
+  .layout-hero {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+  .monitor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .monitor {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 6px 5px;
+    background: #fafafa;
+    position: relative;
+  }
+  .monitor.primary {
+    border-color: var(--workspaces);
+    border-width: 1.5px;
+    background: white;
+    box-shadow: 0 0 0 2px var(--workspaces-bg);
+  }
+  .monitor-label {
+    font-size: 7pt;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 5px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .monitor.primary .monitor-label { color: var(--workspaces); }
+  .monitor-label .pos {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .monitor.primary .monitor-label .pos { color: var(--workspaces); }
+  .monitor-label .gpu {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .ws-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+  }
+  .ws-tile {
+    background: var(--workspaces-bg);
+    border: 1px solid #a7f3d0;
+    border-radius: 3px;
+    padding: 5px 3px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+  .monitor.primary .ws-tile {
+    background: #d1fae5;
+    border-color: var(--workspaces);
+  }
+  .ws-tile .num {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--workspaces);
+    line-height: 1;
+  }
+  .monitor.primary .ws-tile .num { color: #047857; }
+  .ws-tile .code {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 3px;
+    letter-spacing: 0.04em;
+  }
+  .ws-tile .name {
+    font-size: 6.5pt;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .ws-tile .app {
+    font-size: 6pt;
+    color: var(--muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .layout-hint {
+    font-size: 7.5pt;
+    color: var(--ink);
+    text-align: center;
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid var(--rule);
+  }
+  .layout-hint kbd { margin: 0 1px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Hyprland <small>cheatsheet</small></h1>
+  <div class="meta">
+    <kbd>Super</kbd> = Win/Mod key <span class="sep">·</span> bindings via Omarchy + custom
+  </div>
+</header>
+
+<div class="grid">
+
+  <section class="workspaces layout-hero">
+    <h2>Monitor &amp; Workspace Layout</h2>
+    <div class="monitor-grid">
+      <div class="monitor">
+        <div class="monitor-label"><span class="pos">Left</span> <span class="gpu">HDMI · dGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">4</span>
+            <span class="code">PR</span>
+            <span class="name">Prod</span>
+            <span class="app">Slack · Todoist · 1Password</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">5</span>
+            <span class="code">DL</span>
+            <span class="name">DevL</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">6</span>
+            <span class="code">DB</span>
+            <span class="name">Database</span>
+            <span class="app">DataGrip</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor primary">
+        <div class="monitor-label"><span class="pos">Middle · Primary</span> <span class="gpu">DP-2 · dGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">1</span>
+            <span class="code">MN</span>
+            <span class="name">Main</span>
+            <span class="app">Chrome</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">2</span>
+            <span class="code">DV</span>
+            <span class="name">Dev</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">3</span>
+            <span class="code">MC</span>
+            <span class="name">Misc</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor">
+        <div class="monitor-label"><span class="pos">Right</span> <span class="gpu">DP-4 · iGPU</span></div>
+        <div class="ws-row">
+          <div class="ws-tile">
+            <span class="num">7</span>
+            <span class="code">DR</span>
+            <span class="name">DevR</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">8</span>
+            <span class="code">CH</span>
+            <span class="name">Chat</span>
+            <span class="app">Telegram · WhatsApp · Discord</span>
+          </div>
+          <div class="ws-tile">
+            <span class="num">9</span>
+            <span class="code">MS</span>
+            <span class="name">Music</span>
+            <span class="app">Spotify</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layout-hint">
+      <kbd>Super N</kbd> switch · <kbd>Super Shift N</kbd> move window · top-row digits and numpad both work
+    </div>
+  </section>
+
+  <section class="apps">
+    <h2>Apps</h2>
+    <table>
+      <tr><td class="action">Terminal</td><td class="keys"><kbd>Super Return</kbd></td></tr>
+      <tr><td class="action">Tmux session</td><td class="keys"><kbd>Super Alt Return</kbd></td></tr>
+      <tr><td class="action">Browser</td><td class="keys"><kbd>Super Shift B</kbd> <span class="sep">·</span> <kbd>Super Shift Return</kbd></td></tr>
+      <tr><td class="action">Browser (private)</td><td class="keys"><kbd>Super Shift Alt B</kbd></td></tr>
+      <tr><td class="action">File manager</td><td class="keys"><kbd>Super Shift F</kbd></td></tr>
+      <tr><td class="action">File manager (cwd)</td><td class="keys"><kbd>Super Shift Alt F</kbd></td></tr>
+      <tr><td class="action">Editor (Neovim)</td><td class="keys"><kbd>Super Shift N</kbd></td></tr>
+      <tr><td class="action">VS Code</td><td class="keys"><kbd>Super Shift C</kbd></td></tr>
+      <tr><td class="action">Obsidian</td><td class="keys"><kbd>Super Shift O</kbd></td></tr>
+      <tr><td class="action">Typora</td><td class="keys"><kbd>Super Shift W</kbd></td></tr>
+      <tr><td class="action">LazyDocker</td><td class="keys"><kbd>Super Shift D</kbd></td></tr>
+      <tr><td class="action">Spotify</td><td class="keys"><kbd>Super Shift M</kbd></td></tr>
+      <tr><td class="action">Telegram</td><td class="keys"><kbd>Super Shift G</kbd></td></tr>
+      <tr><td class="action">1Password</td><td class="keys"><kbd>Super Shift /</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="apps">
+    <h2>Web Apps</h2>
+    <table>
+      <tr><td class="action">ChatGPT</td><td class="keys"><kbd>Super Shift A</kbd></td></tr>
+      <tr><td class="action">Grok</td><td class="keys"><kbd>Super Shift Alt A</kbd></td></tr>
+      <tr><td class="action">Email (Hey)</td><td class="keys"><kbd>Super Shift E</kbd></td></tr>
+      <tr><td class="action">YouTube</td><td class="keys"><kbd>Super Shift Y</kbd></td></tr>
+      <tr><td class="action">Google Photos</td><td class="keys"><kbd>Super Shift P</kbd></td></tr>
+      <tr><td class="action">WhatsApp</td><td class="keys"><kbd>Super Shift Alt G</kbd></td></tr>
+      <tr><td class="action">Google Messages</td><td class="keys"><kbd>Super Shift Ctrl G</kbd></td></tr>
+      <tr><td class="action">X / Twitter</td><td class="keys"><kbd>Super Shift X</kbd></td></tr>
+      <tr><td class="action">X compose post</td><td class="keys"><kbd>Super Shift Alt X</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="windows">
+    <h2>Windows · Focus &amp; Swap</h2>
+    <table>
+      <tr><td class="action">Focus L / D / U / R</td><td class="keys"><kbd>Super ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Swap window in direction</td><td class="keys"><kbd>Super Shift ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Cycle next / prev window</td><td class="keys"><kbd>Alt Tab</kbd> <span class="sep">·</span> <kbd>Alt Shift Tab</kbd></td></tr>
+      <tr><td class="action">Move (drag)</td><td class="keys"><kbd>Super LMB</kbd> <span class="sep">·</span> <kbd>Middle-click</kbd></td></tr>
+      <tr><td class="action">Resize (drag)</td><td class="keys"><kbd>Super RMB</kbd></td></tr>
+      <tr><td class="action">Resize active ←/→</td><td class="keys"><kbd>Super -</kbd> <kbd>Super =</kbd></td></tr>
+      <tr><td class="action">Resize active ↑/↓</td><td class="keys"><kbd>Super Shift -</kbd> <kbd>Super Shift =</kbd></td></tr>
+      <tr><td class="action">Close active</td><td class="keys"><kbd>Super W</kbd></td></tr>
+      <tr><td class="action">Close all</td><td class="keys"><kbd>Ctrl Alt Delete</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="windows">
+    <h2>Windows · Modes</h2>
+    <table>
+      <tr><td class="action">Full screen</td><td class="keys"><kbd>Super F</kbd></td></tr>
+      <tr><td class="action">Tiled full screen</td><td class="keys"><kbd>Super Ctrl F</kbd></td></tr>
+      <tr><td class="action">Full width</td><td class="keys"><kbd>Super Alt F</kbd></td></tr>
+      <tr><td class="action">Toggle floating</td><td class="keys"><kbd>Super T</kbd></td></tr>
+      <tr><td class="action">Pop out (float &amp; pin)</td><td class="keys"><kbd>Super O</kbd></td></tr>
+      <tr><td class="action">Toggle split</td><td class="keys"><kbd>Super J</kbd></td></tr>
+      <tr><td class="action">Pseudo window</td><td class="keys"><kbd>Super P</kbd></td></tr>
+      <tr><td class="action">Toggle transparency</td><td class="keys"><kbd>Super Backspace</kbd></td></tr>
+      <tr><td class="action">Toggle gaps</td><td class="keys"><kbd>Super Shift Backspace</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="workspaces">
+    <h2>Workspaces</h2>
+    <table>
+      <tr><td class="action">Switch to workspace N</td><td class="keys"><kbd>Super 1</kbd> … <kbd>Super 9</kbd></td></tr>
+      <tr><td class="action">Switch via numpad</td><td class="keys"><kbd>Super KP1</kbd> … <kbd>Super KP9</kbd></td></tr>
+      <tr><td class="action">Move active window to N</td><td class="keys"><kbd>Super Shift 1</kbd> … <kbd>9</kbd></td></tr>
+      <tr><td class="action">Move silently to N</td><td class="keys"><kbd>Super Shift Alt 1</kbd> … <kbd>9</kbd></td></tr>
+      <tr><td class="action">Next / prev workspace</td><td class="keys"><kbd>Super Tab</kbd> <span class="sep">·</span> <kbd>Super Shift Tab</kbd></td></tr>
+      <tr><td class="action">Former workspace</td><td class="keys"><kbd>Super Ctrl Tab</kbd></td></tr>
+      <tr><td class="action">Scroll workspace ±1</td><td class="keys"><kbd>Super Wheel</kbd></td></tr>
+      <tr><td class="action">Toggle scratchpad</td><td class="keys"><kbd>Super S</kbd></td></tr>
+      <tr><td class="action">Send window to scratchpad</td><td class="keys"><kbd>Super Alt S</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="workspaces">
+    <h2>Monitors &amp; Groups</h2>
+    <table>
+      <tr><td class="action">Focus next / prev monitor</td><td class="keys"><kbd>Ctrl Alt Tab</kbd> <span class="sep">·</span> <kbd>Ctrl Alt Shift Tab</kbd></td></tr>
+      <tr><td class="action">Move workspace to monitor</td><td class="keys"><kbd>Super Shift Alt ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Toggle group</td><td class="keys"><kbd>Super G</kbd></td></tr>
+      <tr><td class="action">Move out of group</td><td class="keys"><kbd>Super Alt G</kbd></td></tr>
+      <tr><td class="action">Add to group in direction</td><td class="keys"><kbd>Super Alt ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Cycle group fwd / back</td><td class="keys"><kbd>Super Alt Tab</kbd> <span class="sep">·</span> <kbd>Super Alt Shift Tab</kbd></td></tr>
+      <tr><td class="action">Group focus L / R</td><td class="keys"><kbd>Super Ctrl ←</kbd> <kbd>→</kbd></td></tr>
+      <tr><td class="action">Activate group window N</td><td class="keys"><kbd>Super Alt 1</kbd> … <kbd>5</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="menus">
+    <h2>Menus</h2>
+    <table>
+      <tr><td class="action">App launcher (Walker)</td><td class="keys"><kbd>Super Space</kbd></td></tr>
+      <tr><td class="action">Omarchy menu</td><td class="keys"><kbd>Super Alt Space</kbd></td></tr>
+      <tr><td class="action">System menu</td><td class="keys"><kbd>Super Esc</kbd></td></tr>
+      <tr><td class="action">Show key bindings</td><td class="keys"><kbd>Super K</kbd></td></tr>
+      <tr><td class="action">Capture menu</td><td class="keys"><kbd>Super Ctrl C</kbd></td></tr>
+      <tr><td class="action">Toggle menu</td><td class="keys"><kbd>Super Ctrl O</kbd></td></tr>
+      <tr><td class="action">Hardware menu</td><td class="keys"><kbd>Super Ctrl H</kbd></td></tr>
+      <tr><td class="action">Emoji picker</td><td class="keys"><kbd>Super Ctrl E</kbd></td></tr>
+      <tr><td class="action">Theme menu</td><td class="keys"><kbd>Super Shift Ctrl Space</kbd></td></tr>
+      <tr><td class="action">Background menu</td><td class="keys"><kbd>Super Ctrl Space</kbd></td></tr>
+      <tr><td class="action">Share menu</td><td class="keys"><kbd>Super Ctrl S</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="system">
+    <h2>System &amp; Captures</h2>
+    <table>
+      <tr><td class="action">Lock screen</td><td class="keys"><kbd>Super Ctrl L</kbd></td></tr>
+      <tr><td class="action">Screenshot</td><td class="keys"><kbd>PrintScreen</kbd></td></tr>
+      <tr><td class="action">Screen recording</td><td class="keys"><kbd>Alt PrintScreen</kbd></td></tr>
+      <tr><td class="action">Color picker</td><td class="keys"><kbd>Super PrintScreen</kbd></td></tr>
+      <tr><td class="action">Toggle top bar</td><td class="keys"><kbd>Super Shift Space</kbd></td></tr>
+      <tr><td class="action">Cycle monitor scaling</td><td class="keys"><kbd>Super /</kbd></td></tr>
+      <tr><td class="action">Audio / BT / Wifi</td><td class="keys"><kbd>Super Ctrl A/B/W</kbd></td></tr>
+      <tr><td class="action">Activity (btop)</td><td class="keys"><kbd>Super Ctrl T</kbd></td></tr>
+      <tr><td class="action">Toggle nightlight</td><td class="keys"><kbd>Super Ctrl N</kbd></td></tr>
+      <tr><td class="action">Toggle idle locking</td><td class="keys"><kbd>Super Ctrl I</kbd></td></tr>
+      <tr><td class="action">Zoom in / reset</td><td class="keys"><kbd>Super Ctrl Z</kbd> <span class="sep">·</span> <kbd>Super Ctrl Alt Z</kbd></td></tr>
+      <tr><td class="action">Show time / battery</td><td class="keys"><kbd>Super Ctrl Alt T</kbd> <span class="sep">·</span> <kbd>B</kbd></td></tr>
+      <tr><td class="action">Dismiss notification</td><td class="keys"><kbd>Super ,</kbd></td></tr>
+      <tr><td class="action">Dismiss all / silence</td><td class="keys"><kbd>Super Shift ,</kbd> <span class="sep">·</span> <kbd>Super Ctrl ,</kbd></td></tr>
+      <tr><td class="action">Dictation toggle</td><td class="keys"><kbd>Right Alt</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="notes">
+    <h2>Notes</h2>
+    <ul class="notes-list">
+      <li><kbd>Super</kbd> = Win key. <kbd>Shift</kbd>/<kbd>Ctrl</kbd>/<kbd>Alt</kbd> escalate.</li>
+      <li>Numpad workspace keys mirror the top-row digits exactly — see the layout above.</li>
+      <li>Volume / brightness: media keys with OSD. Add <kbd>Alt</kbd> for 1% precision.</li>
+      <li>Resize keys: <kbd>-</kbd>/<kbd>=</kbd> for L/R, <kbd>Shift -</kbd>/<kbd>Shift =</kbd> for U/D (100px steps).</li>
+      <li>Forgot a binding? <kbd>Super K</kbd> opens the live keybindings menu.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  <span>Config: <kbd>~/.config/hypr/bindings.conf</kbd> + Omarchy defaults</span>
+  <span>Lookup: <kbd>Super K</kbd></span>
+</footer>
+
+</body>
+</html>
