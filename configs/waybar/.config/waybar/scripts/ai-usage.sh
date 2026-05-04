@@ -35,15 +35,41 @@ jq -c '
     end;
 
   def pct($value):
-    if $value == null then "--" else ($value | tostring) end;
+    if $value == null then "--" else "\($value)%" end;
 
   def pct_text($value):
     if $value == null then "n/a" else "\($value)% left" end;
 
-  def provider_text($state; $key):
+  def reset_suffix($epoch; $now):
+    if $epoch == null then ""
+    else ($epoch - $now) as $s
+      | if $s < 1 then ""
+        else (([1, ($s / 60 | ceil)] | max)) as $tm
+          | (($tm / 1440) | floor) as $d
+          | ((($tm / 60) | floor) % 24) as $h
+          | ($tm % 60) as $m
+          | if $d > 0 then
+              (if $h > 0 then " \($d)d \($h)h" else " \($d)d" end)
+            elif $h > 0 then " \($h)h"
+            else " \($m)m"
+            end
+        end
+    end;
+
+  def provider_color($key):
+    if $key == "claude" then "#D97757"
+    else null
+    end;
+
+  def provider_text($state; $key; $now):
     ($state.providers[$key] // null) as $p
-    | if $p == null then "\(provider_label($key)) --"
-      else "\(provider_label($key)) \(pct($p.weekly_left))"
+    | (if $p == null then "\(provider_label($key)) --"
+       else "\(provider_label($key)) \(pct($p.weekly_left))\(reset_suffix($p.weekly_reset_epoch; $now))"
+       end) as $raw
+    | ($raw | markup_escape) as $escaped
+    | provider_color($key) as $color
+    | if $color == null then $escaped
+      else "<span color=\"\($color)\">\($escaped)</span>"
       end;
 
   def provider_tooltip($state; $key):
@@ -58,14 +84,14 @@ jq -c '
   | (now | floor) as $now
   | (.updated_at_epoch // 0) as $updated
   | (.stale_after_seconds // 900) as $stale_after
-  | (["codex", "claude"] | map(provider_text($state; .)) | join(" · ")) as $text
+  | (["codex", "claude"] | map(provider_text($state; .; $now)) | join(" · ")) as $text
   | (["codex", "claude"] | map(provider_tooltip($state; .)) | join("\n\n")) as $provider_tooltip
   | (($now - $updated) > $stale_after) as $stale
   | (["codex", "claude"] | map(. as $key | select($state.providers[$key] != null)) | length) as $provider_count
   | (["codex", "claude"] | map(. as $key | select(($state.providers[$key].ok // false) == true)) | length) as $ok_count
   | "Updated: \(($updated | strflocaltime("%a, %d %b at %-I:%M %p")) // "unknown")" as $updated_text
   | {
-      text: ($text | markup_escape),
+      text: $text,
       tooltip: (($provider_tooltip + "\n\n" + $updated_text) | markup_escape),
       class: (
         if $provider_count == 0 then "error"
