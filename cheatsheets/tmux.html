@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>tmux Cheatsheet</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #e5e5e5;
+
+    --pane: #2563eb;     /* blue */
+    --pane-bg: #eff6ff;
+    --window: #059669;   /* emerald */
+    --window-bg: #ecfdf5;
+    --session: #d97706;  /* amber */
+    --session-bg: #fffbeb;
+    --copy: #7c3aed;     /* violet */
+    --copy-bg: #f5f3ff;
+    --special: #dc2626;  /* red */
+    --special-bg: #fef2f2;
+    --notes: #475569;    /* slate */
+    --notes-bg: #f8fafc;
+  }
+
+  @page { size: letter; margin: 0.35in; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.35;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body { padding: 0; }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  h1 small {
+    font-size: 9.5pt;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 0;
+  }
+  .meta {
+    font-size: 8.5pt;
+    color: var(--muted);
+  }
+  .meta kbd { font-size: 8pt; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+  }
+
+  section {
+    border-left: 4px solid currentColor;
+    padding: 4px 0 6px 8px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  section.panes    { color: var(--pane); }
+  section.windows  { color: var(--window); }
+  section.sessions { color: var(--session); }
+  section.copy     { color: var(--copy); }
+  section.special  { color: var(--special); }
+  section.notes    { color: var(--notes); }
+
+  h2 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--ink);
+  }
+  td {
+    padding: 1.5px 0;
+    vertical-align: top;
+  }
+  td.action {
+    color: var(--ink);
+    padding-right: 8px;
+    width: 42%;
+  }
+  td.keys {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  kbd {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 8.5pt;
+    font-weight: 600;
+    background: #f3f4f6;
+    border: 1px solid #d4d4d8;
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0px 5px;
+    color: var(--ink);
+    display: inline-block;
+    line-height: 1.4;
+  }
+
+  /* Tint keys to their section color */
+  section.panes kbd    { background: var(--pane-bg);    border-color: #bfdbfe; }
+  section.windows kbd  { background: var(--window-bg);  border-color: #a7f3d0; }
+  section.sessions kbd { background: var(--session-bg); border-color: #fde68a; }
+  section.copy kbd     { background: var(--copy-bg);    border-color: #ddd6fe; }
+  section.special kbd  { background: var(--special-bg); border-color: #fecaca; }
+  section.notes kbd    { background: var(--notes-bg);   border-color: #e2e8f0; }
+
+  .sep {
+    color: var(--muted);
+    margin: 0 3px;
+    font-weight: 400;
+  }
+
+  .hint {
+    font-size: 8pt;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .notes-list {
+    list-style: none;
+    font-size: 8.5pt;
+    color: var(--ink);
+  }
+  .notes-list li {
+    padding: 1px 0;
+    padding-left: 10px;
+    position: relative;
+  }
+  .notes-list li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: var(--notes);
+    font-weight: 700;
+  }
+
+  footer {
+    margin-top: 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--rule);
+    font-size: 7.5pt;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>tmux <small>cheatsheet</small></h1>
+  <div class="meta">
+    Prefix <kbd>Ctrl Space</kbd> <span class="sep">also</span> <kbd>Ctrl B</kbd>
+  </div>
+</header>
+
+<div class="grid">
+
+  <section class="panes">
+    <h2>Panes</h2>
+    <table>
+      <tr><td class="action">Move L / D / U / R</td><td class="keys"><kbd>Alt H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td></tr>
+      <tr><td class="action"></td><td class="keys"><kbd>Ctrl Alt ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Split right (vertical)</td><td class="keys"><kbd>Alt R</kbd> <span class="sep">·</span> <kbd>◆ v</kbd> <span class="sep">·</span> <kbd>◆ |</kbd></td></tr>
+      <tr><td class="action">Split down (horizontal)</td><td class="keys"><kbd>Alt D</kbd> <span class="sep">·</span> <kbd>◆ h</kbd> <span class="sep">·</span> <kbd>◆ -</kbd></td></tr>
+      <tr><td class="action">Resize ±5</td><td class="keys"><kbd>Ctrl Alt Shift ←↓↑→</kbd></td></tr>
+      <tr><td class="action"></td><td class="keys"><kbd>◆ ←↓↑→</kbd> <span class="hint">repeatable</span></td></tr>
+      <tr><td class="action">Zoom toggle</td><td class="keys"><kbd>Alt F</kbd> <span class="sep">·</span> <kbd>◆ z</kbd></td></tr>
+      <tr><td class="action">Kill pane</td><td class="keys"><kbd>Alt X</kbd> <span class="sep">·</span> <kbd>◆ x</kbd></td></tr>
+      <tr><td class="action">Swap (spatial)</td><td class="keys"><kbd>Shift ←↓↑→</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="windows">
+    <h2>Windows</h2>
+    <table>
+      <tr><td class="action">New (in cwd)</td><td class="keys"><kbd>Alt C</kbd> <span class="sep">·</span> <kbd>◆ c</kbd></td></tr>
+      <tr><td class="action">Prev / Next</td><td class="keys"><kbd>Alt ,</kbd> <kbd>.</kbd> <span class="sep">·</span> <kbd>Alt Shift H</kbd> <kbd>L</kbd></td></tr>
+      <tr><td class="action"></td><td class="keys"><kbd>Alt ←</kbd> <kbd>→</kbd></td></tr>
+      <tr><td class="action">Jump to N</td><td class="keys"><kbd>Alt 1</kbd> … <kbd>Alt 9</kbd></td></tr>
+      <tr><td class="action">Swap left / right</td><td class="keys"><kbd>Alt Shift ←</kbd> <kbd>→</kbd></td></tr>
+      <tr><td class="action">Rename</td><td class="keys"><kbd>◆ r</kbd></td></tr>
+      <tr><td class="action">Kill window</td><td class="keys"><kbd>◆ k</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="sessions">
+    <h2>Sessions</h2>
+    <table>
+      <tr><td class="action">Prev / Next</td><td class="keys"><kbd>Alt Shift K</kbd> <kbd>J</kbd> <span class="sep">·</span> <kbd>Alt ↑</kbd> <kbd>↓</kbd></td></tr>
+      <tr><td class="action"></td><td class="keys"><kbd>◆ P</kbd> <kbd>◆ N</kbd></td></tr>
+      <tr><td class="action">New (in cwd)</td><td class="keys"><kbd>◆ C</kbd></td></tr>
+      <tr><td class="action">Rename</td><td class="keys"><kbd>◆ R</kbd></td></tr>
+      <tr><td class="action">Kill</td><td class="keys"><kbd>◆ K</kbd></td></tr>
+      <tr><td class="action">Picker</td><td class="keys"><kbd>◆ s</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="special">
+    <h2>Special</h2>
+    <table>
+      <tr><td class="action">Popup lazygit</td><td class="keys"><kbd>Alt P</kbd> <span class="sep">·</span> <kbd>q</kbd> <span class="hint">to close</span></td></tr>
+      <tr><td class="action">Scratchpad toggle</td><td class="keys"><kbd>Alt S</kbd></td></tr>
+      <tr><td class="action">Reload config</td><td class="keys"><kbd>◆ q</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="copy">
+    <h2>Copy Mode <span style="font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 8.5pt;">(vi)</span></h2>
+    <div class="hint">Enter <kbd>◆ [</kbd> · Exit <kbd>q</kbd> or <kbd>Enter</kbd></div>
+    <table>
+      <tr><td class="action">Move</td><td class="keys"><kbd>h j k l</kbd></td></tr>
+      <tr><td class="action">Word fwd / back</td><td class="keys"><kbd>w</kbd> <kbd>b</kbd></td></tr>
+      <tr><td class="action">Jump to char fwd / back</td><td class="keys"><kbd>f c</kbd> <kbd>F c</kbd></td></tr>
+      <tr><td class="action">Search fwd / back</td><td class="keys"><kbd>/</kbd> <kbd>?</kbd></td></tr>
+      <tr><td class="action">Next / prev match</td><td class="keys"><kbd>n</kbd> <kbd>N</kbd></td></tr>
+      <tr><td class="action">Begin selection</td><td class="keys"><kbd>v</kbd></td></tr>
+      <tr><td class="action">Copy &amp; exit</td><td class="keys"><kbd>y</kbd></td></tr>
+      <tr><td class="action">Line start / end</td><td class="keys"><kbd>0</kbd> <kbd>$</kbd></td></tr>
+      <tr><td class="action">Top / bottom</td><td class="keys"><kbd>g</kbd> <kbd>G</kbd></td></tr>
+    </table>
+  </section>
+
+  <section class="notes">
+    <h2>Notes</h2>
+    <ul class="notes-list">
+      <li><kbd>◆</kbd> = prefix (<kbd>Ctrl Space</kbd>)</li>
+      <li>Status: <kbd>COPY</kbd> <kbd>PREFIX</kbd> <kbd>ZOOM</kbd> indicators show current mode</li>
+      <li>Mouse on: drag to select, scroll to scrollback, drag borders to resize</li>
+      <li>Windows auto-rename to <kbd>basename($PWD)</kbd> · override with <kbd>◆ r</kbd></li>
+      <li>Detach-on-destroy <kbd>off</kbd>: closing last window switches sessions instead</li>
+      <li>History <kbd>50000</kbd> · OSC52 clipboard sync on</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>
+  <span>Config: <kbd>~/.config/tmux/tmux.conf</kbd></span>
+  <span>Base: Omarchy + Steve's additions</span>
+</footer>
+
+</body>
+</html>

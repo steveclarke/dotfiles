@@ -143,6 +143,12 @@ ensure_dir "${HOME}/.claude"
 cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
 
+# Tmux — Omarchy ships a stock tmux.conf with no extension point, so we own
+# the file. cleanup_paths removes Omarchy's copy before stow drops in our symlink.
+ensure_dir "${HOME}/.config/tmux"
+cleanup_paths "${HOME}/.config/tmux/tmux.conf"
+stow_package "Tmux" "tmux"
+
 # =============================================================================
 # Omarchy-only packages
 # =============================================================================
@@ -158,6 +164,11 @@ if is_omarchy; then
   ensure_dir "${HOME}/.config/omarchy/themed"
   cleanup_paths "${HOME}/.config/waybar/config.jsonc" "${HOME}/.config/waybar/style.css" "${HOME}/.config/omarchy/themed/waybar.css.tpl"
   stow_package "Waybar" "waybar"
+
+  # Systemd user units — background refresh for Waybar AI usage
+  ensure_dir "${HOME}/.config/systemd/user"
+  cleanup_paths "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.service" "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.timer"
+  stow_package "Systemd user units" "systemd"
 
   # Hyprland — customizations go in Omarchy's user hook files (monitors.conf,
   # bindings.conf, autostart.conf) — never touch hyprland.conf itself, Omarchy owns it
@@ -180,10 +191,6 @@ fi
 # =============================================================================
 
 if ! is_omarchy; then
-  # Tmux — Omarchy manages tmux.conf
-  ensure_dir "${HOME}/.config/tmux"
-  stow_package "Tmux" "tmux"
-
   # Terminals — Omarchy manages via theming
   ensure_dir "${HOME}/.config/alacritty"
   stow_package "Alacritty" "alacritty"
