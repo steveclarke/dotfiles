@@ -35,17 +35,24 @@ jq -c '
     end;
 
   def pct($value):
-    if $value == null then "--" else ($value | tostring) end;
+    if $value == null then "--" else "\($value)%" end;
 
   def pct_text($value):
     if $value == null then "n/a" else "\($value)% left" end;
 
-  def days_suffix($epoch; $now):
+  def reset_suffix($epoch; $now):
     if $epoch == null then ""
-    else (($epoch - $now) / 86400) as $d
-      | if $d <= 0 then ""
-        elif $d < 1 then " <1d"
-        else " \($d | ceil)d"
+    else ($epoch - $now) as $s
+      | if $s < 1 then ""
+        else (([1, ($s / 60 | ceil)] | max)) as $tm
+          | (($tm / 1440) | floor) as $d
+          | ((($tm / 60) | floor) % 24) as $h
+          | ($tm % 60) as $m
+          | if $d > 0 then
+              (if $h > 0 then " \($d)d \($h)h" else " \($d)d" end)
+            elif $h > 0 then " \($h)h"
+            else " \($m)m"
+            end
         end
     end;
 
@@ -57,7 +64,7 @@ jq -c '
   def provider_text($state; $key; $now):
     ($state.providers[$key] // null) as $p
     | (if $p == null then "\(provider_label($key)) --"
-       else "\(provider_label($key)) \(pct($p.weekly_left))\(days_suffix($p.weekly_reset_epoch; $now))"
+       else "\(provider_label($key)) \(pct($p.weekly_left))\(reset_suffix($p.weekly_reset_epoch; $now))"
        end) as $raw
     | ($raw | markup_escape) as $escaped
     | provider_color($key) as $color
