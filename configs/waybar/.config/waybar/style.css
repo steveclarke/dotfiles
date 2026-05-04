@@ -83,6 +83,15 @@ tooltip {
   color: @accent;
 }
 
+#custom-sun {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#custom-sun.sunset {
+  color: #d0a85c;
+}
+
 #custom-ai-usage.warning {
   color: #d0a85c;
 }
