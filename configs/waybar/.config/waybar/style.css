@@ -120,6 +120,15 @@ tooltip {
   margin: 0 0 0 7.5px;
 }
 
+#mpris {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#mpris.paused {
+  opacity: 0.6;
+}
+
 #custom-voxtype.recording {
   color: #a55555;
 }
