@@ -23,7 +23,7 @@ device = "default"
 sample_rate = 16000
 
 # Maximum recording duration in seconds (safety limit)
-max_duration_secs = 60
+max_duration_secs = 600
 
 [audio.feedback]
 enabled = true
