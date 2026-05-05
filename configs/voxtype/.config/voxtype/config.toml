@@ -49,24 +49,31 @@ translate = false
 # Number of CPU threads for inference (omit for auto-detection)
 # threads = 4
 
+# Initial prompt — primes Whisper with terms it would otherwise mishear.
+# Bias the model toward our project names, tools, and frequent jargon.
+initial_prompt = "Voxtype, Omarchy, Hyprland, Waybar, Walker, systemd, Sevenview, Steve Clarke, dotfiles"
+
 [output]
 # Primary output mode: "type" or "clipboard"
 # - type: Simulates keyboard input at cursor position (requires ydotool)
 # - clipboard: Copies text to clipboard (requires wl-copy)
 mode = "paste"
 paste_keys = "shift+insert"
-restore_clipboard = true
+restore_clipboard = false
 restore_clipboard_delay_ms = 300
 
-# Post-processing command (optional)
-# Pipe transcribed text through an external command for cleanup before output.
-# The command receives text on stdin and outputs processed text on stdout.
-# Useful for LLM-based text cleanup, grammar correction, filler word removal.
-# On any failure (timeout, error), falls back to original transcription.
+# Append a trailing space so back-to-back dictations don't run together.
+append_text = " "
+
+# Post-processing command (optional, currently DISABLED)
+# Pipe transcribed text through an LLM for grammar/filler cleanup before output.
+# Adds 2-5s latency per dictation. Falls back to raw text on any failure/timeout.
+# Uncomment to try it. qwen3.5:9b is the fastest model currently installed; once
+# the new GPU is in, swap to a larger one for better cleanup quality.
 #
 # [output.post_process]
-# command = "ollama run llama3.2:1b 'Clean up this dictation. Fix grammar, remove filler words. Output only the cleaned text:'"
-# timeout_ms = 30000  # 30 second timeout (generous for LLM)
+# command = "ollama run qwen3.5:9b 'Clean up this dictation. Fix grammar, remove filler words like um, uh, like. Preserve all substantive content. Output only the cleaned text, nothing else:'"
+# timeout_ms = 30000
 
 [output.notification]
 # Show notification when recording starts (hotkey pressed)
@@ -74,11 +81,14 @@ on_recording_start = true
 on_recording_stop = true
 on_transcription = true
 
-# [text]
-# Text processing options (word replacements, spoken punctuation)
-#
-# Enable spoken punctuation conversion (e.g., say "period" to get ".")
-# spoken_punctuation = false
-#
-# Custom word replacements (case-insensitive)
-# replacements = { "hyperwhisper" = "hyprwhspr" }
+[text]
+# Case-insensitive word replacements applied to the transcription.
+# For terms Whisper reliably mishears — initial_prompt above biases it
+# toward the right word, this catches the leftovers deterministically.
+[text.replacements]
+"omarchi" = "Omarchy"
+"oh marky" = "Omarchy"
+"home archy" = "Omarchy"
+"hyperland" = "Hyprland"
+"way bar" = "Waybar"
+"vox type" = "voxtype"
