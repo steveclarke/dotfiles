@@ -65,14 +65,12 @@ restore_clipboard_delay_ms = 300
 # Append a trailing space so back-to-back dictations don't run together.
 append_text = " "
 
-# Post-processing command (optional, currently DISABLED)
-# Pipe transcribed text through an LLM for grammar/filler cleanup before output.
-# Adds 2-5s latency per dictation. Falls back to raw text on any failure/timeout.
-# Uncomment to try it. qwen3.5:9b is the fastest model currently installed; once
-# the new GPU is in, swap to a larger one for better cleanup quality.
-#
+# Post-processing — pipe the transcription through an LLM for grammar +
+# filler-word cleanup before output. Adds 1-4s of latency per dictation.
+# Falls back to the raw transcription on any failure or timeout.
+# TEMPORARILY DISABLED while we pick a fast non-thinking model.
 # [output.post_process]
-# command = "ollama run qwen3.5:9b 'Clean up this dictation. Fix grammar, remove filler words like um, uh, like. Preserve all substantive content. Output only the cleaned text, nothing else:'"
+# command = "ollama run MODEL 'Clean up this dictation: fix grammar, remove filler words (um, uh, like, you know), preserve all substantive content and tone. Output only the cleaned text, no preamble, no quotes, no explanation:'"
 # timeout_ms = 30000
 
 [output.notification]
@@ -80,6 +78,14 @@ append_text = " "
 on_recording_start = true
 on_recording_stop = true
 on_transcription = true
+
+# Voice Activity Detection — drops silent recordings before they hit Whisper,
+# which prevents hallucinated phantom text on accidental key taps. The energy
+# backend is a simple loudness threshold — instant, no model download.
+[vad]
+enabled = true
+backend = "energy"
+threshold = 0.5
 
 [text]
 # Case-insensitive word replacements applied to the transcription.
