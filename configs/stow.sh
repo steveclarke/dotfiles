@@ -178,16 +178,16 @@ if is_omarchy; then
   # Hyprland — customizations go in Omarchy's user hook files (monitors.conf,
   # bindings.conf, autostart.conf) — never touch hyprland.conf itself, Omarchy owns it
   ensure_dir "${HOME}/.config/hypr"
-  cleanup_paths "${HOME}/.config/hypr/monitors.conf" "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/autostart.conf" "${HOME}/.config/hypr/hypridle.conf"
+  cleanup_paths "${HOME}/.config/hypr/monitors.conf" "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/autostart.conf" "${HOME}/.config/hypr/hypridle.conf" "${HOME}/.config/hypr/input.conf"
   stow_package "Hyprland" "hypr"
 
   # Omarchy custom themes — user-authored themes under ~/.config/omarchy/themes/
   ensure_dir "${HOME}/.config/omarchy/themes"
   stow_package "Omarchy themes" "omarchy-themes"
 
-  # Omarchy hooks — post-update re-enables Voxtype GPU after upgrades swap it to CPU
-  ensure_dir "${HOME}/.config/omarchy/hooks"
-  cleanup_paths "${HOME}/.config/omarchy/hooks/post-update"
+  # Omarchy hooks — post-update.d/voxtype-gpu re-enables Voxtype GPU after upgrades swap it to CPU
+  ensure_dir "${HOME}/.config/omarchy/hooks/post-update.d"
+  cleanup_paths "${HOME}/.config/omarchy/hooks/post-update" "${HOME}/.config/omarchy/hooks/post-update.d/voxtype-gpu"
   stow_package "Omarchy hooks" "omarchy-hooks"
 fi
 
