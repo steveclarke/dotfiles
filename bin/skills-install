@@ -161,9 +161,6 @@ install_specific "External (obie)" "obie/skills" \
 install_specific "External (maquina-app)" "maquina-app/rails-upgrade-skill" \
   rails-upgrade-assistant
 
-install_specific "External (shpigford)" "shpigford/skills" \
-  favicon
-
 install_specific "External (intellectronica)" "intellectronica/agent-skills" \
   gog-cli
 
