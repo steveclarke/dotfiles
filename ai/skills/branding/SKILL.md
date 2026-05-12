@@ -1,6 +1,6 @@
 ---
 name: branding
-description: Create a complete brand identity for a project — logo, colors, fonts, and asset pack. Guides the user through generating a logo with AI tools (quiver.ai), selecting fonts and brand colors, refining SVGs with Inkscape, and producing a full asset pack (SVG variants, PNGs, favicons, social images). Delivers a brand guide HTML page as the final artifact. Optionally wires assets into a project (README, docs site, GitHub, npm). Use when the user mentions branding, logo, brand assets, brand color, project identity, social preview, OG image, or wants to create a visual identity for a project. Also triggers on "brand pack", "logo for my project", "set up branding", or "brand guide".
+description: "Create a complete brand identity — logo (via quiver.ai), colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, logo, brand pack, brand color, project identity, social preview, visual identity."
 ---
 
 # Branding

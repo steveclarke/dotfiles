@@ -1,6 +1,6 @@
 ---
 name: feature-requirements
-description: Creates structured requirements documents through guided discovery, practical scoping, and consolidated output. Produces a single requirements.md with entities, workflows, constraints, and acceptance criteria following the established feature development process.
+description: "Create requirements.md docs via guided discovery — entities, workflows, constraints, acceptance criteria. Triggers on 'requirements', 'gather requirements', 'requirements doc', 'feature requirements'."
 disable-model-invocation: true
 ---
 

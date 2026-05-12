@@ -1,6 +1,6 @@
 ---
 name: ruby-cli
-description: Build and maintain Ruby CLI tools using Thor and Zeitwerk. Use when creating new Ruby CLI gems, adding commands, editing CLI code, refactoring, or enhancing existing CLI tools. Triggers on "Ruby CLI", "Thor CLI", "command-line tool in Ruby", or when working on files in a Thor/Zeitwerk CLI codebase.
+description: "Build Ruby CLI tools with Thor and Zeitwerk. Use for new Ruby CLI gems, adding commands, refactoring, or 'Thor CLI', 'command-line tool in Ruby'."
 ---
 
 # Ruby CLI Development

@@ -1,6 +1,6 @@
 ---
 name: readme-writer
-description: Write and revise READMEs and technical documentation for software projects. Scores readability with Flesch-Kincaid and vocabulary profiling. Use when writing, revising, or reviewing a README, README.md, or project documentation. Triggers on "write readme", "improve readme", "readme review", "documentation writing".
+description: "Write and revise READMEs and technical docs, scoring readability with Flesch-Kincaid. Triggers on 'write readme', 'improve readme', 'readme review', 'documentation writing'."
 license: MIT
 ---
 

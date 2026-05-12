@@ -1,6 +1,6 @@
 ---
 name: time-tracking
-description: Manage time tracking with Toggl or Clockify. Use when user asks about time tracking, timers, timesheets, logging hours, starting/stopping work, checking what's running, viewing time entries, or creating manual entries. Triggers on "toggl", "clockify", "time tracking", "timer", "timesheet", "log time", "track time", "hours worked".
+description: "Manage time tracking with Toggl or Clockify — timers, timesheets, logging hours, viewing entries, manual entries. Triggers on 'toggl', 'clockify', 'time tracking', 'timer', 'log time'."
 ---
 
 # Time Tracking

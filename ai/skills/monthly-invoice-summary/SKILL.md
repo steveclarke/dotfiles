@@ -1,6 +1,6 @@
 ---
 name: monthly-invoice-summary
-description: Generate client-friendly monthly invoice summaries by analyzing Git commits and time sheet notes. Synthesizes technical work into business-focused bullet points suitable for client invoicing. Use when preparing monthly billing or project status reports. Triggers on "invoice summary", "monthly billing", "summarize work for client".
+description: "Generate client-friendly monthly invoice summaries from Git commits and timesheet notes. Use when preparing monthly billing or project status reports."
 disable-model-invocation: true
 ---
 

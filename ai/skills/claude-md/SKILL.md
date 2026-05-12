@@ -1,10 +1,6 @@
 ---
 name: claude-md
-description: >-
-  Use when creating, editing, auditing, trimming, or optimizing any CLAUDE.md
-  file. Also triggers on 'init claude.md', 'update claude.md', 'audit my
-  claude config', 'what should be in CLAUDE.md', or any task involving
-  CLAUDE.md content.
+description: "Create, edit, audit, trim, or optimize any CLAUDE.md file. Triggers on 'init claude.md', 'update claude.md', 'audit my claude config', or any CLAUDE.md content task."
 ---
 
 # CLAUDE.md Authoring
