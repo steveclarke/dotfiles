@@ -1,6 +1,6 @@
 ---
 name: bash-script-writing
-description: Write clean, modular, production-ready bash scripts with proper error handling and maintainable structure. Use when creating new shell scripts, refactoring existing bash code, or when user asks for bash/shell scripting help with terms like "write a script", "bash script", "shell script", or "automate with bash".
+description: "Write clean, modular bash scripts with proper error handling. Triggers on 'write a script', 'bash script', 'shell script', or 'automate with bash'."
 ---
 
 # Modular Bash Script Writing

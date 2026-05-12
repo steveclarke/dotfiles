@@ -1,6 +1,6 @@
 ---
 name: md-to-pdf
-description: Convert markdown files to PDF using Chrome. Use when user wants to render markdown to PDF, print a document, or create a shareable PDF from markdown. Triggers on "markdown to pdf", "render to pdf", "pdf from markdown", "print this markdown".
+description: "Convert markdown to PDF using Chrome. Triggers on 'markdown to pdf', 'render to pdf', 'pdf from markdown', 'print this markdown'."
 ---
 
 # Markdown to PDF
