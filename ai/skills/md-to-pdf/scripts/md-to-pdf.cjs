@@ -12,7 +12,6 @@
  * Usage:
  *   md-to-pdf input.md                     # Creates input.pdf
  *   md-to-pdf input.md output.pdf          # Custom output name
- *   md-to-pdf input.md --open              # Open after creating
  *
  * NOTE: This file is .cjs (CommonJS) on purpose. Crossnote's ESM build has a
  * broken extensionless import (`bit-field/lib/render`) that modern Node
@@ -22,7 +21,6 @@
 const { readFileSync, writeFileSync, mkdtempSync, unlinkSync, copyFileSync, existsSync } = require("fs")
 const { basename, join, resolve, dirname } = require("path")
 const { tmpdir } = require("os")
-const { execFile } = require("child_process")
 const { Notebook } = require("crossnote")
 const matter = require("gray-matter")
 const he = require("he")
@@ -31,13 +29,10 @@ const he = require("he")
 const args = process.argv.slice(2)
 let inputFile = null
 let outputFile = null
-let openAfter = false
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i]
-  if (arg === "--open" || arg === "-O") {
-    openAfter = true
-  } else if (arg === "-o" && args[i + 1]) {
+  if (arg === "-o" && args[i + 1]) {
     outputFile = args[++i]
   } else if (!arg.startsWith("-")) {
     if (!inputFile) {
@@ -49,7 +44,7 @@ for (let i = 0; i < args.length; i++) {
 }
 
 if (!inputFile) {
-  console.error("Usage: md-to-pdf input.md [output.pdf] [--open]")
+  console.error("Usage: md-to-pdf input.md [output.pdf]")
   process.exit(1)
 }
 
@@ -189,13 +184,6 @@ async function renderToPdf() {
     }
 
     console.log(`Created: ${outputPath}`)
-
-    if (openAfter) {
-      const openCmd = process.platform === "darwin" ? "open" : "xdg-open"
-      execFile(openCmd, [outputPath], (err) => {
-        if (err) console.error(`Could not open ${outputPath}: ${err.message}`)
-      })
-    }
   } finally {
     try {
       unlinkSync(tempFilePath)
