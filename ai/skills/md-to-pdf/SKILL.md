@@ -20,14 +20,12 @@ Converts markdown files to beautifully formatted PDFs using crossnote (same engi
 ```bash
 ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md              # Creates input.pdf
 ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md output.pdf   # Custom output name
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs input.md --open       # Open after creating
 ```
 
 ## Options
 
 | Flag | Description |
 |------|-------------|
-| `--open`, `-O` | Open the PDF after creating |
 | `-o FILE` | Specify output filename |
 
 ## Requirements
@@ -50,7 +48,7 @@ Converts markdown files to beautifully formatted PDFs using crossnote (same engi
 ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs README.md
 
 # Spec document for sharing
-~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs spec.md spec-v2.pdf --open
+~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs spec.md spec-v2.pdf
 
 # Multiple files
 for f in docs/*.md; do ~/.claude/skills/md-to-pdf/scripts/md-to-pdf.cjs "$f"; done
