@@ -167,6 +167,9 @@ install_specific "External (intellectronica)" "intellectronica/agent-skills" \
 install_specific "External (doist)" "doist/todoist-cli" \
   todoist-cli
 
+install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
+  modern-web-guidance
+
 remove_deprecated_skills
 
 echo ""
