@@ -1,6 +1,6 @@
 ---
 name: 1password
-description: Fetch secrets and create/manage 1Password items via CLI. Use when needing API keys, tokens, or credentials, or when storing new secrets. Ask user for the 1Password secret reference (op://Vault/Item/field format) rather than the actual secret.
+description: "Fetch secrets and create/manage 1Password items via CLI. Use when needing API keys, tokens, or credentials, or storing new secrets. Ask for the op://Vault/Item/field reference, not the secret itself."
 ---
 
 # 1Password CLI

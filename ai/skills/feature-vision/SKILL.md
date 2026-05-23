@@ -1,6 +1,6 @@
 ---
 name: feature-vision
-description: Creates vision documents through focused discovery phases, building each section systematically. Produces a vision.md covering problem statement, proposed solution, user experience, and scope boundaries following the established feature development process.
+description: "Create vision.md docs — problem statement, proposed solution, user experience, scope boundaries. Triggers on 'vision', 'feature vision', 'product vision', 'goals doc'."
 disable-model-invocation: true
 ---
 

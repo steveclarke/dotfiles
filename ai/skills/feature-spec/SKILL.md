@@ -1,6 +1,6 @@
 ---
 name: feature-spec
-description: Creates concise technical specification documents through guided architectural decisions, system contracts, and technical design. Produces a spec.md covering API design, data models, frontend architecture, and integration points without implementation details.
+description: "Create spec.md docs covering API design, data models, frontend architecture, and integration points. Triggers on 'write a spec', 'technical spec', 'feature spec', 'spec.md'."
 disable-model-invocation: true
 ---
 

@@ -1,0 +1,100 @@
+# Voxtype Configuration
+#
+# Location: ~/.config/voxtype/config.toml
+# All settings can be overridden via CLI flags
+#
+# State file for external integrations (Waybar, polybar, etc.)
+# Use "auto" for default location ($XDG_RUNTIME_DIR/voxtype/state),
+# a custom path, or "disabled" to turn off. The daemon writes state
+# ("idle", "recording", "transcribing") to this file whenever it changes.
+# Required for `voxtype record toggle` and `voxtype status` commands.
+state_file = "auto"
+
+[hotkey]
+# Hotkey is configured in Hyprland. Default is Super + Ctrl + X
+enabled = false
+
+[audio]
+# Audio input device ("default" uses system default)
+# List devices with: pactl list sources short
+device = "default"
+
+# Sample rate in Hz (whisper expects 16000)
+sample_rate = 16000
+
+# Maximum recording duration in seconds (safety limit)
+max_duration_secs = 600
+
+[audio.feedback]
+enabled = true
+theme = "default"
+volume = 0.7
+
+[whisper]
+# Model to use for transcription
+# Options: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large-v3, large-v3-turbo
+# .en models are English-only but faster and more accurate for English
+# large-v3-turbo is faster than large-v3 with minimal accuracy loss (recommended for GPU)
+# Or provide absolute path to a custom .bin model file
+model = "large-v3-turbo"
+
+# Language for transcription
+# Use "en" for English, "auto" for auto-detection
+# See: https://github.com/openai/whisper#available-models-and-languages
+language = "en"
+
+# Translate non-English speech to English
+translate = false
+
+# Number of CPU threads for inference (omit for auto-detection)
+# threads = 4
+
+# Initial prompt — primes Whisper with terms it would otherwise mishear.
+# Bias the model toward our project names, tools, and frequent jargon.
+initial_prompt = "Voxtype, Omarchy, Hyprland, Waybar, Walker, systemd, Sevenview, Steve Clarke, dotfiles"
+
+[output]
+# Primary output mode: "type" or "clipboard"
+# - type: Simulates keyboard input at cursor position (requires ydotool)
+# - clipboard: Copies text to clipboard (requires wl-copy)
+mode = "paste"
+paste_keys = "shift+insert"
+restore_clipboard = false
+restore_clipboard_delay_ms = 300
+
+# Append a trailing space so back-to-back dictations don't run together.
+append_text = " "
+
+# Post-processing — pipe the transcription through an LLM for grammar +
+# filler-word cleanup before output. Adds 1-4s of latency per dictation.
+# Falls back to the raw transcription on any failure or timeout.
+# TEMPORARILY DISABLED while we pick a fast non-thinking model.
+# [output.post_process]
+# command = "ollama run MODEL 'Clean up this dictation: fix grammar, remove filler words (um, uh, like, you know), preserve all substantive content and tone. Output only the cleaned text, no preamble, no quotes, no explanation:'"
+# timeout_ms = 30000
+
+[output.notification]
+# Show notification when recording starts (hotkey pressed)
+on_recording_start = true
+on_recording_stop = true
+on_transcription = true
+
+# Voice Activity Detection — drops silent recordings before they hit Whisper,
+# which prevents hallucinated phantom text on accidental key taps. The energy
+# backend is a simple loudness threshold — instant, no model download.
+[vad]
+enabled = true
+backend = "energy"
+threshold = 0.5
+
+[text]
+# Case-insensitive word replacements applied to the transcription.
+# For terms Whisper reliably mishears — initial_prompt above biases it
+# toward the right word, this catches the leftovers deterministically.
+[text.replacements]
+"omarchi" = "Omarchy"
+"oh marky" = "Omarchy"
+"home archy" = "Omarchy"
+"hyperland" = "Hyprland"
+"way bar" = "Waybar"
+"vox type" = "voxtype"

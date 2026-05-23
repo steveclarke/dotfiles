@@ -39,8 +39,28 @@ apt_install() {
 detect_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     export DOTFILES_OS="macos"
+    export DOTFILES_DISTRO="macos"
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export DOTFILES_OS="linux"
+    # Detect Linux distro
+    if [[ -f /etc/os-release ]]; then
+      local distro_id
+      distro_id=$(. /etc/os-release && echo "$ID")
+      case "$distro_id" in
+        arch)
+          export DOTFILES_DISTRO="arch"
+          # Detect Omarchy specifically
+          if [[ -d /usr/share/omarchy ]] || is_installed omarchy-update-system-pkgs; then
+            export DOTFILES_DISTRO="omarchy"
+          fi
+          ;;
+        ubuntu|pop) export DOTFILES_DISTRO="ubuntu" ;;
+        debian)     export DOTFILES_DISTRO="debian" ;;
+        *)          export DOTFILES_DISTRO="$distro_id" ;;
+      esac
+    else
+      export DOTFILES_DISTRO="unknown"
+    fi
   else
     echo "Unsupported OS: $OSTYPE"
     exit 1
@@ -53,6 +73,18 @@ is_macos() {
 
 is_linux() {
   [[ "$DOTFILES_OS" == "linux" ]]
+}
+
+is_arch() {
+  [[ "$DOTFILES_DISTRO" == "arch" || "$DOTFILES_DISTRO" == "omarchy" ]]
+}
+
+is_omarchy() {
+  [[ "$DOTFILES_DISTRO" == "omarchy" ]]
+}
+
+is_ubuntu() {
+  [[ "$DOTFILES_DISTRO" == "ubuntu" || "$DOTFILES_DISTRO" == "debian" ]]
 }
 
 # macOS-specific helper functions

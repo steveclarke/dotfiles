@@ -1,7 +1,7 @@
 ---
 name: screenshots
 argument-hint: [url]
-description: Generate marketing screenshots of your app using Playwright. Use when the user wants to create screenshots for Product Hunt, social media, landing pages, or documentation.
+description: "Generate marketing screenshots of an app with Playwright — for Product Hunt, social media, landing pages, or docs."
 metadata:
   author: Shpigford
   version: "1.0"

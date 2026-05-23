@@ -5,8 +5,6 @@
 # Usage:
 #   md-to-pdf input.md                     # Creates input.pdf
 #   md-to-pdf input.md output.pdf          # Custom output name
-#   md-to-pdf input.md --open              # Open after creating
-#   md-to-pdf input.md -o out.pdf --open   # Both
 #   md-to-pdf input.md --style custom.css  # Custom stylesheet
 #
 
@@ -127,15 +125,10 @@ img {
 # Parse arguments
 INPUT=""
 OUTPUT=""
-OPEN_AFTER=false
 CUSTOM_STYLE=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --open|-O)
-      OPEN_AFTER=true
-      shift
-      ;;
     --style)
       CUSTOM_STYLE="$2"
       shift 2
@@ -161,7 +154,7 @@ done
 
 # Validate input
 if [ -z "$INPUT" ]; then
-  echo "Usage: md-to-pdf input.md [output.pdf] [--open] [--style file.css]"
+  echo "Usage: md-to-pdf input.md [output.pdf] [--style file.css]"
   exit 1
 fi
 
@@ -232,8 +225,3 @@ fi
   2>/dev/null
 
 echo "Created: $OUTPUT"
-
-# Open if requested
-if [ "$OPEN_AFTER" = true ]; then
-  open "$OUTPUT_ABS"
-fi

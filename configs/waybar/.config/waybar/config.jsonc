@@ -1,0 +1,19 @@
+[
+  {
+    "include": ["~/.config/waybar/shared.jsonc"],
+    "output": "DP-4",
+    "modules-left": [
+      "custom/omarchy",
+      "hyprland/workspaces"
+    ]
+  },
+  {
+    "include": ["~/.config/waybar/shared.jsonc"],
+    "output": ["DP-1", "DP-2"],
+    "modules-left": [
+      "custom/omarchy",
+      "hyprland/workspaces",
+      "mpris"
+    ]
+  }
+]

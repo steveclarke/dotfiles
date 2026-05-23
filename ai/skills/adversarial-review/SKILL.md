@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: Use when implementation is complete and you want rigorous code review before committing. Use for features, refactors, and changes touching critical paths. Not for trivial changes — this is expensive.
+description: "Rigorous code review of completed implementation before committing. Use for features, refactors, and critical-path changes — not trivial changes (this is expensive)."
 argument-hint: "[files/dirs] [--pr]"
 ---
 

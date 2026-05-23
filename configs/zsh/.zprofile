@@ -98,10 +98,27 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 # =============================================================================
-# ANDROID SDK (installed via `brew install --cask android-commandlinetools`)
+# ANDROID SDK — managed via Google's Android CLI (`android`).
+# Install: `dotfiles install android-cli` (adds `temurin@21` via Brewfile).
+# Docs:    https://developer.android.com/tools/agents/android-cli
 # =============================================================================
-export ANDROID_HOME="/opt/homebrew/share/android-commandlinetools"
-case ":$PATH:" in
-  *":$ANDROID_HOME/platform-tools:"*) ;;
-  *) export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH" ;;
-esac
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+for _android_dir in \
+    "$ANDROID_HOME/cmdline-tools/latest/bin" \
+    "$ANDROID_HOME/platform-tools" \
+    "$ANDROID_HOME/emulator"; do
+    if [[ -d "$_android_dir" ]]; then
+        case ":$PATH:" in
+            *":$_android_dir:"*) ;;
+            *) PATH="$_android_dir:$PATH" ;;
+        esac
+    fi
+done
+unset _android_dir
+export PATH
+
+# JDK — Temurin 21 cask installs here.
+if [[ -d "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home" ]]; then
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+fi

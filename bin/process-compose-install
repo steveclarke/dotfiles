@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Install or upgrade process-compose from the latest GitHub release.
+# Idempotent — skips if already on the latest version.
+exec bash "$(dirname "$(readlink -f "$0")")/../install/arch/cli/process-compose.sh" "$@"

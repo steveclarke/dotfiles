@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Assess and improve the architecture of a codebase through layered analysis and guided restructuring. Use when the user wants to evaluate codebase structure, design patterns, modularity, composition, coupling, or framework alignment. Triggers on 'architect', 'architecture review', 'is this well-architected', 'structural assessment', 'evaluate the architecture'."
+description: "Assess and improve codebase architecture via layered analysis and guided restructuring. Triggers on architecture review, structural assessment, design patterns, modularity, coupling, framework alignment."
 argument-hint: "[--teach] [--sweep] [<target>]"
 ---
 

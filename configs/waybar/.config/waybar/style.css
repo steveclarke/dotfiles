@@ -1,0 +1,156 @@
+@import "../omarchy/current/theme/waybar.css";
+
+* {
+  background-color: @background;
+  color: @foreground;
+
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: 'JetBrainsMono Nerd Font';
+  font-size: 16px;
+}
+
+.modules-left {
+  margin-left: 8px;
+}
+
+.modules-right {
+  margin-right: 8px;
+}
+
+#workspaces button {
+  all: initial;
+  font-family: inherit;
+  font-size: 13px;
+  color: @foreground;
+  opacity: 0.3;
+  padding: 2px 5px;
+  margin: 0 1.5px;
+  min-width: 9px;
+}
+
+#workspaces button.active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+#workspaces button.empty {
+  opacity: 0.15;
+}
+
+#cpu,
+#battery,
+#pulseaudio,
+#custom-omarchy,
+#custom-update {
+  min-width: 12px;
+  margin: 0 7.5px;
+}
+
+#custom-monitor {
+  min-width: 12px;
+  margin: 0 22px 0 4px;
+}
+
+#tray {
+  margin-right: 16px;
+}
+
+#bluetooth {
+  margin-right: 17px;
+}
+
+#network {
+  margin-right: 13px;
+}
+
+#custom-expand-icon {
+  margin-right: 18px;
+}
+
+tooltip {
+  padding: 2px;
+}
+
+#custom-update {
+  font-size: 13px;
+}
+
+#custom-clock {
+  margin-left: 8.75px;
+  font-size: 13px;
+}
+
+#custom-ai-usage {
+  min-width: 52px;
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+  color: @accent;
+}
+
+#custom-sun {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#custom-sun.sunset {
+  color: #d0a85c;
+}
+
+#custom-ai-usage.warning {
+  color: #d0a85c;
+}
+
+#custom-ai-usage.critical,
+#custom-ai-usage.error {
+  color: #a55555;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+#custom-screenrecording-indicator,
+#custom-idle-indicator,
+#custom-notification-silencing-indicator {
+  min-width: 12px;
+  margin-left: 5px;
+  margin-right: 0;
+  font-size: 13px;
+  padding-bottom: 1px;
+}
+
+#custom-screenrecording-indicator.active {
+  color: #a55555;
+}
+
+#custom-idle-indicator.active {
+  color: #a55555;
+}
+
+#custom-notification-silencing-indicator.silenced {
+  color: #a55555;
+}
+
+#custom-notification-silencing-indicator.on {
+  opacity: 0.5;
+}
+
+#custom-voxtype {
+  min-width: 12px;
+  margin: 0 0 0 7.5px;
+}
+
+#mpris {
+  margin: 0 7.5px 0 16px;
+  font-size: 13px;
+}
+
+#mpris.paused {
+  opacity: 0.6;
+}
+
+#custom-voxtype.recording {
+  color: #a55555;
+}

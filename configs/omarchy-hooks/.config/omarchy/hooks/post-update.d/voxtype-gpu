@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Runs after omarchy-update.
+#
+# Voxtype upgrades can swap the active backend back to CPU (the tiered
+# package ships CPU/AVX variants alongside GPU). Re-enable Vulkan GPU
+# if hardware supports it and it isn't already active.
+
+if command -v voxtype >/dev/null && omarchy-hw-vulkan 2>/dev/null; then
+  if ! voxtype setup gpu --status 2>/dev/null | grep -q "Active backend: GPU"; then
+    sudo voxtype setup gpu --enable || true
+    systemctl --user restart voxtype 2>/dev/null || true
+  fi
+fi
