@@ -1,13 +1,28 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "theme": "catppuccin",
-  "tui": {
-    "scroll_acceleration": {
-      "enabled": false
-    },
-    "scroll_speed": 1,
-    "diff_style": "stacked"
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (ubu)",
+      "options": {
+        "baseURL": "http://192.168.77.87:11434/v1"
+      },
+      "models": {
+        "glm-4.7-flash": {
+          "name": "GLM 4.7 Flash"
+        },
+        "gemma4:e4b": {
+          "name": "Gemma 4 E4B"
+        },
+        "qwen3.5:9b": {
+          "name": "Qwen 3.5 9B"
+        }
+      }
+    }
   },
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git"
+  ],
   "permission": {
     "bash": {
       "*": "allow",
@@ -36,6 +51,29 @@
       ],
       "enabled": true,
       "type": "local"
+    },
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "oauth": {}
+    },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "enabled": true
     }
   }
 }

@@ -1,6 +1,6 @@
 ---
 name: youtube
-description: Download content from YouTube including transcripts, captions, subtitles, music, MP3s, and playlists. Use when the user provides a YouTube URL or asks to download, transcribe, or get content from YouTube videos or playlists.
+description: "Download YouTube content — transcripts, captions, subtitles, MP3s, playlists. Triggers on YouTube URLs or 'download', 'transcribe', 'get content from' a video."
 allowed-tools: Bash,Read,Write
 ---
 

@@ -22,7 +22,15 @@ install () {
     
     # Configure fish shell as default
     source "${DOTFILES_DIR}"/install/macos/fish.sh
-    
+
+    # Additional per-tool macOS installers (anything beyond prereq/brew/fish).
+    for installer in "${DOTFILES_DIR}"/install/macos/*.sh; do
+      case "$(basename "$installer")" in
+        prereq.sh|brew.sh|fish.sh) continue ;;
+      esac
+      [[ -f $installer ]] && source "$installer"
+    done
+
     # Run macOS-specific setups
     for setup in "${DOTFILES_DIR}"/setups/macos/*.sh; do 
       [[ -f $setup ]] && source "$setup"
@@ -34,10 +42,55 @@ install () {
     done
     
     echo "macOS installation complete! Consider restarting to apply system changes."
+  elif is_arch; then
+    # Arch/Omarchy installation flow
+    banner "Starting Arch Linux installation"
+    if is_omarchy; then
+      banner "(Omarchy detected — skipping packages Omarchy already provides)"
+    fi
+
+    # Install prerequisites
+    if [[ -f "${DOTFILES_DIR}/install/arch/prereq.sh" ]]; then
+      source "${DOTFILES_DIR}"/install/arch/prereq.sh
+    fi
+
+    # Stow configs
+    source "${DOTFILES_DIR}"/configs/stow.sh
+
+    # CLI tools
+    source "${DOTFILES_DIR}"/install/arch/cli.sh
+
+    # Skills
+    if is_installed npx; then
+      banner "Installing skills"
+      bash "${DOTFILES_DIR}"/bin/skills-install
+    fi
+
+    # GUI apps
+    if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
+      if [[ -f "${DOTFILES_DIR}/install/arch/apps.sh" ]]; then
+        source "${DOTFILES_DIR}"/install/arch/apps.sh
+      fi
+    fi
+
+    # Run cross-platform setups
+    for setup in "${DOTFILES_DIR}"/setups/*.sh; do
+      [[ -f $setup ]] && source "$setup"
+    done
+
+    # Run Arch-specific setups
+    if [[ -d "${DOTFILES_DIR}/setups/arch" ]]; then
+      for setup in "${DOTFILES_DIR}"/setups/arch/*.sh; do
+        [[ -f $setup ]] && source "$setup"
+      done
+    fi
+
+    echo "Arch Linux installation complete!"
+
   else
-    # Linux installation flow (existing logic)
+    # Ubuntu/Debian installation flow
     banner "Starting Linux installation"
-    
+
     # Install prerequisites
     source "${DOTFILES_DIR}"/install/prereq.sh
 
@@ -52,12 +105,12 @@ install () {
     fi
 
     # Run cross-platform setups
-    for setup in "${DOTFILES_DIR}"/setups/*.sh; do 
+    for setup in "${DOTFILES_DIR}"/setups/*.sh; do
       [[ -f $setup ]] && source "$setup"
     done
-    
+
     # Run Linux-specific setups
-    for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do 
+    for setup in "${DOTFILES_DIR}"/setups/linux/*.sh; do
       [[ -f $setup ]] && source "$setup"
     done
 

@@ -1,6 +1,6 @@
 ---
 name: to-markdown
-description: Convert files to Markdown using markitdown. Use this skill whenever the user wants to convert a document, PDF, Word file, Excel spreadsheet, PowerPoint, image, HTML page, or any other file into Markdown format. Also use it when importing external documents into a knowledge base, extracting text from files for AI processing, or converting office documents to plain text. Trigger on phrases like "convert to markdown", "extract text from", "import this document", "turn this PDF into markdown", "get the content of this file".
+description: "Convert files to Markdown via markitdown — PDFs, Word, Excel, PowerPoint, images, HTML, and other formats. Triggers on 'convert to markdown', 'extract text from', 'import this document', 'turn this PDF into markdown'."
 ---
 
 Convert files to Markdown using [markitdown](https://github.com/microsoft/markitdown) — Microsoft's utility that extracts and structures content from many file formats.

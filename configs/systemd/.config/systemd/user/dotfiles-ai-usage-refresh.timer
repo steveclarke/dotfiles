@@ -1,0 +1,13 @@
+[Unit]
+Description=Refresh dotfiles AI usage cache periodically
+Documentation=file:%h/.local/share/dotfiles/docs/omarchy-waybar-ai-usage.md
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5min
+AccuracySec=30s
+RandomizedDelaySec=20s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

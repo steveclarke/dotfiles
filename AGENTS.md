@@ -33,6 +33,10 @@ No test suite. Scripts test if commands exist.
 
 **Errors:** Exit with code 1 or 2. Show clear error messages.
 
+## Gotchas
+
+**Omarchy custom themes:** `omarchy-theme-set` *copies* theme files into `~/.config/omarchy/current/theme/` — it does not symlink. Editing the source under `configs/omarchy-themes/` won't affect the active theme until you re-run `omarchy-theme-set <name>`.
+
 ## Repo Structure
 
 | Folder | What's Inside |
