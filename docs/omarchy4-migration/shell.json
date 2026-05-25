@@ -1,0 +1,38 @@
+{
+  "//": "DRAFT Omarchy 4 (4.0.0.alpha) shell.json ported from Steve's Waybar config.",
+  "//draft": "Untested — written against the omarchy-shell branch API as of 2026-05-25. See MIGRATION.md for the full mapping, blockers, and TODO. Lands at ~/.config/omarchy/shell.json once Omarchy 4 is installed.",
+  "version": 1,
+  "idle": {
+    "screensaver": 150,
+    "lock": 300
+  },
+  "bar": {
+    "position": "top",
+    "transparent": false,
+    "centerAnchor": "omarchy.clock",
+    "layout": {
+      "left": [
+        { "id": "omarchy.menu" },
+        { "id": "omarchy.workspaces" }
+      ],
+      "center": [
+        { "id": "omarchy.clock", "format": "dddd HH:mm", "formatAlt": "dd MMMM 'W'ww yyyy" },
+        { "id": "sun", "type": "command", "exec": "~/.config/waybar/scripts/sun.py", "interval": 300, "tooltip": "Sunrise / sunset" },
+        { "id": "ai-usage", "type": "command", "exec": "~/.config/waybar/scripts/ai-usage.sh", "interval": 60, "tooltip": "AI usage", "onClick": "~/.config/waybar/scripts/ai-usage-refresh.sh" },
+        { "id": "omarchy.system-update" },
+        { "id": "omarchy.media" },
+        { "id": "omarchy.indicators", "items": ["Dictation", "ScreenRecording", "StayAwake", "Dnd"], "alwaysShow": false }
+      ],
+      "right": [
+        { "id": "omarchy.tray" },
+        { "id": "omarchy.monitor" },
+        { "id": "omarchy.bluetooth" },
+        { "id": "omarchy.network" },
+        { "id": "omarchy.audio" },
+        { "id": "omarchy.system-stats" },
+        { "id": "omarchy.power" }
+      ]
+    }
+  },
+  "plugins": []
+}
