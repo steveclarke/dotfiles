@@ -11,13 +11,14 @@
 state_file = "auto"
 
 [hotkey]
-# Right Ctrl push-to-talk, handled by voxtype's own evdev grabber rather than a
+# Right Alt push-to-talk, handled by voxtype's own evdev grabber rather than a
 # Hyprland bind: Hyprland's bindrd doesn't fire the release on a bare modifier,
 # so hold-to-talk got stuck "on". The evdev grabber sees press AND release.
-# Requires membership in the `input` group (we are). Other trigger keys
-# (Right Alt toggle, Keychron 191/192) stay as Hyprland binds → `voxtype record`.
+# Requires membership in the `input` group (we are). Right Ctrl was the previous
+# PTT key — unreliable, the holds kept getting swallowed — now reassigned to a
+# `voxtype record toggle` tap in Hyprland. Keychron 191/192 stay Hyprland binds.
 enabled = true
-key = "RIGHTCTRL"
+key = "RIGHTALT"
 modifiers = []
 mode = "push_to_talk"
 
