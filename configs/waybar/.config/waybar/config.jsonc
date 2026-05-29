@@ -1,7 +1,7 @@
 [
   {
     "include": ["~/.config/waybar/shared.jsonc"],
-    "output": "DP-2",
+    "output": "DP-4",
     "modules-left": [
       "custom/omarchy",
       "hyprland/workspaces"
@@ -9,7 +9,7 @@
   },
   {
     "include": ["~/.config/waybar/shared.jsonc"],
-    "output": ["HDMI-A-1", "DP-4"],
+    "output": ["DP-1", "DP-2"],
     "modules-left": [
       "custom/omarchy",
       "hyprland/workspaces",

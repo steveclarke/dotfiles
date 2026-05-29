@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Use for deep-clean cleanup of AI-generated code across a whole codebase — dedupe, dead code, circular deps, weak types, defensive try/catch, legacy paths, and AI-slop comments. Supports JavaScript/TypeScript, Ruby/Rails, and Go. Run after heavy AI-coding sessions, before merging long-running branches, or when the codebase smells like vibe-coded slop. Distinct from `/simplify` (scoped to recent edits); `/deslop` attacks the whole codebase.
+description: "Deep-clean AI-generated code across a whole codebase — dedupe, dead code, circular deps, weak types, defensive try/catch, legacy paths, AI-slop comments. JS/TS, Ruby/Rails, Go. Run after heavy AI sessions or before merging long-running branches. Whole codebase (vs `/simplify` for recent edits)."
 argument-hint: "[path] [--dry-run] [--passes 1,2,...] [--stack js|ruby|go]"
 ---
 

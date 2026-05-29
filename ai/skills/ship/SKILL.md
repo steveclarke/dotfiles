@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Run the full pre-merge pipeline and create a PR. Use when user says 'ship', 'ship it', 'ready to ship', 'let\\'s ship', 'prep for PR', 'create PR', or 'ready to merge'."
+description: "Run the full pre-merge pipeline and create a PR. Triggers on 'ship', 'ship it', 'ready to ship', 'prep for PR', 'create PR', 'ready to merge'."
 argument-hint: "[--adversarial] [--status]"
 ---
 

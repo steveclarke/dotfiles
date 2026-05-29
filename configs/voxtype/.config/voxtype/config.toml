@@ -11,8 +11,16 @@
 state_file = "auto"
 
 [hotkey]
-# Hotkey is configured in Hyprland. Default is Super + Ctrl + X
-enabled = false
+# Right Alt push-to-talk, handled by voxtype's own evdev grabber rather than a
+# Hyprland bind: Hyprland's bindrd doesn't fire the release on a bare modifier,
+# so hold-to-talk got stuck "on". The evdev grabber sees press AND release.
+# Requires membership in the `input` group (we are). Right Ctrl was the previous
+# PTT key — unreliable, the holds kept getting swallowed — now reassigned to a
+# `voxtype record toggle` tap in Hyprland. Keychron 191/192 stay Hyprland binds.
+enabled = true
+key = "RIGHTALT"
+modifiers = []
+mode = "push_to_talk"
 
 [audio]
 # Audio input device ("default" uses system default)
@@ -29,6 +37,16 @@ max_duration_secs = 600
 enabled = true
 theme = "default"
 volume = 0.7
+
+# On-screen waveform overlay (the floating visualizer shown while recording).
+# Default anchors bottom-center on the FOCUSED monitor, which lands mid-screen
+# over the editor. top-right collided with the notification area, so anchored
+# bottom-left instead. margin_px = edge gap for corner anchors (top_margin is
+# ignored unless position is *-center). Other knobs left at defaults:
+# width_px=400, height_px=48, opacity=0.95, frontend=gtk4.
+[osd]
+position = "bottom-left"
+margin_px = 24
 
 [whisper]
 # Model to use for transcription

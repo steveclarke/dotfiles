@@ -24,6 +24,7 @@ Custom skills maintained in `ai/skills/` in this repo.
 | feature-requirements | Feature requirements gathering |
 | feature-spec | Feature spec writing |
 | feature-vision | Feature vision documents |
+| favicon | Generate favicons from a source image (originally from shpigford/skills, now archived/private) |
 | finalize | Final polish |
 | handoff | Context-to-context continuation |
 | humanizer | Edit AI-generated text |
@@ -59,7 +60,6 @@ Custom skills maintained in `ai/skills/` in this repo.
 | `vueuse/skills` | vueuse-functions |
 | `obie/skills` | better-stimulus |
 | `maquina-app/rails-upgrade-skill` | rails-upgrade-assistant |
-| `shpigford/skills` | favicon |
 | `intellectronica/agent-skills` | gog-cli |
 
 ## Archived
@@ -72,5 +72,4 @@ Skills moved to `ai/skills-archive/`:
 - better-stimulus (switching to obie/skills)
 - rails-upgrade-assistant (switching to maquina-app)
 - slidev (switching to antfu/skills)
-- favicon (switching to shpigford/skills)
 - electron (vercel-labs/agent-browser — dropped)

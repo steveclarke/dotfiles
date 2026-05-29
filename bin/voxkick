@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# voxkick — hard-restart voxtype.
+#
+# voxtype 0.7.3 has no SIGTERM handler, so `systemctl --user restart voxtype`
+# blocks for the full 90s stop timeout before SIGKILL. This skips that wait.
+#
+# Also covers the MX Keys hotplug bug: voxtype grabs the keyboard device at
+# startup and doesn't follow it across wireless reconnect/sleep, so PTT
+# silently dies. `voxkick` is the stopgap until a guarded auto-restart is
+# wired up (must not fire mid-dictation — see project memory).
+
+set -e -o pipefail
+
+echo "Killing voxtype..."
+systemctl --user kill -s KILL voxtype || true
+sleep 1
+
+echo "Starting voxtype..."
+systemctl --user start voxtype
+
+# Give the daemon a moment to grab the hotkey device before reporting back.
+sleep 2
+
+if systemctl --user is-active --quiet voxtype; then
+  hotkey_line=$(journalctl --user -u voxtype --no-pager --since "10 sec ago" \
+    | grep -E "Listening for KEY_" | tail -1)
+  echo "voxtype: active"
+  [[ -n "${hotkey_line}" ]] && echo "  ${hotkey_line##*INFO }"
+else
+  echo "voxtype: failed to start" >&2
+  systemctl --user status voxtype --no-pager | head -20 >&2
+  exit 1
+fi

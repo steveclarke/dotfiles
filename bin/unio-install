@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Install or upgrade the Unio CLI from the latest cli-v* GitHub release.
+# Idempotent — skips if already on the latest version.
+exec bash "$(dirname "$(readlink -f "$0")")/../install/arch/cli/unio.sh" "$@"

@@ -1,6 +1,6 @@
 ---
 name: devstack
-description: "Manage dev environment orchestration with process-compose. Use when setting up devstack for a project (init mode), creating worktrees, starting/stopping services, or managing the dev stack. Triggers on 'set up devstack', 'initialize devstack', 'create process-compose', 'start services', 'stop services', 'create a worktree', 'spin up an instance', 'dev environment', 'process-compose', 'DEVSTACK.md', 'bin/dev'."
+description: "Manage dev environment orchestration with process-compose. Use for devstack init, worktrees, starting/stopping services, DEVSTACK.md, bin/dev, or 'create process-compose'."
 ---
 
 # Devstack — Dev Environment Orchestration
