@@ -1,6 +1,6 @@
 ---
 name: bruno-endpoint-creation
-description: Create Bruno REST API endpoint configurations with proper authentication, environment setup, and documentation. Use when setting up API testing with Bruno, creating new endpoints, or configuring collection-level authentication. Triggers on "create Bruno endpoint", "Bruno API testing", "set up Bruno collection".
+description: "Create Bruno REST API endpoint configs with auth, environment setup, and docs. Triggers on 'create Bruno endpoint', 'Bruno API testing', 'Bruno collection'."
 ---
 
 # Bruno Endpoint Creation

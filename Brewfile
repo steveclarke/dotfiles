@@ -84,6 +84,7 @@ brew "the_silver_searcher"
 brew "tea"
 brew "tealdeer"  # Replacement for deprecated tldr
 brew "tmux"
+brew "todoist-cli"
 brew "tree"
 brew "yt-dlp"
 brew "television"

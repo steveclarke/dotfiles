@@ -41,6 +41,30 @@ desc "deploy", "Deployment commands"
 subcommand "deploy", GemName::Cli::Deploy
 ```
 
+## Nested Subcommand Namespaces (Zeitwerk 2.8+)
+
+When a subcommand grows nested commands of its own (e.g. `GemName::Cli::Deploy::Hooks`), the older Zeitwerk convention forced you to keep `lib/gem_name/cli/deploy.rb` *beside* the `deploy/` directory — the namespace file and its members lived in different folders.
+
+Zeitwerk 2.8 added `loader.nsfile`. Set it once during loader setup and the namespace definition moves *inside* the directory:
+
+```ruby
+# lib/gem_name.rb
+loader = Zeitwerk::Loader.for_gem
+loader.nsfile = "ns.rb"
+loader.setup
+```
+
+```
+lib/gem_name/cli/
+├── main.rb
+└── deploy/
+    ├── ns.rb          # defines GemName::Cli::Deploy (the namespace)
+    ├── hooks.rb       # GemName::Cli::Deploy::Hooks
+    └── push.rb        # GemName::Cli::Deploy::Push
+```
+
+Each namespace becomes one self-contained folder. Worth it once subcommand trees get more than one level deep; skip for flat CLIs.
+
 ## Thor Options
 
 ```ruby

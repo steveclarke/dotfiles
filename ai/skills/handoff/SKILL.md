@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Prepare a clean handoff for continuing complex work in a fresh Claude Code session. Use when the user says "handoff", "hand off", "clean handoff", "fresh context", "new session", "pick this up later", "continuation", or when context is getting full and multi-step work remains. Also use proactively when you notice context is approaching limits and the task isn't finished.
+description: "Prepare a clean handoff for continuing complex work in a fresh Claude Code session. Use on 'handoff', 'hand off', 'fresh context', 'new session', 'pick this up later', or proactively when context is full and work remains."
 ---
 
 # Handoff — Context-to-Context Continuation

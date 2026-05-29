@@ -1,6 +1,6 @@
 ---
 name: council
-description: "Run a decision through 5 AI advisors with different thinking styles, anonymous peer review, and chairman synthesis. For genuine decisions with stakes and tradeoffs — not simple questions. Based on Karpathy's LLM Council."
+description: "Run a decision through 5 AI advisors with peer review and chairman synthesis. For genuine decisions with stakes — not simple questions. Based on Karpathy's LLM Council."
 user-invocable: true
 argument-hint: "[question or decision to pressure-test]"
 ---

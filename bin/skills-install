@@ -161,14 +161,14 @@ install_specific "External (obie)" "obie/skills" \
 install_specific "External (maquina-app)" "maquina-app/rails-upgrade-skill" \
   rails-upgrade-assistant
 
-install_specific "External (shpigford)" "shpigford/skills" \
-  favicon
-
 install_specific "External (intellectronica)" "intellectronica/agent-skills" \
   gog-cli
 
 install_specific "External (doist)" "doist/todoist-cli" \
   todoist-cli
+
+install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
+  modern-web-guidance
 
 remove_deprecated_skills
 
