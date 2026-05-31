@@ -55,12 +55,15 @@ Check that new/changed code has corresponding documentation:
 
 Skip this section if the changeset has no view/template/component files.
 
-**Run Impeccable skills on changed view files:**
-- `/polish` — spacing, interaction states, typography, transitions, details
-- `/audit` — accessibility, performance, responsive, theming
-- `/normalize` — component library usage, design system compliance, tokens
+**Run the Impeccable skill on changed view files:**
+- `$impeccable audit <target>` — accessibility, performance, responsive behavior, theming
+- `$impeccable polish <target>` — final UI quality pass: spacing, interaction states, typography, transitions, component-library fit, design-system compliance, tokens
 
-Report which skills were run and what they found. Fix issues directly.
+Use the current Impeccable command routing rather than legacy standalone
+skills. `normalize` was folded into `polish`; do not try to invoke it
+separately.
+
+Report which Impeccable commands were run and what they found. Fix issues directly.
 
 **Consistency with existing pages** (not covered by Impeccable):
 - New pages match the structure of similar existing pages
