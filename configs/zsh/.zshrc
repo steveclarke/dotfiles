@@ -20,20 +20,9 @@
 # - Anything that makes the shell more pleasant to use interactively
 # =============================================================================
 
-# =============================================================================
-# TMUX AUTO-START (Ghostty only)
-# =============================================================================
-# Start tmux automatically when opening Ghostty, but only if:
-# - We're in Ghostty (TERM_PROGRAM check)
-# - We're not already inside tmux (TMUX check)
-# - tmux is installed
-# This runs early to avoid loading plugins twice (they load inside tmux instead)
-# Each Ghostty window gets its own independent tmux session.
-# To revert to shared session: change to `exec tmux new-session -A -s main`
-# DISABLED: Cross-machine tmux compatibility issues between Mac Studio and MacBook Pro
-# if [[ -z "$TMUX" && "$TERM_PROGRAM" == "ghostty" ]] && command -v tmux >/dev/null 2>&1; then
-#     exec tmux new-session
-# fi
+# tmux auto-start now lives in the terminal config (ghostty local/macos.conf:
+# `command = tmux new-session -A -s main`), not here — keeping it out of .zshrc
+# means a tmux failure can't break shell startup across SSH/scripts/editors.
 
 # =============================================================================
 # ZINIT PLUGIN MANAGER
