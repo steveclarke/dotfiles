@@ -1,1 +1,6 @@
-import = ["/home/steve/.config/alacritty/shared.toml", "/home/steve/.config/alacritty/local.toml", "/home/steve/.config/alacritty/themes/catppuccin/catppuccin-mocha.toml"]
+[general]
+import = [
+  "~/.config/alacritty/shared.toml",
+  "~/.config/alacritty/local.toml",
+  "~/.config/alacritty/themes/catppuccin/catppuccin-macchiato.toml",
+]

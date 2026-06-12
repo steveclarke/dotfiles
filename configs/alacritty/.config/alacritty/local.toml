@@ -1,7 +1,14 @@
+[font]
+size = 15
+
+[window]
+option_as_alt = "Both"
+decorations = "Transparent"
+
 [window.dimensions]
-columns = 240
-lines = 60
+columns = 160
+lines = 48
 
 [window.padding]
-x = 0
-y = 0
+x = 8
+y = 30
