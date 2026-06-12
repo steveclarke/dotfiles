@@ -72,4 +72,5 @@ cask "slack"
 cask "visual-studio-code"
 cask "whatsapp"
 cask "zed"
+cask "zoom"
 
