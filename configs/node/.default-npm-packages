@@ -4,7 +4,6 @@
 skills
 yarn
 playwright
-pnpm
 bun
 @slidev/cli
 @doist/todoist-cli
