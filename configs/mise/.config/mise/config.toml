@@ -2,6 +2,7 @@
 bun = "latest"
 go = "latest"
 node = "25.9.0"
+pnpm = "11"
 python = "latest"
 ruby = "3.4"
 
