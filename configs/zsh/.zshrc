@@ -345,10 +345,13 @@ if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]] && [[ -o interactiv
 fi
 
 # pnpm
+# The pnpm binary itself is managed by mise (see ~/.config/mise/config.toml).
+# PNPM_HOME is only the global-install bin dir; append it so it never shadows
+# mise's pnpm shim (which must stay first in PATH).
 export PNPM_HOME="/Users/steve/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *) export PATH="$PATH:$PNPM_HOME" ;;
 esac
 # pnpm end
 
