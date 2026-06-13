@@ -1,10 +1,10 @@
 [tools]
 bun = "latest"
 go = "latest"
-node = "25.9.0"
+node = "lts"
 pnpm = "11"
 python = "latest"
-ruby = "3.4"
+ruby = "4"
 
 [settings]
 node.default_packages_file = "~/.default-npm-packages"
