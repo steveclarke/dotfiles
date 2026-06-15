@@ -104,10 +104,12 @@ else
 fi
 
 thinking_on=false
+effort_level=""
 settings_path="$HOME/.claude/settings.json"
 if [ -f "$settings_path" ]; then
     thinking_val=$(jq -r '.alwaysThinkingEnabled // false' "$settings_path" 2>/dev/null)
     [ "$thinking_val" = "true" ] && thinking_on=true
+    effort_level=$(jq -r '.effortLevel // empty' "$settings_path" 2>/dev/null)
 fi
 
 cwd=$(echo "$input" | jq -r '.cwd // ""')
@@ -223,6 +225,7 @@ fi
 ctx_color=$(color_for_pct "$pct_used")
 
 line="${blue}${model_short}${reset}"
+[ -n "$effort_level" ] && line+=" ${dim}(${magenta}${effort_level}${reset}${dim})${reset}"
 line+="${sep}${ctx_color}${pct_used}%${reset}"
 line+="${sep}${cyan}${dirname}${reset}"
 if [ -n "$git_branch" ]; then
