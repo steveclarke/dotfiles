@@ -8,6 +8,7 @@ cask "temurin@21"
 brew "steveclarke/tap/superthread"
 brew "steveclarke/tap/outport"
 brew "myunio/tap/unio"
+brew "myunio/tap/outport-app-cli"
 
 brew "act"
 brew "aichat"
