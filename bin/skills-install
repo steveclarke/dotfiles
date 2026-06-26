@@ -126,8 +126,8 @@ install_all "My skills (kiso)" \
 install_all "My skills (outport)" \
   "https://github.com/steveclarke/outport/tree/master/skills"
 
-install_all "My skills (outport-app)" \
-  "https://github.com/myunio/outport-app/tree/master/skills"
+install_specific "My skills (outport-app)" "${HOME}/src/outport-app-v2" \
+  out
 
 install_all "My skills (real-world-rails)" \
   "https://github.com/steveclarke/real-world-rails/tree/main/skills"
