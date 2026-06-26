@@ -102,6 +102,9 @@ install_specific "External (nuxt)" "nuxt/ui" \
 install_specific "External (shadcn)" "shadcn/ui" \
   shadcn
 
+install_specific "External (shadcn-improve)" "shadcn/improve" \
+  improve
+
 install_specific "External (vueuse)" "vueuse/skills" \
   vueuse-functions
 
