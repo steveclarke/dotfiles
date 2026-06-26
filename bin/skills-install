@@ -121,6 +121,6 @@ install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
   modern-web-guidance
 
 echo ""
-echo "✓ Done. Listing installed global skills:"
+echo "✓ Done. $(ls "${HOME}/.agents/skills" 2>/dev/null | wc -l | tr -d ' ') skills installed:"
 echo ""
-npx -y skills ls -g
+ls "${HOME}/.agents/skills"
