@@ -2,10 +2,9 @@
 #
 # skills-install — Sync all global skills from configured sources
 #
-# Installs or refreshes skills non-interactively across all agents (Claude Code,
-# OpenCode, Codex, etc.) using symlinks (default behavior of skills.sh). Also
-# prunes known deprecated skills that are no longer provided by configured
-# sources.
+# Installs or refreshes skills non-interactively across the agents listed in
+# SKILL_AGENTS (Claude Code, Codex, OpenCode, etc.) using symlinks (default
+# behavior of skills.sh).
 #
 # Usage:
 #   skills-install          # sync all skills from all sources
@@ -28,34 +27,10 @@ if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
   LIST_ONLY=true
 fi
 
-DEPRECATED_SKILLS=(
-  # Impeccable split skills (replaced by the consolidated impeccable skill)
-  adapt
-  animate
-  arrange
-  audit
-  bolder
-  clarify
-  colorize
-  critique
-  delight
-  distill
-  extract
-  frontend-design
-  harden
-  layout
-  normalize
-  onboard
-  optimize
-  overdrive
-  polish
-  quieter
-  shape
-  teach-impeccable
-  typeset
-  # Replaced by Doist's maintained todoist-cli skill (`td skill install <agent>`)
-  todoist
-)
+# Agents to install skills into. By default only the agents Steve actually uses,
+# instead of all ~70 agents skills.sh knows about. Override with a
+# space-separated list in DOTFILES_SKILL_AGENTS, or set it to "*" for all agents.
+read -ra SKILL_AGENTS <<< "${DOTFILES_SKILL_AGENTS:-claude-code codex opencode gemini-cli cursor}"
 
 install_all() {
   local label="$1"
@@ -66,7 +41,7 @@ install_all() {
   if [[ "$LIST_ONLY" == "true" ]]; then
     npx -y skills add "$source" -g -l
   else
-    npx -y skills add "$source" -g --all
+    npx -y skills add "$source" -g -y -s '*' -a "${SKILL_AGENTS[@]}"
   fi
 }
 
@@ -82,37 +57,9 @@ install_specific() {
     npx -y skills add "$source" -g -l
   else
     for skill in "${skills[@]}"; do
-      npx -y skills add "$source" -g -y -s "$skill"
+      npx -y skills add "$source" -g -y -s "$skill" -a "${SKILL_AGENTS[@]}"
     done
   fi
-}
-
-remove_deprecated_skills() {
-  local installed_deprecated=()
-  local skill
-
-  if [[ "$LIST_ONLY" == "true" ]]; then
-    return
-  fi
-
-  if [[ "${DOTFILES_PRUNE_DEPRECATED_SKILLS:-true}" != "true" ]]; then
-    return
-  fi
-
-  for skill in "${DEPRECATED_SKILLS[@]}"; do
-    if [[ -e "${HOME}/.agents/skills/${skill}" ]]; then
-      installed_deprecated+=("$skill")
-    fi
-  done
-
-  if [[ "${#installed_deprecated[@]}" -eq 0 ]]; then
-    return
-  fi
-
-  echo ""
-  banner "Removing deprecated skills"
-  echo ""
-  npx -y skills remove -g -y "${installed_deprecated[@]}"
 }
 
 # ─── My custom skills (dotfiles repo) — install all ──────────────────────────
@@ -172,8 +119,6 @@ install_specific "External (doist)" "doist/todoist-cli" \
 
 install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
   modern-web-guidance
-
-remove_deprecated_skills
 
 echo ""
 echo "✓ Done. Listing installed global skills:"
