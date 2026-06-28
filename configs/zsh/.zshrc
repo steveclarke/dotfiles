@@ -363,4 +363,12 @@ export PATH=/Users/steve/.opencode/bin:$PATH
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/steve/.lmstudio/bin"
 # End of LM Studio CLI section
+# Keep mise shims first after all interactive PATH mutations above. This keeps
+# agent and IDE subprocesses from falling back to macOS system Ruby via env(1).
+_mise_shims="$HOME/.local/share/mise/shims"
+if [[ -d "$_mise_shims" ]]; then
+    path=("$_mise_shims" ${path:#"$_mise_shims"})
+    export PATH
+fi
+unset _mise_shims
 
