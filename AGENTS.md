@@ -35,6 +35,8 @@ No test suite. Scripts test if commands exist.
 
 ## Gotchas
 
+**Skills live in `ai/skills/` — edit there, never the installed copies.** This repo is the source of truth. `bin/skills-install` *copies* each skill into `~/.agents/skills/`, which is then symlinked into `~/.claude/skills/` (and other agents). Editing `~/.agents/skills/<name>/` or `~/.claude/skills/<name>/` changes a generated copy that isn't tracked by git and gets overwritten on the next sync. Make changes in `ai/skills/<name>/SKILL.md`, then run `skills-install` to propagate. Same rule for `ai/agents/` and `ai/guides/`.
+
 **Omarchy custom themes:** `omarchy-theme-set` *copies* theme files into `~/.config/omarchy/current/theme/` — it does not symlink. Editing the source under `configs/omarchy-themes/` won't affect the active theme until you re-run `omarchy-theme-set <name>`.
 
 ## Repo Structure
