@@ -26,6 +26,22 @@ Whenever the user's request crosses a pane boundary. Common triggers:
 
 Not for ordinary shell work that belongs in the current pane.
 
+## Pane IDs are the stable handle
+
+Every pane has an id like `%69` (`#{pane_id}`) that stays fixed for the life of
+the pane — unlike `session:window.pane` indexes, which shift when windows get
+renumbered or panes are added. Once you've identified a pane, target it by id.
+
+The user can hand you one directly: `prefix + i` copies the current pane's id to
+the clipboard. When they paste `%69` and say "read this" or "the agent's in
+here", that's an unambiguous target — skip the `list-panes` guessing and go
+straight to capturing it. (Still confirm the id isn't your own pane before
+writing — see below.)
+
+When relaying between agents, include the sender's pane id in the message you
+send ("…then tell the agent in %24 you're done; your pane is %69") so the
+receiver can reply to the right place.
+
 ## Safety
 
 The dangerous part isn't the tmux commands, it's the judgment.

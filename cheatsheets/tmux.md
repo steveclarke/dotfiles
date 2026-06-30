@@ -41,6 +41,7 @@
 |---------------------|----------------|
 | Popup lazygit       | `Alt+p` (open) · `q` (close)                |
 | Scratchpad toggle   | `Alt+s`        |
+| Copy pane id (`%N`)  | `Prefix i` — to clipboard, to hand an agent |
 | Reload config       | `Prefix q`     |
 
 ## Copy Mode (vi)

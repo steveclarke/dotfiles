@@ -74,7 +74,8 @@ Mechanics via **tmux-orchestration**. Specifics that bite:
 - **Hyphenated name, no spaces.**
 - Window 1 `agent`: `cd` to worktree, launch agent; when its UI is ready,
   **buffer-paste** the kickoff, then Enter as a separate step. Keep it short —
-  point at the briefing.
+  point at the briefing. Optionally hand it the sibling pane ids (dev stack, test
+  shell) so it can poll them itself via the tmux CLI.
 - Window 2 `dev`: split; top = dev stack, bottom = shell. Both panes need the
   right toolchain (see version-manager gotcha).
 - Window 3 `git`: `cd` to worktree, run `lazygit` (skip if absent).
@@ -102,10 +103,11 @@ back to the system version and bootstrap fails (e.g. *"Could not find bundler"*)
 
 **tmux targeting.**
 - No spaces in session names — `session:window` targets mis-parse otherwise.
-- Target panes by index (`MySess:1.1`), not name — name alone can mis-parse.
+- Prefer pane ids (`%17`, from `#{pane_id}`) once you've found a pane — they stay
+  fixed when windows renumber. Index (`MySess:1.1`) is a fine fallback; never
+  target by name (name alone can mis-parse).
 - Never write to your own pane. Get self first
-  (`tmux display-message -p '#{session_name}:#{window_index}.#{pane_index}'`) and
-  exclude it.
+  (`tmux display-message -p '#{pane_id}'`) and exclude it.
 
 **Driving TUIs.** Wait for the agent UI before pasting; buffer-paste multi-line
 prompts; Enter is a separate, deliberate step (preview substantive prompts to the
