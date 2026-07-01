@@ -188,6 +188,12 @@ alias kill-server-pid="kill -QUIT \$(cat tmp/pids/server.pid)"
 alias lg=lazygit
 alias ncdu="ncdu --color dark"
 
+# Claude Code: launch a one-off session on a specific model without touching
+# the global default (/model mid-session overwrites ~/.claude/settings.json)
+alias ccfable="claude --model fable"
+alias ccsonnet="claude --model sonnet"
+alias ccopus="claude --model opus"
+
 # Commonly cd'ed directories (fish had --set-cursor, zsh uses simple aliases)
 alias src="cd ~/src/"
 alias sand="cd ~/src/sandbox/"
