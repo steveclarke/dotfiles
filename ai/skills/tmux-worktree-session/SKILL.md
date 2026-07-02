@@ -23,12 +23,13 @@ The human attaches and the work is already in motion.
 Session: <Project>-<work>     (hyphenated, no spaces)
 ├── Window 1 "agent" → coding agent (Claude/Codex), cwd = worktree, given a
 │                      kickoff prompt pointing at the briefing
-├── Window 2 "dev"   → split: top = dev stack, bottom = bare shell for tests
-└── Window 3 "git"   → lazygit (optional)
+├── Window 2 "cli"   → bare shell for tests and ad-hoc commands
+├── Window 3 "dev"   → dev stack
+└── Window 4 "git"   → lazygit (optional)
 ```
 
-The common shape — adapt it (no dev stack, two agents, a logs window). Confirm
-if non-obvious.
+Four windows, one thing each — no splits. The common shape; adapt it (no dev
+stack, two agents, a logs window). Confirm if non-obvious.
 
 ## Inputs
 
@@ -65,7 +66,7 @@ stack.
 
 Look (see cheatsheet). Prefer a **headless/detached** mode for your control
 (e.g. process-compose `-D` + `status`/`logs`); a foreground TUI is fine for the
-human to watch. Note the test runner — the bottom pane and agent need it.
+human to watch. Note the test runner — the cli window and agent need it.
 
 ### 4. Build the session
 
@@ -74,11 +75,14 @@ Mechanics via **tmux-orchestration**. Specifics that bite:
 - **Hyphenated name, no spaces.**
 - Window 1 `agent`: `cd` to worktree, launch agent; when its UI is ready,
   **buffer-paste** the kickoff, then Enter as a separate step. Keep it short —
-  point at the briefing. Optionally hand it the sibling pane ids (dev stack, test
-  shell) so it can poll them itself via the tmux CLI.
-- Window 2 `dev`: split; top = dev stack, bottom = shell. Both panes need the
-  right toolchain (see version-manager gotcha).
-- Window 3 `git`: `cd` to worktree, run `lazygit` (skip if absent).
+  point at the briefing. Optionally hand it the sibling pane ids (cli, dev) so it
+  can poll them itself via the tmux CLI.
+- Window 2 `cli`: `cd` to worktree, bare shell for tests and ad-hoc commands.
+- Window 3 `dev`: `cd` to worktree, run the dev stack.
+- Window 4 `git`: `cd` to worktree, run `lazygit` (skip if absent).
+
+Every window `cd`s into the worktree and needs the right toolchain (see
+version-manager gotcha).
 
 ### 5. Verify and report
 
@@ -101,18 +105,12 @@ back to the system version and bootstrap fails (e.g. *"Could not find bundler"*)
   or `mise exec --`. If the dev-stack config uses plain `mise activate`, that's a
   real bug for agent/CI use — flag it.
 
-**tmux targeting.**
-- No spaces in session names — `session:window` targets mis-parse otherwise.
-- Prefer pane ids (`%17`, from `#{pane_id}`) once you've found a pane — they stay
-  fixed when windows renumber. Index (`MySess:1.1`) is a fine fallback; never
-  target by name (name alone can mis-parse).
-- Never write to your own pane. Get self first
-  (`tmux display-message -p '#{pane_id}'`) and exclude it.
-
-**Driving TUIs.** Wait for the agent UI before pasting; buffer-paste multi-line
-prompts; Enter is a separate, deliberate step (preview substantive prompts to the
-user first). Quit a dev TUI with its real key (process-compose `F10`), not a
-guessed `Ctrl-C`.
+**Pane mechanics + safety → tmux-orchestration.** Pane-id targeting, never
+writing to your own pane, read-before-write, buffer-pasting multi-line prompts,
+Enter as a separate step — all of that lives there. Don't restate it; follow it.
+Two things worth repeating here: **no spaces in session names** (`session:window`
+targets mis-parse), and quit a dev TUI with its real key (process-compose `F10`),
+not a guessed `Ctrl-C`.
 
 ## Discovery cheatsheet
 
