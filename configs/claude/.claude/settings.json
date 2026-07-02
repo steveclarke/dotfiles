@@ -25,6 +25,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -85,10 +86,11 @@
     ]
   },
   "effortLevel": "high",
+  "tui": "fullscreen",
   "autoDreamEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "tui": "fullscreen"
+  "voiceEnabled": true
 }
