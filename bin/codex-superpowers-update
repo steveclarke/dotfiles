@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#
+# codex-superpowers-update — install/update Superpowers for Codex
+#
+# Keeps Codex on the direct Superpowers marketplace instead of the stale
+# OpenAI-curated copy. Safe to run repeatedly on every machine.
+
+set -euo pipefail
+
+MARKETPLACE="superpowers-marketplace"
+MARKETPLACE_SOURCE="obra/superpowers-marketplace"
+PLUGIN="superpowers@${MARKETPLACE}"
+STALE_PLUGIN="superpowers@openai-curated"
+
+find_codex() {
+  if command -v codex >/dev/null 2>&1; then
+    command -v codex
+    return
+  fi
+
+  if [[ -x "/Applications/Codex.app/Contents/Resources/codex" ]]; then
+    printf '%s\n' "/Applications/Codex.app/Contents/Resources/codex"
+    return
+  fi
+
+  echo "Codex CLI not found. Install Codex first, then rerun this script." >&2
+  exit 1
+}
+
+install_or_update() {
+  local codex="$1"
+
+  echo "Updating Codex Superpowers..."
+
+  if "$codex" plugin marketplace list | awk '{print $1}' | grep -qx "$MARKETPLACE"; then
+    "$codex" plugin marketplace upgrade "$MARKETPLACE"
+  else
+    "$codex" plugin marketplace add "$MARKETPLACE_SOURCE"
+  fi
+
+  "$codex" plugin add "$PLUGIN"
+
+  if "$codex" plugin list --json | grep -Eq "\"pluginId\"[[:space:]]*:[[:space:]]*\"${STALE_PLUGIN}\""; then
+    "$codex" plugin remove "$STALE_PLUGIN"
+  fi
+
+  "$codex" plugin list --json | grep -E -A 12 "\"pluginId\"[[:space:]]*:[[:space:]]*\"${PLUGIN}\"" || true
+  echo "Done."
+}
+
+usage() {
+  cat <<USAGE
+Usage: codex-superpowers-update
+
+Installs or updates Superpowers for Codex now.
+USAGE
+}
+
+main() {
+  local codex
+  codex="$(find_codex)"
+
+  case "${1:-}" in
+    "")
+      install_or_update "$codex"
+      ;;
+    -h|--help|help)
+      usage
+      ;;
+    *)
+      usage >&2
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
