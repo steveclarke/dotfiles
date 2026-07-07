@@ -40,3 +40,51 @@ teardown() {
   [[ "$output" == *"switch=false"* ]]
   [[ "$output" == *"json=true"* ]]
 }
+
+@test "toml_get reads a value under a section, ignoring comments and other tables" {
+  cfg="$WORK/config.toml"
+  cat > "$cfg" <<'EOF'
+# comment
+[session]
+default_agent = "codex"   # inline comment
+agent_mode = "fable"
+
+[worktree]
+root = "~/src/foo-worktrees"
+EOF
+  run bash -c 'source "$1"; toml_get "$2" session default_agent' _ "$TOOL" "$cfg"
+  [ "$status" -eq 0 ]
+  [ "$output" = "codex" ]
+}
+
+@test "toml_get returns nothing for a missing key or missing file" {
+  run bash -c 'source "$1"; toml_get "/no/file" session default_agent' _ "$TOOL"
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "repo .worktree.toml overrides global config" {
+  export TMUX_WORKSPACE_CONFIG="$WORK/global.toml"
+  printf '[session]\ndefault_agent = "claude"\n' > "$WORK/global.toml"
+  git -C "$WORK" init -q
+  printf '[session]\ndefault_agent = "codex"\n' > "$WORK/.worktree.toml"
+  run "$TOOL" --dry-run "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"agent=codex"* ]]
+}
+
+@test "global config applies when no repo config and no flag" {
+  export TMUX_WORKSPACE_CONFIG="$WORK/global.toml"
+  printf '[session]\ndefault_agent = "claude"\n' > "$WORK/global.toml"
+  run "$TOOL" --dry-run "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"agent=claude"* ]]
+}
+
+@test "explicit --agent beats config" {
+  export TMUX_WORKSPACE_CONFIG="$WORK/global.toml"
+  printf '[session]\ndefault_agent = "claude"\n' > "$WORK/global.toml"
+  run "$TOOL" --dry-run --agent none "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"agent=none"* ]]
+}
