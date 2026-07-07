@@ -26,6 +26,14 @@ set -euo pipefail
 
 # shellcheck disable=SC2034
 GLOBAL_CONFIG="${TMUX_WORKSPACE_CONFIG:-$HOME/.config/worktree/config.toml}"
+# Each window gets mise shims prepended to PATH so the right toolchain is active
+# in the pane. NOTE: this covers the pane shell and non-login children (agent,
+# cli). It does NOT guarantee shims-first for a dev stack that spawns login
+# shells (bash -lc) as children — path_helper reorders PATH there. That case
+# relies on the project's own toolchain setup and the user's ~/.bash_profile
+# shims fix (see dotfiles docs/mise-dev-stacks.md), which an external launcher
+# cannot inject. Do not wrap $DEV_CMD in `mise` here — this tool is
+# project-agnostic and must work for non-mise projects.
 # shellcheck disable=SC2034,SC2016
 SHIMS_EXPORT='export PATH="$HOME/.local/share/mise/shims:$PATH"'
 
@@ -102,8 +110,12 @@ toml_get() {
   ' "$file"
 }
 
+sanitize_name() {
+  printf '%s' "$1" | sed 's/[^A-Za-z0-9_-]/-/g; s/-\{2,\}/-/g; s/^-//; s/-$//'
+}
+
 derive_name() {
-  basename "$1" | sed 's/[^A-Za-z0-9_-]/-/g; s/-\{2,\}/-/g; s/^-//; s/-$//'
+  sanitize_name "$(basename "$1")"
 }
 
 discover_dev_cmd() {
@@ -124,7 +136,12 @@ resolve_config() {
     toml_get "$GLOBAL_CONFIG" session "$1"
   }
 
-  [[ -z "$NAME" ]] && NAME="$(derive_name "$TARGET_DIR")"
+  if [[ -z "$NAME" ]]; then
+    NAME="$(derive_name "$TARGET_DIR")"
+  else
+    NAME="$(sanitize_name "$NAME")"
+  fi
+  [[ -z "$NAME" ]] && NAME="workspace"
 
   [[ -z "$AGENT" ]] && AGENT="$(cfg default_agent)"
   [[ -z "$AGENT" ]] && AGENT="none"
