@@ -186,13 +186,33 @@ build_session() {
   tmux select-window -t "=$NAME:agent"
 }
 
+emit_json() {
+  printf '{"session":"%s","windows":{"agent":"%s","cli":"%s","dev":"%s"' \
+    "$NAME" "$PANE_AGENT" "$PANE_CLI" "$PANE_DEV"
+  [[ -n "$PANE_GIT" ]] && printf ',"git":"%s"' "$PANE_GIT"
+  printf '}}\n'
+}
+
+finish() {
+  [[ "$JSON" == "true" ]] && emit_json
+  if [[ "$SWITCH" == "true" ]]; then
+    if [[ -n "${TMUX:-}" ]]; then
+      tmux switch-client -t "=$NAME"
+    else
+      tmux attach -t "=$NAME"
+    fi
+  elif [[ "$JSON" != "true" ]]; then
+    echo "tmux-workspace: created session '$NAME' (attach: tmux attach -t $NAME)"
+  fi
+}
+
 main() {
   parse_args "$@"
   resolve_config
   if [[ "$DRY_RUN" == "true" ]]; then print_plan; exit 0; fi
   command -v tmux >/dev/null 2>&1 || { echo "tmux-workspace: tmux not found" >&2; exit 1; }
   build_session
-  echo "tmux-workspace: created session '$NAME'"
+  finish
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi

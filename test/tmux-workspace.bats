@@ -7,6 +7,7 @@ setup() {
 
 teardown() {
   [[ -n "${WORK:-}" ]] && rm -rf "$WORK"
+  tmux kill-session -t "=${sesh:-}" 2>/dev/null || true
 }
 
 @test "dry-run prints resolved defaults for a plain dir" {
@@ -156,4 +157,30 @@ tw_kill() { tmux kill-session -t "=$1" 2>/dev/null || true; }
 @test "invalid agent errors" {
   run "$TOOL" --no-switch --name "twtest-$$-x" --agent gpt "$WORK"
   [ "$status" -eq 2 ]
+}
+
+@test "--json emits session and pane ids for present windows" {
+  sesh="twtest-$$-j"
+  tw_kill "$sesh"
+  run "$TOOL" --no-switch --no-git --json --name "$sesh" "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"\"session\":\"$sesh\""* ]]
+  [[ "$output" == *"\"agent\":\"%"* ]]
+  [[ "$output" == *"\"cli\":\"%"* ]]
+  [[ "$output" == *"\"dev\":\"%"* ]]
+  [[ "$output" != *"\"git\":"* ]]
+  # the emitted agent pane id must be a real pane in the session
+  pane="$(echo "$output" | sed -n 's/.*"agent":"\(%[0-9]*\)".*/\1/p')"
+  run tmux display-message -p -t "$pane" '#{session_name}'
+  [ "$output" = "$sesh" ]
+  tw_kill "$sesh"
+}
+
+@test "--no-switch without --json prints an attach hint" {
+  sesh="twtest-$$-h"
+  tw_kill "$sesh"
+  run "$TOOL" --no-switch --no-git --name "$sesh" "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"tmux attach -t $sesh"* ]]
+  tw_kill "$sesh"
 }
