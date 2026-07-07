@@ -102,6 +102,15 @@ toml_get() {
   ' "$file"
 }
 
+derive_name() {
+  basename "$1" | sed 's/[^A-Za-z0-9_-]/-/g; s/-\{2,\}/-/g; s/^-//; s/-$//'
+}
+
+discover_dev_cmd() {
+  [[ -x "$1/bin/dev" ]] && { echo "bin/dev"; return; }
+  echo ""
+}
+
 resolve_config() {
   local repo_config="" top
   top="$(git -C "$TARGET_DIR" rev-parse --show-toplevel 2>/dev/null || true)"
@@ -115,7 +124,7 @@ resolve_config() {
     toml_get "$GLOBAL_CONFIG" session "$1"
   }
 
-  [[ -z "$NAME" ]] && NAME="$(basename "$TARGET_DIR")"
+  [[ -z "$NAME" ]] && NAME="$(derive_name "$TARGET_DIR")"
 
   [[ -z "$AGENT" ]] && AGENT="$(cfg default_agent)"
   [[ -z "$AGENT" ]] && AGENT="none"
@@ -124,6 +133,7 @@ resolve_config() {
 
   if [[ -z "$DEV_CMD" ]]; then
     DEV_CMD="$(cfg dev_cmd)"
+    [[ -z "$DEV_CMD" ]] && DEV_CMD="$(discover_dev_cmd "$TARGET_DIR")"
   fi
 
   if [[ -z "$GIT_WINDOW" ]]; then
