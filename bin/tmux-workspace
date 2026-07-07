@@ -142,13 +142,57 @@ resolve_config() {
       command -v lazygit >/dev/null 2>&1 && GIT_WINDOW="true" || GIT_WINDOW="false"
     fi
   fi
+
+  case "$AGENT" in
+    claude|codex|none) ;;
+    *) echo "tmux-workspace: invalid --agent: $AGENT (claude|codex|none)" >&2; exit 2 ;;
+  esac
+}
+
+# Create a window, cd it into the target, put mise shims on PATH. Echoes pane id.
+_new_window() {
+  local win="$1"
+  tmux new-window -d -t "=$NAME" -n "$win" -c "$TARGET_DIR"
+  local pane; pane="$(tmux display-message -p -t "=$NAME:$win" '#{pane_id}')"
+  tmux send-keys -t "$pane" "$SHIMS_EXPORT" C-m
+  echo "$pane"
+}
+
+build_session() {
+  if tmux has-session -t "=$NAME" 2>/dev/null; then
+    echo "tmux-workspace: session '$NAME' already exists" >&2; exit 1
+  fi
+
+  tmux new-session -d -s "$NAME" -n agent -c "$TARGET_DIR"
+  PANE_AGENT="$(tmux display-message -p -t "=$NAME:agent" '#{pane_id}')"
+  tmux send-keys -t "$PANE_AGENT" "$SHIMS_EXPORT" C-m
+  if [[ "$AGENT" != "none" ]]; then
+    local launch="$AGENT"
+    [[ -n "$AGENT_MODE" ]] && launch="$AGENT $AGENT_MODE"
+    tmux send-keys -t "$PANE_AGENT" "$launch" C-m
+  fi
+
+  # shellcheck disable=SC2034
+  PANE_CLI="$(_new_window cli)"
+  PANE_DEV="$(_new_window dev)"
+  [[ -n "$DEV_CMD" ]] && tmux send-keys -t "$PANE_DEV" "$DEV_CMD" C-m
+
+  PANE_GIT=""
+  if [[ "$GIT_WINDOW" == "true" ]]; then
+    PANE_GIT="$(_new_window git)"
+    tmux send-keys -t "$PANE_GIT" "lazygit" C-m
+  fi
+
+  tmux select-window -t "=$NAME:agent"
 }
 
 main() {
   parse_args "$@"
   resolve_config
   if [[ "$DRY_RUN" == "true" ]]; then print_plan; exit 0; fi
-  echo "tmux-workspace: session build not implemented yet" >&2; exit 1
+  command -v tmux >/dev/null 2>&1 || { echo "tmux-workspace: tmux not found" >&2; exit 1; }
+  build_session
+  echo "tmux-workspace: created session '$NAME'"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi

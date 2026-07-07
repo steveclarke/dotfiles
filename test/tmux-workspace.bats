@@ -115,3 +115,45 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" == *"name=custom-sesh"* ]]
 }
+
+tw_kill() { tmux kill-session -t "=$1" 2>/dev/null || true; }
+
+@test "build creates agent/cli/dev windows, no git by default" {
+  sesh="twtest-$$-a"
+  tw_kill "$sesh"
+  run "$TOOL" --no-switch --no-git --name "$sesh" "$WORK"
+  [ "$status" -eq 0 ]
+  run tmux list-windows -t "=$sesh" -F '#{window_name}'
+  [[ "$output" == *"agent"* ]]
+  [[ "$output" == *"cli"* ]]
+  [[ "$output" == *"dev"* ]]
+  [[ "$output" != *"git"* ]]
+  tw_kill "$sesh"
+}
+
+@test "build adds a git window when GIT_WINDOW is true" {
+  sesh="twtest-$$-g"
+  tw_kill "$sesh"
+  export TMUX_WORKSPACE_CONFIG="$WORK/global.toml"
+  printf '[session]\ngit_window = "true"\n' > "$WORK/global.toml"
+  run "$TOOL" --no-switch --name "$sesh" "$WORK"
+  [ "$status" -eq 0 ]
+  run tmux list-windows -t "=$sesh" -F '#{window_name}'
+  [[ "$output" == *"git"* ]]
+  tw_kill "$sesh"
+}
+
+@test "duplicate session name errors" {
+  sesh="twtest-$$-d"
+  tw_kill "$sesh"
+  "$TOOL" --no-switch --no-git --name "$sesh" "$WORK"
+  run "$TOOL" --no-switch --no-git --name "$sesh" "$WORK"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"already exists"* ]]
+  tw_kill "$sesh"
+}
+
+@test "invalid agent errors" {
+  run "$TOOL" --no-switch --name "twtest-$$-x" --agent gpt "$WORK"
+  [ "$status" -eq 2 ]
+}
