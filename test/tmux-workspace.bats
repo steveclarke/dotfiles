@@ -108,13 +108,31 @@ EOF
 @test "dev_cmd empty when no bin/dev and no config" {
   run "$TOOL" --dry-run "$WORK"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"dev_cmd="$'\n'* ]] || [[ "$output" == *$'dev_cmd=\n'* ]] || [[ "$output" == *"dev_cmd="* ]]
+  grep -qx 'dev_cmd=' <<<"$output"
 }
 
 @test "--name overrides the derived name" {
   run "$TOOL" --dry-run --name custom-sesh "$WORK"
   [ "$status" -eq 0 ]
   [[ "$output" == *"name=custom-sesh"* ]]
+}
+
+@test "sanitize_name reduces disallowed chars and collapses hyphens" {
+  run bash -c 'source "$1"; sanitize_name "a\"b, c:d"' _ "$TOOL"
+  [ "$status" -eq 0 ]
+  [ "$output" = "a-b-c-d" ]
+}
+
+@test "explicit --name is sanitized (no raw quotes reach the session name)" {
+  run "$TOOL" --dry-run --name 'a"b:c' "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"name=a-b-c"* ]]
+}
+
+@test "an all-punctuation name falls back to workspace" {
+  run "$TOOL" --dry-run --name '...' "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"name=workspace"* ]]
 }
 
 tw_kill() { tmux kill-session -t "=$1" 2>/dev/null || true; }
