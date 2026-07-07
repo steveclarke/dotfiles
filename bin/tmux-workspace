@@ -81,11 +81,57 @@ print_plan() {
   echo "json=$JSON"
 }
 
+# toml_get <file> <section> <key> — flat reader for key = "value" under [section].
+toml_get() {
+  local file="$1" section="$2" key="$3"
+  [[ -f "$file" ]] || return 0
+  awk -v want_sec="$section" -v want_key="$key" '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*\[/ { s=$0; gsub(/[][[:space:]]/, "", s); cur=s; next }
+    cur==want_sec {
+      line=$0; sub(/#.*/, "", line)
+      n=index(line, "="); if (n==0) next
+      k=substr(line,1,n-1); v=substr(line,n+1)
+      gsub(/[[:space:]]/, "", k)
+      if (k==want_key) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+        gsub(/^"|"$/, "", v)
+        print v; exit
+      }
+    }
+  ' "$file"
+}
+
 resolve_config() {
-  # Filled in Task 2/3. Minimal defaults so Task 1 is runnable.
+  local repo_config="" top
+  top="$(git -C "$TARGET_DIR" rev-parse --show-toplevel 2>/dev/null || true)"
+  [[ -n "$top" && -f "$top/.worktree.toml" ]] && repo_config="$top/.worktree.toml"
+
+  # cfg <key> — repo value, else global value.
+  cfg() {
+    local v
+    v="$(toml_get "$repo_config" session "$1")"
+    [[ -n "$v" ]] && { printf '%s' "$v"; return; }
+    toml_get "$GLOBAL_CONFIG" session "$1"
+  }
+
   [[ -z "$NAME" ]] && NAME="$(basename "$TARGET_DIR")"
+
+  [[ -z "$AGENT" ]] && AGENT="$(cfg default_agent)"
   [[ -z "$AGENT" ]] && AGENT="none"
-  [[ -z "$GIT_WINDOW" ]] && GIT_WINDOW="false"
+
+  [[ -z "$AGENT_MODE" ]] && AGENT_MODE="$(cfg agent_mode)"
+
+  if [[ -z "$DEV_CMD" ]]; then
+    DEV_CMD="$(cfg dev_cmd)"
+  fi
+
+  if [[ -z "$GIT_WINDOW" ]]; then
+    GIT_WINDOW="$(cfg git_window)"
+    if [[ -z "$GIT_WINDOW" ]]; then
+      command -v lazygit >/dev/null 2>&1 && GIT_WINDOW="true" || GIT_WINDOW="false"
+    fi
+  fi
 }
 
 main() {
