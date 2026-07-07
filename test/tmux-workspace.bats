@@ -88,3 +88,30 @@ EOF
   [ "$status" -eq 0 ]
   [[ "$output" == *"agent=none"* ]]
 }
+
+@test "derive_name sanitizes spaces and dots to hyphens" {
+  run bash -c 'source "$1"; derive_name "/tmp/My Feature.v2"' _ "$TOOL"
+  [ "$status" -eq 0 ]
+  [ "$output" = "My-Feature-v2" ]
+}
+
+@test "dev_cmd auto-discovers an executable bin/dev" {
+  mkdir -p "$WORK/bin"
+  printf '#!/usr/bin/env bash\n' > "$WORK/bin/dev"
+  chmod +x "$WORK/bin/dev"
+  run "$TOOL" --dry-run "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"dev_cmd=bin/dev"* ]]
+}
+
+@test "dev_cmd empty when no bin/dev and no config" {
+  run "$TOOL" --dry-run "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"dev_cmd="$'\n'* ]] || [[ "$output" == *$'dev_cmd=\n'* ]] || [[ "$output" == *"dev_cmd="* ]]
+}
+
+@test "--name overrides the derived name" {
+  run "$TOOL" --dry-run --name custom-sesh "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"name=custom-sesh"* ]]
+}
