@@ -2,12 +2,16 @@
 # readiness.sh — Manage readiness state for the /ship pipeline
 #
 # Usage:
-#   readiness.sh log <project> <branch> <skill> <status> [key=value ...]
-#   readiness.sh check <project> <branch> <skill> [--max-age=7200]
-#   readiness.sh dashboard <project> <branch> [--required=simplify,code-review,finalize]
+#   readiness.sh log <project> <branch> <skill> <status> [key=value ...]   (e.g. head=<sha>)
+#   readiness.sh check <project> <branch> <skill> [--head=<sha>] [--max-age=7200]
+#   readiness.sh dashboard <project> <branch> [--head=<sha>] [--required=simplify,code-review,finalize]
 #   readiness.sh status <project> <branch>
 #   readiness.sh dir <project>
 #   readiness.sh file <project> <branch>
+#
+# HEAD keying: when --head is passed, an entry is only valid if its logged
+# "head" field matches, and matching entries never go stale by age. Without
+# --head, the legacy time-based (max-age) behavior applies.
 
 set -euo pipefail
 
@@ -76,10 +80,19 @@ build_json_extras() {
     elif [[ "$val" =~ ^[0-9]+$ ]]; then
       extras="$extras,\"$key\":$val"
     else
-      extras="$extras,\"$key\":\"$val\""
+      # Escape backslashes and double-quotes so string values (e.g. a note=...)
+      # can't produce invalid JSON that later breaks field extraction.
+      local esc="${val//\\/\\\\}"
+      esc="${esc//\"/\\\"}"
+      extras="$extras,\"$key\":\"$esc\""
     fi
   done
   echo "$extras"
+}
+
+# Extract a string field's value from a JSONL entry, e.g. json_field "$line" head
+json_field() {
+  echo "$1" | sed -n "s/.*\"$2\":\"\([^\"]*\)\".*/\1/p"
 }
 
 # --- Commands ---
@@ -114,9 +127,11 @@ cmd_check() {
   local skill="$1"; shift
 
   local max_age="$DEFAULT_MAX_AGE"
+  local want_head=""
   for arg in "$@"; do
     case "$arg" in
       --max-age=*) max_age="${arg#--max-age=}" ;;
+      --head=*)    want_head="${arg#--head=}" ;;
     esac
   done
 
@@ -135,28 +150,39 @@ cmd_check() {
     exit 1
   fi
 
-  # Check status
+  # Status must be a pass. "skipped" means "checked, nothing to do" — a valid
+  # pass, so a skipped gate doesn't force a re-run.
   local status
-  status="$(echo "$latest" | sed -n 's/.*"status":"\([^"]*\)".*/\1/p')"
-  if [ "$status" != "clean" ]; then
+  status="$(json_field "$latest" status)"
+  if [ "$status" != "clean" ] && [ "$status" != "skipped" ]; then
     exit 1
   fi
 
-  # Check staleness
   local timestamp
-  timestamp="$(echo "$latest" | sed -n 's/.*"timestamp":"\([^"]*\)".*/\1/p')"
+  timestamp="$(json_field "$latest" timestamp)"
   local entry_epoch
   entry_epoch="$(iso_to_epoch "$timestamp")"
   local current_epoch
   current_epoch="$(now_epoch)"
   local age=$(( current_epoch - entry_epoch ))
 
-  if [ "$age" -gt "$max_age" ]; then
-    exit 1
+  if [ -n "$want_head" ]; then
+    # HEAD-keyed: valid only if the logged head matches. Matching entries never
+    # go stale by age — the diff is what matters, not the clock.
+    local entry_head
+    entry_head="$(json_field "$latest" head)"
+    if [ -z "$entry_head" ] || [ "$entry_head" != "$want_head" ]; then
+      exit 1
+    fi
+  else
+    # Legacy time-based staleness.
+    if [ "$age" -gt "$max_age" ]; then
+      exit 1
+    fi
   fi
 
   # Return relative time for display
-  echo "$(relative_time "$age")"
+  relative_time "$age"
   exit 0
 }
 
@@ -165,17 +191,19 @@ cmd_dashboard() {
   local branch="$1"; shift
 
   local required="$DEFAULT_REQUIRED"
+  local want_head=""
   for arg in "$@"; do
     case "$arg" in
       --required=*) required="${arg#--required=}" ;;
+      --head=*)     want_head="${arg#--head=}" ;;
     esac
   done
 
   local file
   file="$(readiness_file "$project" "$branch")"
 
-  # All known steps
-  local all_steps="simplify code-review adversarial-review finalize update-docs"
+  # All known steps (docs is covered inside finalize, not a separate gate)
+  local all_steps="simplify code-review adversarial-review finalize"
 
   local verdict="CLEARED"
   local width=66
@@ -205,42 +233,56 @@ cmd_dashboard() {
 
       if [ -n "$latest" ]; then
         local entry_status
-        entry_status="$(echo "$latest" | sed -n 's/.*"status":"\([^"]*\)".*/\1/p')"
+        entry_status="$(json_field "$latest" status)"
         local timestamp
-        timestamp="$(echo "$latest" | sed -n 's/.*"timestamp":"\([^"]*\)".*/\1/p')"
+        timestamp="$(json_field "$latest" timestamp)"
         local entry_epoch
         entry_epoch="$(iso_to_epoch "$timestamp")"
         local current_epoch
         current_epoch="$(now_epoch)"
         local age=$(( current_epoch - entry_epoch ))
+        time_str="$(relative_time "$age")"
 
-        if [ "$age" -gt "$DEFAULT_MAX_AGE" ]; then
+        # Staleness: HEAD-keyed when --head given (entry's head must match),
+        # else legacy time-based.
+        local is_stale="no"
+        if [ -n "$want_head" ]; then
+          local entry_head
+          entry_head="$(json_field "$latest" head)"
+          [ "$entry_head" != "$want_head" ] && is_stale="yes"
+        else
+          [ "$age" -gt "$DEFAULT_MAX_AGE" ] && is_stale="yes"
+        fi
+
+        if [ "$is_stale" = "yes" ]; then
           status="STALE"
-          time_str="$(relative_time "$age")"
         elif [ "$entry_status" = "clean" ]; then
           status="DONE"
-          time_str="$(relative_time "$age")"
+        elif [ "$entry_status" = "skipped" ]; then
+          status="SKIPPED"
         elif [ "$entry_status" = "failed" ]; then
           status="FAILED"
-          time_str="$(relative_time "$age")"
         else
           status="$entry_status"
-          time_str="$(relative_time "$age")"
         fi
       fi
     fi
 
-    # Check if this blocks the verdict
-    if [ "$is_required" = "yes" ] && [ "$status" != "DONE" ]; then
+    # A required gate clears on DONE or SKIPPED (skipped = checked, nothing
+    # affected). Anything else on a required gate blocks the verdict.
+    if [ "$is_required" = "yes" ] && [ "$status" != "DONE" ] && [ "$status" != "SKIPPED" ]; then
       verdict="NOT CLEARED"
     fi
 
-    # Format required column
-    local req_display="$is_required"
-    if [ "$step" = "adversarial-review" ] && [ "$status" = "NOT RUN" ]; then
-      req_display="no"
+    # A FAILED gate always blocks, even an optional one. If you opted into
+    # adversarial (not required) and it failed, the dashboard must not clear.
+    if [ "$status" = "FAILED" ]; then
+      verdict="NOT CLEARED"
     fi
-    if [ "$step" = "update-docs" ] && [ "$status" = "NOT RUN" ]; then
+
+    # Format required column. Adversarial is opt-in, never required.
+    local req_display="$is_required"
+    if [ "$step" = "adversarial-review" ]; then
       req_display="no"
     fi
 
@@ -251,7 +293,6 @@ cmd_dashboard() {
       code-review) step_display="Code Review" ;;
       adversarial-review) step_display="Adversarial Review" ;;
       finalize) step_display="Finalize" ;;
-      update-docs) step_display="Update Docs" ;;
       *) step_display="$step" ;;
     esac
 
@@ -259,10 +300,14 @@ cmd_dashboard() {
       "$step_display" "$status" "$time_str" "$req_display"
   done
 
-  # Tests/coverage row from finalize entry
+  # Tests/coverage row from finalize entry — only when it applies to the diff
+  # under review (matching --head), so stale numbers don't get shown as current.
   if [ -f "$file" ]; then
     local finalize_entry
     finalize_entry="$(grep '"skill":"finalize"' "$file" | tail -1)" || true
+    if [ -n "$want_head" ] && [ -n "$finalize_entry" ]; then
+      [ "$(json_field "$finalize_entry" head)" != "$want_head" ] && finalize_entry=""
+    fi
     if [ -n "$finalize_entry" ]; then
       printf '|%s|\n' "$(printf -- '-%.0s' $(seq 1 $width))"
       local tests_passed
