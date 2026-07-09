@@ -6,11 +6,26 @@ argument-hint: "[files/dirs] [--pr]"
 
 # Adversarial Review
 
-Automated critique-fix loop using fresh-eyes reviewer subagents. Each round, a
-new subagent reviews the code cold — no knowledge of why decisions were made, no
-attachment to the implementation. The main agent fixes Critical and Suggestion
-findings, then a fresh reviewer checks again. Loop stops when only Nitpicks
-remain or after 3 rounds.
+Automated critique-fix loop using **fresh-eyes** review. Each round, the code is
+reviewed cold — no knowledge of why decisions were made, no attachment to the
+implementation. Critical and Suggestion findings get fixed, then a fresh review
+checks again. Loop stops when only Nitpicks remain or after 3 rounds.
+
+## Execution — Harness-Neutral
+
+The contract is the **fresh-eyes critique-fix loop**, not any one mechanism:
+
+- **Claude Code** — spawn a *new* reviewer subagent each round (Agent tool,
+  `subagent_type: general-purpose`) so the reviewer literally has no memory of the
+  code or prior rounds. This is the strongest form of "fresh eyes."
+- **Codex / other single-agent harnesses** — run the loop yourself: each round,
+  re-read the diff cold and review it as if you'd never seen it, deliberately
+  setting aside what you know about why it was written. No subagent required; the
+  fresh-eyes discipline is what matters, not the process boundary.
+
+Everything below describes the loop in Claude's subagent terms — a single-agent
+harness maps "spawn a reviewer" to "do a cold review pass" and "fresh subagent"
+to "re-read from scratch."
 
 ## When to Use
 
@@ -31,7 +46,16 @@ Parse `$ARGUMENTS` to determine what to review:
 
 - **No args:** review uncommitted changes — run `git diff` and `git diff --cached` to get staged + unstaged changes
 - **File/dir paths:** review specific files — read them directly and present as the code to review
-- **`--pr` flag:** review the full branch diff — run `git diff main...HEAD` (try `master` if `main` doesn't exist)
+- **`--base=<ref>` / `--fork=<sha>`:** an explicit base or fork point to diff against (a caller like `/ship` passes this so the review sees exactly the diff it inventoried). If given, review `<fork-or-base>...HEAD` and skip the auto-resolution below.
+- **`--pr` flag:** review the full branch diff. **Resolve the base robustly** — don't assume `main`. Use the existing PR's base, else the repo default branch, resolved to a ref that exists locally, then the true fork point:
+  ```bash
+  BASE="$(gh pr view --json baseRefName -q .baseRefName 2>/dev/null || gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo main)"
+  if git rev-parse --verify --quiet "$BASE" >/dev/null; then BASE_REF="$BASE";
+  elif git rev-parse --verify --quiet "origin/$BASE" >/dev/null; then BASE_REF="origin/$BASE";
+  else echo "No base ref for '$BASE' — fetch it and retry"; exit 1; fi
+  FORK="$(git merge-base "$BASE_REF" HEAD)"
+  git diff "$FORK"...HEAD
+  ```
 
 If the diff is empty, tell the user there's nothing to review and stop.
 

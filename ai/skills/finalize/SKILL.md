@@ -7,10 +7,17 @@ description: "Post-implementation checklist — docs, code quality, conventions,
 
 ## How it works
 
-This skill runs a universal checklist, then checks the project's CLAUDE.md
-for any project-specific finalization requirements (look for a "Finalize
-Checklist" section or similar). The project knows what it needs — this skill
-just makes sure nothing gets skipped.
+This skill runs a universal checklist, then checks the project's agent
+instructions file (`CLAUDE.md`, or `AGENTS.md` in harnesses that use it) for any
+project-specific finalization requirements (look for a "Finalize Checklist"
+section or similar). The project knows what it needs — this skill just makes sure
+nothing gets skipped.
+
+**Harness-neutral.** The checklist is tool-agnostic: run the project's real
+lint/test/build commands with whatever shell and tooling the harness has. Steps
+that name a specific tool (e.g. the Impeccable UI pass, or the Memory step) apply
+only where that tool exists — skip them, with a note, where it doesn't. Nothing
+here requires subagents.
 
 ## Universal Checklist
 
@@ -20,7 +27,7 @@ work done, not a report.
 
 ### 1. Lint & Format
 
-Run whatever lint/format tools the project uses. Check CLAUDE.md or
+Run whatever lint/format tools the project uses. Check CLAUDE.md/AGENTS.md or
 package.json/Gemfile for the commands. Common ones:
 
 - Ruby: `standardrb`, `rubocop`
@@ -49,7 +56,7 @@ Scan changed files for common issues:
 Check that new/changed code has corresponding documentation:
 - README or docs pages updated if user-facing behavior changed
 - Inline docs (JSDoc, YARD, docstrings) on public APIs
-- Any project-specific docs (check CLAUDE.md for the list)
+- Any project-specific docs (check CLAUDE.md/AGENTS.md for the list)
 
 ### 5. UI & Design Quality
 
@@ -86,8 +93,8 @@ Report which Impeccable commands were run and what they found. Fix issues direct
 
 ### 7. Project-Specific Checks
 
-Read the project's CLAUDE.md for a "Finalize Checklist" section (or similar).
-If it exists, work through those items too. These are project-specific
+Read the project's CLAUDE.md/AGENTS.md for a "Finalize Checklist" section (or
+similar). If it exists, work through those items too. These are project-specific
 requirements that the universal checklist can't know about.
 
 ### 8. Memory
