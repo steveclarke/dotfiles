@@ -123,6 +123,22 @@ install_specific "External (doist)" "doist/todoist-cli" \
 install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
   modern-web-guidance
 
+# ─── Post-install: restore deps for skills that ship a package.json ──────────
+# `skills add` overwrites each skill directory on every run, which wipes any
+# node_modules. Reinstall deps for any skill that needs them (e.g. md-to-pdf)
+# so a re-sync never leaves a skill broken.
+if [[ "$LIST_ONLY" != "true" ]]; then
+  echo ""
+  echo "=== Installing skill dependencies (npm) ==="
+  echo ""
+  while IFS= read -r pkg; do
+    dir="$(dirname "$pkg")"
+    echo "  → $(basename "$dir")"
+    (cd "$dir" && npm install --silent --no-audit --no-fund) \
+      || echo "    ⚠ npm install failed in ${dir}"
+  done < <(find "${HOME}/.agents/skills" -mindepth 2 -maxdepth 2 -name package.json 2>/dev/null)
+fi
+
 echo ""
 echo "✓ Done. $(ls "${HOME}/.agents/skills" 2>/dev/null | wc -l | tr -d ' ') skills installed:"
 echo ""
