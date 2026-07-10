@@ -353,6 +353,9 @@ esac
 # Stop Homebrew from showing hints after every command
 export HOMEBREW_NO_ENV_HINTS=1
 
+# Don't quarantine casks — stops Gatekeeper "app is damaged" prompts after upgrades
+export HOMEBREW_CASK_OPTS="--no-quarantine"
+
 # Herd Lite - PHP development environment
 if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
     export PATH="/Users/steve/.config/herd-lite/bin:$PATH"
