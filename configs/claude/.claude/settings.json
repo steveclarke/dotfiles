@@ -85,7 +85,7 @@
     ]
   },
   "effortLevel": "high",
-  "advisorModel": "fable",
+  "advisorModel": "opus",
   "tui": "fullscreen",
   "autoDreamEnabled": true,
   "skipWorkflowUsageWarning": true,
