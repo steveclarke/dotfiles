@@ -8,6 +8,7 @@ cask "temurin@21"
 brew "steveclarke/tap/superthread"
 brew "steveclarke/tap/outport"
 brew "steveclarke/tap/scn-cli"
+brew "steveclarke/tap/ninjanizr-cli"
 brew "myunio/tap/unio"
 brew "myunio/tap/outport-app-cli"
 
