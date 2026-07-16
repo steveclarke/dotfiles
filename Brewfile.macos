@@ -1,5 +1,6 @@
 # macOS-specific packages
 brew "duti"
+brew "mole" # Mac maintenance CLI — headless clean/analyze; see weekly disk-maintenance Todoist task
 tap "bwya77/tap"
 tap "heroku/brew"
 tap "steipete/tap"
