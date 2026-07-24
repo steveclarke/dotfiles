@@ -79,6 +79,9 @@ install_all "My skills (outport-app)" \
 install_all "My skills (nj)" \
   "https://github.com/steveclarke/nj/tree/master/skills"
 
+install_all "My skills (ucmix)" \
+  "https://github.com/steveclarke/ucmix/tree/master/skills"
+
 install_all "My skills (real-world-rails)" \
   "https://github.com/steveclarke/real-world-rails/tree/main/skills"
 
