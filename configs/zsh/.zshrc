@@ -381,3 +381,8 @@ if [[ -d "$_mise_shims" ]]; then
 fi
 unset _mise_shims
 
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/steve/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
