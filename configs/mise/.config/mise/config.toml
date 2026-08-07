@@ -2,6 +2,7 @@
 bun = "latest"
 go = "latest"
 node = "lts"
+"npm:@usebruno/cli" = "3.4.2"
 pnpm = "11"
 python = "latest"
 ruby = "4"
