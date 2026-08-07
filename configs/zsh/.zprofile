@@ -77,6 +77,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # - Troubleshooting: https://mise.jdx.dev/troubleshooting.html
 # =============================================================================
 
+# User-local bin (codex and other installers drop binaries here)
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+
 # Bun global bin (used for tools like qmd that only install via bun)
 case ":$PATH:" in
   *":$HOME/.bun/bin:"*) ;;
