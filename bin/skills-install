@@ -129,6 +129,9 @@ install_specific "External (doist)" "doist/todoist-cli" \
 install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
   modern-web-guidance
 
+install_specific "External (mattpocock)" "mattpocock/skills" \
+  wait-what
+
 # ─── Post-install: restore deps for skills that ship a package.json ──────────
 # `skills add` overwrites each skill directory on every run, which wipes any
 # node_modules. Reinstall deps for any skill that needs them (e.g. md-to-pdf)
