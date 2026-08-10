@@ -77,6 +77,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # - Troubleshooting: https://mise.jdx.dev/troubleshooting.html
 # =============================================================================
 
+# User-local bin (codex and other installers drop binaries here)
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+
 # Bun global bin (used for tools like qmd that only install via bun)
 case ":$PATH:" in
   *":$HOME/.bun/bin:"*) ;;
@@ -84,17 +90,9 @@ case ":$PATH:" in
 esac
 
 if command -v mise >/dev/null 2>&1; then
-  # Guard: skip if shims are already on PATH (prevents double-prepending)
-  case ":$PATH:" in
-    *":$HOME/.local/share/mise/shims:"*)
-      # Shims already present - nothing to do
-      ;;
-    *)
-      # Use --shims mode for non-interactive shell compatibility
-      # This is essential for Claude Code, Cursor, VS Code, and other AI agents
-      eval "$(mise activate zsh --shims)"
-      ;;
-  esac
+  # Use --shims mode for non-interactive shell compatibility.
+  # Always run this: inherited agent PATHs can contain shims behind /usr/bin.
+  eval "$(mise activate zsh --shims)"
 fi
 
 # =============================================================================
@@ -122,3 +120,12 @@ export PATH
 if [[ -d "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home" ]]; then
     export JAVA_HOME="/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
 fi
+
+# Keep mise shims ahead of system tools even if an inherited PATH already had
+# them later in the list. Agent-spawned binstubs use /usr/bin/env ruby/node/etc.
+_mise_shims="$HOME/.local/share/mise/shims"
+if [[ -d "$_mise_shims" ]]; then
+    path=("$_mise_shims" ${path:#"$_mise_shims"})
+    export PATH
+fi
+unset _mise_shims

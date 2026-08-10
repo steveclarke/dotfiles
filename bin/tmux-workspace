@@ -1,0 +1,235 @@
+#!/usr/bin/env bash
+#
+# tmux-workspace — stand up a standard 4-window tmux session for a directory.
+#
+#   tmux-workspace <dir> [options]
+#
+# Windows: agent (shell, or an agent if --agent), cli, dev (runs the dev
+# command), git (lazygit). Convention-based, with an optional flat-TOML config
+# at ~/.config/worktree/config.toml (or a repo-local .worktree.toml) under a
+# [session] table: default_agent, agent_mode, dev_cmd, git_window.
+#
+# Precedence: flags > repo config > global config > convention defaults.
+#
+# Options:
+#   --name NAME            session name (default: basename of <dir>)
+#   --agent claude|codex|none  launch an agent in window 1 (default: none)
+#   --mode STR             raw extra args appended to the agent launch
+#   --dev CMD              dev-stack command (default: bin/dev if executable)
+#   --no-git               skip the lazygit window
+#   --no-switch            create detached; don't switch/attach (agents use this)
+#   --json                 print session + pane ids as JSON (agents use this)
+#   --dry-run              print the resolved plan and exit; touch nothing
+#   -h, --help
+
+set -euo pipefail
+
+# shellcheck disable=SC2034
+GLOBAL_CONFIG="${TMUX_WORKSPACE_CONFIG:-$HOME/.config/worktree/config.toml}"
+# Each window gets mise shims prepended to PATH so the right toolchain is active
+# in the pane. NOTE: this covers the pane shell and non-login children (agent,
+# cli). It does NOT guarantee shims-first for a dev stack that spawns login
+# shells (bash -lc) as children — path_helper reorders PATH there. That case
+# relies on the project's own toolchain setup and the user's ~/.bash_profile
+# shims fix (see dotfiles docs/mise-dev-stacks.md), which an external launcher
+# cannot inject. Do not wrap $DEV_CMD in `mise` here — this tool is
+# project-agnostic and must work for non-mise projects.
+# shellcheck disable=SC2034,SC2016
+SHIMS_EXPORT='export PATH="$HOME/.local/share/mise/shims:$PATH"'
+
+TARGET_DIR=""
+NAME=""
+AGENT=""          # "" = unset -> config default -> none
+AGENT_MODE=""
+DEV_CMD=""        # "" = unset -> config -> discover
+GIT_WINDOW=""     # "" = auto (config or lazygit); --no-git sets "false"
+SWITCH="true"
+JSON="false"
+DRY_RUN="false"
+
+# shellcheck disable=SC2034
+PANE_AGENT="" PANE_CLI="" PANE_DEV="" PANE_GIT=""
+
+usage() { sed -n '2,25s/^# \{0,1\}//p' "$0"; }
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --name)      NAME="${2:?--name requires a value}"; shift 2 ;;
+      --name=*)    NAME="${1#*=}"; shift ;;
+      --agent)     AGENT="${2:?--agent requires a value}"; shift 2 ;;
+      --agent=*)   AGENT="${1#*=}"; shift ;;
+      --mode)      AGENT_MODE="${2:?--mode requires a value}"; shift 2 ;;
+      --mode=*)    AGENT_MODE="${1#*=}"; shift ;;
+      --dev)       DEV_CMD="${2:?--dev requires a value}"; shift 2 ;;
+      --dev=*)     DEV_CMD="${1#*=}"; shift ;;
+      --no-git)    GIT_WINDOW="false"; shift ;;
+      --no-switch) SWITCH="false"; shift ;;
+      --json)      JSON="true"; shift ;;
+      --dry-run)   DRY_RUN="true"; shift ;;
+      -h|--help)   usage; exit 0 ;;
+      -*)  echo "tmux-workspace: unknown flag: $1" >&2; exit 2 ;;
+      *)   [[ -n "$TARGET_DIR" ]] && { echo "tmux-workspace: too many positional args" >&2; exit 2; }
+           TARGET_DIR="$1"; shift ;;
+    esac
+  done
+  [[ -n "$TARGET_DIR" ]] || { echo "tmux-workspace: target directory required" >&2; exit 2; }
+  TARGET_DIR="$(cd "$TARGET_DIR" 2>/dev/null && pwd)" \
+    || { echo "tmux-workspace: no such directory" >&2; exit 2; }
+}
+
+print_plan() {
+  echo "target=$TARGET_DIR"
+  echo "name=$NAME"
+  echo "agent=$AGENT"
+  echo "mode=$AGENT_MODE"
+  echo "dev_cmd=$DEV_CMD"
+  echo "git_window=$GIT_WINDOW"
+  echo "switch=$SWITCH"
+  echo "json=$JSON"
+}
+
+# toml_get <file> <section> <key> — flat reader for key = "value" under [section].
+toml_get() {
+  local file="$1" section="$2" key="$3"
+  [[ -f "$file" ]] || return 0
+  awk -v want_sec="$section" -v want_key="$key" '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*\[/ { s=$0; gsub(/[][[:space:]]/, "", s); cur=s; next }
+    cur==want_sec {
+      line=$0; sub(/#.*/, "", line)
+      n=index(line, "="); if (n==0) next
+      k=substr(line,1,n-1); v=substr(line,n+1)
+      gsub(/[[:space:]]/, "", k)
+      if (k==want_key) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+        gsub(/^"|"$/, "", v)
+        print v; exit
+      }
+    }
+  ' "$file"
+}
+
+sanitize_name() {
+  printf '%s' "$1" | sed 's/[^A-Za-z0-9_-]/-/g; s/-\{2,\}/-/g; s/^-//; s/-$//'
+}
+
+derive_name() {
+  sanitize_name "$(basename "$1")"
+}
+
+discover_dev_cmd() {
+  [[ -x "$1/bin/dev" ]] && { echo "bin/dev"; return; }
+  echo ""
+}
+
+resolve_config() {
+  local repo_config="" top
+  top="$(git -C "$TARGET_DIR" rev-parse --show-toplevel 2>/dev/null || true)"
+  [[ -n "$top" && -f "$top/.worktree.toml" ]] && repo_config="$top/.worktree.toml"
+
+  # cfg <key> — repo value, else global value.
+  cfg() {
+    local v
+    v="$(toml_get "$repo_config" session "$1")"
+    [[ -n "$v" ]] && { printf '%s' "$v"; return; }
+    toml_get "$GLOBAL_CONFIG" session "$1"
+  }
+
+  if [[ -z "$NAME" ]]; then
+    NAME="$(derive_name "$TARGET_DIR")"
+  else
+    NAME="$(sanitize_name "$NAME")"
+  fi
+  [[ -z "$NAME" ]] && NAME="workspace"
+
+  [[ -z "$AGENT" ]] && AGENT="$(cfg default_agent)"
+  [[ -z "$AGENT" ]] && AGENT="none"
+
+  [[ -z "$AGENT_MODE" ]] && AGENT_MODE="$(cfg agent_mode)"
+
+  if [[ -z "$DEV_CMD" ]]; then
+    DEV_CMD="$(cfg dev_cmd)"
+    [[ -z "$DEV_CMD" ]] && DEV_CMD="$(discover_dev_cmd "$TARGET_DIR")"
+  fi
+
+  if [[ -z "$GIT_WINDOW" ]]; then
+    GIT_WINDOW="$(cfg git_window)"
+    if [[ -z "$GIT_WINDOW" ]]; then
+      command -v lazygit >/dev/null 2>&1 && GIT_WINDOW="true" || GIT_WINDOW="false"
+    fi
+  fi
+
+  case "$AGENT" in
+    claude|codex|none) ;;
+    *) echo "tmux-workspace: invalid --agent: $AGENT (claude|codex|none)" >&2; exit 2 ;;
+  esac
+}
+
+# Create a window, cd it into the target, put mise shims on PATH. Echoes pane id.
+_new_window() {
+  local win="$1"
+  tmux new-window -d -t "=$NAME" -n "$win" -c "$TARGET_DIR"
+  local pane; pane="$(tmux display-message -p -t "=$NAME:$win" '#{pane_id}')"
+  tmux send-keys -t "$pane" "$SHIMS_EXPORT" C-m
+  echo "$pane"
+}
+
+build_session() {
+  if tmux has-session -t "=$NAME" 2>/dev/null; then
+    echo "tmux-workspace: session '$NAME' already exists" >&2; exit 1
+  fi
+
+  tmux new-session -d -s "$NAME" -n agent -c "$TARGET_DIR"
+  PANE_AGENT="$(tmux display-message -p -t "=$NAME:agent" '#{pane_id}')"
+  tmux send-keys -t "$PANE_AGENT" "$SHIMS_EXPORT" C-m
+  if [[ "$AGENT" != "none" ]]; then
+    local launch="$AGENT"
+    [[ -n "$AGENT_MODE" ]] && launch="$AGENT $AGENT_MODE"
+    tmux send-keys -t "$PANE_AGENT" "$launch" C-m
+  fi
+
+  # shellcheck disable=SC2034
+  PANE_CLI="$(_new_window cli)"
+  PANE_DEV="$(_new_window dev)"
+  [[ -n "$DEV_CMD" ]] && tmux send-keys -t "$PANE_DEV" "$DEV_CMD" C-m
+
+  PANE_GIT=""
+  if [[ "$GIT_WINDOW" == "true" ]]; then
+    PANE_GIT="$(_new_window git)"
+    tmux send-keys -t "$PANE_GIT" "lazygit" C-m
+  fi
+
+  tmux select-window -t "=$NAME:agent"
+}
+
+emit_json() {
+  printf '{"session":"%s","windows":{"agent":"%s","cli":"%s","dev":"%s"' \
+    "$NAME" "$PANE_AGENT" "$PANE_CLI" "$PANE_DEV"
+  [[ -n "$PANE_GIT" ]] && printf ',"git":"%s"' "$PANE_GIT"
+  printf '}}\n'
+}
+
+finish() {
+  [[ "$JSON" == "true" ]] && emit_json
+  if [[ "$SWITCH" == "true" ]]; then
+    if [[ -n "${TMUX:-}" ]]; then
+      tmux switch-client -t "=$NAME"
+    else
+      tmux attach -t "=$NAME"
+    fi
+  elif [[ "$JSON" != "true" ]]; then
+    echo "tmux-workspace: created session '$NAME' (attach: tmux attach -t $NAME)"
+  fi
+}
+
+main() {
+  parse_args "$@"
+  resolve_config
+  if [[ "$DRY_RUN" == "true" ]]; then print_plan; exit 0; fi
+  command -v tmux >/dev/null 2>&1 || { echo "tmux-workspace: tmux not found" >&2; exit 1; }
+  build_session
+  finish
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi

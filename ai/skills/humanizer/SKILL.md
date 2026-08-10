@@ -1,7 +1,7 @@
 ---
 name: humanizer
-version: 2.1.1
-description: "Remove signs of AI-generated writing from text. Use when editing or reviewing text to sound natural and human-written. Based on Wikipedia's 'Signs of AI writing' — catches em dash overuse, rule of three, AI vocabulary, vague attributions, inflated symbolism, negative parallelisms."
+version: 2.2.0
+description: "Remove signs of AI-generated writing from text. Use when editing or reviewing text to sound natural and human-written. Based on Wikipedia's 'Signs of AI writing' — catches em dash overuse, rule of three, AI vocabulary, vague attributions, inflated symbolism, negative parallelisms, passive voice. For agent-facing text use simplified-technical-english-asd-ste100 instead."
 allowed-tools:
   - Read
   - Write
@@ -14,6 +14,26 @@ allowed-tools:
 # Humanizer: Remove AI Writing Patterns
 
 Identify and remove signs of AI-generated text to make writing sound more natural and human. Based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
+
+## The One Principle Behind All 25 Patterns
+
+Orwell, 1946, "Politics and the English Language":
+
+> Never use a metaphor, simile, or other figure of speech which you are used to seeing in print.
+
+That single rule predicts nearly every pattern in this skill. A language model picks the most statistically likely next token — which is, by definition, the phrase you are most used to seeing in print. Em dash overuse, the rule of three, "delve," negative parallelisms, "stands as a testament to": these are not separate diseases. They are the same disease, and Orwell named it eighty years before the models existed.
+
+Use this when a passage feels off but matches none of the numbered patterns. Ask: **have I seen this exact phrasing a thousand times?** If yes, rewrite it, even though it isn't on the list. The list is symptoms; this is the cause.
+
+Orwell's remaining rules are already covered below — short words over long (#7), cut what you can (#22), no jargon where plain English works (#7), and his own escape hatch: *"Break any of these rules sooner than say anything outright barbarous."* Do not mangle a sentence to satisfy a rule.
+
+## When NOT to Use This Skill
+
+This skill adds voice and personality. That is wrong for text whose reader is a machine.
+
+For agent-facing English — tool descriptions, error messages, system prompts, inter-agent instructions, skill files — use the **`simplified-technical-english-asd-ste100`** skill instead. It applies ASD-STE100: one meaning per word, active voice, simple tenses, ≤20-word sentences. Deliberately flat, deliberately voiceless. Exactly what you do not want here, and exactly what you do want there.
+
+Never run both on the same text. They pull in opposite directions.
 
 ## Your Task
 
@@ -383,6 +403,20 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 
 ---
 
+### 25. Passive Voice Where Active Works
+
+**Problem:** The actor disappears. Nobody is responsible for anything, and sentences get longer to say less. Orwell's rule 4: never use the passive where you can use the active.
+
+**Before:**
+> Mistakes were made during the deployment. It has been determined that the configuration was not validated before the changes were applied.
+
+**After:**
+> We broke the deployment. Nobody validated the config before applying the changes.
+
+Passive is fine when the actor is genuinely unknown, irrelevant, or deliberately withheld ("the server was compromised" — you don't know by whom yet). It is not fine as a default, and it is not fine as a way to avoid naming who did something.
+
+---
+
 ## Process
 
 1. Read the input text carefully
@@ -429,3 +463,7 @@ Provide:
 This skill is based on [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup. The patterns documented there come from observations of thousands of instances of AI-generated text on Wikipedia.
 
 Key insight from Wikipedia: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+
+That is George Orwell's first rule restated in statistics. See [Orwell's 6 Rules](https://sites.duke.edu/scientificwriting/orwells-6-rules/) (Duke Graduate School) for the 1946 original.
+
+For the opposite job — flattening English so a machine cannot misread it — see the `simplified-technical-english-asd-ste100` skill and [ASD-STE100](https://www.asd-ste100.org/). For a reader-side test of whether a document works at all, see [ISO 24495-1:2023 plain language](https://www.iplfederation.org/iso-standard/): readers get what they need, can find it, understand it, and use it.

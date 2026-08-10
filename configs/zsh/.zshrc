@@ -20,20 +20,9 @@
 # - Anything that makes the shell more pleasant to use interactively
 # =============================================================================
 
-# =============================================================================
-# TMUX AUTO-START (Ghostty only)
-# =============================================================================
-# Start tmux automatically when opening Ghostty, but only if:
-# - We're in Ghostty (TERM_PROGRAM check)
-# - We're not already inside tmux (TMUX check)
-# - tmux is installed
-# This runs early to avoid loading plugins twice (they load inside tmux instead)
-# Each Ghostty window gets its own independent tmux session.
-# To revert to shared session: change to `exec tmux new-session -A -s main`
-# DISABLED: Cross-machine tmux compatibility issues between Mac Studio and MacBook Pro
-# if [[ -z "$TMUX" && "$TERM_PROGRAM" == "ghostty" ]] && command -v tmux >/dev/null 2>&1; then
-#     exec tmux new-session
-# fi
+# tmux auto-start now lives in the terminal config (ghostty local/macos.conf:
+# `command = tmux new-session -A -s main`), not here — keeping it out of .zshrc
+# means a tmux failure can't break shell startup across SSH/scripts/editors.
 
 # =============================================================================
 # ZINIT PLUGIN MANAGER
@@ -199,6 +188,12 @@ alias kill-server-pid="kill -QUIT \$(cat tmp/pids/server.pid)"
 alias lg=lazygit
 alias ncdu="ncdu --color dark"
 
+# Claude Code: launch a one-off session on a specific model without touching
+# the global default (/model mid-session overwrites ~/.claude/settings.json)
+alias ccfable="claude --model fable"
+alias ccsonnet="claude --model sonnet"
+alias ccopus="claude --model opus"
+
 # Commonly cd'ed directories (fish had --set-cursor, zsh uses simple aliases)
 alias src="cd ~/src/"
 alias sand="cd ~/src/sandbox/"
@@ -345,15 +340,21 @@ if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]] && [[ -o interactiv
 fi
 
 # pnpm
+# The pnpm binary itself is managed by mise (see ~/.config/mise/config.toml).
+# PNPM_HOME is only the global-install bin dir; append it so it never shadows
+# mise's pnpm shim (which must stay first in PATH).
 export PNPM_HOME="/Users/steve/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *) export PATH="$PATH:$PNPM_HOME" ;;
 esac
 # pnpm end
 
 # Stop Homebrew from showing hints after every command
 export HOMEBREW_NO_ENV_HINTS=1
+
+# Don't quarantine casks — stops Gatekeeper "app is damaged" prompts after upgrades
+export HOMEBREW_CASK_OPTS="--no-quarantine"
 
 # Herd Lite - PHP development environment
 if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then
@@ -371,4 +372,17 @@ export PATH=/Users/steve/.opencode/bin:$PATH
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/steve/.lmstudio/bin"
 # End of LM Studio CLI section
+# Keep mise shims first after all interactive PATH mutations above. This keeps
+# agent and IDE subprocesses from falling back to macOS system Ruby via env(1).
+_mise_shims="$HOME/.local/share/mise/shims"
+if [[ -d "$_mise_shims" ]]; then
+    path=("$_mise_shims" ${path:#"$_mise_shims"})
+    export PATH
+fi
+unset _mise_shims
 
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/steve/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

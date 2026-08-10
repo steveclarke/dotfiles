@@ -85,7 +85,10 @@
     ]
   },
   "effortLevel": "high",
+  "advisorModel": "opus",
+  "tui": "fullscreen",
   "autoDreamEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
