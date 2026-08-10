@@ -96,7 +96,7 @@ stow_package "Bin scripts" "bin"
 
 # Bash — new XDG-style layout under ~/.config/bash/
 ensure_dir "${HOME}/.config/bash"
-cleanup_paths "${HOME}/.bash_aliases"
+cleanup_paths "${HOME}/.bash_aliases" "${HOME}/.bash_profile"
 stow_package "Bash" "bash"
 
 # On Omarchy, hook our bash config into ~/.bashrc (which is safe from updates)
