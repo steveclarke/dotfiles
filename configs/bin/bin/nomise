@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Run a command with mise stripped out of PATH.
+#
+# mise activation puts its installs/ and shims/ directories ahead of /usr/bin,
+# which is what you want interactively and wrong for anything that builds
+# packages. makepkg picks up mise's Python instead of the system one, then fails
+# on missing modules that only exist in the system site-packages:
+#
+#   /home/steve/.local/share/mise/installs/python/3.11.15/bin/python:
+#     No module named build
+#
+# Use it for AUR builds and system updates:
+#
+#   nomise omarchy update
+#   nomise yay -S --needed some-aur-package
+#
+# Everything else keeps mise. This only changes PATH for the child process.
+
+if [[ $# -eq 0 ]]; then
+  echo "usage: nomise <command> [args...]" >&2
+  exit 64
+fi
+
+clean_path="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '/mise/' | paste -sd:)"
+
+if [[ -z "$clean_path" ]]; then
+  echo "nomise: stripping mise left an empty PATH, refusing to run" >&2
+  exit 1
+fi
+
+exec env PATH="$clean_path" "$@"
