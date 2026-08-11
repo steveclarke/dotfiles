@@ -20,7 +20,8 @@
 
 set -euo pipefail
 
-CONF=/etc/fancontrol
+# Overridable so the rewrite logic can be tested against a copy.
+CONF=${FANCONTROL_CONF:-/etc/fancontrol}
 [[ -f $CONF ]] || exit 0
 
 chip=$(awk -F= '/^DEVNAME=/{print $3; exit}' "$CONF")
