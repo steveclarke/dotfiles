@@ -89,6 +89,10 @@ install_all "My skills (real-world-rails)" \
 install_all "External (impeccable)" \
   "pbakaus/impeccable"
 
+# ─── External: danyuchn/asd-ste100-skill — Simplified Technical English ──────
+install_all "External (asd-ste100)" \
+  "danyuchn/asd-ste100-skill"
+
 # ─── External: specific skills only ─────────────────────────────────────────
 
 install_specific "External (antfu)" "antfu/skills" \

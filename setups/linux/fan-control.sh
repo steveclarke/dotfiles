@@ -77,6 +77,21 @@ for i in 3 4; do
   echo 1 | sudo tee "$hwmon_dir/pwm${i}_enable" >/dev/null
 done
 
+# --- Self-healing drop-in --------------------------------------------------
+# The config above bakes in today's hwmon index, which shifts whenever the
+# kernel changes device enumeration order (a kernel upgrade is enough). Wire an
+# ExecStartPre that re-resolves the index by chip name and re-seeds pwm_enable,
+# so the service fixes itself at boot instead of needing this script re-run.
+sudo install -m 755 "${DOTFILES_DIR}/setups/linux/fancontrol-prep.sh" \
+  /usr/local/bin/fancontrol-prep
+sudo mkdir -p /etc/systemd/system/fancontrol.service.d
+sudo tee /etc/systemd/system/fancontrol.service.d/resolve-hwmon.conf >/dev/null <<'EOF'
+# Managed by dotfiles/setups/linux/fan-control.sh
+[Service]
+ExecStartPre=/usr/local/bin/fancontrol-prep
+EOF
+sudo systemctl daemon-reload
+
 # --- Service ---------------------------------------------------------------
 sudo systemctl enable --now fancontrol.service
 
