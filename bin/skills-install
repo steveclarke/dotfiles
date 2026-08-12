@@ -67,9 +67,6 @@ install_all "My skills (dotfiles)" \
   "https://github.com/steveclarke/dotfiles/tree/master/ai/skills"
 
 # ─── My skills from own repos — install all ──────────────────────────────────
-install_all "My skills (kiso)" \
-  "https://github.com/steveclarke/kiso/tree/master/skills"
-
 install_all "My skills (outport)" \
   "https://github.com/steveclarke/outport/tree/master/skills"
 
@@ -102,14 +99,8 @@ install_specific "External (antfu)" "antfu/skills" \
 install_specific "External (nuxt)" "nuxt/ui" \
   nuxt-ui
 
-install_specific "External (shadcn-improve)" "shadcn/improve" \
-  improve
-
 install_specific "External (vueuse)" "vueuse/skills" \
   vueuse-functions
-
-install_specific "External (obie)" "obie/skills" \
-  better-stimulus
 
 install_specific "External (maquina-app)" "maquina-app/rails-upgrade-skill" \
   rails-upgrade-assistant
@@ -119,9 +110,6 @@ install_specific "External (intellectronica)" "intellectronica/agent-skills" \
 
 install_specific "External (doist)" "doist/todoist-cli" \
   todoist-cli
-
-install_specific "External (GoogleChrome)" "GoogleChrome/modern-web-guidance" \
-  modern-web-guidance
 
 install_specific "External (mattpocock)" "mattpocock/skills" \
   wait-what
