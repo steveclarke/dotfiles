@@ -1,6 +1,6 @@
 {
   "//": "DRAFT Omarchy 4 (4.0.0.alpha) shell.json ported from Steve's Waybar config.",
-  "//draft": "Untested — written against the omarchy-shell branch API as of 2026-05-25. See MIGRATION.md for the full mapping, blockers, and TODO. Lands at ~/.config/omarchy/shell.json once Omarchy 4 is installed.",
+  "//draft": "Untested — re-verified 2026-08-12 against origin/quattro. See MIGRATION.md for mapping, blockers, and TODO. Lands at ~/.config/omarchy/shell.json once Omarchy 4 is installed.",
   "version": 1,
   "idle": {
     "screensaver": 150,
@@ -17,8 +17,8 @@
       ],
       "center": [
         { "id": "omarchy.clock", "format": "dddd HH:mm", "formatAlt": "dd MMMM 'W'ww yyyy" },
-        { "id": "sun", "type": "command", "exec": "~/.config/waybar/scripts/sun.py", "interval": 300, "tooltip": "Sunrise / sunset" },
-        { "id": "ai-usage", "type": "command", "exec": "~/.config/waybar/scripts/ai-usage.sh", "interval": 60, "tooltip": "AI usage", "onClick": "~/.config/waybar/scripts/ai-usage-refresh.sh" },
+        { "id": "sun", "type": "command", "exec": "~/.config/omarchy/bar/scripts/sun.py", "interval": 300, "tooltip": "Sunrise / sunset" },
+        { "id": "omarchy.agents" },
         { "id": "omarchy.system-update" },
         { "id": "omarchy.media" },
         { "id": "omarchy.indicators", "items": ["Dictation", "ScreenRecording", "StayAwake", "Dnd"], "alwaysShow": false }
