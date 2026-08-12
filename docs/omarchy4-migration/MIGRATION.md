@@ -166,6 +166,14 @@ are blue-light filtering, unrelated. Confirmed by grepping the whole branch for
    Validate with `omarchy-plugin-validate` before publishing. Remember the
    symlink restriction: install by copy, not stow.
 
+**Built 2026-08-12: `~/src/omarchy-sun`** (local git, not yet on GitHub).
+`manifest.json` + `Widget.qml` + `bin/sun.py` + README + MIT license. Passes
+`omarchy-plugin-validate` (exit 0). `Widget.qml` is **untested** — Quickshell
+isn't installed yet, so the QML has never run. It sticks to the documented
+third-party surface (a plain `Item` receiving `bar` / `moduleName` / `settings`)
+instead of importing `qs.Ui` / `qs.Commons`, so it shouldn't break on shell
+internals. First real test: enable it and watch for a blank widget.
+
 **Where to publish:** [omarchyplugins.com](https://omarchyplugins.com/) —
 community-curated, **not** official or 37signals-affiliated. Submission wants one
 public GitHub repo per plugin with `manifest.json`, README, and license at the
