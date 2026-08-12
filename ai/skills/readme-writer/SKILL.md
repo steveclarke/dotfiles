@@ -1,49 +1,50 @@
 ---
 name: readme-writer
-description: "Write and revise READMEs and technical docs, scoring readability with Flesch-Kincaid. Triggers on 'write readme', 'improve readme', 'readme review', 'documentation writing'."
 license: MIT
+description: "Measure and improve the reading level of any prose — docs, READMEs, emails, proposals, specs, plans. Scores Flesch-Kincaid grade level and top-1000 vocabulary coverage with real scripts instead of estimates. Triggers on 'readability', 'reading level', 'grade level', 'Flesch-Kincaid', 'plain language', 'make this easier to read', 'simplify this writing', 'too dense', 'ESL-friendly', and on 'write readme', 'improve readme', 'readme review', 'documentation writing'."
 ---
 
-# README Writer
+# Readability and README Writing
 
-## README Structure
+Two jobs. The common one: **measure and improve reading level in any prose** —
+a doc, an email, a proposal, a spec, a plan. The narrower one: **structure a
+README**.
 
-A good README flows through these sections:
+## Always Measure — Never Estimate
 
-1. **What and why** — What the package does and why it matters (the "what's in it for me" for the reader)
-2. **Install and use** — How to get started quickly
-3. **Configuration** — Common options and methods
-4. **Contributing** — How to contribute, or a pointer to CONTRIBUTING.md. Notes on the build environment and portability
-5. **Project layout** — Brief explanation of unusual top-level directories or files, hints for navigating the source
-
-## Writing for a Technical Audience
-
-### Reading Level
-
-Target a **Flesch-Kincaid grade level of 11 or below**. Technical terms will naturally inflate the score — that's fine. The goal is to keep the *surrounding prose* clear and direct so the technical content stays accessible.
-
-After writing or revising, measure with `scripts/flesch_kincaid.rb`:
+Syllable counts cannot be eyeballed accurately across a document. Reporting a
+Flesch-Kincaid score without running the script is guessing. Run it.
 
 ```bash
-cat README.md | ruby scripts/flesch_kincaid.rb
+cat FILE | ruby scripts/flesch_kincaid.rb
 ```
 
-Revise until the score is at or below grade 11. Focus revision effort on:
+Works on any text, not just markdown — pipe in an email draft, a section of a
+doc, a paragraph pasted into a heredoc.
+
+**Target: grade level 11 or below.** Technical terms inflate the score, and
+that's fine — the goal is to keep the *surrounding prose* clear so the technical
+content stays accessible.
+
+Revise, then re-measure. Focus revision on:
+
 - Shortening sentences (not dumbing down terminology)
 - Replacing complex connectors with simple ones
 - Breaking multi-clause sentences into two
 
-### ESL-Friendly Writing
+Report the before and after scores.
 
-Many readers of technical documentation are not native English speakers.
+## Vocabulary Coverage
 
-Profile vocabulary coverage with `scripts/vocabulary_profiler.rb`:
+Many readers of technical writing are not native English speakers.
 
 ```bash
-cat README.md | ruby scripts/vocabulary_profiler.rb
+cat FILE | ruby scripts/vocabulary_profiler.rb
 ```
 
-Aim to increase the percentage of words in the top 1000 most common English words. Technical terms will lower this number — that's expected. Keep the non-technical words simple.
+Aim to raise the percentage of words in the top 1000 most common English words.
+Technical terms lower this number — expected. Keep the non-technical words
+simple.
 
 **Do:**
 - Use active voice
@@ -63,15 +64,22 @@ Aim to increase the percentage of words in the top 1000 most common English word
 ## Flow and Transitions
 
 - Start with concepts, then details. Give readers the "why" before the "how"
-- Add transitions between major sections so the document reads as a narrative, not a list of disconnected blocks
-- Use phrases like "Now that you have X set up, here's how to configure Y"
+- Add transitions between major sections so the piece reads as a narrative, not a list of disconnected blocks
 - Create logical progression from high-level to detailed
+
+## README Structure
+
+When the document is specifically a README, it flows through these sections:
+
+1. **What and why** — what the package does and why it matters (the "what's in it for me")
+2. **Install and use** — how to get started quickly
+3. **Configuration** — common options and methods
+4. **Contributing** — how to contribute, or a pointer to CONTRIBUTING.md. Notes on the build environment and portability
+5. **Project layout** — unusual top-level directories or files, hints for navigating the source
 
 ## Formatting
 
-### GitHub-Flavored Markdown
-
-Use callout blocks to highlight important information:
+Use GitHub-flavored callout blocks to highlight important information:
 
 > [!CAUTION]
 > [!IMPORTANT]
@@ -79,18 +87,15 @@ Use callout blocks to highlight important information:
 > [!TIP]
 > [!WARNING]
 
-### Disambiguation
-
 - Use **bold** for key concepts on first introduction
 - Use `code` for commands, filenames, config keys, and values
 - Use concrete, descriptive names for examples ("Invoice Approval" not "Example 1")
 
 ## Quality Checklist
 
-Before finalizing, verify:
-
+- [ ] Flesch-Kincaid grade level **measured with the script**, at or below 11
+- [ ] Vocabulary coverage measured; non-technical words kept simple
 - [ ] Each section flows naturally into the next
-- [ ] Flesch-Kincaid grade level is 11 or below
 - [ ] Key concepts are bolded on first use
 - [ ] Examples use real scenario names, not generic placeholders
 - [ ] No corporate buzzwords (comprehensive, robust, seamless, leverage, utilize)
