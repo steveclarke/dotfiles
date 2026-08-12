@@ -25,6 +25,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -84,8 +85,8 @@
       "Working"
     ]
   },
-  "effortLevel": "high",
-  "advisorModel": "opus",
+  "effortLevel": "medium",
+  "advisorModel": "fable",
   "tui": "fullscreen",
   "autoDreamEnabled": true,
   "skipWorkflowUsageWarning": true,

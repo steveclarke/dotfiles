@@ -9,6 +9,7 @@ ruby = "4"
 
 [settings]
 node.default_packages_file = "~/.default-npm-packages"
+idiomatic_version_file_enable_tools = ["ruby"]
 
 [env]
 # Pin baseruby for ruby-build so ./configure doesn't probe $PATH and

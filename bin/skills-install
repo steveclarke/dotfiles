@@ -85,16 +85,9 @@ install_all "My skills (ucmix)" \
 install_all "My skills (real-world-rails)" \
   "https://github.com/steveclarke/real-world-rails/tree/main/skills"
 
-install_all "My skills (superthread)" \
-  "https://github.com/steveclarke/superthread/tree/master/skills"
-
 # ─── External: pbakaus/impeccable — install all ──────────────────────────────
 install_all "External (impeccable)" \
   "pbakaus/impeccable"
-
-# ─── External: android/skills — Google's Android agent skills ───────────────
-install_all "External (android)" \
-  "android/skills"
 
 # ─── External: specific skills only ─────────────────────────────────────────
 
@@ -104,9 +97,6 @@ install_specific "External (antfu)" "antfu/skills" \
 
 install_specific "External (nuxt)" "nuxt/ui" \
   nuxt-ui
-
-install_specific "External (shadcn)" "shadcn/ui" \
-  shadcn
 
 install_specific "External (shadcn-improve)" "shadcn/improve" \
   improve
