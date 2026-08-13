@@ -1,15 +1,32 @@
+// Bars are keyed by monitor make/model/serial, not DP port, for the same reason
+// monitors.conf is: ports get renamed by GPU swaps and re-cabling, and a bar
+// pinned to a port that no longer exists silently vanishes. Waybar accepts the
+// same "make model serial" string Hyprland reports as a monitor description
+// (see waybar(5) -> output, which follows sway-output(5)).
 [
+  // Main screen: plain bar, no media controls.
+  //   3-monitor desk: the centre S2725QC
+  //   2-monitor setup: the right-hand S2721QS
   {
     "include": ["~/.config/waybar/shared.jsonc"],
-    "output": "DP-4",
+    "output": [
+      "Dell Inc. DELL S2725QC 154G464",
+      "Dell Inc. DELL S2721QS 3QL0M43"
+    ],
     "modules-left": [
       "custom/omarchy",
       "hyprland/workspaces"
     ]
   },
+  // Every other screen gets the media bar. Exclusions first, then "*" to accept
+  // whatever is left, so a newly attached monitor gets a bar without an edit.
   {
     "include": ["~/.config/waybar/shared.jsonc"],
-    "output": ["DP-1", "DP-2"],
+    "output": [
+      "!Dell Inc. DELL S2725QC 154G464",
+      "!Dell Inc. DELL S2721QS 3QL0M43",
+      "*"
+    ],
     "modules-left": [
       "custom/omarchy",
       "hyprland/workspaces",

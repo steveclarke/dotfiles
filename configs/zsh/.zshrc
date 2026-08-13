@@ -67,6 +67,13 @@ export LESS="-rF"
 # Enable Ruby YJIT (Just-In-Time compiler) for better performance
 export RUBY_YJIT_ENABLE=1
 
+# hyprmoncfg writes its target with temp-file + rename, so keep it off the
+# stowed ~/.config/hypr/monitors.conf symlink. Hyprland's own `env =` covers
+# anything Hyprland launches; this covers shells that predate a reload, such as
+# a long-lived tmux server or an SSH session.
+[[ -d $HOME/.config/hypr ]] &&
+  export HYPRMONCFG_MONITORS_CONF="$HOME/.config/hypr/monitors-generated.conf"
+
 # Dotfiles directory for aliases
 export DOTFILES_DIR="$HOME/.local/share/dotfiles"
 

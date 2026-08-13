@@ -29,3 +29,10 @@ export PATH
 
 # JDK — Arch sets /usr/lib/jvm/default via `archlinux-java`.
 [[ -d /usr/lib/jvm/default ]] && export JAVA_HOME=/usr/lib/jvm/default
+
+# hyprmoncfg writes its target with temp-file + rename, so keep it off the
+# stowed ~/.config/hypr/monitors.conf symlink. Hyprland's own `env =` covers
+# anything Hyprland launches; this covers shells that predate a reload, such as
+# a long-lived tmux server or an SSH session.
+[[ -d $HOME/.config/hypr ]] &&
+  export HYPRMONCFG_MONITORS_CONF="$HOME/.config/hypr/monitors-generated.conf"
