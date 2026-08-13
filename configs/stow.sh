@@ -159,22 +159,6 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/voxtype/config.toml"
   stow_package "Voxtype" "voxtype"
 
-  # Waybar — workspace labels, persistent workspaces, 12h clock, accent theme variable
-  ensure_dir "${HOME}/.config/waybar"
-  ensure_dir "${HOME}/.config/omarchy/themed"
-  cleanup_paths "${HOME}/.config/waybar/config.jsonc" "${HOME}/.config/waybar/style.css" "${HOME}/.config/omarchy/themed/waybar.css.tpl"
-  stow_package "Waybar" "waybar"
-
-  # Mako — user template adds output= directive so notifications appear on a side
-  # monitor (keeps them off the screen-shared main monitor)
-  ensure_dir "${HOME}/.config/omarchy/themed"
-  stow_package "Mako" "mako"
-
-  # Systemd user units — background refresh for Waybar AI usage
-  ensure_dir "${HOME}/.config/systemd/user"
-  cleanup_paths "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.service" "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.timer"
-  stow_package "Systemd user units" "systemd"
-
   # Hyprland — Omarchy 4 configures Hyprland in Lua; the old .conf hook files are
   # inert. Never touch hyprland.lua itself, Omarchy owns it. Deliberately NOT
   # stowed: monitors-generated.lua (hyprmoncfg rewrites it wholesale) and

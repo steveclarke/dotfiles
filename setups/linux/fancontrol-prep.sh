@@ -49,10 +49,22 @@ if [[ $new != "$old" ]]; then
   sed -i "s|\b${old}\b|${new}|g" "$CONF"
 fi
 
+seeded=0
 for pwm in $(grep -oE "${new}/pwm[0-9]+" "$CONF" | sort -u); do
   enable="/sys/class/hwmon/${pwm}_enable"
   if [[ -w $enable ]] && [[ "$(cat "$enable")" != "1" ]]; then
     echo "fancontrol-prep: setting ${pwm}_enable to manual (was $(cat "$enable"))"
     echo 1 >"$enable"
+    seeded=1
   fi
 done
+
+# nct6775 does not settle instantly after a pwm_enable write. On 2026-08-13
+# (kernel 7.1.8) this script correctly moved pwm3/pwm4 from 99 to 1 and
+# fancontrol still aborted with "Error enabling PWM on hwmon5/pwm3" in the same
+# second; restarting the service against the identical state succeeded. So the
+# abort is a race on the write, not a wrong value. Let the chip settle before
+# fancontrol does its own write-and-verify.
+if ((seeded)); then
+  sleep 2
+fi
