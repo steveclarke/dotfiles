@@ -167,6 +167,26 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/hypr/monitors.lua" "${HOME}/.config/hypr/bindings.lua" "${HOME}/.config/hypr/autostart.lua" "${HOME}/.config/hypr/input.lua" "${HOME}/.config/hypr/looknfeel.lua" "${HOME}/.config/hypr/hyprsunset.conf"
   stow_package "Hyprland" "hypr"
 
+  # Omarchy shell — bar layout, widget set, and idle/lock timings. This is the
+  # Omarchy 4 replacement for the old Waybar config.
+  ensure_dir "${HOME}/.config/omarchy"
+  cleanup_paths "${HOME}/.config/omarchy/shell.json"
+  stow_package "Omarchy shell" "omarchy-shell"
+
+  # Omarchy shell plugins — COPIED, never symlinked: omarchy-plugin-validate
+  # rejects symlinks in or as a plugin folder, which is the one place the stow
+  # pattern does not work. Hence living outside configs/. Local edits under
+  # ~/.config/omarchy/plugins/ are overwritten, so edit the dotfiles copy.
+  config_banner "Omarchy shell plugins"
+  ensure_dir "${HOME}/.config/omarchy/plugins"
+  for plugin_src in "${DOTFILES_DIR}"/omarchy-plugins/*/; do
+    [ -d "$plugin_src" ] || continue
+    plugin_name="$(basename "$plugin_src")"
+    rm -rf "${HOME}/.config/omarchy/plugins/${plugin_name}"
+    cp -a "$plugin_src" "${HOME}/.config/omarchy/plugins/${plugin_name}"
+    echo "  copied ${plugin_name}"
+  done
+
   # Omarchy custom themes — user-authored themes under ~/.config/omarchy/themes/
   ensure_dir "${HOME}/.config/omarchy/themes"
   stow_package "Omarchy themes" "omarchy-themes"
