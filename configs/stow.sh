@@ -175,10 +175,12 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.service" "${HOME}/.config/systemd/user/dotfiles-ai-usage-refresh.timer"
   stow_package "Systemd user units" "systemd"
 
-  # Hyprland — customizations go in Omarchy's user hook files (monitors.conf,
-  # bindings.conf, autostart.conf) — never touch hyprland.conf itself, Omarchy owns it
+  # Hyprland — Omarchy 4 configures Hyprland in Lua; the old .conf hook files are
+  # inert. Never touch hyprland.lua itself, Omarchy owns it. Deliberately NOT
+  # stowed: monitors-generated.lua (hyprmoncfg rewrites it wholesale) and
+  # xdph.conf (portal config, left as Omarchy ships it).
   ensure_dir "${HOME}/.config/hypr"
-  cleanup_paths "${HOME}/.config/hypr/monitors.conf" "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/autostart.conf" "${HOME}/.config/hypr/hypridle.conf" "${HOME}/.config/hypr/input.conf"
+  cleanup_paths "${HOME}/.config/hypr/monitors.lua" "${HOME}/.config/hypr/bindings.lua" "${HOME}/.config/hypr/autostart.lua" "${HOME}/.config/hypr/input.lua" "${HOME}/.config/hypr/looknfeel.lua" "${HOME}/.config/hypr/hyprsunset.conf"
   stow_package "Hyprland" "hypr"
 
   # Omarchy custom themes — user-authored themes under ~/.config/omarchy/themes/
