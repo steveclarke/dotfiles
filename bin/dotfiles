@@ -35,7 +35,10 @@ run_brew() {
 
   banner "Updating Homebrew"
   brew update
-  brew upgrade
+  # --formula only: never upgrade casks here. Homebrew replaces the .app in place,
+  # which breaks running apps (Docker, Chrome) and re-triggers Gatekeeper prompts.
+  # Desktop apps update themselves; upgrade them deliberately with `brew upgrade --cask <name>`.
+  brew upgrade --formula
 
   banner "Running brew bundle"
 
@@ -43,16 +46,18 @@ run_brew() {
     # Cache sudo credentials for casks that may require it
     cache_sudo_credentials
 
+    # --no-upgrade: install anything missing, but leave already-installed casks alone.
+    # `brew bundle` upgrades outdated dependencies by default.
     if [[ -f "${DOTFILES_DIR}/Brewfile" ]]; then
-      brew bundle --file="${DOTFILES_DIR}/Brewfile"
+      brew bundle --no-upgrade --file="${DOTFILES_DIR}/Brewfile"
     fi
 
     if [[ -f "${DOTFILES_DIR}/Brewfile.macos" ]]; then
-      brew bundle --file="${DOTFILES_DIR}/Brewfile.macos"
+      brew bundle --no-upgrade --file="${DOTFILES_DIR}/Brewfile.macos"
     fi
   else
     cd "${DOTFILES_DIR}" || exit
-    brew bundle
+    brew bundle --no-upgrade
     cd - > /dev/null || exit
   fi
 

@@ -360,8 +360,11 @@ esac
 # Stop Homebrew from showing hints after every command
 export HOMEBREW_NO_ENV_HINTS=1
 
-# Don't quarantine casks — stops Gatekeeper "app is damaged" prompts after upgrades
-export HOMEBREW_CASK_OPTS="--no-quarantine"
+# --no-quarantine was removed from Homebrew in mid-2026, so HOMEBREW_CASK_OPTS no
+# longer suppresses Gatekeeper prompts. Instead, keep `brew upgrade` out of desktop
+# apps: since April 2026 it upgrades `auto_updates true` casks whenever the installed
+# app bundle looks older than the tap, which replaces apps while they're running.
+export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1
 
 # Herd Lite - PHP development environment
 if [[ -d "/Users/steve/.config/herd-lite/bin" ]]; then

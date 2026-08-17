@@ -12,5 +12,5 @@ function upgrade-all
         '
     end
 
-    and brew upgrade
+    and brew upgrade --formula
 end
