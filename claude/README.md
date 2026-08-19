@@ -53,14 +53,38 @@ Settings are recovered from the last committed version, so a theme or effort
 level that only ever existed in that machine's UI comes back at the committed
 value. Restore from the snapshot by editing `~/.claude/settings.json` directly.
 
+`dotfiles stow` creates the managed symlink itself and will prompt for your sudo
+password. Don't run the underlying `sudo ln` by hand — there's no need, and doing
+it manually makes it look like the tooling is broken when it isn't.
+
+Pull everything before stowing, and stow once. Stowing against a half-pulled repo
+just means doing it again.
+
 Verify:
 
 ```
 ls -l ~/.claude/settings.json    # must NOT be a symlink
 readlink "/Library/Application Support/ClaudeCode/managed-settings.json"   # macOS
 readlink /etc/claude-code/managed-settings.json                            # Linux
-claude auto-mode config | head -3
+claude plugin list               # plugins should be enabled
 ```
+
+`enabledPlugins` is only ever set in the managed file, so plugins showing as
+enabled means the managed file is being read.
+
+Two verification traps, both of which produced wrong answers during the rollout:
+
+- **`claude auto-mode config` does not show merged settings.** It prints the auto
+  mode classifier's own rule text. `permissions`, `statusLine`, and `spinnerVerbs`
+  never appear in it, so grepping for them returns nothing whether or not the
+  managed file loaded. Fine as a "runs without erroring" smoke test, useless as
+  proof.
+- **`claude plugin list` reports `Scope:` inconsistently.** It showed `managed` on
+  one machine and `user` on another with an identical setup. Judge by whether the
+  plugins are enabled, not by the scope label.
+
+`claude config list` is not a subcommand — it drops into an interactive session.
+Don't script against it.
 
 ## The one rule
 
