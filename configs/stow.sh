@@ -53,6 +53,19 @@ cleanup_paths() {
   done
 }
 
+# Remove symlinks whose target no longer exists. cleanup_paths deliberately
+# skips symlinks (so it doesn't eat stow's own links), which leaves nothing to
+# clean up a link stow orphaned by a package losing a file.
+cleanup_dead_symlinks() {
+  local path
+  for path in "$@"; do
+    if [ -L "$path" ] && [ ! -e "$path" ]; then
+      rm -f "$path"
+      echo "  removed dead symlink: ${path}"
+    fi
+  done
+}
+
 # Ensure directories exist (for stow to symlink into)
 ensure_dir() {
   local path
@@ -150,6 +163,10 @@ stow_package "Just" "just"
 # symlinked to the system managed-settings path below. See claude/README.md.
 config_banner "Claude"
 ensure_dir "${HOME}/.claude"
+# hooks/ was removed from the claude package. Plain `stow` never cleans up a
+# symlink whose target is gone, so without this every migrating machine keeps a
+# dangling ~/.claude/hooks. cleanup_paths won't do it — that skips symlinks.
+cleanup_dead_symlinks "${HOME}/.claude/hooks"
 do_stow "claude"
 
 # Claude managed settings — root-owned system path, so stow can't do this.
