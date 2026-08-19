@@ -11,6 +11,12 @@
 # Write every migration to check the current state before acting. The state file
 # is machine-local and disappears when a machine is rebuilt, so a migration must
 # be safe to re-run against an already-migrated system.
+#
+# Deliberately NOT baselined on fresh installs. Marking every migration applied
+# on a new machine would be one line, but it trades a real failure (a machine
+# silently skipping a migration it needed) for an imaginary one (a correctly
+# written migration no-opping, which costs nothing). Replaying is the safer
+# default precisely because the rule above is enforced.
 
 MIGRATIONS_DIR="${DOTFILES_DIR}/migrations"
 MIGRATIONS_STATE="${XDG_STATE_HOME:-${HOME}/.local/state}/dotfiles/migrations"

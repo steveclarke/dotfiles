@@ -182,13 +182,20 @@ stow_claude_managed_settings() {
     return 0
   fi
 
-  sudo mkdir -p "$dir" && sudo ln -sfn "$src" "$dest" \
-    && echo "  linked: ${dest}" \
-    || error "Failed to link ${dest}"
+  if sudo mkdir -p "$dir" && sudo ln -sfn "$src" "$dest"; then
+    echo "  linked: ${dest}"
+  else
+    error "Failed to link ${dest}"
+    error "Claude Code is running without your curated settings until this is fixed."
+    return 1
+  fi
 }
 
 config_banner "Claude managed settings"
-stow_claude_managed_settings
+# Don't let a failure here abort the rest of stow, but don't let it pass silently
+# either — error() returns 0, so without this the whole run reports success.
+STOW_FAILED=""
+stow_claude_managed_settings || STOW_FAILED="claude-managed-settings"
 
 # Tmux — Omarchy ships a stock tmux.conf with no extension point, so we own
 # the file. cleanup_paths removes Omarchy's copy before stow drops in our symlink.
@@ -269,6 +276,11 @@ if ! is_omarchy; then
 
   # OpenCode — Omarchy has its own config
   stow_package "OpenCode" "opencode"
+fi
+
+if [ -n "${STOW_FAILED:-}" ]; then
+  error "Stow finished with failures: ${STOW_FAILED}"
+  exit 1
 fi
 
 success "All configurations stowed successfully"

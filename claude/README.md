@@ -28,6 +28,40 @@ survey. That survey describes the machine's infrastructure — internal
 hostnames, trusted repos, where sensitive data lives — which is why it must
 never land in this repo. **This repo is public.**
 
+## Migrating a machine
+
+```
+cp -L ~/.claude/settings.json /tmp/claude-settings-backup.json   # snapshot first
+cd ~/.local/share/dotfiles && git pull
+dotfiles up                                                       # prompts for sudo
+```
+
+The pull deletes `configs/claude/.claude/settings.json`, so it will abort if that
+machine's Claude Code wrote into the tracked file:
+
+```
+git checkout -- configs/claude/.claude/settings.json
+git pull
+```
+
+That's safe — you have the snapshot, and the migration recovers the committed
+version from git history regardless. It also writes its own backup to
+`~/.claude/settings.json.pre-split.<timestamp>` (mode 600) before touching
+anything.
+
+Settings are recovered from the last committed version, so a theme or effort
+level that only ever existed in that machine's UI comes back at the committed
+value. Restore from the snapshot by editing `~/.claude/settings.json` directly.
+
+Verify:
+
+```
+ls -l ~/.claude/settings.json    # must NOT be a symlink
+readlink "/Library/Application Support/ClaudeCode/managed-settings.json"   # macOS
+readlink /etc/claude-code/managed-settings.json                            # Linux
+claude auto-mode config | head -3
+```
+
 ## The one rule
 
 **Never put a key in `managed-settings.json` that Claude Code writes at

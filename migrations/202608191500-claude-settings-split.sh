@@ -23,22 +23,45 @@ SETTINGS="${HOME}/.claude/settings.json"
 # unknown keys are kept, so a machine's own customizations survive.
 SHARED_KEYS='["env","attribution","permissions","hooks","statusLine","enabledPlugins","extraKnownMarketplaces","spinnerVerbs","includeCoAuthoredBy"]'
 
-if [ -L "$SETTINGS" ]; then
-  :  # symlink — handled below, target may or may not still exist
-elif [ -e "$SETTINGS" ]; then
-  echo "  ${SETTINGS} is already a real file — nothing to migrate"
-  exit 0
-else
+if [ ! -L "$SETTINGS" ] && [ ! -e "$SETTINGS" ]; then
   echo "  no ${SETTINGS} — nothing to migrate"
   exit 0
 fi
 
 command -v python3 >/dev/null 2>&1 || { echo "python3 required" >&2; exit 1; }
 
+# Being a real file does NOT mean the split already happened — a machine whose
+# settings were never stowed as a symlink still has every shared key in there.
+# Leaving them would double up against managed settings once the symlink lands:
+# arrays concatenate across scopes, so permissions and hooks would appear twice.
+# The test that matters is whether shared keys are still present, not the file type.
+if [ ! -L "$SETTINGS" ]; then
+  if python3 - "$SETTINGS" "$SHARED_KEYS" <<'PY'
+import json, sys
+shared = set(json.loads(sys.argv[2]))
+try:
+    with open(sys.argv[1]) as f:
+        data = json.load(f)
+except (OSError, ValueError):
+    sys.exit(0)   # unreadable/invalid — treat as needing work, let the split report
+sys.exit(0 if shared & set(data) else 1)
+PY
+  then
+    echo "  real file, still holds shared keys — stripping them"
+  else
+    echo "  ${SETTINGS} is a real file with no shared keys — already split"
+    exit 0
+  fi
+fi
+
 BACKUP="${SETTINGS}.pre-split.$(date +%Y%m%d%H%M%S)"
+# The backup holds the autoMode environment survey — internal hostnames, where
+# sensitive data lives. Create it private before anything is written into it.
+: > "$BACKUP"
+chmod 600 "$BACKUP"
 
 if [ -e "$SETTINGS" ]; then
-  # Symlink with a live target: read through it.
+  # Real file, or a symlink with a live target: read through it either way.
   cp -L "$SETTINGS" "$BACKUP"
   echo "  backed up current settings to ${BACKUP}"
 else
