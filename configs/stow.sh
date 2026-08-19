@@ -138,10 +138,57 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
+# Claude — statusline and hooks are shared and stowed into ~/.claude.
+#
+# ~/.claude/settings.json is deliberately NOT stowed. Claude Code writes to that
+# file at runtime (effort level, theme, the auto mode environment survey, which
+# describes this machine's infrastructure), and this repo is public. It stays a
+# real machine-local file. Do NOT add cleanup_paths for it — that would delete a
+# machine's settings on every `dotfiles up`.
+#
+# The hand-curated settings live in claude/managed-settings.json and are
+# symlinked to the system managed-settings path below. See claude/README.md.
 config_banner "Claude"
 ensure_dir "${HOME}/.claude"
-cleanup_paths "${HOME}/.claude/settings.json"
 do_stow "claude"
+
+# Claude managed settings — root-owned system path, so stow can't do this.
+stow_claude_managed_settings() {
+  local src="${DOTFILES_DIR}/claude/managed-settings.json"
+  local dir
+
+  if is_macos; then
+    dir="/Library/Application Support/ClaudeCode"
+  elif is_linux; then
+    dir="/etc/claude-code"
+  else
+    echo "  skipping — no managed-settings path known for this platform"
+    return 0
+  fi
+
+  local dest="${dir}/managed-settings.json"
+
+  # Already pointing at the repo — nothing to do, and nothing to sudo for.
+  if [ "$(readlink "$dest" 2>/dev/null)" = "$src" ]; then
+    echo "  already linked: ${dest}"
+    return 0
+  fi
+
+  # A real file here belongs to someone else (an employer's MDM, a manual
+  # install). Refuse rather than clobber it.
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    error "Not a symlink, leaving alone: ${dest}"
+    error "Move it aside yourself if you want dotfiles to manage it."
+    return 0
+  fi
+
+  sudo mkdir -p "$dir" && sudo ln -sfn "$src" "$dest" \
+    && echo "  linked: ${dest}" \
+    || error "Failed to link ${dest}"
+}
+
+config_banner "Claude managed settings"
+stow_claude_managed_settings
 
 # Tmux — Omarchy ships a stock tmux.conf with no extension point, so we own
 # the file. cleanup_paths removes Omarchy's copy before stow drops in our symlink.

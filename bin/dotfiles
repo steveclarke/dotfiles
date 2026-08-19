@@ -4,6 +4,7 @@ set -e -o pipefail
 
 source "${HOME}"/.dotfilesrc
 source "${DOTFILES_DIR}"/lib/dotfiles.sh
+source "${DOTFILES_DIR}"/lib/migrations.sh
 
 # Detect OS
 detect_os
@@ -13,8 +14,9 @@ if [ $# -eq 0 ]; then
   echo "Usage: dotfiles <command>"
   echo ""
   echo "Commands:"
-  echo "  up, update          Update everything (stow, brew, skills, mise)"
+  echo "  up, update          Update everything (migrate, stow, brew, skills, mise)"
   echo "  stow                Update config symlinks"
+  echo "  migrate [--list]    Run pending one-time migrations"
   echo "  brew                Update and upgrade Homebrew packages"
   echo "  skills [subcmd]     Manage agent skills (install, list, status)"
   echo "  mise                Install/update tool versions"
@@ -163,6 +165,7 @@ run_install() {
 # check the command and run appropriate function
 case $1 in
   up|update)
+    run_migrations
     run_stow
     run_brew
     run_skills_install
@@ -170,6 +173,13 @@ case $1 in
     ;;
   stow)
     run_stow
+    ;;
+  migrate)
+    case "${2:-}" in
+      --list|-l|list) list_migrations ;;
+      "")             run_migrations && success "Migrations up to date" ;;
+      *)              error "Unknown migrate option: $2"; exit 1 ;;
+    esac
     ;;
   brew)
     run_brew

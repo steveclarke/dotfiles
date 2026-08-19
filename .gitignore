@@ -6,3 +6,7 @@ repomix*
 
 # Personal configuration files
 .dotfilesrc
+
+# Claude Code writes machine state here; it must never be committed.
+# See claude/README.md.
+configs/claude/.claude/settings.json
