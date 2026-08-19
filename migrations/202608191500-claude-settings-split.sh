@@ -23,22 +23,46 @@ SETTINGS="${HOME}/.claude/settings.json"
 # unknown keys are kept, so a machine's own customizations survive.
 SHARED_KEYS='["env","attribution","permissions","hooks","statusLine","enabledPlugins","extraKnownMarketplaces","spinnerVerbs","includeCoAuthoredBy"]'
 
-if [ ! -e "$SETTINGS" ]; then
-  echo "  no ${SETTINGS} — nothing to migrate"
-  exit 0
-fi
-
-if [ ! -L "$SETTINGS" ]; then
+if [ -L "$SETTINGS" ]; then
+  :  # symlink — handled below, target may or may not still exist
+elif [ -e "$SETTINGS" ]; then
   echo "  ${SETTINGS} is already a real file — nothing to migrate"
+  exit 0
+else
+  echo "  no ${SETTINGS} — nothing to migrate"
   exit 0
 fi
 
 command -v python3 >/dev/null 2>&1 || { echo "python3 required" >&2; exit 1; }
 
-# Read through the symlink before replacing it.
 BACKUP="${SETTINGS}.pre-split.$(date +%Y%m%d%H%M%S)"
-cp -L "$SETTINGS" "$BACKUP"
-echo "  backed up current settings to ${BACKUP}"
+
+if [ -e "$SETTINGS" ]; then
+  # Symlink with a live target: read through it.
+  cp -L "$SETTINGS" "$BACKUP"
+  echo "  backed up current settings to ${BACKUP}"
+else
+  # Dangling symlink. The commit that added this migration also deleted the
+  # target, so on any machine that pulls before migrating, the settings are
+  # only in git history. Recover them from the commit before the deletion.
+  : "${DOTFILES_DIR:="${HOME}/.local/share/dotfiles"}"
+  TRACKED="configs/claude/.claude/settings.json"
+
+  DELETED_IN="$(git -C "$DOTFILES_DIR" rev-list -n 1 HEAD -- "$TRACKED" 2>/dev/null || true)"
+  if [ -z "$DELETED_IN" ]; then
+    echo "  dangling symlink and no history for ${TRACKED} — removing the dead link" >&2
+    rm -f "$SETTINGS"
+    exit 0
+  fi
+
+  if ! git -C "$DOTFILES_DIR" show "${DELETED_IN}~1:${TRACKED}" > "$BACKUP" 2>/dev/null; then
+    echo "  could not recover ${TRACKED} from ${DELETED_IN}~1" >&2
+    rm -f "$BACKUP"
+    exit 1
+  fi
+  echo "  symlink target was deleted by a pull; recovered settings from ${DELETED_IN}~1"
+  echo "  backed up recovered settings to ${BACKUP}"
+fi
 
 TMP="$(mktemp)"
 python3 - "$BACKUP" "$TMP" "$SHARED_KEYS" <<'PY'
