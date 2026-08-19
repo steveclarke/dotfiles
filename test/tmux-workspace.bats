@@ -15,8 +15,23 @@ teardown() {
   [ "$status" -eq 0 ]
   [[ "$output" == *"target=$WORK"* ]]
   [[ "$output" == *"agent=none"* ]]
+  [[ "$output" == *"git_window=false"* ]]
   [[ "$output" == *"switch=true"* ]]
   [[ "$output" == *"json=false"* ]]
+}
+
+@test "--git opts the lazygit window back in" {
+  run "$TOOL" --dry-run --git "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"git_window=true"* ]]
+}
+
+@test "--no-git beats a config that turns the git window on" {
+  export TMUX_WORKSPACE_CONFIG="$WORK/global.toml"
+  printf '[session]\ngit_window = "true"\n' > "$WORK/global.toml"
+  run "$TOOL" --dry-run --no-git "$WORK"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"git_window=false"* ]]
 }
 
 @test "unknown flag exits 2" {

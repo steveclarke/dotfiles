@@ -2,7 +2,7 @@
 name: tmux-worktree-session
 description: >
   Spin up an isolated git worktree in its own tmux session — coding agent in one
-  window, dev stack in another, git UI in a third — with the agent briefed and
+  window, a shell in another, dev stack in a third — with the agent briefed and
   already working. Use for spinning up a worktree, starting a feature/branch/task
   in isolation, handing work to a fresh agent (Claude/Codex), or setting up an
   isolated tmux dev session.
@@ -24,12 +24,12 @@ Session: <Project>-<work>     (hyphenated, no spaces)
 ├── Window 1 "agent" → coding agent (Claude/Codex), cwd = worktree, given a
 │                      kickoff prompt pointing at the briefing
 ├── Window 2 "cli"   → bare shell for tests and ad-hoc commands
-├── Window 3 "dev"   → dev stack
-└── Window 4 "git"   → lazygit (optional)
+└── Window 3 "dev"   → dev stack
 ```
 
-Four windows, one thing each — no splits. The common shape; adapt it (no dev
-stack, two agents, a logs window). Confirm if non-obvious.
+Three windows, one thing each — no splits. The common shape; adapt it (no dev
+stack, two agents, a logs window). Confirm if non-obvious. Don't add a git/lazygit
+window unless the user asks for one.
 
 ## Inputs
 
@@ -79,7 +79,6 @@ Mechanics via **tmux-orchestration**. Specifics that bite:
   can poll them itself via the tmux CLI.
 - Window 2 `cli`: `cd` to worktree, bare shell for tests and ad-hoc commands.
 - Window 3 `dev`: `cd` to worktree, run the dev stack.
-- Window 4 `git`: `cd` to worktree, run `lazygit` (skip if absent).
 
 Every window `cd`s into the worktree and needs the right toolchain (see
 version-manager gotcha).
