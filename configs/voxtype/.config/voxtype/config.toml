@@ -12,11 +12,14 @@ state_file = "auto"
 
 [hotkey]
 # Right Alt push-to-talk, handled by voxtype's own evdev grabber rather than a
-# Hyprland bind: Hyprland's bindrd doesn't fire the release on a bare modifier,
-# so hold-to-talk got stuck "on". The evdev grabber sees press AND release.
-# Requires membership in the `input` group (we are). Right Ctrl was the previous
-# PTT key — unreliable, the holds kept getting swallowed — now reassigned to a
-# `voxtype record toggle` tap in Hyprland. Keychron 191/192 stay Hyprland binds.
+# Hyprland bind. This is deliberate and has been re-litigated twice: Hyprland
+# never fires a release event for a bare modifier, so Right Alt as a Hyprland
+# bind starts a recording that cannot be stopped. The evdev grabber sees both
+# press and release. Requires membership in the `input` group (we are).
+#
+# Known cost: the daemon occasionally wedges at 100% CPU and stops responding
+# to the hotkey. Fix is `voxkick`. That is a worse day than losing Right Alt
+# would be, so the grabber stays.
 enabled = true
 key = "RIGHTALT"
 modifiers = []
@@ -32,6 +35,9 @@ sample_rate = 16000
 
 # Maximum recording duration in seconds (safety limit)
 max_duration_secs = 600
+
+# Pause MPRIS media players during recording
+pause_media = true
 
 [audio.feedback]
 enabled = true

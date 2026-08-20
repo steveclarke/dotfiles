@@ -27,22 +27,14 @@ hl.unbind("SUPER + SHIFT + C")
 o.bind("SUPER + SHIFT + C", "VS Code", "setsid uwsm-app -- code")
 
 -- Dictation ----------------------------------------------------------------
--- Omarchy already binds SUPER + CTRL + X (toggle) and F9 (push-to-talk) when
--- voxtype is present. These are the extra keys on this keyboard, so they are
--- additions rather than replacements.
+-- Right Alt push-to-talk is NOT bound here. It is handled by voxtype's own
+-- evdev grabber ([hotkey] in ~/.config/voxtype/config.toml), because Hyprland
+-- never fires a release event for a bare modifier. Do not try to move it here;
+-- it has been tested twice and the release edge never arrives.
 --
--- Right Alt push-to-talk is deliberately NOT here: it is handled by voxtype's
--- own evdev grabber ([hotkey] in ~/.config/voxtype/config.toml). Hyprland does
--- not fire a release event for a bare modifier keycode, so hold-to-talk got
--- stuck "on" when it was a Hyprland bind.
-if o.cmd_present("voxtype") then
-  o.bind("SUPER + H", "Dictation (toggle)", "voxtype record toggle")
-  -- O key (keycode 192) - toggle
-  o.bind("code:192", "Dictation (toggle)", "voxtype record toggle")
-  -- X key (keycode 191) - push-to-talk, needs the matching release bind
-  o.bind("code:191", "Dictation (push-to-talk start)", "voxtype record start")
-  o.bind("code:191", "Dictation (push-to-talk stop)", "voxtype record stop", { release = true })
-end
+-- Omarchy's stock binds stay as they are: SUPER + CTRL + X toggles dictation,
+-- SUPER + CTRL + V opens the clipboard manager to recover a lost transcript.
+-- Stock F9 is unusable on the MX Keys, whose F-row needs Fn held.
 
 -- Mouse --------------------------------------------------------------------
 -- Middle-click drag to move floating windows, no keyboard needed.
