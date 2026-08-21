@@ -11,9 +11,9 @@ python = "latest"
 ruby = "4"
 
 [settings]
-# Skip mise's new-release quarantine for claude — always take the newest
-# Claude Code the moment it ships.
-minimum_release_age_excludes = ["claude"]
+# Skip mise's new-release quarantine for Claude Code and Codex — always take
+# the newest versions the moment they ship.
+minimum_release_age_excludes = ["claude", "codex"]
 node.default_packages_file = "~/.default-npm-packages"
 idiomatic_version_file_enable_tools = ["ruby"]
 
