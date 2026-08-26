@@ -44,7 +44,7 @@ _install_jots() (
   gh release download "$tag" --repo "$found" \
     --pattern '*.AppImage' --dir "$tmpdir"
 
-  appimage=$(compgen -G "${tmpdir}/"*".AppImage" | head -1)
+  appimage=$(compgen -G "${tmpdir}/*.AppImage" | head -1)
   if [[ -z "$appimage" ]]; then
     error "jots: release ${tag} has no AppImage"
     rm -rf "$tmpdir"

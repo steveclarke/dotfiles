@@ -328,7 +328,7 @@ github_latest_tag() {
 # True when ~/Applications already holds this app at this version.
 # Usage: appimage_is_installed <Name> <version>
 appimage_is_installed() {
-	compgen -G "${HOME}/Applications/${1}-${2}"*".AppImage" >/dev/null
+	compgen -G "${HOME}/Applications/${1}-${2}*.AppImage" >/dev/null
 }
 
 # Install an AppImage into ~/Applications and add it to the app menu.
@@ -347,7 +347,7 @@ install_appimage() {
 	if is_installed ail-cli && ail-cli integrate "$dest" >/dev/null 2>&1; then
 		# AppImageLauncher renames the file as it integrates it
 		local integrated
-		integrated=$(compgen -G "${dest_dir}/${name}-${version}"*".AppImage" | head -1)
+		integrated=$(compgen -G "${dest_dir}/${name}-${version}*.AppImage" | head -1)
 		[[ -n "$integrated" ]] && dest="$integrated"
 	else
 		_appimage_desktop_entry "$name" "$dest"
@@ -367,7 +367,7 @@ _appimage_desktop_entry() {
 	tmpdir=$(mktemp -d)
 	if (cd "$tmpdir" && "$app" --appimage-extract '*.png' >/dev/null 2>&1); then
 		local extracted
-		extracted=$(compgen -G "${tmpdir}/squashfs-root/"*".png" | head -1)
+		extracted=$(compgen -G "${tmpdir}/squashfs-root/*.png" | head -1)
 		if [[ -n "$extracted" ]]; then
 			install -Dm644 "$extracted" "${icon_dir}/${name}.png"
 			icon="${icon_dir}/${name}.png"
@@ -397,5 +397,5 @@ _appimage_remove_other_versions() {
 		is_installed ail-cli && ail-cli unintegrate "$old" >/dev/null 2>&1
 		rm -f "$old"
 		banner "removed old ${name} AppImage: $(basename "$old")"
-	done < <(compgen -G "${HOME}/Applications/${name}-"*".AppImage" || true)
+	done < <(compgen -G "${HOME}/Applications/${name}-*.AppImage" || true)
 }

@@ -35,7 +35,7 @@ _install_gander() (
   gh release download "$tag" --repo steveclarke/gander \
     --pattern '*.AppImage' --dir "$tmpdir"
 
-  appimage=$(compgen -G "${tmpdir}/"*".AppImage" | head -1)
+  appimage=$(compgen -G "${tmpdir}/*.AppImage" | head -1)
   if [[ -z "$appimage" ]]; then
     error "gander: release ${tag} has no AppImage"
     rm -rf "$tmpdir"

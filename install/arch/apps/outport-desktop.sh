@@ -36,7 +36,7 @@ _install_outport() (
   gh release download "$tag" --repo myunio/outport-app \
     --pattern '*.AppImage' --dir "$tmpdir"
 
-  appimage=$(compgen -G "${tmpdir}/"*".AppImage" | head -1)
+  appimage=$(compgen -G "${tmpdir}/*.AppImage" | head -1)
   if [[ -z "$appimage" ]]; then
     error "outport: release ${tag} has no AppImage"
     rm -rf "$tmpdir"
