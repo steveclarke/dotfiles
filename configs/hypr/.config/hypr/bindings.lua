@@ -36,6 +36,18 @@ o.bind("SUPER + SHIFT + C", "VS Code", "setsid uwsm-app -- code")
 -- SUPER + CTRL + V opens the clipboard manager to recover a lost transcript.
 -- Stock F9 is unusable on the MX Keys, whose F-row needs Fn held.
 
+-- Dictation toggle ---------------------------------------------------------
+-- Right Alt (X11 keycode 108 = evdev 100 + 8) toggles dictation: press to
+-- start, press again to stop. Caps Lock is the hold-to-talk key, handled by
+-- voxtype's own evdev grabber.
+--
+-- A toggle only needs the key-down edge, which Hyprland does deliver for a bare
+-- modifier. It is the key-UP edge that never arrives, which is why hold-to-talk
+-- cannot live here and stays on the grabber.
+--
+-- See docs/dictation.md in the hugo repo for the full constraint list.
+o.bind("code:108", "Toggle dictation", "voxtype record toggle")
+
 -- Mouse --------------------------------------------------------------------
 -- Middle-click drag to move floating windows, no keyboard needed.
 o.bind("mouse:274", "Move window", hl.dsp.window.drag(), { mouse = true })

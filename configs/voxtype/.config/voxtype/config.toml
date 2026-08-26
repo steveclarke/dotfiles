@@ -11,17 +11,17 @@
 state_file = "auto"
 
 [hotkey]
-# Right Alt push-to-talk, handled by voxtype's own evdev grabber rather than a
+# Caps Lock push-to-talk, handled by voxtype's own evdev grabber rather than a
 # Hyprland bind. This is deliberate and has been re-litigated twice: Hyprland
-# never fires a release event for a bare modifier, so Right Alt as a Hyprland
+# never fires a release event for a bare modifier, so a modifier as a Hyprland
 # bind starts a recording that cannot be stopped. The evdev grabber sees both
 # press and release. Requires membership in the `input` group (we are).
 #
 # Known cost: the daemon occasionally wedges at 100% CPU and stops responding
-# to the hotkey. Fix is `voxkick`. That is a worse day than losing Right Alt
+# to the hotkey. Fix is `voxkick`. That is a worse day than losing Caps Lock
 # would be, so the grabber stays.
 enabled = true
-key = "RIGHTALT"
+key = "CAPSLOCK"
 modifiers = []
 mode = "push_to_talk"
 

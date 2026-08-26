@@ -7,8 +7,10 @@ hl.config({
   input = {
     kb_layout = "us",
 
-    -- Caps Lock acts as the Compose key.
-    kb_options = "compose:caps",
+    -- Caps Lock is disabled as a key in its own right so it can be bound to
+    -- dictation toggle in bindings.lua. Compose moves to the Menu key.
+    -- See docs/dictation.md in the hugo repo before changing this.
+    kb_options = "caps:none,compose:menu",
 
     -- Faster key repeat than the default.
     repeat_rate = 40,

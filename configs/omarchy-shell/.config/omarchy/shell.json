@@ -67,7 +67,7 @@
       ]
     },
     "position": "top",
-    "transparent": false
+    "transparent": true
   },
   "idle": {
     "lock": 28800,
