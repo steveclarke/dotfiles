@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Runs after omarchy-update.
+#
+# The Unio CLI ships as a GitHub release, not a pacman package, so
+# `omarchy update` has no way to see it. Run the dotfiles installer,
+# which is idempotent and returns early when already on the latest
+# cli-v* release. Needs gh authenticated against myunio; failures are
+# swallowed so a stale CLI never breaks a system update.
+
+installer="${DOTFILES_DIR:-$HOME/.local/share/dotfiles}/bin/unio-install"
+
+if command -v gh >/dev/null && [[ -x "$installer" ]]; then
+  "$installer" || true
+fi
