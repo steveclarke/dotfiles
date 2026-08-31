@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+################################################################################
+# monitor-input - flip monitors between two machines over DDC/CI
+################################################################################
+#
+# OVERVIEW
+# --------
+# Monitors cabled to two machines can be handed back and forth by setting their
+# input source over DDC/CI, instead of menu-diving on the monitor's OSD.
+#
+# Run it on whichever machine currently owns the screens. DDC keeps answering on
+# a monitor that is displaying another input, so the machine you switch AWAY
+# from can always pull the monitors back on its own.
+#
+# USAGE
+# -----
+#   monitor-input toggle    flip to whichever side is not currently showing
+#   monitor-input <name>    switch explicitly to a configured side
+#
+# The two side names come from the config. `toggle` is what a hotkey should
+# run; the explicit names are the escape hatch when state is confused, or for
+# an SSH recovery from another machine.
+#
+# CONFIGURATION
+# -------------
+# Machine-specific values live OUTSIDE this repo (this repo is public, and the
+# values differ per desk):
+#
+#   ~/.config/monitor-input/config
+#
+#     MONITORS=(ABC1234 DEF5678)   # display serials, in any order
+#     REFERENCE=ABC1234            # the one monitor that decides which way to
+#                                  # flip; must appear in MONITORS
+#     SIDE_A_NAME=linux
+#     SIDE_A_INPUT=0x0f
+#     SIDE_B_NAME=mini
+#     SIDE_B_INPUT=0x11
+#
+# Find serials and the inputs a monitor actually accepts with:
+#   ddcutil detect
+#   ddcutil --sn <serial> capabilities   # look at "Feature: 60 (Input Source)"
+#
+# Monitor models differ. An input code valid on one panel can be absent on
+# another, and sending a code a monitor does not have leaves it dark with no
+# display to recover on. Only ever configure codes listed by `capabilities`.
+#
+################################################################################
+
+green='\033[0;32m'
+blue='\033[0;34m'
+red='\033[0;31m'
+nc='\033[0m'
+
+CONFIG=${MONITOR_INPUT_CONFIG:-$HOME/.config/monitor-input/config}
+
+################################################################################
+# Main Orchestration
+################################################################################
+
+main() {
+  local target="${1:-}" code name
+
+  load_config
+  require_ddcutil
+
+  case "$target" in
+    "$SIDE_A_NAME") code=$SIDE_A_INPUT; name=$SIDE_A_NAME ;;
+    "$SIDE_B_NAME") code=$SIDE_B_INPUT; name=$SIDE_B_NAME ;;
+    toggle)         code=$(other_input); name=$(name_for "$code") ;;
+    *)              error "usage: monitor-input toggle|${SIDE_A_NAME}|${SIDE_B_NAME}" ;;
+  esac
+
+  log "Switching ${#MONITORS[@]} monitor(s) to ${name} (${code})"
+  for serial in "${MONITORS[@]}"; do
+    switch_monitor "$serial" "$code"
+  done
+  log "Done"
+}
+
+################################################################################
+# Helper Functions
+################################################################################
+
+log() { echo -e "${green}==>${nc} ${1}"; }
+info() { echo -e "${blue}Info:${nc} ${1}"; }
+error() { echo -e "${red}Error:${nc} ${1}" >&2; exit 1; }
+
+################################################################################
+# Setup
+################################################################################
+
+load_config() {
+  [ -f "$CONFIG" ] || error "no config at ${CONFIG} - see the header of this script"
+  # shellcheck source=/dev/null
+  source "$CONFIG"
+
+  for var in MONITORS REFERENCE SIDE_A_NAME SIDE_A_INPUT SIDE_B_NAME SIDE_B_INPUT; do
+    [ -n "${!var:-}" ] || error "${var} is not set in ${CONFIG}"
+  done
+
+  [[ " ${MONITORS[*]} " == *" ${REFERENCE} "* ]] \
+    || error "REFERENCE (${REFERENCE}) is not one of MONITORS in ${CONFIG}"
+}
+
+require_ddcutil() {
+  command -v ddcutil >/dev/null \
+    || error "ddcutil not found. On macOS this needs a different backend (m1ddc/ddcctl) - not supported yet."
+}
+
+################################################################################
+# Core Functions
+################################################################################
+
+read_input() {
+  ddcutil --sn "$1" getvcp 60 2>/dev/null \
+    | grep -o 'sl=0x[0-9a-f]*' | cut -d= -f2 || true
+}
+
+name_for() {
+  case "$1" in
+    "$SIDE_A_INPUT") echo "$SIDE_A_NAME" ;;
+    "$SIDE_B_INPUT") echo "$SIDE_B_NAME" ;;
+    *)               echo "$1" ;;
+  esac
+}
+
+# Which way to flip is decided from ONE monitor, then every monitor is driven to
+# that same target. Deciding per-monitor would let a half-switched pair stay
+# split forever, each flipping away from the other.
+#
+# If the read fails we refuse rather than guess: guessing wrong hands the
+# screens away from someone who is already stuck.
+other_input() {
+  local current
+  current=$(read_input "$REFERENCE")
+
+  case "$current" in
+    "$SIDE_A_INPUT") echo "$SIDE_B_INPUT" ;;
+    "$SIDE_B_INPUT") echo "$SIDE_A_INPUT" ;;
+    "") error "no DDC response from ${REFERENCE} - cannot tell which way to flip. Name a side explicitly: monitor-input ${SIDE_A_NAME}|${SIDE_B_NAME}" ;;
+    *)  error "${REFERENCE} is on an unconfigured input (${current}). Name a side explicitly." ;;
+  esac
+}
+
+switch_monitor() {
+  local serial="$1" code="$2"
+
+  ddcutil --sn "$serial" setvcp 60 "$code" \
+    || error "could not set input on ${serial} - recover with the monitor OSD"
+  sleep 1
+  local now
+  now=$(read_input "$serial")
+  if [ -n "$now" ]; then
+    info "${serial} -> $(name_for "$now") (${now})"
+  else
+    info "${serial} -> no DDC response"
+  fi
+}
+
+################################################################################
+# Script Execution
+################################################################################
+
+main "$@"
