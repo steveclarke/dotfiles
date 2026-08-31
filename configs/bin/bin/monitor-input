@@ -37,6 +37,7 @@ set -euo pipefail
 #     SIDE_A_INPUT=0x0f
 #     SIDE_B_NAME=mini
 #     SIDE_B_INPUT=0x11
+#     VALID_INPUTS="0x0f 0x11 0x12"   # optional; codes these panels accept
 #
 # Find serials and the inputs a monitor actually accepts with:
 #   ddcutil detect
@@ -71,6 +72,9 @@ main() {
     toggle)         code=$(other_input); name=$(name_for "$code") ;;
     *)              error "usage: monitor-input toggle|${SIDE_A_NAME}|${SIDE_B_NAME}" ;;
   esac
+
+  verify_all_present
+  verify_code "$code"
 
   log "Switching ${#MONITORS[@]} monitor(s) to ${name} (${code})"
   for serial in "${MONITORS[@]}"; do
@@ -112,6 +116,34 @@ require_ddcutil() {
 ################################################################################
 # Core Functions
 ################################################################################
+
+# Every configured monitor must be reachable BEFORE any of them is switched.
+# Without this, a detached or asleep panel fails mid-loop having already moved
+# the others - a half-switched pair, split across two machines, which is the
+# state hardest to recover from.
+verify_all_present() {
+  local missing=()
+  for serial in "${MONITORS[@]}"; do
+    [ -n "$(read_input "$serial")" ] || missing+=("$serial")
+  done
+
+  if [ ${#missing[@]} -gt 0 ]; then
+    error "not switching - no DDC response from: ${missing[*]}. Switching the rest would split the pair across two machines."
+  fi
+}
+
+# Optional allowlist. Set VALID_INPUTS in the config to the codes the panels
+# actually accept (from `ddcutil --sn <serial> capabilities`). A code a monitor
+# does not have leaves it dark with no display to recover on, so a config typo
+# is worth catching before it is sent rather than after.
+verify_code() {
+  [ -n "${VALID_INPUTS:-}" ] || return 0
+
+  case " ${VALID_INPUTS} " in
+    *" $1 "*) return 0 ;;
+    *) error "input ${1} is not in VALID_INPUTS (${VALID_INPUTS}) - refusing, since a code a panel lacks blacks it" ;;
+  esac
+}
 
 read_input() {
   ddcutil --sn "$1" getvcp 60 2>/dev/null \
