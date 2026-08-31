@@ -85,7 +85,13 @@ end
 --
 -- It also works blind - Hyprland still gets the keypress with no picture on
 -- screen - which is what makes it a real recovery rather than a convenience.
-o.bind("SUPER + SHIFT + H", "Toggle monitors to other machine", "monitor-input toggle")
+-- Absolute path on purpose, resolved here rather than by a shell: Hyprland
+-- launches binds with a PATH that has ~/.local/bin but NOT ~/bin, where stow
+-- puts this, so a bare name silently does nothing - the worst possible failure
+-- for a key whose whole job is recovering a screen you cannot see. "$HOME" is
+-- no good either, since the bind may not go through a shell to expand it.
+o.bind("SUPER + SHIFT + H", "Toggle monitors to other machine",
+  os.getenv("HOME") .. "/bin/monitor-input toggle")
 
 -- Disarmed bindings --------------------------------------------------------
 
