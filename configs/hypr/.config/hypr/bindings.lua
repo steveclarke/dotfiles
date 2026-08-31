@@ -72,6 +72,21 @@ for workspace, code in ipairs(numpad) do
     hl.dsp.window.move({ workspace = tostring(workspace) }))
 end
 
+-- Monitor handoff ----------------------------------------------------------
+-- The desk monitors are cabled to two machines. This TOGGLES them between the
+-- two over DDC/CI instead of menu-diving on the monitor OSD. See the
+-- monitor-input script in configs/bin; serials and input codes come from
+-- ~/.config/monitor-input/config, which is machine-specific and not in here.
+--
+-- It must be a toggle, not a one-way hand-off: the machine you hand the screens
+-- to may have no working input device, and then the same key has to bring them
+-- back. This binding was one-way for exactly one afternoon and that is precisely
+-- how it went wrong.
+--
+-- It also works blind - Hyprland still gets the keypress with no picture on
+-- screen - which is what makes it a real recovery rather than a convenience.
+o.bind("SUPER + SHIFT + H", "Toggle monitors to other machine", "monitor-input toggle")
+
 -- Disarmed bindings --------------------------------------------------------
 
 -- SUPER + SHIFT + SPACE toggles the top bar, and sits one Shift away from
