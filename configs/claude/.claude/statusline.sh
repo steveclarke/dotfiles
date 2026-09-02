@@ -103,14 +103,11 @@ else
     pct_used=0
 fi
 
+# Live session values (reflect mid-session /effort changes), not the settings.json default
 thinking_on=false
-effort_level=""
-settings_path="$HOME/.claude/settings.json"
-if [ -f "$settings_path" ]; then
-    thinking_val=$(jq -r '.alwaysThinkingEnabled // false' "$settings_path" 2>/dev/null)
-    [ "$thinking_val" = "true" ] && thinking_on=true
-    effort_level=$(jq -r '.effortLevel // empty' "$settings_path" 2>/dev/null)
-fi
+thinking_val=$(echo "$input" | jq -r '.thinking.enabled // false')
+[ "$thinking_val" = "true" ] && thinking_on=true
+effort_level=$(echo "$input" | jq -r '.effort.level // empty')
 
 cwd=$(echo "$input" | jq -r '.cwd // ""')
 [ -z "$cwd" ] || [ "$cwd" = "null" ] && cwd=$(pwd)
