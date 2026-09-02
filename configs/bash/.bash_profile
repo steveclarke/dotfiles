@@ -20,6 +20,14 @@ if [[ -d "$_mise_shims" ]]; then
 fi
 unset _mise_shims
 
+# Docker Desktop CLI plugins (appended; Docker Desktop keeps trying to add this)
+if [[ -d "$HOME/.docker/bin" ]]; then
+  case ":$PATH:" in
+    *":$HOME/.docker/bin:"*) ;;
+    *) export PATH="$PATH:$HOME/.docker/bin" ;;
+  esac
+fi
+
 # For interactive login shells, load the normal interactive config.
 if [[ $- == *i* && -f "$HOME/.bashrc" ]]; then
   source "$HOME/.bashrc"

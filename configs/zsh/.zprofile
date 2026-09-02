@@ -89,6 +89,14 @@ case ":$PATH:" in
   *) export PATH="$HOME/.bun/bin:$PATH" ;;
 esac
 
+# Docker Desktop CLI plugins (appended; Docker Desktop keeps trying to add this)
+if [[ -d "$HOME/.docker/bin" ]]; then
+  case ":$PATH:" in
+    *":$HOME/.docker/bin:"*) ;;
+    *) export PATH="$PATH:$HOME/.docker/bin" ;;
+  esac
+fi
+
 if command -v mise >/dev/null 2>&1; then
   # Use --shims mode for non-interactive shell compatibility.
   # Always run this: inherited agent PATHs can contain shims behind /usr/bin.
