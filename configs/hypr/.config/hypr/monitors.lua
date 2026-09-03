@@ -21,7 +21,6 @@ hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
 -- newly attached monitor lights up instead of staying blank.
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
--- hyprmoncfg's generated layout and workspace pinning. Absolute path via HOME
--- because hyprmoncfg probes at runtime that this file actually executed, and a
--- require() path miss would fail that check silently.
-dofile(os.getenv("HOME") .. "/.config/hypr/monitors-generated.lua")
+-- The generated layout is NOT loaded here. hyprmoncfg maintains its own
+-- include at the end of hyprland.lua (see `hyprmoncfg doctor`), and loading it
+-- from here as well just applied the same rules twice.

@@ -238,6 +238,18 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/hypr/monitors.lua" "${HOME}/.config/hypr/bindings.lua" "${HOME}/.config/hypr/autostart.lua" "${HOME}/.config/hypr/input.lua" "${HOME}/.config/hypr/looknfeel.lua" "${HOME}/.config/hypr/hyprsunset.conf"
   stow_package "Hyprland" "hypr"
 
+  # hyprmoncfg monitor profiles — the saved screen arrangements, keyed by panel
+  # make/model/serial rather than by machine, so the daemon auto-applies
+  # whichever profile matches what is plugged in. Stow folds the whole
+  # profiles/ DIRECTORY into a symlink, so a profile saved later lands in this
+  # repo with no extra step. (Linking the directory rather than each file also
+  # survives hyprmoncfg writing profiles atomically: the rename happens inside
+  # the real directory.) monitors-generated.lua stays out — hyprmoncfg rewrites
+  # it wholesale from whichever profile is active.
+  ensure_dir "${HOME}/.config/hyprmoncfg"
+  cleanup_paths "${HOME}/.config/hyprmoncfg/profiles"
+  stow_package "hyprmoncfg profiles" "hyprmoncfg"
+
   # Omarchy shell — bar layout, widget set, idle/lock timings (shell.json) and
   # the machine-level font/spacing override (shell.toml). COPIED, never
   # symlinked: both are rewritten atomically by Omarchy itself — the shell's

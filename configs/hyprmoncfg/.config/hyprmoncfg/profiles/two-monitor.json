@@ -1,0 +1,108 @@
+{
+  "name": "two-monitor",
+  "created_at": "2026-08-13T16:26:21.367623487Z",
+  "updated_at": "2026-08-13T16:26:21.367856145Z",
+  "outputs": [
+    {
+      "key": "dell inc.|dell s2721qs|3ql0m43",
+      "match_key": "dell inc.|dell s2721qs|3ql0m43",
+      "name": "DP-1",
+      "description": "Dell Inc. DELL S2721QS 3QL0M43",
+      "make": "Dell Inc.",
+      "model": "DELL S2721QS",
+      "serial": "3QL0M43",
+      "enabled": true,
+      "mode": "3840x2160@60.00Hz",
+      "width": 3840,
+      "height": 2160,
+      "refresh": 59.997,
+      "x": 2880,
+      "y": 0,
+      "scale": 1.333333,
+      "transform": 0,
+      "bitdepth": 8,
+      "cm": "srgb",
+      "sdr_brightness": 1,
+      "sdr_saturation": 1,
+      "sdr_min_luminance": 0.2,
+      "sdr_max_luminance": 80,
+      "min_luminance": 0
+    },
+    {
+      "key": "dell inc.|dell s2721qs|d0x1m43",
+      "match_key": "dell inc.|dell s2721qs|d0x1m43",
+      "name": "DP-2",
+      "description": "Dell Inc. DELL S2721QS D0X1M43",
+      "make": "Dell Inc.",
+      "model": "DELL S2721QS",
+      "serial": "D0X1M43",
+      "enabled": true,
+      "mode": "3840x2160@60.00Hz",
+      "width": 3840,
+      "height": 2160,
+      "refresh": 59.997,
+      "x": 0,
+      "y": 0,
+      "scale": 1.333333,
+      "transform": 0,
+      "bitdepth": 8,
+      "cm": "srgb",
+      "sdr_brightness": 1,
+      "sdr_saturation": 1,
+      "sdr_min_luminance": 0.2,
+      "sdr_max_luminance": 80,
+      "min_luminance": 0
+    }
+  ],
+  "workspaces": {
+    "enabled": true,
+    "strategy": "manual",
+    "max_workspaces": 9,
+    "group_size": 3,
+    "monitor_order": [
+      "dell inc.|dell s2721qs|d0x1m43",
+      "dell inc.|dell s2721qs|3ql0m43"
+    ],
+    "rules": [
+      {
+        "workspace": "1",
+        "output_key": "dell inc.|dell s2721qs|3ql0m43",
+        "output_name": "DP-1",
+        "default": true,
+        "persistent": true
+      },
+      {
+        "workspace": "2",
+        "output_key": "dell inc.|dell s2721qs|3ql0m43",
+        "output_name": "DP-1",
+        "persistent": true
+      },
+      {
+        "workspace": "3",
+        "output_key": "dell inc.|dell s2721qs|3ql0m43",
+        "output_name": "DP-1",
+        "persistent": true
+      },
+      {
+        "workspace": "4",
+        "output_key": "dell inc.|dell s2721qs|d0x1m43",
+        "output_name": "DP-2",
+        "default": true,
+        "persistent": true
+      },
+      {
+        "workspace": "5",
+        "output_key": "dell inc.|dell s2721qs|d0x1m43",
+        "output_name": "DP-2",
+        "persistent": true
+      },
+      {
+        "workspace": "6",
+        "output_key": "dell inc.|dell s2721qs|d0x1m43",
+        "output_name": "DP-2",
+        "persistent": true
+      }
+    ]
+  },
+  "exec": ""
+}
