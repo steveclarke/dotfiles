@@ -19,7 +19,8 @@
           "id": "omarchy.weather"
         },
         {
-          "id": "steveclarke.sun"
+          "id": "vt.sun",
+          "show": "both"
         },
         {
           "id": "omarchy.media"
@@ -41,7 +42,7 @@
           "id": "omarchy.tray"
         },
         {
-          "id": "io.github.steveclarke.monitor-input"
+          "id": "io.github.steveclarke.screenpush"
         },
         {
           "id": "omarchy.tailscale"

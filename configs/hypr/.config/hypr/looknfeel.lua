@@ -9,3 +9,11 @@ hl.config({
     single_window_aspect_ratio = { 8, 9 },
   },
 })
+
+-- Close the gap between the bar and the top row of windows. The bar is
+-- transparent, so a top gap reads as bar padding rather than as a gap.
+hl.config({
+  general = {
+    gaps_out = { top = 0, right = 10, bottom = 10, left = 10 },
+  },
+})

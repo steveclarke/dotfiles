@@ -238,11 +238,26 @@ if is_omarchy; then
   cleanup_paths "${HOME}/.config/hypr/monitors.lua" "${HOME}/.config/hypr/bindings.lua" "${HOME}/.config/hypr/autostart.lua" "${HOME}/.config/hypr/input.lua" "${HOME}/.config/hypr/looknfeel.lua" "${HOME}/.config/hypr/hyprsunset.conf"
   stow_package "Hyprland" "hypr"
 
-  # Omarchy shell — bar layout, widget set, and idle/lock timings. This is the
-  # Omarchy 4 replacement for the old Waybar config.
+  # Omarchy shell — bar layout, widget set, idle/lock timings (shell.json) and
+  # the machine-level font/spacing override (shell.toml). COPIED, never
+  # symlinked: both are rewritten atomically by Omarchy itself — the shell's
+  # FileView uses `atomicWrites: true` for shell.json, and
+  # omarchy-display-text-size does `mv "$tmp" shell.toml`. A temp-file rename
+  # replaces a symlink with a real file, so a stow link silently detaches the
+  # first time the bar UI or `omarchy display text size` writes. Dotfiles is
+  # the source of truth; edits made through the Omarchy UI live only in
+  # ~/.config until copied back here, and `dotfiles stow` overwrites them.
+  config_banner "Omarchy shell"
   ensure_dir "${HOME}/.config/omarchy"
-  cleanup_paths "${HOME}/.config/omarchy/shell.json"
-  stow_package "Omarchy shell" "omarchy-shell"
+  # rm -f, not cleanup_paths: cleanup_paths deliberately skips symlinks, and a
+  # leftover link from the days these were stowed would make cp write straight
+  # back into this repo.
+  rm -f "${HOME}/.config/omarchy/shell.json" "${HOME}/.config/omarchy/shell.toml"
+  for shell_file in "${DOTFILES_DIR}"/omarchy-shell/*; do
+    [ -f "$shell_file" ] || continue
+    cp -a "$shell_file" "${HOME}/.config/omarchy/$(basename "$shell_file")"
+    echo "  copied $(basename "$shell_file")"
+  done
 
   # Omarchy shell plugins — COPIED, never symlinked: omarchy-plugin-validate
   # rejects symlinks in or as a plugin folder, which is the one place the stow
