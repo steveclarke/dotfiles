@@ -41,6 +41,9 @@
           "id": "omarchy.tray"
         },
         {
+          "id": "io.github.steveclarke.monitor-input"
+        },
+        {
           "id": "omarchy.tailscale"
         },
         {

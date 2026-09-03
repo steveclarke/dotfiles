@@ -73,25 +73,23 @@ for workspace, code in ipairs(numpad) do
 end
 
 -- Monitor handoff ----------------------------------------------------------
--- The desk monitors are cabled to two machines. This TOGGLES them between the
--- two over DDC/CI instead of menu-diving on the monitor OSD. See the
--- monitor-input script in configs/bin; serials and input codes come from
--- ~/.config/monitor-input/config, which is machine-specific and not in here.
+-- The desk monitors are cabled to two machines. This brings them all HERE
+-- over DDC/CI instead of menu-diving on the monitor OSD. It runs the Screen
+-- Push plugin's engine (github.com/steveclarke/omarchy-screenpush); the desk,
+-- its computers and input codes live in ~/.config/screenpush/desks.json,
+-- written by the plugin's setup sheet, and are machine-specific.
 --
--- It must be a toggle, not a one-way hand-off: the machine you hand the screens
--- to may have no working input device, and then the same key has to bring them
--- back. This binding was one-way for exactly one afternoon and that is precisely
--- how it went wrong.
+-- One-way on purpose: each machine has its own keyboard now, so the key on
+-- each side means "I am here, send me the screens". The earlier toggle was
+-- for a Mac with no input device of its own.
 --
--- It also works blind - Hyprland still gets the keypress with no picture on
+-- It works blind - Hyprland still gets the keypress with no picture on
 -- screen - which is what makes it a real recovery rather than a convenience.
--- Absolute path on purpose, resolved here rather than by a shell: Hyprland
--- launches binds with a PATH that has ~/.local/bin but NOT ~/bin, where stow
--- puts this, so a bare name silently does nothing - the worst possible failure
--- for a key whose whole job is recovering a screen you cannot see. "$HOME" is
--- no good either, since the bind may not go through a shell to expand it.
-o.bind("SUPER + SHIFT + H", "Toggle monitors to other machine",
-  os.getenv("HOME") .. "/bin/monitor-input toggle")
+-- It calls the engine directly, not the shell's IPC, so it still works while
+-- the shell is dead or restarting. Absolute path: Hyprland launches binds
+-- with a PATH that lacks ~/bin and may not go through a shell for "$HOME".
+o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
+  os.getenv("HOME") .. "/.config/omarchy/plugins/io.github.steveclarke.screenpush/bin/screenpush switch this")
 
 -- Disarmed bindings --------------------------------------------------------
 
