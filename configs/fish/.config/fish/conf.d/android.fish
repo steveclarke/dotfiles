@@ -12,11 +12,14 @@ for dir in $ANDROID_HOME/cmdline-tools/latest/bin \
            $ANDROID_HOME/platform-tools \
            $ANDROID_HOME/emulator
     if test -d $dir
-        fish_add_path $dir
+        fish_add_path -g $dir
     end
 end
 
-# JDK — Arch sets /usr/lib/jvm/default via `archlinux-java`.
+# JDK — Arch sets /usr/lib/jvm/default via `archlinux-java`; macOS gets Temurin
+# 21 from the Brewfile cask.
 if test -d /usr/lib/jvm/default
     set -x JAVA_HOME /usr/lib/jvm/default
+else if test -d /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
+    set -x JAVA_HOME /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
 end
