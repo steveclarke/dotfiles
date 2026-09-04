@@ -1,4 +1,5 @@
 # macOS-specific packages
+brew "asc" # App Store Connect CLI (asccli.sh) — TestFlight, builds, releases from the terminal
 brew "duti"
 brew "mole" # Mac maintenance CLI — headless clean/analyze; see weekly disk-maintenance Todoist task
 tap "bwya77/tap"
