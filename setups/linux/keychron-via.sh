@@ -14,8 +14,8 @@
 #
 # Full K5 Max reference (layers, remap procedure, cable-mode warning,
 # dead-end paths) lives at:
-#   ~/src/hugo/keymaps/keychron-k5-max.md
-# Manual PDF: ~/src/hugo/keymaps/Keychron_K5_Max_User_Manual.pdf
+#   ~/src/hugo/docs/keymaps/keychron-k5-max.md
+# Manual PDF: ~/src/hugo/docs/keymaps/Keychron_K5_Max_User_Manual.pdf
 #
 
 source "${HOME}"/.dotfilesrc
