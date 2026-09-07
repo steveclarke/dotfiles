@@ -1,6 +1,6 @@
 ---
 name: branding
-description: "Create a complete brand identity — logo (via quiver.ai), colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, logo, brand pack, brand color, project identity, social preview, visual identity."
+description: "Create a complete brand identity — logo authored directly as SVG, colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, logo, brand pack, brand color, project identity, social preview, visual identity."
 ---
 
 # Branding
@@ -25,7 +25,7 @@ which inkscape && which magick
 The workflow has 7 phases. The first 3 are collaborative with the user; the last 4 are mostly automated production work.
 
 1. **Discovery** — understand the project and what the logo should convey
-2. **Logo generation** — craft a prompt for an AI SVG tool, user generates it
+2. **Logo generation** — author SVG concepts directly and review them with the user
 3. **Font and color selection** — pick a wordmark font and brand color
 4. **SVG refinement** — Inkscape: text to paths, viewBox cleanup, lockup creation
 5. **Asset pack production** — export all variants, sizes, and formats
@@ -61,25 +61,19 @@ Ask the user:
 4. **Any symbols or metaphors** — things the name evokes (e.g., "Kiso" means "foundation" in Japanese, which led to stacked building blocks)
 5. **Color preferences** — warm/cool, any existing colors, or "surprise me"
 
-Don't overthink this — a 2-minute conversation is enough. The AI tool will do the creative heavy lifting.
+Use answers already available in the conversation. Keep discovery brief, then create concepts.
 
 ## Phase 2: Logo Generation
 
-Craft a detailed prompt for the user to paste into an AI SVG generation tool (quiver.ai, recraft.ai, or similar). The prompt should specify:
+Author the logo directly as editable SVG using the latest available flagship model from OpenAI or Anthropic, with the highest supported reasoning or effort setting. Prefer the strongest available model for visual design and code generation; do not hard-code model names or versions in this skill. Respect the user's explicit model choice. If the environment cannot change models or effort, state that briefly and work with the available model without blocking progress or claiming a switch occurred.
 
-- The visual concept from discovery
-- "SVG format" or "vector" explicitly
-- Style keywords (isometric, flat, geometric, minimal, etc.)
-- Color guidance if the user has preferences
-- "No text" — the wordmark will be added separately with a proper font
+Use the discovery brief to create a few distinct concepts when the user wants options, or refine the chosen direction directly. Write real vector geometry (paths, shapes, fills, and strokes), with a clean viewBox and no embedded raster image standing in for the logo. Keep the mark separate from the wordmark, which gets a proper font in Phase 3.
 
-Present the prompt to the user. They paste it into the tool, generate options, and either:
-- Share the SVG file with you, or
-- Save it to a known path
+Render the SVGs and inspect them visually before presenting them. Show concepts together on an HTML preview page, including small icon sizes and light/dark backgrounds. Check the silhouette, spacing, stroke consistency, and legibility. Iterate from the user's feedback; keep the approved version intact while exploring alternatives and replace it only when the user chooses a successor.
 
-Once you have the SVG, read it to understand its structure (viewBox, dimensions, colors used). This is the **mark** — the icon without text.
+Third-party SVG generators such as quiver.ai or recraft.ai are optional fallbacks when the user requests one or direct SVG iteration cannot achieve the desired result. Do not require accounts, external generation, or a copy-and-paste prompt handoff as the normal workflow.
 
-**Important:** If the mark SVG has embedded text or fonts, note it — those will be converted to paths in Phase 4.
+Once a mark is chosen, inspect its SVG structure (viewBox, dimensions, colors, and any embedded text or fonts) before producing the asset pack. Convert any remaining text to paths in Phase 4.
 
 ## Phase 3: Font and Color Selection
 
