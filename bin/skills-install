@@ -90,6 +90,10 @@ install_all "External (impeccable)" \
 install_all "External (asd-ste100)" \
   "danyuchn/asd-ste100-skill"
 
+# ─── External: wbso-ai/omarchy-plugin-security-skill — install all ──────────
+install_all "External (omarchy-plugin-security)" \
+  "wbso-ai/omarchy-plugin-security-skill"
+
 # ─── External: specific skills only ─────────────────────────────────────────
 
 install_specific "External (antfu)" "antfu/skills" \
