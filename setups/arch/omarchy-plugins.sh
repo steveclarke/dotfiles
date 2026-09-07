@@ -20,6 +20,7 @@ omarchy_plugins_setup() {
   # id|git url. The id must match the folder omarchy plugin add creates.
   local plugins=(
     "io.github.steveclarke.screenpush|https://github.com/steveclarke/omarchy-screenpush.git"
+    "io.github.steveclarke.headroom|https://github.com/steveclarke/omarchy-headroom.git"
     "vt.sun|https://github.com/vitally/omarchy-solar-times.git"
   )
 

@@ -7,6 +7,9 @@
           "id": "omarchy.indicators"
         },
         {
+          "id": "io.github.steveclarke.headroom"
+        },
+        {
           "format": "dddd h:mm AP",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
@@ -46,9 +49,6 @@
         },
         {
           "id": "omarchy.tailscale"
-        },
-        {
-          "id": "omarchy.agents"
         },
         {
           "id": "omarchy.bluetooth"
