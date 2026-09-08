@@ -6,11 +6,13 @@
 # file as it was when last merged), $OMARCHY_PATH/config/herdr/config.toml is
 # theirs, configs/herdr/.config/herdr/config.toml is ours. Lines only Omarchy
 # changed come across; lines we changed stay; a line both sides changed gets
-# conflict markers to resolve by hand. The snapshot is then updated so the next
-# run only sees new upstream changes.
+# conflict markers. Claude then summarises what upstream changed and, when
+# there are conflicts, proposes a resolution (our bindings win, upstream's new
+# settings come in). Nothing is committed: review with git diff, then commit.
 #
-# Usage: herdr-upstream-merge [--check]
-#   --check   report whether upstream changed, change nothing
+# Usage: herdr-upstream-merge [--check] [--no-agent]
+#   --check     report whether upstream changed, change nothing
+#   --no-agent  skip the Claude summary / conflict resolution
 
 set -euo pipefail
 
@@ -21,6 +23,15 @@ upstream="${omarchy_path}/config/herdr/config.toml"
 base="${DOTFILES_DIR}/omarchy-upstream/herdr/config.toml"
 ours="${DOTFILES_DIR}/configs/herdr/.config/herdr/config.toml"
 
+check=false; agent=true
+for arg in "$@"; do
+  case "$arg" in
+    --check) check=true ;;
+    --no-agent) agent=false ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
+
 [[ -f $upstream ]] || { echo "No Omarchy stock herdr config at ${upstream}" >&2; exit 1; }
 
 if cmp -s "$upstream" "$base"; then
@@ -28,18 +39,47 @@ if cmp -s "$upstream" "$base"; then
   exit 0
 fi
 
+upstream_diff=$(diff -u "$base" "$upstream" || true)
 echo "Omarchy changed its stock herdr config:"
-diff -u "$base" "$upstream" || true
+echo "$upstream_diff"
 echo
 
-[[ ${1:-} == "--check" ]] && exit 0
+$check && exit 0
 
+conflicts=false
 if git merge-file "$ours" "$base" "$upstream"; then
   echo "Merged cleanly into ${ours}"
 else
-  echo "Conflicts in ${ours} - resolve the <<<<<<< markers, then commit." >&2
+  conflicts=true
+  echo "Conflicts in ${ours}"
 fi
 
 cp "$upstream" "$base"
+
+if $agent && command -v claude >/dev/null; then
+  echo
+  if $conflicts; then
+    echo "Asking Claude to resolve the conflicts..."
+    claude -p "You are resolving a three-way merge of a Herdr terminal-multiplexer config (TOML).
+The file at ${ours} contains git conflict markers. Rules: Steve's custom key bindings and
+settings always win; new settings, comments, or keys that Omarchy added upstream come in
+alongside them; when a key binding list conflicts, keep every key from Steve's side and add
+any new keys from upstream. Edit the file in place to remove all conflict markers, keep it
+valid TOML, and change nothing else. Then print a short plain-English summary of what
+Omarchy changed upstream and how each conflict was resolved.
+
+Upstream diff (Omarchy's old stock -> new stock):
+${upstream_diff}" --allowedTools "Read,Edit" --add-dir "${DOTFILES_DIR}"
+  else
+    echo "Claude's summary of the upstream change:"
+    claude -p "Summarise in plain English, for Steve, what changed in this Herdr config diff
+from Omarchy (old stock -> new stock), and say whether any of it could affect custom key
+bindings a user layered on top. Four sentences maximum, no preamble.
+
+${upstream_diff}"
+  fi
+fi
+
+echo
 echo "Snapshot updated. Review with: git -C ${DOTFILES_DIR} diff"
 echo "Apply with:                    herdr server reload-config"
