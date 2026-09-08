@@ -5,273 +5,241 @@
 <title>Herdr Cheatsheet</title>
 <style>
   :root {
-    --bg: #ffffff;
-    --ink: #1a1a1a;
-    --muted: #6b6b6b;
-    --rule: #e5e5e5;
+    --paper: #ffffff;
+    --ink: #16181d;
+    --ink-2: #4b5563;
+    --ink-3: #6f7681;
+    --rule: #d9dde3;
 
-    --pane: #2563eb;     /* blue */
-    --pane-bg: #eff6ff;
-    --window: #059669;   /* emerald */
-    --window-bg: #ecfdf5;
-    --session: #d97706;  /* amber */
-    --session-bg: #fffbeb;
-    --copy: #7c3aed;     /* violet */
-    --copy-bg: #f5f3ff;
-    --special: #dc2626;  /* red */
-    --special-bg: #fef2f2;
-    --notes: #475569;    /* slate */
-    --notes-bg: #f8fafc;
+    --panes: #1d4ed8;
+    --tabs: #047857;
+    --spaces: #b45309;
+    --herdr: #b91c1c;
+    --copy: #9d174d;
+    --agents: #0e7490;
+    --config: #374151;
   }
 
-  @page { size: letter; margin: 0.35in; }
-
+  @page { size: letter; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    background: var(--bg);
+  html { background: #e9ebef; }
+  body {
     color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-    font-size: 9.5pt;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 8.6pt;
     line-height: 1.35;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    padding: 0.4in 0;
+  }
+  ::selection { background: #1d4ed8; color: #fff; }
+
+  .page {
+    width: 8.5in; height: 11in;
+    margin: 0 auto;
+    padding: 0.42in 0.45in 0.38in;
+    background: var(--paper);
+    box-shadow: 0 8px 30px -10px rgba(22,24,29,.35);
+    display: flex; flex-direction: column;
+  }
+  @media print {
+    html { background: none; }
+    body { padding: 0; }
+    .page { box-shadow: none; margin: 0; }
   }
 
-  body { padding: 0; }
-
+  /* ---- header ---- */
   header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 6px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    padding-bottom: 8px;
+    border-bottom: 2.5px solid var(--ink);
+    margin-bottom: 12px;
   }
   h1 {
-    font-size: 18pt;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: 26pt; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
   }
-  h1 small {
-    font-size: 9.5pt;
-    font-weight: 400;
-    color: var(--muted);
-    margin-left: 8px;
-    letter-spacing: 0;
+  h1 span { color: var(--ink-3); font-weight: 500; letter-spacing: -0.02em; font-size: 12pt; margin-left: 10px; }
+  .prefix {
+    text-align: right; font-size: 8.4pt; color: var(--ink-2); line-height: 1.5;
   }
-  .meta {
-    font-size: 8.5pt;
-    color: var(--muted);
-  }
-  .meta kbd { font-size: 8pt; }
+  .prefix kbd { font-size: 9pt; padding: 1px 7px; }
+  .prefix b { color: var(--ink); font-weight: 600; }
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 12px;
+  /* ---- layout ---- */
+  .cols {
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: 0.32in;
+    flex: 1;
   }
+  .col { display: flex; flex-direction: column; gap: 11px; }
 
-  section {
-    border-left: 4px solid currentColor;
-    padding: 4px 0 6px 8px;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  section.panes    { color: var(--pane); }
-  section.windows  { color: var(--window); }
-  section.sessions { color: var(--session); }
-  section.copy     { color: var(--copy); }
-  section.special  { color: var(--special); }
-  section.notes    { color: var(--notes); }
-
+  section { break-inside: avoid; }
   h2 {
-    font-size: 10.5pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 8.2pt; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--c); margin-bottom: 5px;
   }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--rule); transform: translateY(-2px); }
+  h2 small { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink-3); font-size: 7.6pt; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    color: var(--ink);
-  }
-  td {
-    padding: 1.5px 0;
-    vertical-align: top;
-  }
-  td.action {
-    color: var(--ink);
-    padding-right: 8px;
-    width: 42%;
-  }
-  td.keys {
-    text-align: right;
-    white-space: nowrap;
-  }
+  /* every row: fixed key column so actions align across the whole sheet */
+  .rows { display: grid; grid-template-columns: 1.86in 1fr; row-gap: 3px; column-gap: 10px; }
+  .rows > .k { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+  .rows > .a { align-self: center; color: var(--ink); }
+  .a .h { color: var(--ink-3); font-size: 7.6pt; margin-left: 4px; }
 
   kbd {
-    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Menlo, Consolas, monospace;
-    font-size: 8.5pt;
-    font-weight: 600;
-    background: #f3f4f6;
-    border: 1px solid #d4d4d8;
-    border-bottom-width: 2px;
-    border-radius: 3px;
-    padding: 0px 5px;
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "SF Mono", Menlo, monospace;
+    font-size: 7.9pt; font-weight: 600; line-height: 1.45;
     color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--ink-3);
+    border-bottom: 2px solid var(--ink-3);
+    border-radius: 3px; padding: 0 5px;
     display: inline-block;
-    line-height: 1.4;
   }
+  kbd .p { color: var(--c); font-weight: 800; }
+  .k .or { color: var(--ink-3); font-size: 7.4pt; }
 
-  /* Tint keys to their section color */
-  section.panes kbd    { background: var(--pane-bg);    border-color: #bfdbfe; }
-  section.windows kbd  { background: var(--window-bg);  border-color: #a7f3d0; }
-  section.sessions kbd { background: var(--session-bg); border-color: #fde68a; }
-  section.copy kbd     { background: var(--copy-bg);    border-color: #ddd6fe; }
-  section.special kbd  { background: var(--special-bg); border-color: #fecaca; }
-  section.notes kbd    { background: var(--notes-bg);   border-color: #e2e8f0; }
+  section[data-c="panes"]  { --c: var(--panes); }
+  section[data-c="tabs"]   { --c: var(--tabs); }
+  section[data-c="spaces"] { --c: var(--spaces); }
+  section[data-c="herdr"]  { --c: var(--herdr); }
+  section[data-c="copy"]   { --c: var(--copy); }
+  section[data-c="agents"] { --c: var(--agents); }
+  section[data-c="config"] { --c: var(--config); }
 
-  .sep {
-    color: var(--muted);
-    margin: 0 3px;
-    font-weight: 400;
-  }
-
-  .hint {
-    font-size: 8pt;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .notes-list {
-    list-style: none;
-    font-size: 8.5pt;
-    color: var(--ink);
-  }
-  .notes-list li {
-    padding: 1px 0;
-    padding-left: 10px;
-    position: relative;
-  }
-  .notes-list li::before {
-    content: "›";
-    position: absolute;
-    left: 0;
-    color: var(--notes);
-    font-weight: 700;
-  }
+  /* notes */
+  ul { list-style: none; display: grid; row-gap: 3px; }
+  li { padding-left: 11px; position: relative; color: var(--ink-2); }
+  li::before { content: ""; position: absolute; left: 0; top: 0.42em; width: 5px; height: 5px; border-radius: 50%; background: var(--c); }
+  li kbd { font-weight: 500; color: var(--ink); }
+  li b { color: var(--ink); font-weight: 600; }
 
   footer {
-    margin-top: 8px;
-    padding-top: 4px;
-    border-top: 1px solid var(--rule);
-    font-size: 7.5pt;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
+    margin-top: 10px; padding-top: 6px; border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between;
+    font-size: 7.4pt; color: var(--ink-3);
   }
 </style>
 </head>
 <body>
+<div class="page">
 
 <header>
-  <h1>Herdr <small>cheatsheet</small></h1>
-  <div class="meta">
-    Prefix <kbd>Ctrl Space</kbd> <span class="sep">·</span> workspace = session <span class="sep">·</span> tab = window
+  <h1>Herdr <span>keybindings</span></h1>
+  <div class="prefix">
+    <b>◆</b> is the prefix <kbd>Ctrl Space</kbd><br>
+    Capital letter = with Shift &nbsp;·&nbsp; workspace ≈ tmux session, tab ≈ tmux window
   </div>
 </header>
 
-<div class="grid">
+<div class="cols">
 
-  <section class="panes">
+<div class="col">
+
+  <section data-c="panes">
     <h2>Panes</h2>
-    <table>
-      <tr><td class="action">Focus L / D / U / R</td><td class="keys"><kbd>Ctrl Alt ←↓↑→</kbd></td></tr>
-      <tr><td class="action"></td><td class="keys"><kbd>◆ j</kbd> <kbd>◆ k</kbd> <kbd>◆ l</kbd> <span class="hint">down / up / right</span></td></tr>
-      <tr><td class="action">Cycle next / prev</td><td class="keys"><kbd>◆ Tab</kbd> <kbd>◆ Shift Tab</kbd></td></tr>
-      <tr><td class="action">Last pane</td><td class="keys"><kbd>◆ ;</kbd></td></tr>
-      <tr><td class="action">Split down (horizontal)</td><td class="keys"><kbd>Alt Enter</kbd> <span class="sep">·</span> <kbd>◆ h</kbd></td></tr>
-      <tr><td class="action">Split right (vertical)</td><td class="keys"><kbd>Alt Shift Enter</kbd> <span class="sep">·</span> <kbd>◆ v</kbd></td></tr>
-      <tr><td class="action">Resize</td><td class="keys"><kbd>Ctrl Alt Shift ←↓↑→</kbd></td></tr>
-      <tr><td class="action">Resize mode</td><td class="keys"><kbd>◆ Ctrl ←↓↑→</kbd> <span class="hint">then arrows</span></td></tr>
-      <tr><td class="action">Zoom toggle</td><td class="keys"><kbd>◆ z</kbd></td></tr>
-      <tr><td class="action">Rename pane</td><td class="keys"><kbd>◆ O</kbd></td></tr>
-      <tr><td class="action">Close pane</td><td class="keys"><kbd>Alt Esc</kbd> <span class="sep">·</span> <kbd>◆ x</kbd></td></tr>
-    </table>
+    <div class="rows">
+      <div class="k"><kbd>Ctrl Alt ←↓↑→</kbd></div>                       <div class="a">Focus pane in that direction</div>
+      <div class="k"><kbd><span class="p">◆</span> j</kbd><kbd><span class="p">◆</span> k</kbd><kbd><span class="p">◆</span> l</kbd></div> <div class="a">Focus down · up · right</div>
+      <div class="k"><kbd><span class="p">◆</span> Tab</kbd><span class="or">·</span><kbd><span class="p">◆</span> Shift Tab</kbd></div> <div class="a">Cycle next · previous</div>
+      <div class="k"><kbd><span class="p">◆</span> ;</kbd></div>                              <div class="a">Last pane</div>
+      <div class="k"><kbd>Alt Enter</kbd><span class="or">·</span><kbd><span class="p">◆</span> h</kbd></div>  <div class="a">Split down</div>
+      <div class="k"><kbd>Alt Shift Enter</kbd><span class="or">·</span><kbd><span class="p">◆</span> v</kbd></div> <div class="a">Split right</div>
+      <div class="k"><kbd>Ctrl Alt Shift ←↓↑→</kbd></div>                 <div class="a">Resize</div>
+      <div class="k"><kbd><span class="p">◆</span> Ctrl ←↓↑→</kbd></div>              <div class="a">Resize mode <span class="h">arrows, Esc to leave</span></div>
+      <div class="k"><kbd><span class="p">◆</span> z</kbd></div>                              <div class="a">Zoom toggle</div>
+      <div class="k"><kbd><span class="p">◆</span> O</kbd></div>                              <div class="a">Rename pane</div>
+      <div class="k"><kbd>Alt Esc</kbd><span class="or">·</span><kbd><span class="p">◆</span> x</kbd></div>    <div class="a">Close pane</div>
+    </div>
   </section>
 
-  <section class="windows">
+  <section data-c="tabs">
     <h2>Tabs</h2>
-    <table>
-      <tr><td class="action">New (in cwd)</td><td class="keys"><kbd>◆ c</kbd></td></tr>
-      <tr><td class="action">Prev / Next</td><td class="keys"><kbd>Alt ←</kbd> <kbd>→</kbd> <span class="sep">·</span> <kbd>◆ p</kbd> <kbd>◆ n</kbd></td></tr>
-      <tr><td class="action">Jump to N</td><td class="keys"><kbd>Alt 1</kbd> … <kbd>Alt 9</kbd> <span class="sep">·</span> <kbd>◆ 1</kbd> … <kbd>◆ 9</kbd></td></tr>
-      <tr><td class="action">Move left / right</td><td class="keys"><kbd>Alt Shift ←</kbd> <kbd>→</kbd></td></tr>
-      <tr><td class="action">Rename</td><td class="keys"><kbd>◆ r</kbd></td></tr>
-      <tr><td class="action">Close tab</td><td class="keys"><kbd>◆ k</kbd></td></tr>
-    </table>
+    <div class="rows">
+      <div class="k"><kbd><span class="p">◆</span> c</kbd></div>                              <div class="a">New tab <span class="h">in current dir</span></div>
+      <div class="k"><kbd>Alt ←</kbd><kbd>Alt →</kbd><span class="or">·</span><kbd><span class="p">◆</span> p</kbd><kbd><span class="p">◆</span> n</kbd></div> <div class="a">Previous · next</div>
+      <div class="k"><kbd>Alt 1‥9</kbd><span class="or">·</span><kbd><span class="p">◆</span> 1‥9</kbd></div>   <div class="a">Jump to tab N</div>
+      <div class="k"><kbd>Alt Shift ←</kbd><kbd>Alt Shift →</kbd></div>         <div class="a">Move tab left · right</div>
+      <div class="k"><kbd><span class="p">◆</span> r</kbd></div>                              <div class="a">Rename tab</div>
+      <div class="k"><kbd><span class="p">◆</span> k</kbd></div>                              <div class="a">Close tab</div>
+    </div>
   </section>
 
-  <section class="sessions">
+  <section data-c="spaces">
     <h2>Workspaces</h2>
-    <table>
-      <tr><td class="action">Prev / Next</td><td class="keys"><kbd>Alt ↑</kbd> <kbd>↓</kbd> <span class="sep">·</span> <kbd>◆ P</kbd> <kbd>◆ N</kbd></td></tr>
-      <tr><td class="action">New (in cwd)</td><td class="keys"><kbd>◆ C</kbd></td></tr>
-      <tr><td class="action">Rename</td><td class="keys"><kbd>◆ R</kbd></td></tr>
-      <tr><td class="action">Close</td><td class="keys"><kbd>◆ K</kbd></td></tr>
-      <tr><td class="action">Picker</td><td class="keys"><kbd>◆ w</kbd></td></tr>
-      <tr><td class="action">Go to <span class="hint">workspace / pane / agent</span></td><td class="keys"><kbd>◆ g</kbd></td></tr>
-      <tr><td class="action">New worktree workspace</td><td class="keys"><kbd>◆ G</kbd></td></tr>
-      <tr><td class="action">Sidebar toggle</td><td class="keys"><kbd>◆ b</kbd></td></tr>
-    </table>
-  </section>
-
-  <section class="special">
-    <h2>Herdr</h2>
-    <table>
-      <tr><td class="action">Help <span class="hint">active keys</span></td><td class="keys"><kbd>◆ ?</kbd></td></tr>
-      <tr><td class="action">Settings</td><td class="keys"><kbd>◆ s</kbd></td></tr>
-      <tr><td class="action">Open notification target</td><td class="keys"><kbd>◆ o</kbd></td></tr>
-      <tr><td class="action">Edit scrollback in $EDITOR</td><td class="keys"><kbd>◆ e</kbd></td></tr>
-      <tr><td class="action">Reload config</td><td class="keys"><kbd>◆ q</kbd></td></tr>
-      <tr><td class="action">Detach</td><td class="keys"><kbd>◆ d</kbd></td></tr>
-    </table>
-  </section>
-
-  <section class="copy">
-    <h2>Copy Mode</h2>
-    <div class="hint">Enter <kbd>◆ [</kbd></div>
-    <table>
-      <tr><td class="action">Move</td><td class="keys"><kbd>h j k l</kbd> <span class="sep">·</span> <kbd>←↓↑→</kbd></td></tr>
-      <tr><td class="action">Page</td><td class="keys"><kbd>PgUp</kbd> <kbd>PgDn</kbd></td></tr>
-      <tr><td class="action">Begin selection</td><td class="keys"><kbd>v</kbd> <span class="sep">·</span> <kbd>Space</kbd></td></tr>
-      <tr><td class="action">Copy &amp; exit</td><td class="keys"><kbd>y</kbd> <span class="sep">·</span> <kbd>Enter</kbd></td></tr>
-      <tr><td class="action">Exit</td><td class="keys"><kbd>q</kbd> <span class="sep">·</span> <kbd>Esc</kbd></td></tr>
-    </table>
-  </section>
-
-  <section class="notes">
-    <h2>Notes</h2>
-    <ul class="notes-list">
-      <li><kbd>◆</kbd> = prefix (<kbd>Ctrl Space</kbd>) · capital letter = with Shift</li>
-      <li>Sidebar dots: agent <kbd>working</kbd> <kbd>blocked</kbd> <kbd>done</kbd> <kbd>idle</kbd></li>
-      <li>Mouse on: click panes and tabs, drag borders to resize, scroll for history</li>
-      <li>Plugins have no menu: bind an action in <kbd>config.toml</kbd> or <kbd>herdr plugin action invoke</kbd></li>
-      <li>reviewr: <kbd>herdr plugin action invoke toggle --plugin persiyanov.reviewr</kbd></li>
-      <li>Omarchy updated its stock config? <kbd>herdr-upstream-merge</kbd> on uber-om</li>
-    </ul>
+    <div class="rows">
+      <div class="k"><kbd>Alt ↑</kbd><kbd>Alt ↓</kbd><span class="or">·</span><kbd><span class="p">◆</span> P</kbd><kbd><span class="p">◆</span> N</kbd></div> <div class="a">Previous · next</div>
+      <div class="k"><kbd><span class="p">◆</span> C</kbd></div>                              <div class="a">New workspace <span class="h">in current dir</span></div>
+      <div class="k"><kbd><span class="p">◆</span> R</kbd></div>                              <div class="a">Rename workspace</div>
+      <div class="k"><kbd><span class="p">◆</span> K</kbd></div>                              <div class="a">Close workspace</div>
+      <div class="k"><kbd><span class="p">◆</span> w</kbd></div>                              <div class="a">Workspace picker</div>
+      <div class="k"><kbd><span class="p">◆</span> g</kbd></div>                              <div class="a">Go to <span class="h">workspace, pane or agent</span></div>
+      <div class="k"><kbd><span class="p">◆</span> G</kbd></div>                              <div class="a">New worktree workspace</div>
+      <div class="k"><kbd><span class="p">◆</span> b</kbd></div>                              <div class="a">Sidebar toggle</div>
+    </div>
   </section>
 
 </div>
 
+<div class="col">
+
+  <section data-c="herdr">
+    <h2>Herdr</h2>
+    <div class="rows">
+      <div class="k"><kbd><span class="p">◆</span> ?</kbd></div>                              <div class="a">Help <span class="h">shows the active keys</span></div>
+      <div class="k"><kbd><span class="p">◆</span> s</kbd></div>                              <div class="a">Settings</div>
+      <div class="k"><kbd><span class="p">◆</span> o</kbd></div>                              <div class="a">Open notification target</div>
+      <div class="k"><kbd><span class="p">◆</span> e</kbd></div>                              <div class="a">Edit scrollback in $EDITOR</div>
+      <div class="k"><kbd><span class="p">◆</span> q</kbd></div>                              <div class="a">Reload config</div>
+      <div class="k"><kbd><span class="p">◆</span> d</kbd></div>                              <div class="a">Detach <span class="h">server keeps running</span></div>
+    </div>
+  </section>
+
+  <section data-c="copy">
+    <h2>Copy mode</h2>
+    <div class="rows">
+      <div class="k"><kbd><span class="p">◆</span> [</kbd></div>                              <div class="a">Enter copy mode</div>
+      <div class="k"><kbd>h j k l</kbd><span class="or">·</span><kbd>←↓↑→</kbd></div>            <div class="a">Move</div>
+      <div class="k"><kbd>PgUp</kbd><kbd>PgDn</kbd></div>                          <div class="a">Page up · down</div>
+      <div class="k"><kbd>v</kbd><span class="or">·</span><kbd>Space</kbd></div>                 <div class="a">Begin selection</div>
+      <div class="k"><kbd>y</kbd><span class="or">·</span><kbd>Enter</kbd></div>                 <div class="a">Copy and exit</div>
+      <div class="k"><kbd>q</kbd><span class="or">·</span><kbd>Esc</kbd></div>                   <div class="a">Exit</div>
+    </div>
+  </section>
+
+  <section data-c="agents">
+    <h2>Agents &amp; plugins <small>from any shell</small></h2>
+    <ul>
+      <li>Sidebar dot is the agent state: <b>working</b>, <b>blocked</b>, <b>done</b>, <b>idle</b></li>
+      <li><kbd>herdr agent list</kbd> · <kbd>herdr agent prompt NAME "…" --wait</kbd> · <kbd>herdr agent read NAME</kbd></li>
+      <li>Plugins have no menu. Bind an action in <kbd>config.toml</kbd> or invoke it by hand</li>
+      <li>reviewr, beside the focused pane: <kbd>herdr plugin action invoke toggle --plugin persiyanov.reviewr</kbd></li>
+    </ul>
+  </section>
+
+  <section data-c="config">
+    <h2>Config</h2>
+    <ul>
+      <li><kbd>~/.config/herdr/config.toml</kbd> → dotfiles <kbd>configs/herdr/</kbd>, stowed on every machine</li>
+      <li>Apply an edit: <kbd>herdr server reload-config</kbd></li>
+      <li>Omarchy changed its stock file: <kbd>herdr-upstream-merge</kbd> on uber-om</li>
+      <li>Never <kbd>omarchy refresh herdr</kbd> — it writes stock over the symlink</li>
+      <li>Mouse is on: click panes and tabs, drag borders, scroll for history</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+
 <footer>
-  <span>Config: <kbd>~/.config/herdr/config.toml</kbd> (dotfiles) · reload <kbd>herdr server reload-config</kbd></span>
-  <span>Base: Omarchy stock + Steve's additions · herdr 0.9</span>
+  <span>Herdr 0.9 · Omarchy stock config with Steve's additions</span>
+  <span>dotfiles/cheatsheets/herdr.html</span>
 </footer>
 
+</div>
 </body>
 </html>
