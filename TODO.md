@@ -1,4 +1,4 @@
 # TODO
 
 - [ ] Add Bash configuration to configs
-- [ ] Replace copy_ssh_keys (scp of private keys from a LAN host) with the 1Password SSH agent: key lives in 1Password, new box only needs `op` signed in. Then drop DOTFILES_SSH_KEYS_HOST.
+- [ ] Optional 1Password SSH agent path: on a box with 1Password signed in, skip copy_ssh_keys and keychain and use the agent (keys are in 1Password as SSH Key cards). Keep copy_ssh_keys and keychain as the default for boxes without 1Password.
