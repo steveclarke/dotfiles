@@ -220,6 +220,13 @@ ensure_dir "${HOME}/.config/tmux"
 cleanup_paths "${HOME}/.config/tmux/tmux.conf"
 stow_package "Tmux" "tmux"
 
+# Herdr — same shape as tmux: Omarchy only seeds config.toml, and herdr edits it
+# in place, so the stow symlink holds. omarchy-upstream/herdr/ keeps the stock
+# copy for three-way merges (herdr-upstream-merge). Never `omarchy refresh herdr`.
+ensure_dir "${HOME}/.config/herdr"
+cleanup_paths "${HOME}/.config/herdr/config.toml"
+stow_package "Herdr" "herdr"
+
 # =============================================================================
 # Omarchy-only packages
 # =============================================================================

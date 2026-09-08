@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Fold Omarchy's changes to its stock herdr config into the dotfiles copy.
+#
+# Three-way merge: omarchy-upstream/herdr/config.toml is the base (the stock
+# file as it was when last merged), $OMARCHY_PATH/config/herdr/config.toml is
+# theirs, configs/herdr/.config/herdr/config.toml is ours. Lines only Omarchy
+# changed come across; lines we changed stay; a line both sides changed gets
+# conflict markers to resolve by hand. The snapshot is then updated so the next
+# run only sees new upstream changes.
+#
+# Usage: herdr-upstream-merge [--check]
+#   --check   report whether upstream changed, change nothing
+
+set -euo pipefail
+
+source "${HOME}/.dotfilesrc"
+
+omarchy_path="${OMARCHY_PATH:-/usr/share/omarchy}"
+upstream="${omarchy_path}/config/herdr/config.toml"
+base="${DOTFILES_DIR}/omarchy-upstream/herdr/config.toml"
+ours="${DOTFILES_DIR}/configs/herdr/.config/herdr/config.toml"
+
+[[ -f $upstream ]] || { echo "No Omarchy stock herdr config at ${upstream}" >&2; exit 1; }
+
+if cmp -s "$upstream" "$base"; then
+  echo "Omarchy's herdr config is unchanged since the last merge."
+  exit 0
+fi
+
+echo "Omarchy changed its stock herdr config:"
+diff -u "$base" "$upstream" || true
+echo
+
+[[ ${1:-} == "--check" ]] && exit 0
+
+if git merge-file "$ours" "$base" "$upstream"; then
+  echo "Merged cleanly into ${ours}"
+else
+  echo "Conflicts in ${ours} - resolve the <<<<<<< markers, then commit." >&2
+fi
+
+cp "$upstream" "$base"
+echo "Snapshot updated. Review with: git -C ${DOTFILES_DIR} diff"
+echo "Apply with:                    herdr server reload-config"
