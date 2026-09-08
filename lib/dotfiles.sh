@@ -206,6 +206,42 @@ copy_ssh_keys() {
 	fi
 }
 
+install_github_authorized_keys() {
+	bootstrap_banner "Installing GitHub public keys into authorized_keys"
+
+	local user="${DOTFILES_GITHUB_USER:-}"
+	if [[ -z "$user" ]]; then
+		echo "DOTFILES_GITHUB_USER not set in ~/.dotfilesrc, skipping"
+		return 0
+	fi
+
+	mkdir -p "${HOME}/.ssh"
+	chmod 700 "${HOME}/.ssh"
+	local auth="${HOME}/.ssh/authorized_keys"
+	touch "$auth"
+	chmod 600 "$auth"
+
+	local keys
+	if ! keys=$(curl -fsSL "https://github.com/${user}.keys") || [[ -z "$keys" ]]; then
+		echo "WARNING: could not fetch https://github.com/${user}.keys, skipping"
+		return 0
+	fi
+
+	local added=0
+	while IFS= read -r key; do
+		[[ -z "$key" ]] && continue
+		# Match on type + key blob; comments differ between copies of the same key
+		local blob
+		blob=$(echo "$key" | awk '{print $1" "$2}')
+		if ! awk '{print $1" "$2}' "$auth" | grep -qxF "$blob"; then
+			echo "$key" >> "$auth"
+			added=$((added + 1))
+		fi
+	done <<< "$keys"
+
+	echo "GitHub keys for ${user}: $(echo "$keys" | grep -c .) published, ${added} added"
+}
+
 configure_ssh() {
 	bootstrap_banner "Configuring SSH"
 	

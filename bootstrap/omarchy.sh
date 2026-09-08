@@ -37,6 +37,7 @@ fi
 # Copy SSH keys and configure SSH
 source "${DOTFILES_DIR}/lib/dotfiles.sh"
 detect_os
+install_github_authorized_keys
 copy_ssh_keys
 configure_ssh
 

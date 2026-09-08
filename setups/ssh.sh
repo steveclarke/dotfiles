@@ -4,6 +4,10 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # SSH Setup - handles SSH key copying and configuration
 # This replaces the SSH functionality previously in bootstrap.sh
 
+# Let this machine be reached from any box holding the GitHub-published keys.
+# Public keys only; it does not replace the private-key copy below.
+install_github_authorized_keys
+
 # Skip if SSH variables are not configured
 if [[ -z "${DOTFILES_SSH_KEYS_HOST}" || -z "${DOTFILES_SSH_KEYS}" || -z "${DOTFILES_SSH_KEYS_PRIMARY}" ]]; then
     echo "SSH configuration variables not set in .dotfilesrc, skipping SSH setup"
