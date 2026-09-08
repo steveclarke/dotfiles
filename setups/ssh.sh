@@ -8,8 +8,8 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Public keys only; it does not replace the private-key copy below.
 install_github_authorized_keys
 
-# 1Password agent path: keys live in 1Password, nothing copied to disk.
-if [[ "${DOTFILES_SSH_AGENT:-}" == "1password" ]]; then
+# 1Password agent present: keys live in 1Password, nothing copied to disk.
+if use_onepassword_agent; then
     configure_ssh_agent_1password
     return 0
 fi

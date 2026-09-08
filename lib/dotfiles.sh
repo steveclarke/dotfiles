@@ -250,9 +250,18 @@ onepassword_agent_sock() {
 	fi
 }
 
-# DOTFILES_SSH_AGENT=1password: SSH signs with keys held in 1Password.
-# No private key on disk, no key copy, no keychain. Needs the 1Password app
-# installed, signed in, with "Use the SSH Agent" on.
+# True when the 1Password app is running with its SSH agent on. Auto-detected;
+# DOTFILES_SSH_AGENT=keychain forces the old path, =1password forces this one.
+use_onepassword_agent() {
+	case "${DOTFILES_SSH_AGENT:-}" in
+		1password) return 0 ;;
+		keychain)  return 1 ;;
+	esac
+	[[ -S "$(onepassword_agent_sock)" ]]
+}
+
+# SSH signs with keys held in 1Password. No private key on disk, no key copy,
+# no keychain.
 configure_ssh_agent_1password() {
 	bootstrap_banner "Configuring SSH to use the 1Password agent"
 	mkdir -p "${HOME}/.ssh"; chmod 700 "${HOME}/.ssh"

@@ -8,10 +8,11 @@ export DOTFILES_DIR=${HOME}/.local/share/dotfiles
 # GitHub user whose public keys (https://github.com/<user>.keys) get appended
 # to ~/.ssh/authorized_keys so existing machines can SSH into this one.
 export DOTFILES_GITHUB_USER=steveclarke
-# Set to 1password on a box where the 1Password app is signed in with its SSH
-# agent on: keys are served from 1Password, the copy below and keychain are
-# skipped. Leave unset (default) to copy private keys from an existing machine.
-# export DOTFILES_SSH_AGENT=1password
+# SSH agent is auto-detected: if the 1Password app is running with its SSH
+# agent on, keys come from 1Password and the copy below plus keychain are
+# skipped. Otherwise the private keys are copied from an existing machine.
+# Override only if needed: keychain (force the old path) or 1password.
+# export DOTFILES_SSH_AGENT=keychain
 export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77
 export DOTFILES_SSH_KEYS="sevenview2020.pub sevenview2020 sevenview.pub sevenview"
 export DOTFILES_SSH_KEYS_PRIMARY=sevenview2020
