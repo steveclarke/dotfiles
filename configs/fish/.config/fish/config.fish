@@ -21,8 +21,7 @@ if test -d ~/.config/hypr
     set -gx HYPRMONCFG_MONITORS_CONF ~/.config/hypr/monitors-generated.lua
 end
 
-# Use the `bass` plugin to source bash scripts
-bass source ~/.dotfilesrc
+# ~/.dotfilesrc is sourced in conf.d/00-dotfilesrc.fish
 
 # ─[ Editor et. al. ]─────────────────────────────────────────────────────
 set -gx EDITOR (command -v vim || echo vim)

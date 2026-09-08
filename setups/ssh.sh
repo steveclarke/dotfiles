@@ -8,6 +8,12 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Public keys only; it does not replace the private-key copy below.
 install_github_authorized_keys
 
+# 1Password agent path: keys live in 1Password, nothing copied to disk.
+if [[ "${DOTFILES_SSH_AGENT:-}" == "1password" ]]; then
+    configure_ssh_agent_1password
+    return 0
+fi
+
 # Skip if SSH variables are not configured
 if [[ -z "${DOTFILES_SSH_KEYS_HOST}" || -z "${DOTFILES_SSH_KEYS}" || -z "${DOTFILES_SSH_KEYS_PRIMARY}" ]]; then
     echo "SSH configuration variables not set in .dotfilesrc, skipping SSH setup"

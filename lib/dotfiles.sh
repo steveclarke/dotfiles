@@ -242,6 +242,32 @@ install_github_authorized_keys() {
 	echo "GitHub keys for ${user}: $(echo "$keys" | grep -c .) published, ${added} added"
 }
 
+onepassword_agent_sock() {
+	if is_macos; then
+		echo "${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+	else
+		echo "${HOME}/.1password/agent.sock"
+	fi
+}
+
+# DOTFILES_SSH_AGENT=1password: SSH signs with keys held in 1Password.
+# No private key on disk, no key copy, no keychain. Needs the 1Password app
+# installed, signed in, with "Use the SSH Agent" on.
+configure_ssh_agent_1password() {
+	bootstrap_banner "Configuring SSH to use the 1Password agent"
+	mkdir -p "${HOME}/.ssh"; chmod 700 "${HOME}/.ssh"
+	local cfg="${HOME}/.ssh/config" sock
+	sock=$(onepassword_agent_sock)
+	[[ -f "$cfg" ]] || { touch "$cfg"; chmod 600 "$cfg"; }
+	if grep -q "IdentityAgent" "$cfg"; then
+		echo "IdentityAgent already set in ~/.ssh/config, leaving it"
+	else
+		printf '\nHost *\n\tIdentityAgent "%s"\n' "$sock" >> "$cfg"
+		echo "Added IdentityAgent for 1Password to ~/.ssh/config"
+	fi
+	[[ -S "$sock" ]] || echo "WARNING: 1Password agent socket not found at $sock (app not running, or SSH agent off)"
+}
+
 configure_ssh() {
 	bootstrap_banner "Configuring SSH"
 	

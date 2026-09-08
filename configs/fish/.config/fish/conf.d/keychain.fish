@@ -1,6 +1,16 @@
 # FUNTOOO KEYCHAIN - frontend to ssh-agent
 # https://www.funtoo.org/Funtoo:Keychain
 if status is-interactive
+    # DOTFILES_SSH_AGENT=1password: 1Password holds the keys, keychain is not needed.
+    if test "$DOTFILES_SSH_AGENT" = 1password
+        if test (uname) = Darwin
+            set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+        else
+            set -gx SSH_AUTH_SOCK "$HOME/.1password/agent.sock"
+        end
+        exit
+    end
+
     # Only load keychain if SSH keys exist
     set -l ssh_keys
     set -l missing_keys
