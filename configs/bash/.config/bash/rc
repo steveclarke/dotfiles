@@ -17,5 +17,22 @@
 # It scans the filesystem and hangs ble.sh's per-keystroke auto-complete.
 complete -r -D 2>/dev/null
 
+# Same class of bug, different source. ble.sh resolves a wrapper function down
+# to the command it wraps, then tries to generate a completion for it. For the
+# `hugo` function that means `claude completion bash`, which boots Node and
+# takes 3-5s -- on EVERY keystroke that starts a new word. Typing appears to
+# freeze, then all the buffered characters dump at once.
+# Plain filename completion instead: no subprocess, no stall.
+complete -o default -o bashdefault hugo claude 2>/dev/null
+
 # ble.sh — attach after all config is loaded
 [[ ! ${BLE_VERSION-} ]] || ble-attach
+
+# Post-attach tuning. These must come AFTER ble-attach: ble.sh loads
+# core-complete.sh at attach time and resets _ble_complete_auto_source there,
+# so anything set before attach is silently overwritten.
+# complete_auto_delay: stock is 1ms, i.e. a full completion pass on every
+# keystroke. 300ms means suggestions appear when you pause, never mid-word.
+if [[ ${BLE_VERSION-} ]]; then
+  bleopt complete_auto_delay=300
+fi
