@@ -3,7 +3,8 @@ size = 18
 
 [window]
 option_as_alt = "Both"
-decorations = "Transparent"
+decorations = "Full"
+decorations_theme_variant = "Dark"
 
 [window.dimensions]
 columns = 160
@@ -11,4 +12,4 @@ lines = 48
 
 [window.padding]
 x = 8
-y = 30
+y = 6
