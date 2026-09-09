@@ -4,7 +4,7 @@ onboarding = false
 
 [theme]
 # tmux ran on the terminal's own palette (bg=default, fg=default, ANSI blue accents)
-name = "catppuccin"
+name = "terminal"   # steve: use the terminal palette (Alacritty Macchiato); built-in catppuccin is Mocha and clashes
 
 auto_switch = false
 [theme.custom]
