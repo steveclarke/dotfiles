@@ -13,3 +13,11 @@ stow symlink survives its own writes (`onboarding`, `herdr config reset-keys`).
   uber-om; three-way merge against `omarchy-upstream/herdr/config.toml`)
 - Never `omarchy refresh herdr`: it `cp -f`s stock over the symlink, i.e. into
   this repo. Recoverable with `git checkout`, but pointless.
+
+## Plugins
+
+Declared in dotfiles `herdr-plugins/plugins.list`, pinned by `plugins.lock`, managed by
+herdr-lazy. `dotfiles up` installs herdr-lazy when missing and runs `herdr-lazy sync`, so
+a machine that pulls a new list gets the plugin on its next update. Adding one: edit the
+list (or `herdr-lazy add owner/repo`), `herdr-lazy sync`, commit the list and lock the
+wrapper copied back. Updating: `herdr-lazy update`, commit, `dotfiles up` elsewhere.
