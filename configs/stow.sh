@@ -223,8 +223,8 @@ stow_package "Tmux" "tmux"
 # Herdr — same shape as tmux: Omarchy only seeds config.toml, and herdr edits it
 # in place, so the stow symlink holds. omarchy-upstream/herdr/ keeps the stock
 # copy for three-way merges (herdr-upstream-merge). Never `omarchy refresh herdr`.
-ensure_dir "${HOME}/.config/herdr" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr"
-cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
+ensure_dir "${HOME}/.config/herdr" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr" "${HOME}/.config/herdr/plugins/config/ez-corp.git-status"
+cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr/config.toml" "${HOME}/.config/herdr/plugins/config/ez-corp.git-status/config.toml"
 stow_package "Herdr" "herdr"
 
 # Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like

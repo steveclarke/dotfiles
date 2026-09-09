@@ -1,0 +1,5 @@
+# herdr-git-status: put the working-tree status under each workspace in the
+# sidebar (branch row), not as a pseudo-agent in the agents panel.
+mode = "sidebar"
+interval_seconds = 5
+clean_checkmark = true
