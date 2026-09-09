@@ -28,16 +28,16 @@ detach = "prefix+d"
 copy_mode = "prefix+["
 
 # Panes
-split_horizontal = ["prefix+h", "alt+enter"]
-split_vertical = ["prefix+v", "alt+shift+enter"]
-close_pane = ["prefix+x", "alt+esc"]
-zoom = "prefix+z"
+split_horizontal = ["prefix+h", "alt+enter"]        # steve: add "alt+d" if alt+enter does not stick
+split_vertical = ["prefix+v", "alt+shift+enter"]    # steve: add "alt+r" if alt+shift+enter does not stick
+close_pane = ["prefix+x", "alt+esc", "alt+x"]  # steve: alt+x
+zoom = ["prefix+z", "alt+f"]  # steve: alt+f
 last_pane = "prefix+;"
 
-focus_pane_left = "ctrl+alt+left"
-focus_pane_down = "ctrl+alt+down"
-focus_pane_up = "ctrl+alt+up"
-focus_pane_right = "ctrl+alt+right"
+focus_pane_left = ["ctrl+alt+left", "alt+shift+h"]    # steve: alt+shift+h
+focus_pane_down = ["ctrl+alt+down", "alt+shift+j"]    # steve: alt+shift+j
+focus_pane_up = ["ctrl+alt+up", "alt+shift+k"]        # steve: alt+shift+k
+focus_pane_right = ["ctrl+alt+right", "alt+shift+l"]  # steve: alt+shift+l
 
 resize_mode = ["prefix+ctrl+left", "prefix+ctrl+down", "prefix+ctrl+up", "prefix+ctrl+right"]
 
@@ -51,12 +51,12 @@ resize_pane_right = "ctrl+alt+shift+right"
 rename_pane = "prefix+shift+o"
 
 # Windows -> tabs
-new_tab = "prefix+c"
+new_tab = ["prefix+c", "alt+c"]  # steve: alt+c
 rename_tab = "prefix+r"
 close_tab = "prefix+k"
 switch_tab = ["prefix+1..9", "alt+1..9"]
-previous_tab = ["prefix+p", "alt+left"]
-next_tab = ["prefix+n", "alt+right"]
+previous_tab = ["prefix+p", "alt+left", "alt+h"]   # steve: alt+h
+next_tab = ["prefix+n", "alt+right", "alt+l"]      # steve: alt+l
 
 # Like swap-window -t -1/+1 on M-S-Left/Right
 move_tab_previous = "alt+shift+left"
@@ -66,8 +66,14 @@ move_tab_next = "alt+shift+right"
 new_workspace = "prefix+shift+c"
 rename_workspace = "prefix+shift+r"
 close_workspace = "prefix+shift+k"
-previous_workspace = ["prefix+shift+p", "alt+up"]
-next_workspace = ["prefix+shift+n", "alt+down"]
+previous_workspace = ["prefix+shift+p", "alt+up", "alt+p"]    # steve: alt+p
+next_workspace = ["prefix+shift+n", "alt+down", "alt+n"]      # steve: alt+n
+
+# Agents (steve). Herdr binds none of these by default.
+open_notification_target = ["prefix+o", "alt+o"]  # steve: jump to the agent that just finished or blocked
+next_agent = "alt+j"                              # steve
+previous_agent = "alt+k"                          # steve
+focus_agent = "alt+shift+1..9"                    # steve: Nth agent in the sidebar
 
 [ui]
 accent = "blue"
@@ -96,3 +102,16 @@ tab_bar_right = [{ type = "zoom" }, { type = "hostname" }]
 # and it resolves on the server so remote sessions name the remote host.
 window_title = "{hostname}: {workspace}"
 agent_panel_sort = "spaces"
+
+# steve: custom commands. Omarchy ships none, so this whole block is ours.
+[[keys.command]]
+key = "alt+shift+p"
+type = "plugin_action"
+command = "vjeantet.palette.open"
+description = "command palette"
+
+[[keys.command]]
+key = "alt+i"
+type = "shell"
+command = "herdr pane current --current | jq -r .result.pane.pane_id | clip"
+description = "copy pane id"

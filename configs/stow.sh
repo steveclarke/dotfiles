@@ -223,9 +223,22 @@ stow_package "Tmux" "tmux"
 # Herdr — same shape as tmux: Omarchy only seeds config.toml, and herdr edits it
 # in place, so the stow symlink holds. omarchy-upstream/herdr/ keeps the stock
 # copy for three-way merges (herdr-upstream-merge). Never `omarchy refresh herdr`.
-ensure_dir "${HOME}/.config/herdr"
-cleanup_paths "${HOME}/.config/herdr/config.toml"
+ensure_dir "${HOME}/.config/herdr" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr"
+cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
 stow_package "Herdr" "herdr"
+
+# Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like
+# shell.json: herdr-lazy rewrites the lock atomically and a stow symlink would
+# detach on the first sync. The herdr-lazy wrapper in bin/ copies them back here
+# after every run. Install herdr-lazy itself once per machine:
+#   herdr plugin install natori-hrj/herdr-lazy && herdr-lazy sync
+config_banner "Herdr plugins (herdr-lazy list + lock)"
+ensure_dir "${HOME}/.config/herdr/plugins/config/herdr-lazy"
+for lazy_file in "${DOTFILES_DIR}"/herdr-plugins/plugins.list "${DOTFILES_DIR}"/herdr-plugins/plugins.lock; do
+  rm -f "${HOME}/.config/herdr/plugins/config/herdr-lazy/$(basename "$lazy_file")"
+  cp -a "$lazy_file" "${HOME}/.config/herdr/plugins/config/herdr-lazy/"
+  echo "  copied $(basename "$lazy_file")"
+done
 
 # =============================================================================
 # Omarchy-only packages

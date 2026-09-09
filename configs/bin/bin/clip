@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# System clipboard, whichever OS this is.
+#   echo hello | clip      copy stdin to the clipboard
+#   clip -o                print the clipboard (like xclip -o)
+# macOS: pbcopy/pbpaste. Wayland: wl-copy/wl-paste. X11: xclip. Windows: clip.exe / powershell.
+# Not named paste: /usr/bin/paste is the Unix line-merging tool and scripts depend on it.
+set -euo pipefail
+if [[ ${1:-} == "-o" || ${1:-} == "--out" ]]; then
+  if command -v pbpaste >/dev/null 2>&1; then exec pbpaste
+  elif [[ -n ${WAYLAND_DISPLAY:-} ]] && command -v wl-paste >/dev/null 2>&1; then exec wl-paste --no-newline
+  elif command -v xclip >/dev/null 2>&1; then exec xclip -selection clipboard -o
+  elif command -v powershell.exe >/dev/null 2>&1; then exec powershell.exe -NoProfile -Command Get-Clipboard
+  fi
+else
+  if command -v pbcopy >/dev/null 2>&1; then exec pbcopy
+  elif [[ -n ${WAYLAND_DISPLAY:-} ]] && command -v wl-copy >/dev/null 2>&1; then exec wl-copy
+  elif command -v xclip >/dev/null 2>&1; then exec xclip -selection clipboard
+  elif command -v clip.exe >/dev/null 2>&1; then exec clip.exe
+  fi
+fi
+echo "clip: no clipboard tool found" >&2; exit 1

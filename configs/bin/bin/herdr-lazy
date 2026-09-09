@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# herdr-lazy lives inside herdr's plugin directory (hashed name), so it is not on
+# PATH. This finds the installed copy, runs it, then copies plugins.list and
+# plugins.lock back into dotfiles (herdr-plugins/). They are copied, not stowed:
+# herdr-lazy rewrites the lock atomically, which replaces a symlink with a file.
+set -uo pipefail
+source "${HOME}/.dotfilesrc"
+root=$(herdr plugin list --json | python3 -c \
+  "import json,sys;print([p['plugin_root'] for p in json.load(sys.stdin)['result']['plugins'] if p['plugin_id']=='herdr-lazy'][0])") \
+  || { echo "herdr-lazy is not installed: herdr plugin install natori-hrj/herdr-lazy" >&2; exit 1; }
+"$root/target/release/herdr-lazy" "$@"; status=$?
+cfg=$(herdr plugin config-dir herdr-lazy 2>/dev/null) || exit $status
+for f in plugins.list plugins.lock; do
+  if [[ -f $cfg/$f ]] && ! cmp -s "$cfg/$f" "${DOTFILES_DIR}/herdr-plugins/$f"; then
+    cp "$cfg/$f" "${DOTFILES_DIR}/herdr-plugins/$f" && echo "herdr-lazy: copied $f to dotfiles (commit it)"
+  fi
+done
+exit $status
