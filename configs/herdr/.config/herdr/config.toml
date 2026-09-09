@@ -10,7 +10,13 @@ auto_switch = false
 [theme.custom]
 # The active tab is drawn as panel_bg text on an accent background, so panel_bg
 # has to be dark for it to read - same colors as status-left's "#[fg=black,bg=blue]"
-panel_bg = "black"
+panel_bg = "#1e1e2e"
+# Explicit hex, not ANSI names: color 0 differs per emulator (Mocha maps it to
+# #45475a, macOS terminals to true black), which made the sidebar selection
+# unreadable on Linux.
+sidebar_bg = "#181825"
+active_row_bg = "#45475a"
+selection_bg = "#585b70"
 
 [terminal]
 # Matches -c "#{pane_current_path}" on every split, window, and session
