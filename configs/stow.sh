@@ -239,6 +239,18 @@ for lazy_file in "${DOTFILES_DIR}"/herdr-plugins/plugins.list "${DOTFILES_DIR}"/
   cp -a "$lazy_file" "${HOME}/.config/herdr/plugins/config/herdr-lazy/"
   echo "  copied $(basename "$lazy_file")"
 done
+# Converge the installed plugins to the list. Idempotent, so it belongs here
+# rather than in a migration: a machine that pulls a new plugins.list gets the
+# plugin on its next `dotfiles up`. Skipped when herdr is not installed.
+if is_installed herdr; then
+  if ! herdr plugin list --json 2>/dev/null | grep -q '"plugin_id": *"herdr-lazy"'; then
+    echo "  installing herdr-lazy"
+    herdr plugin install natori-hrj/herdr-lazy --yes >/dev/null || error "herdr-lazy install failed"
+  fi
+  "${DOTFILES_DIR}/configs/bin/bin/herdr-lazy" sync || error "herdr-lazy sync failed"
+else
+  echo "  herdr not installed - skipping plugin sync"
+fi
 
 # =============================================================================
 # Omarchy-only packages
