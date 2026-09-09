@@ -69,7 +69,7 @@ move_tab_previous = "alt+shift+left"
 move_tab_next = "alt+shift+right"
 
 # Sessions -> workspaces
-new_workspace = "prefix+shift+c"
+new_workspace = ["prefix+shift+c", "alt+shift+c"]   # steve: alt+shift+c
 rename_workspace = "prefix+shift+r"
 close_workspace = "prefix+shift+k"
 previous_workspace = ["prefix+shift+p", "alt+up", "alt+p"]    # steve: alt+p
