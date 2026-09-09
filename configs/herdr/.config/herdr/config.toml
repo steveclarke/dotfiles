@@ -15,8 +15,8 @@ panel_bg = "#1e1e2e"
 # #45475a, macOS terminals to true black), which made the sidebar selection
 # unreadable on Linux.
 sidebar_bg = "#181825"
-active_row_bg = "#45475a"
-selection_bg = "#585b70"
+active_row_bg = "#494d64"   # steve: lifted for contrast
+selection_bg = "#5b6078"    # steve: lifted for contrast
 
 [terminal]
 # Matches -c "#{pane_current_path}" on every split, window, and session
@@ -124,3 +124,14 @@ description = "copy pane id"
 
 [ui.toast]
 delivery = "herdr"   # steve: in-app toasts; open_notification_target (Alt+o) jumps to the latest one. Default "off" leaves Alt+o with nothing to jump to
+
+# steve: agent rows — name first, bright and bold; a blank line between agents;
+# model in peach so kind is visible at a glance; workspace grey. Machine dropped:
+# it is "Local" on nearly every row. dim=true renders no differently in
+# Alacritty's terminal palette, so colours are explicit (Catppuccin Macchiato).
+[ui.sidebar.agents]
+row_gap = 0
+rows = [
+  ["state_icon", { token = "terminal_title_stripped", fg = "#f4f6ff", bold = true }],
+  [{ token = "agent", fg = "#ffb86c" }, { token = "workspace", fg = "#b8c0e0" }],
+]
