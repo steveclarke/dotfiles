@@ -11,3 +11,4 @@
 - A submission with an open blocker and no response for seven days is closed.
 - One finding on one of an author's plugins applies to all of them; fix the class across every plugin repo before the re-check.
 - `service-management` is flagged for any `systemctl` string, README included. It is a review-required capability, not a finding; say what the one write is in Maintainer notes.
+- Expect more than one review round: the reviewer re-reads the whole tree after each fix and raises new findings (Kopia round 2: http credentials to non-loopback hosts, a bare executable on a user-triggered path). Edit the issue body from a scratch copy, not from a file in the repo, or the edit itself is a new commit that makes the review stale.

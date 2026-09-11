@@ -52,3 +52,5 @@ Learned on the Kopia plugin (2026-09-11)
 - Never put a secret in argv, including a password inside a URL handed to `xdg-open` or a browser: `/proc/<pid>/cmdline` is readable by every process of the user. Reviewers treat it as a blocker, not hardening.
 - A local `component PlainLabel: Text { textFormat: Text.PlainText }` keeps the reviewers' textFormat grep clean; a component named `Label` shows up as dozens of false "missing textFormat" hits.
 - Run tools by absolute path through one `binDir` property (default `/usr/bin/`) so the harness can point it at stubs; the missing-binary case then proves it is honoured.
+- `omarchy-launch-floating-terminal-with-presentation` joins its arguments into a `bash -c` string, so a plugin must not pass data through it. Run `/usr/bin/xdg-terminal-exec --app-id=org.omarchy.terminal --title=... -- /usr/bin/<cmd> args...` as an argv array instead.
+- Any credential sent over `http://` must be limited to a literal loopback address (parse with `ipaddress`, refuse names like `localhost` and IPv4-mapped IPv6); require `https://` otherwise.
