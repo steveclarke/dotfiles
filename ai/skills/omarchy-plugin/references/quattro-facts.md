@@ -46,3 +46,5 @@ Learned on the Kopia plugin (2026-09-11)
 - `systemctl --user start` of a oneshot blocks until it finishes; pass `--no-block` or the watchdog kills the client.
 - Under bats, `! cmd` never fails a test (`set -e` ignores negated commands). Assert on captured output: `[ -z "$(grep ...)" ]`. Prove every guard with a planted positive control before trusting it.
 - No click tool on Wayland here (no ydotool). `wtype` sends keys, so give every panel action a key and capture through it; a "," settings key doubles as a feature.
+- Reusing one `Process` for a cancelled run and the next one lets the killed run's late `exited` complete the new run with an empty buffer. Create a Process per run with a token and drop signals whose token is stale.
+- A stub that returns fixed-date fixtures makes "healthy" tests pass only for a few hours after capture. Shift fixture timestamps relative to now inside the stub.
