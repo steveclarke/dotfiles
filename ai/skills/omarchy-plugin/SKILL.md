@@ -88,8 +88,12 @@ Order matters. Each step ends with a screenshot the user can see.
    `shell.updateEntryInline`.
 7. Notifications: `notify-send -u critical -A key=Label`, one per event,
    deduplicated by the event's timestamp.
-8. Design audit: four agents, four lenses (first-party comparison, cold read,
-   copy table, flow). Apply, recapture, ask again. Done when the user says so.
+8. Design audit: three or four read-only agents, one lens each (first-party
+   comparison, cold read plus copy table, flow plus robustness). Apply in one
+   pass, recapture every state, ask again. Done when the user says so.
+   Preview: crop to the panel border exactly (sample edge pixels with
+   `magick ... -format "%[pixel:p{x,y}]"`), pad on a neutral colour, zoom all
+   four corners.
 9. `preview.png` (check all four edges at zoom, stand-in names only), tag,
    GitHub release, marketplace issue per `references/marketplace.md`.
 

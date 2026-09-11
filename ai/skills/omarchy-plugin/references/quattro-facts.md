@@ -35,3 +35,14 @@ Hotkeys
 CLI quirks seen
 - `omarchy bar set <id> <key> '[...]' --json` failed for array values ("Too many arguments"); scalars and objects worked. Use the settings UI for arrays.
 - `hyprctl dispatch movecursor` fails on Lua Hyprland; use `hyprctl eval` with `hl.dsp.cursor.move`.
+
+Learned on the Kopia plugin (2026-09-11)
+- `shell.shellConfig` is gone from the plugin API. A plugin's `shell` object carries `barConfig`, and it is a one-time copy made when the object is created; it never updates. Live settings come from the bar widget's `settings` property (the bar patches it on `omarchy bar set` and on `updateEntryInline`). Push them into the service from `onSettingsChanged`, JSON-compare first so N bars do not trigger N refreshes.
+- `omarchy bar set <id> <key> 6` stores the string "6". Coerce numeric and boolean strings in the settings normaliser or the CLI silently does nothing.
+- Naming a property `state` or `settings` on an Item/Panel root overrides a base-type property; qmllint flags `property-override`. Use `health`, `prefs`.
+- A `Repeater` delegate cannot reach `parent.someProperty` of the enclosing Column during creation; give the container an id.
+- `Process.started` fires only when the binary launched. A watchdog that times out without `started` means "not installed"; one that times out after `started` means "slow", and must not flip the widget to its unset state.
+- A `-A key=Label` `notify-send` process lives until the notification is acted on. A second `start()` while it is active is a silent no-op; cancel first.
+- `systemctl --user start` of a oneshot blocks until it finishes; pass `--no-block` or the watchdog kills the client.
+- Under bats, `! cmd` never fails a test (`set -e` ignores negated commands). Assert on captured output: `[ -z "$(grep ...)" ]`. Prove every guard with a planted positive control before trusting it.
+- No click tool on Wayland here (no ydotool). `wtype` sends keys, so give every panel action a key and capture through it; a "," settings key doubles as a feature.
