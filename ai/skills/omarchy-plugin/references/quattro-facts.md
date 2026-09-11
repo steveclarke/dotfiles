@@ -48,3 +48,7 @@ Learned on the Kopia plugin (2026-09-11)
 - No click tool on Wayland here (no ydotool). `wtype` sends keys, so give every panel action a key and capture through it; a "," settings key doubles as a feature.
 - Reusing one `Process` for a cancelled run and the next one lets the killed run's late `exited` complete the new run with an empty buffer. Create a Process per run with a token and drop signals whose token is stale.
 - A stub that returns fixed-date fixtures makes "healthy" tests pass only for a few hours after capture. Shift fixture timestamps relative to now inside the stub.
+- `xdg-open` rejects `--` as an unknown option. Validate the URL to start with `http://` or `https://` instead, and say so in a comment for reviewers.
+- Never put a secret in argv, including a password inside a URL handed to `xdg-open` or a browser: `/proc/<pid>/cmdline` is readable by every process of the user. Reviewers treat it as a blocker, not hardening.
+- A local `component PlainLabel: Text { textFormat: Text.PlainText }` keeps the reviewers' textFormat grep clean; a component named `Label` shows up as dozens of false "missing textFormat" hits.
+- Run tools by absolute path through one `binDir` property (default `/usr/bin/`) so the harness can point it at stubs; the missing-binary case then proves it is honoured.

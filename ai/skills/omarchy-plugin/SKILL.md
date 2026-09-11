@@ -94,7 +94,11 @@ Order matters. Each step ends with a screenshot the user can see.
    Preview: crop to the panel border exactly (sample edge pixels with
    `magick ... -format "%[pixel:p{x,y}]"`), pad on a neutral colour, zoom all
    four corners.
-9. `preview.png` (check all four edges at zoom, stand-in names only), tag,
+9. Security pass before submitting: run the `omarchy-plugin-security` skill
+   (grep audit, then the marketplace scanner locally on the pushed commit) and
+   fix every hit. Each review round costs a day and reviewers re-read the
+   whole tree after every push.
+10. `preview.png` (check all four edges at zoom, stand-in names only), tag,
    GitHub release, marketplace issue per `references/marketplace.md`.
 
 ## Verify without touching the user's mouse
@@ -112,6 +116,17 @@ into `~/.config/omarchy/plugins/<id>/`; never edit there. Commit, push,
 `omarchy plugin update`, `omarchy-restart-shell` after any manifest, glyph or
 IPC change. No symlinks in a plugin folder. Nothing personal in the repo,
 fixtures, screenshots or history.
+
+**No agent-instruction files in the plugin repo.** No `AGENTS.md`, `CLAUDE.md`,
+`GEMINI.md`, `.claude/`, `.cursor/`, `SKILL.md` or similar anywhere in the tree:
+`omarchy plugin add` copies the repo into a path coding agents auto-discover,
+and marketplace review blocks it (Kopia, 2026-09-11). Contributor guidance goes
+in `docs/CONTRIBUTING.md`. Copy `tools/check-agent-files` from
+`~/src/omarchy-kopia` into `bin/check` and CI from the first commit.
+
+**Screenshots are crops of the panel border, never whole grabs.** A grab of the
+panel's region also captures whatever window sits behind it (a terminal
+transcript went into a public repo's history this way).
 
 ## References
 
