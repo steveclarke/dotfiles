@@ -45,7 +45,30 @@ everything. Do this in one pass, one voice, no agent fan-out.
    inline. Every string is a sentence with a next step. Get a yes on this page.
 5. Only then write the spec (`superpowers:brainstorming` architectural path).
 
-## Phase 3: Build
+## Phase 3: Start the repo
+
+Two ways to get a template. Use the second when a previous plugin of your own
+exists; it already has the service/widget split, tests and CI.
+
+1. **Built-in as template.** `omarchy plugin clone omarchy.clock --edit` copies
+   the shipped plugin into `~/.config/omarchy/plugins/omarchy.clock-copy/`
+   (`omarchy plugin list --json` shows the ids; `omarchy.clock` is the smallest
+   bar-widget + panel, `omarchy.power` a good status panel). Move that folder to
+   `~/src/<repo>`, rename the id in `manifest.json`, `git init`, then install
+   it back the real way (below). The clone stays in the config folder until you
+   `omarchy plugin remove` it.
+2. **Own plugin as template.** Copy the skeleton from the last plugin you built
+   (for Steve: `~/src/omarchy-headroom`): `manifest.json`, `BarWidget.qml`,
+   `Service.qml`, `CollectorProcess.qml`, `TintedIcon.qml`, `Model.js`,
+   `tests/`, `tools/`, CI workflow, `LICENSE`, `AGENTS.md` and `CLAUDE.md`.
+   Strip the domain logic, keep the plumbing.
+
+Either way: `gh repo create <user>/<repo> --public --source=. --push`, then
+`omarchy plugin add https://github.com/<user>/<repo> --enable` and
+`omarchy-restart-shell`. From then on: edit in `~/src`, commit, push,
+`omarchy plugin update`.
+
+## Phase 4: Build
 
 Order matters. Each step ends with a screenshot the user can see.
 

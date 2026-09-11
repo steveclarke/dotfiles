@@ -17,6 +17,9 @@ minimum_release_age_excludes = ["claude", "codex"]
 node.default_packages_file = "~/.default-npm-packages"
 idiomatic_version_file_enable_tools = ["ruby"]
 
+[settings.upgrade]
+auto_prune = false
+
 [env]
 # Pin baseruby for ruby-build so ./configure doesn't probe $PATH and
 # pick up the mise ruby shim, which recurses back into `mise install`.
