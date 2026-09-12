@@ -4,6 +4,8 @@ claude = "latest"
 codex = "latest"
 gh = "latest"
 go = "latest"
+# Java 21 LTS, not latest: AGP 9 / Gradle / Android CLI need 21.
+java = "21"
 node = "lts"
 "npm:@usebruno/cli" = "4.1.0"
 pnpm = "11"

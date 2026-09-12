@@ -3,7 +3,7 @@
 # Arch/Omarchy Prerequisites
 #
 # Installs foundational packages needed before stow, CLI tools, and apps.
-# Omarchy provides most build tools (base-devel, rust, clang, etc.) —
+# Omarchy 4 provides base-devel and clang but NOT stow or rust —
 # this fills in the gaps for Rails dev, PDF tools, and app distribution.
 #
 # Usage: sourced by install.sh (or run standalone for testing)
@@ -16,12 +16,24 @@ cache_sudo_credentials
 
 banner "Installing Arch prerequisites"
 
+# GNU Stow — Omarchy 3 shipped this, Omarchy 4 does not. configs/stow.sh runs
+# before install/arch/cli.sh, so stow has to land here or the install aborts.
+installing_banner "stow"
+omarchy-pkg-add stow
+
+# Rust — Omarchy 3 shipped this, Omarchy 4 does not. The herdr-lazy sync in
+# configs/stow.sh builds ez-corp.git-status with cargo, and that runs before
+# install/arch/cli.sh, so rust has to land here too.
+installing_banner "rust"
+if is_installed cargo; then
+  skipping "rust"
+else
+  omarchy install dev-env rust
+fi
+
 # Development libraries (Rails/Ruby apps need these)
 installing_banner "jemalloc"
 omarchy-pkg-add jemalloc
-
-installing_banner "libvips"
-omarchy-pkg-add libvips
 
 # Runtime compatibility libraries
 installing_banner "libxml2-legacy"

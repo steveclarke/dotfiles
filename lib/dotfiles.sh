@@ -413,7 +413,7 @@ install_appimage() {
 	local dest="${dest_dir}/${name}-${version}.AppImage"
 
 	mkdir -p "$dest_dir"
-	install -Dm755 "$src" "$dest"
+	command install -Dm755 "$src" "$dest"
 
 	if is_installed ail-cli && ail-cli integrate "$dest" >/dev/null 2>&1; then
 		# AppImageLauncher renames the file as it integrates it
@@ -440,7 +440,7 @@ _appimage_desktop_entry() {
 		local extracted
 		extracted=$(compgen -G "${tmpdir}/squashfs-root/*.png" | head -1)
 		if [[ -n "$extracted" ]]; then
-			install -Dm644 "$extracted" "${icon_dir}/${name}.png"
+			command install -Dm644 "$extracted" "${icon_dir}/${name}.png"
 			icon="${icon_dir}/${name}.png"
 		fi
 	fi

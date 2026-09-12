@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 installing_banner "firefox"
-omarchy-pkg-add firefox
+if is_installed firefox; then
+  skipping "firefox"
+else
+  omarchy install browser firefox
+fi

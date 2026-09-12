@@ -6,7 +6,10 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Detect OS at start
 detect_os
 
-install () {
+# NOT named `install`: shell functions shadow external commands, so a function
+# by that name silently hijacks `install -m ...` in every sourced installer and
+# re-enters the whole flow. That caused an infinite recursion via codexbar.sh.
+run_install_flow () {
   if is_macos; then
     # macOS installation flow
     banner "Starting macOS installation"
@@ -138,7 +141,7 @@ read -r answer
 answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
 
 if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-	install
+	run_install_flow
 else
 	echo "Exiting..."
 fi

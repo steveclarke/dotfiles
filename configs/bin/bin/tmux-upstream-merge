@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+# Fold Omarchy's changes to its stock tmux.conf into the dotfiles copy.
+#
+# Omarchy ships a complete tmux.conf with no include mechanism, so dotfiles
+# owns the whole file. That means an Omarchy improvement is invisible until
+# something diffs it — which is how the `?` keybindings popup and every `-N`
+# binding description went missing for a release.
+#
+# Three-way merge: omarchy-upstream/tmux/tmux.conf is the base (their stock
+# file as of the last merge), $OMARCHY_PATH/config/tmux/tmux.conf is theirs,
+# configs/tmux/.config/tmux/tmux.conf is ours. Our file keeps their stock
+# content as a verbatim first section precisely so this merge stays trivial.
+#
+# Usage: tmux-upstream-merge [--check] [--no-agent]
+#   --check     report whether upstream changed, change nothing
+#   --no-agent  skip the Claude summary / conflict resolution
+
+set -euo pipefail
+
+source "${HOME}/.dotfilesrc"
+
+omarchy_path="${OMARCHY_PATH:-/usr/share/omarchy}"
+upstream="${omarchy_path}/config/tmux/tmux.conf"
+base="${DOTFILES_DIR}/omarchy-upstream/tmux/tmux.conf"
+ours="${DOTFILES_DIR}/configs/tmux/.config/tmux/tmux.conf"
+
+check=false; agent=true
+for arg in "$@"; do
+  case "$arg" in
+    --check) check=true ;;
+    --no-agent) agent=false ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
+
+[[ -f $upstream ]] || { echo "No Omarchy stock tmux.conf at ${upstream}" >&2; exit 1; }
+
+if cmp -s "$upstream" "$base"; then
+  echo "Omarchy's tmux.conf is unchanged since the last merge."
+  exit 0
+fi
+
+upstream_diff=$(diff -u "$base" "$upstream" || true)
+echo "Omarchy changed its stock tmux.conf:"
+echo "$upstream_diff"
+echo
+
+$check && exit 0
+
+conflicts=false
+if git merge-file "$ours" "$base" "$upstream"; then
+  echo "Merged cleanly into ${ours}"
+else
+  conflicts=true
+  echo "Conflicts in ${ours}"
+fi
+
+cp "$upstream" "$base"
+
+if $agent && command -v claude >/dev/null; then
+  echo
+  if $conflicts; then
+    echo "Asking Claude to resolve the conflicts..."
+    claude -p "You are resolving a three-way merge of a tmux config.
+The file at ${ours} has three sections: (1) OMARCHY BASE, which must stay
+byte-identical to Omarchy's stock tmux.conf, (2) ADDITIONS, Steve's Alt-letter
+bindings, (3) OVERRIDES, the few Omarchy settings he deliberately changed.
+It currently contains git conflict markers. Rules: everything Omarchy changed
+belongs in section 1; Steve's bindings in section 2 and his overrides in
+section 3 always win and must not be lost; if Omarchy added a binding that
+collides with one of Steve's Alt-letter keys, keep Steve's and note it.
+Edit the file in place to remove all conflict markers and change nothing else.
+Then print a short plain-English summary of what Omarchy changed and how each
+conflict was resolved.
+
+Upstream diff (Omarchy's old stock -> new stock):
+${upstream_diff}" --allowedTools "Read,Edit" --add-dir "${DOTFILES_DIR}"
+  else
+    echo "Claude's summary of the upstream change:"
+    claude -p "Summarise in plain English, for Steve, what changed in this tmux.conf diff
+from Omarchy (old stock -> new stock), and say whether any of it could collide with
+custom Alt-letter bindings layered on top. Four sentences maximum, no preamble.
+
+${upstream_diff}"
+  fi
+fi
+
+echo
+echo "Snapshot updated. Review with: git -C ${DOTFILES_DIR} diff"
+echo "Apply with:                    tmux source-file ~/.config/tmux/tmux.conf"

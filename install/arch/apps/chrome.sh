@@ -8,7 +8,11 @@
 # starts, suppressing the prompt.
 
 installing_banner "google-chrome"
-omarchy-pkg-aur-add google-chrome
+if is_installed google-chrome-stable; then
+  skipping "google-chrome"
+else
+  omarchy install browser chrome
+fi
 
 # --- Wrapper: ~/.local/bin shadows /usr/bin in PATH for shell launches.
 mkdir -p "${HOME}/.local/bin"
