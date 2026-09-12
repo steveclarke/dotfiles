@@ -1,6 +1,6 @@
 source "${HOME}"/.dotfilesrc
 
-# Enable DDC/CI access for ddcutil so it (and vdu_controls) can drive
+# Enable DDC/CI access for ddcutil so it can drive
 # external monitors over I2C without root. Loads the i2c-dev kernel module
 # and adds the user to the i2c group.
 #
