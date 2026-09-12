@@ -13,7 +13,7 @@
           "format": "dddd h:mm AP",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
-          "verticalFormat": "HH\n—\nmm"
+          "verticalFormat": "HH\n\u2014\nmm"
         },
         {
           "id": "omarchy.keyboard-layout"
@@ -61,9 +61,6 @@
         },
         {
           "id": "omarchy.monitor"
-        },
-        {
-          "id": "omarchy.system-stats"
         },
         {
           "id": "omarchy.power"

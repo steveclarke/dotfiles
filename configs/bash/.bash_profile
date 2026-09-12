@@ -32,3 +32,6 @@ fi
 if [[ $- == *i* && -f "$HOME/.bashrc" ]]; then
   source "$HOME/.bashrc"
 fi
+# Rust/cargo on PATH. Appended by rustup, guarded by hand: this file is shared
+# across machines and sourcing a missing .cargo/env breaks shell startup.
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

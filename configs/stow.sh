@@ -18,8 +18,18 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Detect OS/distro (needed for is_omarchy guards when run standalone)
 detect_os
 
-# Exit on any error
+# Exit on any error.
+#
+# This file is sourced by install.sh, not run, so a bare `set -e` leaks errexit
+# into the rest of the install: one non-zero from any later script would take
+# the whole run down with it. Remember the caller's setting and put it back.
+__stow_errexit_was_set=0
+case "$-" in *e*) __stow_errexit_was_set=1 ;; esac
 set -e
+
+__stow_restore_errexit() {
+  [ "$__stow_errexit_was_set" = "1" ] || set +e
+}
 
 # Validate stow is installed
 if ! is_installed stow; then
@@ -353,6 +363,8 @@ if ! is_omarchy; then
   # OpenCode — Omarchy has its own config
   stow_package "OpenCode" "opencode"
 fi
+
+__stow_restore_errexit
 
 if [ -n "${STOW_FAILED:-}" ]; then
   error "Stow finished with failures: ${STOW_FAILED}"

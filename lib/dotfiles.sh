@@ -286,8 +286,15 @@ configure_ssh() {
 		chmod 600 "${HOME}/.ssh/config"
 	fi
 	
-	# Add identity file to SSH config
-	echo "IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY" >> "${HOME}/.ssh/config"
+	# Add identity file to SSH config, once. This used to append every run, so a
+	# machine that had install.sh run twice ended up with duplicate IdentityFile
+	# lines.
+	local line="IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY"
+	if grep -qxF "$line" "${HOME}/.ssh/config" 2>/dev/null; then
+		echo "IdentityFile already set in ~/.ssh/config, leaving it"
+	else
+		echo "$line" >> "${HOME}/.ssh/config"
+	fi
 }
 
 clone_git_repo() {
@@ -413,7 +420,7 @@ install_appimage() {
 	local dest="${dest_dir}/${name}-${version}.AppImage"
 
 	mkdir -p "$dest_dir"
-	install -Dm755 "$src" "$dest"
+	command install -Dm755 "$src" "$dest"
 
 	if is_installed ail-cli && ail-cli integrate "$dest" >/dev/null 2>&1; then
 		# AppImageLauncher renames the file as it integrates it
@@ -440,7 +447,7 @@ _appimage_desktop_entry() {
 		local extracted
 		extracted=$(compgen -G "${tmpdir}/squashfs-root/*.png" | head -1)
 		if [[ -n "$extracted" ]]; then
-			install -Dm644 "$extracted" "${icon_dir}/${name}.png"
+			command install -Dm644 "$extracted" "${icon_dir}/${name}.png"
 			icon="${icon_dir}/${name}.png"
 		fi
 	fi

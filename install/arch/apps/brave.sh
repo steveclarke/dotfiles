@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 installing_banner "brave"
-omarchy-pkg-aur-add brave-bin
+if is_installed brave; then
+  skipping "brave"
+else
+  omarchy install browser brave
+fi
