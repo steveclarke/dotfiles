@@ -8,13 +8,14 @@ export DOTFILES_DIR=${HOME}/.local/share/dotfiles
 # GitHub user whose public keys (https://github.com/<user>.keys) get appended
 # to ~/.ssh/authorized_keys so existing machines can SSH into this one.
 export DOTFILES_GITHUB_USER=steveclarke
-# SSH agent is auto-detected: if the 1Password app is running with its SSH
-# agent on, keys come from 1Password and the copy below plus keychain are
-# skipped. Otherwise the private keys are copied from an existing machine.
-# Override only if needed: keychain (force the old path) or 1password.
-# export DOTFILES_SSH_AGENT=keychain
-export DOTFILES_SSH_KEYS_HOST=steve@192.168.77.77
-export DOTFILES_SSH_KEYS="sevenview2020.pub sevenview2020 sevenview.pub sevenview"
+# SSH private keys are read out of 1Password, which ships with Omarchy and is
+# always reachable — a new machine needs a 1Password login and nothing else.
+# Turn on 1Password > Settings > Developer > Integrate with 1Password CLI first.
+#
+# Maps each key name in ~/.ssh to its 1Password item. Item ids, not titles:
+# stable, and no spaces to quote around. Find them with:
+#   op item list --categories "SSH Key"
+export DOTFILES_SSH_KEYS_OP="sevenview2020=op://Employee/phmppr6yos4vik6wvpee4pi5he sevenview=op://Employee/sa2dxzebwhnuyhmprtt4g3or7i"
 export DOTFILES_SSH_KEYS_PRIMARY=sevenview2020
 
 # Git Configuration

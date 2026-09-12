@@ -129,81 +129,71 @@ check_dotfilesrc() {
 	fi
 }
 
-copy_ssh_keys() {
-	bootstrap_banner "Copying SSH keys"
-	
-	# Create .ssh directory if it doesn't exist
-	mkdir -p "${HOME}/.ssh"
-	chmod 700 "${HOME}/.ssh"
-	
-	# Check if SSH keys already exist locally
-	local keys_exist=true
-	for key in ${DOTFILES_SSH_KEYS}; do
-		if [[ ! -f "${HOME}/.ssh/${key}" ]]; then
-			keys_exist=false
-			break
-		fi
-	done
-	
-	if [[ "$keys_exist" == "true" ]]; then
-		echo "SSH keys already exist locally, skipping copy"
+# Write the SSH keys named in DOTFILES_SSH_KEYS to ~/.ssh, reading them out of
+# 1Password. 1Password ships with Omarchy and is always reachable, so a new
+# machine needs nothing but a 1Password login — no second machine powered on.
+#
+# DOTFILES_SSH_KEYS_OP maps each key name to its 1Password item:
+#   "sevenview2020=op://Employee/<item-id> sevenview=op://Employee/<item-id>"
+# Item ids rather than titles: stable, and no spaces to quote around.
+fetch_ssh_keys_from_1password() {
+	bootstrap_banner "Fetching SSH keys from 1Password"
+
+	if ! is_installed op; then
+		error "1Password CLI (op) not installed — open 1Password from the Omarchy menu"
+		return 1
+	fi
+
+	if [[ -z "${DOTFILES_SSH_KEYS_OP:-}" ]]; then
+		echo "DOTFILES_SSH_KEYS_OP not set in ~/.dotfilesrc, skipping"
 		return 0
 	fi
-	
-	# Test if remote host is reachable
-	echo "Testing connection to ${DOTFILES_SSH_KEYS_HOST}..."
-	
-	# First try key-based authentication (no password prompt)
-	if ssh -o ConnectTimeout=5 -o BatchMode=yes "${DOTFILES_SSH_KEYS_HOST}" 'exit 0' 2>/dev/null; then
-		echo "✅ Remote host reachable (key-based auth), copying SSH keys..."
-		copy_method="key-based"
-	else
-		# Try regular connection (may prompt for password)
-		echo "🔑 Key-based auth failed, testing password authentication..."
-		echo "You may be prompted for a password..."
-		if ssh -o ConnectTimeout=5 "${DOTFILES_SSH_KEYS_HOST}" 'exit 0'; then
-			echo "✅ Remote host reachable (password auth), copying SSH keys..."
-			copy_method="password"
-		else
-			echo "❌ Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
-			copy_method="failed"
+
+	mkdir -p "${HOME}/.ssh"
+	chmod 700 "${HOME}/.ssh"
+
+	local entry name ref priv pub
+	for entry in ${DOTFILES_SSH_KEYS_OP}; do
+		name="${entry%%=*}"
+		ref="${entry#*=}"
+
+		if [[ -f "${HOME}/.ssh/${name}" ]]; then
+			echo "  ${name} already present, leaving it"
+			continue
 		fi
-	fi
-	
-	if [[ "$copy_method" != "failed" ]]; then
-		# Copy each SSH key individually for better error handling
-		for key in ${DOTFILES_SSH_KEYS}; do
-			echo "Copying ${key}..."
-			if scp "${DOTFILES_SSH_KEYS_HOST}:.ssh/${key}" "${HOME}/.ssh/${key}"; then
-				echo "✓ ${key} copied successfully"
-			else
-				echo "⚠ Failed to copy ${key} (may not exist on remote host)"
-			fi
-		done
-		
-		# Set proper permissions
-		echo "Setting SSH key permissions..."
-		if is_macos; then
-			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
-			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
+
+		# Written to a temp file first so a failed read cannot leave a
+		# truncated key in place.
+		priv=$(mktemp) && chmod 600 "$priv"
+		if op read "${ref}/private key?ssh-format=openssh" > "$priv" 2>/dev/null &&
+			[[ -s "$priv" ]]; then
+			mv "$priv" "${HOME}/.ssh/${name}"
+			chmod 600 "${HOME}/.ssh/${name}"
+			echo "  ${name} written"
 		else
-			chmod 600 "${HOME}/.ssh/"* 2>/dev/null || true
-			chmod 644 "${HOME}/.ssh/"*.pub 2>/dev/null || true
+			rm -f "$priv"
+			error "  could not read ${ref}/private key"
+			# `op whoami` is not a usable readiness check here: with the desktop
+			# app integration it reports "not signed in" while reads work fine.
+			echo "  If nothing has authorized the CLI yet: turn on 1Password >"
+			echo "  Settings > Developer > Integrate with 1Password CLI, then run"
+			echo "  'op item list' once and approve the prompt."
+			continue
 		fi
-		echo "SSH keys processing complete"
-	else
-		echo "WARNING: Cannot reach ${DOTFILES_SSH_KEYS_HOST}"
-		echo "SSH keys will need to be copied manually to ${HOME}/.ssh/"
-		echo "Required keys: ${DOTFILES_SSH_KEYS}"
-		echo ""
-		echo "You can either:"
-		echo "1. Copy the keys manually to ${HOME}/.ssh/"
-		echo "2. Update DOTFILES_SSH_KEYS_HOST in ~/.dotfilesrc to a reachable host"
-		echo "3. Skip SSH key copying if you'll set them up differently"
-		echo ""
-		echo "Press Enter to continue without copying SSH keys, or Ctrl+C to abort..."
-		read -r
-	fi
+
+		pub=$(mktemp)
+		if op read "${ref}/public key" > "$pub" 2>/dev/null && [[ -s "$pub" ]]; then
+			mv "$pub" "${HOME}/.ssh/${name}.pub"
+			chmod 644 "${HOME}/.ssh/${name}.pub"
+		else
+			rm -f "$pub"
+			# Recoverable: the public key can be derived from the private one.
+			ssh-keygen -y -f "${HOME}/.ssh/${name}" > "${HOME}/.ssh/${name}.pub" 2>/dev/null &&
+				chmod 644 "${HOME}/.ssh/${name}.pub"
+		fi
+	done
+
+	echo "SSH keys ready"
 }
 
 install_github_authorized_keys() {

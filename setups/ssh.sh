@@ -8,24 +8,17 @@ source "${DOTFILES_DIR}"/lib/dotfiles.sh
 # Public keys only; it does not replace the private-key copy below.
 install_github_authorized_keys
 
-# 1Password agent present: keys live in 1Password, nothing copied to disk.
-if use_onepassword_agent; then
-    configure_ssh_agent_1password
+# Keys come out of 1Password, which ships with Omarchy and is always up. Set
+# DOTFILES_SSH_KEYS_OP in ~/.dotfilesrc to map key names to 1Password items.
+if [[ -z "${DOTFILES_SSH_KEYS_OP:-}" ]]; then
+    echo "DOTFILES_SSH_KEYS_OP not set in ~/.dotfilesrc, skipping SSH key setup"
     return 0
 fi
 
-# Skip if SSH variables are not configured
-if [[ -z "${DOTFILES_SSH_KEYS_HOST}" || -z "${DOTFILES_SSH_KEYS}" || -z "${DOTFILES_SSH_KEYS_PRIMARY}" ]]; then
-    echo "SSH configuration variables not set in .dotfilesrc, skipping SSH setup"
-    echo "To enable SSH setup, configure these variables in ~/.dotfilesrc:"
-    echo "  DOTFILES_SSH_KEYS_HOST"
-    echo "  DOTFILES_SSH_KEYS"
-    echo "  DOTFILES_SSH_KEYS_PRIMARY"
-    return 0
+fetch_ssh_keys_from_1password || return 0
+
+if [[ -n "${DOTFILES_SSH_KEYS_PRIMARY:-}" ]]; then
+    configure_ssh
 fi
 
-# Copy SSH keys and configure SSH
-copy_ssh_keys
-configure_ssh
-
-echo "SSH setup complete!" 
+echo "SSH setup complete!"

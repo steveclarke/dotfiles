@@ -18,7 +18,7 @@ if [[ ! -f "$DOTFILESRC" ]]; then
   curl -fsSL -o "$DOTFILESRC" \
     https://raw.githubusercontent.com/steveclarke/dotfiles/master/.dotfilesrc.template
   echo ""
-  echo "Edit ~/.dotfilesrc now to verify your settings (especially SSH host)."
+  echo "Edit ~/.dotfilesrc now to verify your settings (especially DOTFILES_SSH_KEYS_OP)."
   echo "Then re-run this script."
   exit 0
 fi
@@ -38,7 +38,7 @@ fi
 source "${DOTFILES_DIR}/lib/dotfiles.sh"
 detect_os
 install_github_authorized_keys
-copy_ssh_keys
+fetch_ssh_keys_from_1password
 configure_ssh
 
 # Switch remote to SSH now that we have keys
