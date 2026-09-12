@@ -44,10 +44,15 @@ _install_out() (
     --pattern "$tarball" --dir "$tmpdir"
 
   tar xzf "${tmpdir}/${tarball}" -C "$tmpdir"
-  sudo install -Dm755 "${tmpdir}/out" /usr/bin/out
-  sudo install -Dm644 "${tmpdir}/completions/out.bash" /usr/share/bash-completion/completions/out
-  sudo install -Dm644 "${tmpdir}/completions/_out" /usr/share/zsh/site-functions/_out
-  sudo install -Dm644 "${tmpdir}/completions/out.fish" /usr/share/fish/vendor_completions.d/out.fish
+  # ~/.local/bin and the per-user completion dirs, so no sudo is needed and
+  # install.sh can run unattended.
+  install -Dm755 "${tmpdir}/out" "${HOME}/.local/bin/out"
+  install -Dm644 "${tmpdir}/completions/out.bash" \
+    "${HOME}/.local/share/bash-completion/completions/out"
+  install -Dm644 "${tmpdir}/completions/_out" \
+    "${HOME}/.local/share/zsh/site-functions/_out"
+  install -Dm644 "${tmpdir}/completions/out.fish" \
+    "${HOME}/.config/fish/completions/out.fish"
 
   rm -rf "$tmpdir"
   success "out ${version} installed - run 'out setup' to add your API token"

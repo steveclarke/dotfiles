@@ -391,6 +391,10 @@ if [[ -d "$_mise_shims" ]]; then
 fi
 unset _mise_shims
 
+# Per-user completions, for tools installed into ~/.local without sudo.
+# zsh does not look here by default; bash and fish find their own XDG dirs.
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=(/Users/steve/.docker/completions $fpath)
 autoload -Uz compinit

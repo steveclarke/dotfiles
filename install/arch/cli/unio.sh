@@ -44,10 +44,15 @@ _install_unio() (
     --dir "$tmpdir"
 
   tar xzf "${tmpdir}/unio_${version}_linux_${go_arch}.tar.gz" -C "$tmpdir"
-  sudo install -Dm755 "${tmpdir}/unio" /usr/bin/unio
-  sudo install -Dm644 "${tmpdir}/completions/unio.bash" /usr/share/bash-completion/completions/unio
-  sudo install -Dm644 "${tmpdir}/completions/_unio" /usr/share/zsh/site-functions/_unio
-  sudo install -Dm644 "${tmpdir}/completions/unio.fish" /usr/share/fish/vendor_completions.d/unio.fish
+  # ~/.local/bin and the per-user completion dirs, so no sudo is needed and
+  # install.sh can run unattended.
+  install -Dm755 "${tmpdir}/unio" "${HOME}/.local/bin/unio"
+  install -Dm644 "${tmpdir}/completions/unio.bash" \
+    "${HOME}/.local/share/bash-completion/completions/unio"
+  install -Dm644 "${tmpdir}/completions/_unio" \
+    "${HOME}/.local/share/zsh/site-functions/_unio"
+  install -Dm644 "${tmpdir}/completions/unio.fish" \
+    "${HOME}/.config/fish/completions/unio.fish"
 
   rm -rf "$tmpdir"
   success "unio ${version} installed"
