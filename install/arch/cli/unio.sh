@@ -52,7 +52,7 @@ _install_unio() (
   install -Dm644 "${tmpdir}/completions/_unio" \
     "${HOME}/.local/share/zsh/site-functions/_unio"
   install -Dm644 "${tmpdir}/completions/unio.fish" \
-    "${HOME}/.config/fish/completions/unio.fish"
+    "${HOME}/.local/share/fish/vendor_completions.d/unio.fish"
 
   rm -rf "$tmpdir"
   success "unio ${version} installed"

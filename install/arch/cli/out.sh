@@ -52,7 +52,7 @@ _install_out() (
   install -Dm644 "${tmpdir}/completions/_out" \
     "${HOME}/.local/share/zsh/site-functions/_out"
   install -Dm644 "${tmpdir}/completions/out.fish" \
-    "${HOME}/.config/fish/completions/out.fish"
+    "${HOME}/.local/share/fish/vendor_completions.d/out.fish"
 
   rm -rf "$tmpdir"
   success "out ${version} installed - run 'out setup' to add your API token"
