@@ -286,8 +286,15 @@ configure_ssh() {
 		chmod 600 "${HOME}/.ssh/config"
 	fi
 	
-	# Add identity file to SSH config
-	echo "IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY" >> "${HOME}/.ssh/config"
+	# Add identity file to SSH config, once. This used to append every run, so a
+	# machine that had install.sh run twice ended up with duplicate IdentityFile
+	# lines.
+	local line="IdentityFile ~/.ssh/$DOTFILES_SSH_KEYS_PRIMARY"
+	if grep -qxF "$line" "${HOME}/.ssh/config" 2>/dev/null; then
+		echo "IdentityFile already set in ~/.ssh/config, leaving it"
+	else
+		echo "$line" >> "${HOME}/.ssh/config"
+	fi
 }
 
 clone_git_repo() {
