@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Omarchy runs databases in Docker rather than as a native service. Its
-# installer presents a `gum choose` picker, so it can only run interactively —
-# an unattended install.sh would hang on it.
+# Postgres runs in a Docker container via Omarchy's installer, which presents a
+# picker for which database to set up. install.sh is interactive, so let it ask.
 installing_banner "postgresql (Omarchy docker dbs)"
-if [ -t 0 ]; then
-  omarchy install docker dbs
+
+if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q '^postgres'; then
+  skipping "postgresql (container exists)"
 else
-  echo "  skipping — interactive picker; run 'omarchy install docker dbs' by hand"
+  omarchy install docker dbs
 fi
