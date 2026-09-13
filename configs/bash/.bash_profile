@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/steve/.docker/bin"
+# End of Docker Desktop section.
+
 # Login-shell startup, read by `bash -lc` — which is how process-compose and
 # other dev stacks shell out (zsh is the interactive shell, but the stacks use
 # bash). This is the bash twin of configs/zsh/.zshenv.

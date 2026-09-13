@@ -2,6 +2,7 @@
 bun = "latest"
 claude = "latest"
 codex = "latest"
+dotnet = "latest"
 gh = "latest"
 go = "latest"
 # Java 21 LTS, not latest: AGP 9 / Gradle / Android CLI need 21.

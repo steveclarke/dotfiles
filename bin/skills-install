@@ -182,7 +182,8 @@ prune_unlisted() {
   while IFS=$'\t' read -r kind name; do
     [[ -n "$name" ]] || continue
     echo "  ✗ ${name}"
-    npx -y skills remove -g -y "$name" >/dev/null 2>&1 || true
+    # </dev/null: npx otherwise reads the rest of the list from stdin.
+    npx -y skills remove -g -y "$name" </dev/null >/dev/null 2>&1 || true
     if [[ "$kind" == "dir" ]]; then
       rm -rf "${skills_dir:?}/${name}"
     fi

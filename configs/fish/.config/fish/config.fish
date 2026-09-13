@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/steve/.docker/bin"
+# End of Docker Desktop section.
+
 # ─[ Path ]───────────────────────────────────────────────────────────────
 fish_add_path -g ~/bin
 fish_add_path -g ~/.local/bin
