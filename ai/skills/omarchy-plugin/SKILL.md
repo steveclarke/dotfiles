@@ -131,7 +131,7 @@ fixtures, screenshots or history.
 `omarchy plugin add` copies the repo into a path coding agents auto-discover,
 and marketplace review blocks it (Kopia, 2026-09-11). Contributor guidance goes
 in `docs/CONTRIBUTING.md`. Copy `tools/check-agent-files` from
-`github.com/steveclarke/omarchy-kopia` into `bin/check` and CI from the first
+`github.com/steveclarke/omarchy-headroom` (Kopia's older copy also flags `claude.svg`) into `bin/check` and CI from the first
 commit.
 
 **Screenshots are crops of the panel border, never whole grabs.** A grab of the

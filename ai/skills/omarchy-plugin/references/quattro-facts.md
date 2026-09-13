@@ -34,7 +34,8 @@ Each of these cost hours on a real plugin (Screen Push, Headroom, Kopia).
 - In settings set `PanelKeyCatcher.blocked`, not `enabled: false` (disables children too).
 - `Column` already has `move`; name a reorder function `reorder`.
 - A `Repeater` delegate cannot reach `parent.someProperty` of the enclosing Column during creation; give the container an id.
-- Hot reload keeps stale glyphs and IPC handlers: `omarchy-restart-shell`.
+- Hot reload keeps stale glyphs and IPC handlers: `omarchy-restart-shell`. It refuses while the session is locked; test IPC in a throwaway `quickshell -p <dir>` with a bare `ShellRoot` and `IpcHandler` instead.
+- IPC targets are global across the whole shell, so a short target (`kopia`) can collide with another plugin. Use the full plugin id (`io.github.steveclarke.kopia`); dotted targets work with `omarchy-shell` and `quickshell ipc`. Built-ins use `omarchy.<name>`. `quickshell ipc -p /usr/share/omarchy/shell show` lists every live target.
 
 ## Processes
 
@@ -65,6 +66,7 @@ Each of these cost hours on a real plugin (Screen Push, Headroom, Kopia).
 - Under bats, `! cmd` never fails a test (`set -e` ignores negated commands). Assert on captured output: `[ -z "$(grep ...)" ]`. Prove every guard with a planted positive control before trusting it.
 - A stub that returns fixed-date fixtures makes "healthy" tests pass only for a few hours after capture. Shift fixture timestamps relative to now inside the stub.
 - No click tool on Wayland (no ydotool). `wtype` sends keys, so give every panel action a key and capture through it; a "," settings key doubles as a feature.
+- CI on `ubuntu-latest` has no Omarchy, Quickshell or qmllint. Run the unit suites and the agent-file guard there; keep qmllint, offscreen QML checks and `omarchy plugin validate` in local `bin/check`. A test that reaches for `/usr/share/omarchy/bin` passes locally and fails in CI, so stub the file check. A personal-data check that compares against the local username fails in CI (the runner is `runner`, a common word); keep it local.
 - `hyprctl dispatch movecursor` fails on Lua Hyprland; use `hyprctl eval` with `hl.dsp.cursor.move`.
 
 ## Hotkeys
