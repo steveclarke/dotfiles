@@ -57,11 +57,12 @@ exists; it already has the service/widget split, tests and CI.
    `~/src/<repo>`, rename the id in `manifest.json`, `git init`, then install
    it back the real way (below). The clone stays in the config folder until you
    `omarchy plugin remove` it.
-2. **Own plugin as template.** Copy the skeleton from the last plugin you built
-   (for Steve: `~/src/omarchy-headroom`): `manifest.json`, `BarWidget.qml`,
-   `Service.qml`, `CollectorProcess.qml`, `TintedIcon.qml`, `Model.js`,
-   `tests/`, `tools/`, CI workflow, `LICENSE`, `AGENTS.md` and `CLAUDE.md`.
-   Strip the domain logic, keep the plumbing.
+2. **Own plugin as template.** Copy the skeleton from the last plugin built
+   (for example `github.com/steveclarke/omarchy-headroom`): `manifest.json`,
+   `BarWidget.qml`, `Service.qml`, `CollectorProcess.qml`, `TintedIcon.qml`,
+   `Model.js`, `tests/`, `tools/`, CI workflow and `LICENSE`. Strip the domain
+   logic, keep the plumbing. Do not copy agent-instruction files (see Install
+   the real way).
 
 Either way: `gh repo create <user>/<repo> --public --source=. --push`, then
 `omarchy plugin add https://github.com/<user>/<repo> --enable` and
@@ -75,7 +76,7 @@ Order matters. Each step ends with a screenshot the user can see.
 1. Manifest + `BarWidget.qml` with the glyph visible in the bar. First hour.
    `implicitWidth`/`implicitHeight` on the root or the slot is 0x0.
 2. `Model.js` pure functions with node tests: parsing, state machine, relative
-   time, error-class mapping.
+   time, error-class mapping. Pick the cases from `references/testing.md`.
 3. `Service.qml` singleton with a watchdogged `Process` wrapper (copy
    Headroom's `CollectorProcess.qml`), stub binaries under `test/stub/` so
    tests never touch real hardware or real repositories.
@@ -98,8 +99,10 @@ Order matters. Each step ends with a screenshot the user can see.
    (grep audit, then the marketplace scanner locally on the pushed commit) and
    fix every hit. Each review round costs a day and reviewers re-read the
    whole tree after every push.
-10. `preview.png` (check all four edges at zoom, stand-in names only), tag,
-   GitHub release, marketplace issue per `references/marketplace.md`.
+10. `preview.png` (check all four edges at zoom, stand-in names only), then
+   the release sequence in `references/release.md` (version, green CI,
+   annotated tag, GitHub release), then the marketplace issue per
+   `references/marketplace.md`.
 
 ## Verify without touching the user's mouse
 
@@ -108,6 +111,12 @@ on the panel's geometry from `omarchy-shell shell debugBarGeometry`. Hover via
 `hyprctl eval 'hl.dispatch(hl.dsp.cursor.move({x=..,y=..}))'` after saving
 `hyprctl -j cursorpos` and restoring it in a finally. Never ask the user to
 click something to tell you what happened.
+
+## When the widget does not load
+
+Walk `references/debugging.md` top down (files, schema, discovery, enablement,
+load, lifecycle, IPC, process, interaction) and stop at the first layer that
+fails. Do not guess at QML while the manifest is still invalid.
 
 ## Install the real way
 
@@ -122,7 +131,8 @@ fixtures, screenshots or history.
 `omarchy plugin add` copies the repo into a path coding agents auto-discover,
 and marketplace review blocks it (Kopia, 2026-09-11). Contributor guidance goes
 in `docs/CONTRIBUTING.md`. Copy `tools/check-agent-files` from
-`~/src/omarchy-kopia` into `bin/check` and CI from the first commit.
+`github.com/steveclarke/omarchy-kopia` into `bin/check` and CI from the first
+commit.
 
 **Screenshots are crops of the panel border, never whole grabs.** A grab of the
 panel's region also captures whatever window sits behind it (a terminal
@@ -134,4 +144,7 @@ transcript went into a public repo's history this way).
   that cost hours each.
 - `references/design-language.md`: geometry, tokens, component vocabulary,
   state-colour rules, copy rules.
-- `references/marketplace.md`: submission body, validator quirks.
+- `references/testing.md`: state cases, live lifecycle checks, evidence record.
+- `references/debugging.md`: the failure ladder and the read-only commands.
+- `references/release.md`: version, CI, annotated tag, compatibility statement.
+- `references/marketplace.md`: submission body, validator quirks, review rounds.

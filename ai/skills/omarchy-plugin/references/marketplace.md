@@ -1,10 +1,10 @@
 # Marketplace submission
 
 - Repo: `github.com/omacom/omarchy-plugin-marketplace`. Submission is a GitHub issue using `SUBMISSION.md` verbatim: six headings in order, five checkboxes, title `[Plugin]: Name`. `gh issue create --body-file` works.
-- Validation is automatic, under five minutes. The security baseline flags the word `sudo` anywhere (README, error strings) and any file named `Setup.qml` as an installer. Those are `review-required`, not failures; a maintainer accepts them.
-- Ids are permanent and global; search `catalog.json` first.
+- Validation is automatic, under five minutes. The security baseline flags the word `sudo` anywhere (README, error strings) and any file named `Setup.qml` as an installer. A negation still matches: "never requests sudo" in a README was flagged (issue #6586). Those are `review-required`, not failures; a maintainer accepts them.
+- Ids are permanent and global; search `https://plugins.omarchy.org/catalog.json` first.
 - `preview.png` at the repo root is optional; the site crops it. Check all four edges at zoom for stray borders. Stand-in names only.
-- Before submitting: `omarchy plugin validate`, qmllint, tests in CI, a tagged release so the listing shows a version badge, `AGENTS.md` as a real file (no symlinks).
+- Before submitting: `omarchy plugin validate`, qmllint, tests in CI, and an annotated release tag (`references/release.md`) so the listing shows a version badge. No symlinks and no agent-instruction files anywhere in the tree.
 - Security review is a maintainer-run AI agent reading the full tree at the exact commit, separate from the static baseline bot. It blocked Kopia on its first pass for root `AGENTS.md`/`CLAUDE.md`. Load the `omarchy-plugin-security` skill before submitting; it is distilled from every past review comment.
 - Exact-SHA binding: validation, baseline and review all bind to one 40-character commit. Any push after validation (even README or preview) makes the review stale. Put every fix on one final commit, then re-validate, then leave HEAD alone until approval.
 - Re-validation is triggered by editing the issue body (`gh issue edit <n> --repo omacom/omarchy-plugin-marketplace --body-file ...`); something in the body must change. A comment does not trigger it; reply with the fix SHA as a courtesy.
