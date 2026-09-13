@@ -36,7 +36,6 @@ Custom skills maintained in `ai/skills/` in this repo.
 | screenshots | Screenshot automation |
 | ship | Ship orchestrator |
 | time-tracking | Toggl/Clockify via scripts/track |
-| to-markdown | Convert files to markdown via markitdown |
 | todoist | Todoist MCP integration |
 | youtube | YouTube transcript/mp3 |
 
@@ -54,7 +53,7 @@ Custom skills maintained in `ai/skills/` in this repo.
 | Source | Skills |
 |--------|--------|
 | `pbakaus/impeccable` | adapt, animate, arrange, audit, bolder, clarify, colorize, critique, delight, distill, extract, frontend-design, harden, impeccable, layout, normalize, onboard, optimize, overdrive, polish, quieter, shape, teach-impeccable, typeset |
-| `antfu/skills` | slidev, nuxt, vite, vitepress, vitest, vue, vue-best-practices, vue-router-best-practices, vue-testing-best-practices |
+| `antfu/skills` | slidev, nuxt, vue-best-practices, vue-testing-best-practices |
 | `nuxt/ui` | nuxt-ui |
 | `shadcn/ui` | shadcn |
 | `vueuse/skills` | vueuse-functions |
@@ -73,3 +72,4 @@ Skills moved to `ai/skills-archive/`:
 - rails-upgrade-assistant (switching to maquina-app)
 - slidev (switching to antfu/skills)
 - electron (vercel-labs/agent-browser — dropped)
+- to-markdown (md-to-pdf and agents cover it; 2026-09-13)

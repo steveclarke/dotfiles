@@ -43,7 +43,7 @@ everything. Do this in one pass, one voice, no agent fan-out.
    (healthy, running, failed, stale/warn, not set up, settings) each in its own
    card with a one-paragraph "why" under it, and the notification mocked
    inline. Every string is a sentence with a next step. Get a yes on this page.
-5. Only then write the spec (`superpowers:brainstorming` architectural path).
+5. Only then write the spec.
 
 ## Phase 3: Start the repo
 

@@ -1,137 +1,84 @@
 ---
 name: handoff
-description: "Prepare a clean handoff for continuing complex work in a fresh Claude Code session. Use on 'handoff', 'hand off', 'fresh context', 'new session', 'pick this up later', or proactively when context is full and work remains."
+description: "Brief another agent session so it can continue this work — directly to a running session or pane, or as a temp file when neither is reachable. Use on 'handoff', 'hand off', 'fresh context', 'new session', 'pick this up later', or proactively when context is full and work remains."
 ---
 
-# Handoff — Context-to-Context Continuation
+# Handoff — Brief the Next Session
 
-Write durable continuation notes to the project, generate a resume prompt, and copy it to the clipboard so a fresh Claude Code session can pick up exactly where this one left off.
+Pass the state of this session to the session that continues the work. A handoff is a briefing, not a record: it is delivered straight to the next session wherever possible, and it is never committed to the repo.
 
-## Why This Matters
+## 1. Gather State
 
-Claude Code sessions have finite context. Complex multi-session work (migrations, large features, multi-phase plans) needs a way to pass state between sessions without losing momentum. The handoff captures what a fresh session needs to know — not everything that happened, but everything that matters going forward.
+Collect only what the next session needs:
 
-## Process
+**Done:**
+- Tasks or phases completed
+- Files created or modified (high level)
+- Commits made and pushed (branch, remote status)
 
-### 1. Gather State
-
-Before writing anything, collect this information from the current session:
-
-**What's done:**
-- Tasks/phases completed
-- Files created or modified (high-level, not every file)
-- Commits made and pushed (branch name, remote status)
-
-**What's not done:**
+**Not done:**
 - Remaining tasks or phases
-- Known issues, bugs encountered and fixed (so the next session doesn't repeat them)
+- Bugs hit and fixed, so the next session doesn't repeat them
 - Anything partially started
 
-**Key decisions made:**
-- Architectural choices the user approved
-- Patterns established that future work should follow
-- Things that were tried and didn't work
+**Decisions:**
+- Choices the user approved that constrain future work
+- Patterns established
+- Approaches tried that didn't work
 
 **Practical details:**
-- Repo location, branch, remote
-- Dev environment state (running? needs setup?)
+- Repo path, branch, remote
+- Dev environment state (running, or how to start it)
 - Test credentials if relevant
-- Relevant file paths (specs, plans, docs)
+- Key file paths (specs, plans, docs) — 2-4 at most
 
-If the next task isn't obvious from context, ask: **"What should the next session focus on?"**
+If the next task isn't obvious, ask: **"What should the next session focus on?"**
 
-### 2. Write Continuation File
+## 2. Write the Brief
 
-Write a continuation notes file to the project. Location preference:
-1. `docs/superpowers/plans/` if it exists (superpowers convention)
-2. `docs/` if it exists
-3. Project root as `CONTINUATION.md`
-
-**Filename:** `YYYY-MM-DD-<topic>-continuation.md`
-
-Structure:
+Keep it under a minute to read. Self-contained — no "see above".
 
 ```markdown
-# [Topic] — Continuation Notes
-
-## Current State (YYYY-MM-DD)
+# [Topic] — Handoff (YYYY-MM-DD)
 
 [1-2 sentence summary of where things stand]
 
-### What's Working
-- [bullet list of completed work]
+## Done
+- ...
 
-### What's NOT Working Yet
-- [bullet list of remaining work, known gaps]
+## Not Done
+- ...
 
-### Key Decisions
-- [decisions the user approved that constrain future work]
+## Decisions
+- ...
 
-### Bugs Fixed (Don't Repeat These)
-- [gotchas encountered — saves the next session from re-discovering them]
+## Bugs Fixed (Don't Repeat)
+- ...
 
-### Practical Details
-- Repo: [path] (GitHub: [org/repo], branch: [branch])
-- Dev stack: [running? how to start?]
-- Credentials: [if needed for testing]
+## Practical
+- Repo: [path] (branch: [branch])
+- Dev stack: [state]
 
-## Next: [What To Do]
+## Next
+[What to do first]
 
-[Brief description of what the next session should do first]
-
-### Key Files to Read
-- [file path] — [what it contains and why it matters]
-
-### Pattern to Follow
-[If a pattern was established, show a brief example so the next session
-doesn't have to rediscover it]
+## Read First
+- [path] — [why]
 ```
 
-Keep it concise — this is a briefing, not a history. The next session should be able to read this in under a minute and know exactly what to do.
+## 3. Deliver It
 
-### 3. Commit and Push
+Use the first route that works:
 
-```bash
-git add <continuation-file>
-git commit -m "docs: add continuation notes for handoff"
-git push
-```
+1. **Another Claude Code session is running.** Find it with `ListAgents` and send the brief with `SendMessage`. Confirm which session it is before sending.
+2. **The target runs in Herdr or tmux.** Send the brief to the target pane with the `herdr` skill (inside Herdr) or the `tmux-orchestration` skill (plain tmux). Confirm the pane before sending.
+3. **No live target.** Write the brief to `${TMPDIR:-/tmp}/handoff-YYYY-MM-DD-<topic>.md`, copy a one-line resume prompt that points at it to the clipboard (`pbcopy` on macOS, `wl-copy` or `xclip -selection clipboard` on Linux), and give the user the path. The file is disposable; losing it on reboot is fine.
 
-### 4. Generate Resume Prompt
-
-Craft a resume prompt — the exact text the user will paste into a fresh session. It should:
-- Be self-contained (no "see above" references)
-- Point to 2-4 files max (the continuation notes + key docs)
-- State the next task clearly
-- Be under 10 lines
-
-**Template:**
-
-```
-I'm [brief context]. [Phase/step] is complete. Read these files to get up to speed, then [next action]:
-
-1. [continuation file path] (where we left off)
-2. [spec or plan path] (full context)
-3. [CLAUDE.md or other key doc] (conventions)
-
-[One sentence about what to do next.]
-```
-
-### 5. Copy to Clipboard
-
-```bash
-echo "<resume prompt>" | pbcopy   # macOS
-# or: echo "<resume prompt>" | xclip -selection clipboard   # Linux
-```
-
-Tell the user: **"Resume prompt copied to clipboard. Start a fresh session in `[repo path]` and paste it."**
+Never write the brief into the project or commit it.
 
 ## What NOT to Include
 
-- Full conversation history or play-by-play
-- Raw error logs (summarize the fix, not the stack trace)
-- File contents that can be read from disk
-- Implementation details that are in the code
-- Anything the fresh session can derive by reading the codebase
-
-The continuation file supplements `git log` and the code itself — it captures context that isn't in either place.
+- Conversation play-by-play
+- Raw error logs (summarize the fix)
+- File contents or implementation details readable from disk
+- Anything derivable from `git log` or the code
