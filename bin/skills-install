@@ -219,7 +219,9 @@ if [[ "$LIST_ONLY" != "true" ]]; then
   while IFS= read -r pkg; do
     dir="$(dirname "$pkg")"
     echo "  → $(basename "$dir")"
-    (cd "$dir" && npm install --silent --no-audit --no-fund) \
+    # A Homebrew libvips (pulled in by other formulae) makes sharp build from
+    # source, which fails; use sharp's bundled binaries instead.
+    (cd "$dir" && SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --silent --no-audit --no-fund) \
       || echo "    ⚠ npm install failed in ${dir}"
   done < <(find "${HOME}/.agents/skills" -mindepth 2 -maxdepth 2 -name package.json 2>/dev/null)
 fi
