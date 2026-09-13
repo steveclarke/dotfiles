@@ -6,6 +6,13 @@
 # SKILL_AGENTS (Claude Code, Codex, OpenCode, etc.) using symlinks (default
 # behavior of skills.sh).
 #
+# This file is the master list for every machine. After a full install, any
+# skill in ~/.agents/skills that this run did not install is removed, along
+# with its agent links. That covers skills dropped from a source repo, sources
+# removed from this file, and skills added by hand or by another tool.
+# Symlinks that point outside ~/.agents/skills (Omarchy's bundled skills) are
+# left alone. To keep a skill on every machine, add it here.
+#
 # Usage:
 #   skills-install          # sync all skills from all sources
 #   skills-install --list   # list available skills without installing
@@ -26,6 +33,10 @@ LIST_ONLY=false
 if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
   LIST_ONLY=true
 fi
+
+# Every `skills add` stamps updatedAt in the lock, even when nothing changed.
+# Anything not stamped after this moment was not installed by this run.
+RUN_STARTED="$(node -e 'console.log(new Date().toISOString())')"
 
 # Agents to install skills into. By default only the agents Steve actually uses,
 # instead of all ~70 agents skills.sh knows about. Override with a
@@ -76,6 +87,12 @@ install_all "My skills (outport-app)" \
 install_all "My skills (nj)" \
   "https://github.com/steveclarke/nj/tree/master/skills"
 
+install_all "My skills (kiso)" \
+  "https://github.com/steveclarke/kiso/tree/master/skills"
+
+install_all "My skills (superthread)" \
+  "https://github.com/steveclarke/superthread/tree/master/skills"
+
 install_all "My skills (ucmix)" \
   "https://github.com/steveclarke/ucmix/tree/master/skills"
 
@@ -120,6 +137,83 @@ install_specific "External (mattpocock)" "mattpocock/skills" \
 
 install_specific "External (herdr)" "herdrdev/herdr" \
   herdr
+
+# ─── Post-install: remove skills this run did not install ────────────────────
+# `set -e` stops the script if any source fails, so a partial run never prunes.
+prune_unlisted() {
+  local skills_dir="${HOME}/.agents/skills"
+  local lock="${HOME}/.agents/.skill-lock.json"
+  [[ -d "$skills_dir" && -f "$lock" ]] || return 0
+
+  echo ""
+  echo "=== Removing skills not in this list ==="
+  echo ""
+
+  # Prints stale names: "dir<TAB>name" for installed folders, "lock<TAB>name"
+  # for lock entries with no folder. Lock keys can be display names, so they
+  # are compared in the folder-name form skills.sh uses.
+  local stale
+  stale="$(node -e '
+    const fs = require("fs"), path = require("path");
+    const [lock, dir, started] = process.argv.slice(1);
+    const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const data = JSON.parse(fs.readFileSync(lock, "utf8"));
+    const entries = data.skills || {};
+    const fresh = new Set(Object.keys(entries)
+      .filter((k) => (entries[k].updatedAt || "") >= started).map(slug));
+    if (fresh.size === 0) { console.error("nothing installed this run; not pruning"); process.exit(0); }
+    const realDir = fs.realpathSync(dir);
+    for (const name of fs.readdirSync(dir)) {
+      if (fresh.has(slug(name))) continue;
+      const p = path.join(dir, name);
+      if (fs.lstatSync(p).isSymbolicLink()) {
+        let target = "";
+        try { target = fs.realpathSync(p); } catch {}
+        if (target && !target.startsWith(realDir + path.sep)) continue;
+      }
+      console.log("dir\t" + name);
+    }
+    for (const key of Object.keys(entries)) {
+      if (!fresh.has(slug(key)) && !fs.existsSync(path.join(dir, key))) console.log("lock\t" + key);
+    }
+  ' "$lock" "$skills_dir" "$RUN_STARTED")"
+
+  local kind name
+  while IFS=$'\t' read -r kind name; do
+    [[ -n "$name" ]] || continue
+    echo "  ✗ ${name}"
+    npx -y skills remove -g -y "$name" >/dev/null 2>&1 || true
+    if [[ "$kind" == "dir" ]]; then
+      rm -rf "${skills_dir:?}/${name}"
+    fi
+  done <<< "$stale"
+
+  # Drop lock entries the remove command did not clear.
+  node -e '
+    const fs = require("fs"), path = require("path");
+    const [lock, dir, started] = process.argv.slice(1);
+    const data = JSON.parse(fs.readFileSync(lock, "utf8"));
+    for (const [k, v] of Object.entries(data.skills || {})) {
+      if ((v.updatedAt || "") < started) delete data.skills[k];
+    }
+    fs.writeFileSync(lock, JSON.stringify(data, null, 2) + "\n");
+  ' "$lock" "$skills_dir" "$RUN_STARTED"
+
+  # Remove agent links left pointing at deleted skills.
+  local agent_dir link
+  for agent_dir in "$HOME/.claude/skills" "$HOME/.codex/skills" "$HOME/.cursor/skills" \
+    "$HOME/.gemini/skills" "$HOME/.config/opencode/skill" "$HOME/.config/opencode/skills"; do
+    [[ -d "$agent_dir" ]] || continue
+    for link in "$agent_dir"/*; do
+      [[ -L "$link" && ! -e "$link" ]] || continue
+      [[ "$(readlink "$link")" == *".agents/skills/"* ]] && rm -f "$link"
+    done
+  done
+}
+
+if [[ "$LIST_ONLY" != "true" ]]; then
+  prune_unlisted
+fi
 
 # ─── Post-install: restore deps for skills that ship a package.json ──────────
 # `skills add` overwrites each skill directory on every run, which wipes any
