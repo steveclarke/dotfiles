@@ -88,6 +88,7 @@ sudo mkdir -p /etc/systemd/system/fancontrol.service.d
 sudo tee /etc/systemd/system/fancontrol.service.d/resolve-hwmon.conf >/dev/null <<'EOF'
 # Managed by dotfiles/setups/linux/fan-control.sh
 [Service]
+ReadWritePaths=/etc/fancontrol
 ExecStartPre=/usr/local/bin/fancontrol-prep
 EOF
 sudo systemctl daemon-reload

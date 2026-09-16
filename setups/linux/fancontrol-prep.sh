@@ -46,7 +46,9 @@ fi
 if [[ $new != "$old" ]]; then
   echo "fancontrol-prep: $chip moved $old -> $new, rewriting $CONF"
   # \b keeps hwmon1 from matching inside hwmon10.
-  sed -i "s|\b${old}\b|${new}|g" "$CONF"
+  # Preserve the inode: the service grants write access to this file only.
+  updated=$(sed "s|\b${old}\b|${new}|g" "$CONF")
+  printf '%s\n' "$updated" >"$CONF"
 fi
 
 seeded=0
