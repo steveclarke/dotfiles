@@ -47,7 +47,7 @@ Pause for script review only if requested.
 
 ## Video and delivery
 
-When a video is requested, use `record-video` if installed. That skill handles
+When a video is requested, use `video-walkthrough` if installed. That skill handles
 capture, optional narration, assembly, and playback verification. Otherwise
 use the available recorder to produce and check a real video, or report the
 missing recording capability. A written guide alone does not fulfill a video

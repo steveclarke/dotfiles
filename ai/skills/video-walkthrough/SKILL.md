@@ -1,5 +1,5 @@
 ---
-name: record-video
+name: video-walkthrough
 description: Record a playable video showing actual work or a workflow in a browser, desktop app, or terminal, with optional narration and captions. Use for "show me a video of what you did", "record a demo", or "make a screencast". Not for generating synthetic footage or downloading existing videos.
 ---
 
