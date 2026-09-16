@@ -130,6 +130,9 @@ install_specific "External (doist)" "doist/todoist-cli" \
 install_specific "External (herdr)" "herdrdev/herdr" \
   herdr
 
+install_specific "External (cloudflare)" "cloudflare/security-audit-skill" \
+  security-audit
+
 # ─── Post-install: remove skills this run did not install ────────────────────
 # `set -e` stops the script if any source fails, so a partial run never prunes.
 prune_unlisted() {
