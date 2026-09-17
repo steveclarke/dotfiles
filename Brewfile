@@ -11,6 +11,7 @@ brew "steveclarke/tap/scn-cli"
 brew "steveclarke/tap/ninjanizr-cli"
 brew "myunio/tap/unio"
 brew "myunio/tap/outport-app-cli"
+brew "coollabsio/coolify-cli/coolify-cli" # Coolify CLI (`coolify`), first-party
 
 brew "act"
 brew "aichat"
