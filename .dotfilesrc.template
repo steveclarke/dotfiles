@@ -76,3 +76,7 @@ export DOTFILES_INSTALL_ANDROID_SDK=false
 # Control:
 # Set to skip 1Password entirely for Unio / 1Password Docker tokens
 # export UNIO_OP_SKIP=1
+
+# Homepage dashboard MCP (dotfiles install homepage-mcp)
+# export HOMEPAGE_MCP_URL=http://homepage.example:3001/api/mcp
+# export HOMEPAGE_MCP_TOKEN_REF="op://Vault/Item/credential"
