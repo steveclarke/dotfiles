@@ -136,6 +136,11 @@ install_specific "External (cloudflare)" "cloudflare/security-audit-skill" \
 install_specific "External (typesafe)" "typesafe-ai/skills" \
   typesafe-ai
 
+# Planning half only. The superpowers plugin stays off in managed-settings.json:
+# its execution skills cost too many tokens.
+install_specific "External (superpowers)" "obra/superpowers" \
+  brainstorming writing-plans
+
 # ─── Post-install: remove skills this run did not install ────────────────────
 # `set -e` stops the script if any source fails, so a partial run never prunes.
 prune_unlisted() {
