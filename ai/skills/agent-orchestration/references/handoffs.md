@@ -84,6 +84,19 @@ harness with another tool or call a background process an independent reviewer.
 If a requested transport is unavailable, report that boundary without silently
 substituting another.
 
+Name every agent, tab, and workspace this run creates with the run's prefix
+followed by its role, so the agent list shows which run each belongs to and
+which is the director: `video-library-director`, `video-library-impl`,
+`video-library-review`. Pick one short prefix for the run and reuse it
+everywhere.
+
+In Herdr the first line of each row in the agents list is the agent's own
+terminal title, which Herdr's rename commands do not change. Set it inside the
+agent: send `/rename <prefix> <role>` to a Codex or Claude Code agent right
+after it starts, then read `terminal_title_stripped` from `herdr agent get`
+to confirm. Also set the agent name, the pane label, and the tab and workspace
+labels so every Herdr view shows the prefix.
+
 Reports must reach a busy director without waiting for it to become idle. In
 Herdr, use `agent prompt` without `--wait`; do not send raw terminal keystrokes
 into the director's UI. Peers may resolve interface questions together but must
