@@ -103,18 +103,27 @@ related agent somewhere else.
 - An agent moved in from elsewhere comes with `herdr pane move <pane> --new-tab
   --workspace <id>`; it keeps running.
 
-Name every agent, tab, and workspace this run creates with the run's prefix
-followed by its role, so the agent list shows which run each belongs to and
-which is the director: `video-library-director`, `video-library-impl`,
-`video-library-review`. Pick one short prefix for the run and reuse it
-everywhere.
+Pick one short prefix for the run, six characters or fewer, that a person
+recognizes at a glance (`vidlib`, `leave`, `ft139`). The agents list is a
+narrow, flat list across every workspace, and agent names must be unique, so
+the prefix is what groups a run's agents together there.
 
-In Herdr the first line of each row in the agents list is the agent's own
-terminal title, which Herdr's rename commands do not change. Set it inside the
-agent: send `/rename <prefix> <role>` to a Codex or Claude Code agent right
-after it starts, then read `terminal_title_stripped` from `herdr agent get`
-to confirm. Also set the agent name, the pane label, and the tab and workspace
-labels so every Herdr view shows the prefix.
+- Agent name: `<prefix>-<role>`, with a short role: `vidlib-dir`,
+  `vidlib-impl`, `vidlib-rev`.
+- Agent title, the first line of its row: `<prefix> <role>`, such as
+  `vidlib impl`. This is the agent's own terminal title, which Herdr's rename
+  commands do not change. Set it inside the agent as the first thing after
+  `agent start`, before the brief: send `/rename <prefix> <role>` to a Codex or
+  Claude Code agent, then read `terminal_title_stripped` from `herdr agent get`
+  to confirm. An agent left untitled names itself after its first task.
+- Pane label: the same text as the title.
+- The director's own title cannot be set from outside; give the user the exact
+  `/rename <prefix> director` line to run.
+
+When a worker finishes or gets blocked, raise
+`herdr notification show "<prefix>: <what happened>" --sound done` so the user
+does not have to watch tabs. A rename changes the name a running watch polls;
+re-arm the watch after renaming.
 
 Reports must reach a busy director without waiting for it to become idle. In
 Herdr, use `agent prompt` without `--wait`; do not send raw terminal keystrokes
