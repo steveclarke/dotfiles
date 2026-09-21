@@ -84,6 +84,25 @@ harness with another tool or call a background process an independent reviewer.
 If a requested transport is unavailable, report that boundary without silently
 substituting another.
 
+### Herdr layout: one workspace per piece of work
+
+A Herdr workspace is one piece of work. Everything that belongs to it lives in
+that workspace as tabs: the director, each worker agent, the dev stack, a log
+tail. The user switches workspaces to switch work, and never has to hunt for a
+related agent somewhere else.
+
+- Never create a second workspace for a run. Start each agent in a new tab of
+  the director's workspace (`herdr tab create --workspace "$HERDR_WORKSPACE_ID"`).
+  This holds even when the code is in another repository or worktree: pass that
+  path as `--cwd`.
+- The workspace label names the work in plain words ("Outport Video Library").
+  If the director's workspace still carries a repo name or an old topic, rename
+  it when the run starts.
+- Tab labels name the role inside that work: `director`, `codex impl`,
+  `dev stack`, `review`.
+- An agent moved in from elsewhere comes with `herdr pane move <pane> --new-tab
+  --workspace <id>`; it keeps running.
+
 Name every agent, tab, and workspace this run creates with the run's prefix
 followed by its role, so the agent list shows which run each belongs to and
 which is the director: `video-library-director`, `video-library-impl`,
