@@ -7,6 +7,8 @@ fish_add_path -g ~/bin
 fish_add_path -g ~/.local/bin
 fish_add_path -g ~/.local/share/dotfiles/bin
 fish_add_path -g ~/.cargo/bin
+fish_add_path -g ~/.opencode/bin
+fish_add_path -g ~/.antigravity/antigravity/bin
 fish_add_path -g --append ~/.docker/bin
 
 # ─[ Exports ]────────────────────────────────────────────────────────────

@@ -6,7 +6,7 @@
 # Note: As of 2025-02-28, this is moved back here from config.fish because it
 # looks like it was a temp issue with VSCode.
 
-if test -f ~/.local/bin/mise
+if command -q mise
     # https://github.com/jdx/mise/issues/2270#issuecomment-2211805443
     if test "$VSCODE_RESOLVING_ENVIRONMENT" = "1"
         mise activate fish --shims | source
