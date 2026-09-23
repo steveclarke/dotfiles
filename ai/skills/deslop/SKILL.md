@@ -8,8 +8,7 @@ argument-hint: "[path] [--dry-run] [--passes 1,2,...] [--stack js|ruby|go]"
 
 Aggressive whole-codebase cleanup for AI-generated code. Eight specialized
 passes, each a fresh-eyes subagent with a narrow mandate. Based on the pattern
-from Shaw (@shawmakesmagic). The framing: "the quality of your vibecoded slop
-is horrible… fortunately, there is a fix."
+from Shaw (@shawmakesmagic).
 
 ## What It Does (the 8 passes)
 
@@ -58,7 +57,6 @@ All canonical JS/TS tools run through `npx --yes` without modifying `package.jso
 ```bash
 npx --yes knip        # dead code
 npx --yes madge --circular src/   # circular deps
-npx --yes ts-prune    # alt: unused exports
 ```
 
 `npx` downloads to the global npm cache on first run. No project changes. This is the default — don't add anything to `package.json` for a one-off deslop run.
@@ -112,7 +110,7 @@ If `--stack` is given, skip detection and use the forced stack.
 
 For stack-specific tooling details (commands, install, quirks), read the relevant reference file only when a pass that uses that tool is about to run:
 
-- `references/javascript.md` — knip, madge, ts-prune, TypeScript type checking
+- `references/javascript.md` — knip, madge, TypeScript type checking
 - `references/ruby.md` — debride, packwerk, Sorbet notes
 - `references/go.md` — staticcheck, `go mod graph`, deadcode
 
@@ -259,16 +257,16 @@ List of commits created on the branch.
 ## Common Mistakes
 
 - **Running on a dirty tree.** The whole point of commits between passes is clean reverts. If you skip the clean-tree check, a bad pass can mix with the user's in-flight work and become a nightmare to untangle.
-- **Skipping the research phase.** Going straight to edits produces the cargo-cult behavior Shaw was railing against. Research first, commit to findings, then apply.
+- **Skipping the research phase.** Going straight to edits produces shallow, pattern-matched changes. Research first, commit to findings, then apply.
 - **Applying needs-review items.** If the subagent wasn't confident, neither should the apply phase be. Surface them in the report and let the user decide.
 - **Running pass 1 (DRY) before pass 3 (dead code).** You'd waste effort deduping code that's about to be deleted.
 - **Running all passes in parallel during apply.** The passes can conflict (e.g. type consolidation moves a type the dead-code pass wants to remove). Research in parallel, apply sequentially.
-- **Treating missing tools as blocking.** If `knip` isn't installed, the JS/TS dead-code pass reports "skipped — install `knip`" and the rest of the run continues. Never halt the whole flow because one tool is missing.
+- **Treating a failed install as blocking.** If a pass's tool can't be installed (no network, unsupported version), that pass reports "skipped — <tool> failed to install" and the rest of the run continues.
 
 ## References
 
 - Shaw's original prompt: https://x.com/shawmakesmagic/status/2044269097647779990
 - `references/passes.md` — full per-pass instructions
-- `references/javascript.md` — JS/TS tooling (knip, madge, ts-prune)
+- `references/javascript.md` — JS/TS tooling (knip, madge)
 - `references/ruby.md` — Ruby/Rails tooling (debride, packwerk)
 - `references/go.md` — Go tooling (staticcheck, `go mod graph`)

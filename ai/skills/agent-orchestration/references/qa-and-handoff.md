@@ -58,8 +58,8 @@ deployment retain their own authorization boundaries.
 ## Approve the recording milestone
 
 Keep the written walkthrough and real-surface evidence current as behavior changes.
-The core skill's video gate applies even if an older workflow assumes automatic
-recording. Do not assemble narration while the demonstrated behavior is still
+The core skill's video gate overrides any workflow that records
+automatically. Do not assemble narration while the demonstrated behavior is still
 changing. Keep existing recordings unless replacement is authorized, and identify
 material mismatches in the written guide. Read the remaining recording sections
 only when that milestone is explicitly approved.

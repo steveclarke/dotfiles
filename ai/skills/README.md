@@ -48,10 +48,10 @@ description: What this skill does and when to use it. Include trigger words.
 # My Skill
 
 ## Instructions
-Step-by-step guidance for the agent...
+The outcome, the constraints, and how to check the result...
 
 ## Examples
-Show what success looks like...
+Only where the output format matters...
 ```
 
 > [!IMPORTANT]
@@ -86,7 +86,7 @@ Ask the agent questions that match your skill's description. The agent will use 
 
 **Start simple.** Begin with markdown instructions. Add scripts later if needed.
 
-**Use examples.** Show inputs and outputs so the agent knows what success looks like.
+**Describe the goal, not a script.** State the outcome, constraints, and how to check the result. Use numbered steps only where order matters. Add examples only for format-sensitive output, and vary them so the agent doesn't copy one.
 
 ## Scripts in Skills
 

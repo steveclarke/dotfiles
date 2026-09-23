@@ -80,22 +80,22 @@ The `print` script at `~/.claude/skills/print/scripts/print` wraps `lp` with the
 
 ```bash
 # Basic usage
-print document.pdf
+~/.claude/skills/print/scripts/print document.pdf
 
 # Specify printer
-print document.pdf -d Brother_HL_L3280CDW_series
+~/.claude/skills/print/scripts/print document.pdf -d Brother_HL_L3280CDW_series
 
 # Multiple copies
-print document.pdf -n 3
+~/.claude/skills/print/scripts/print document.pdf -n 3
 
 # Single-sided color
-print document.pdf --single-sided --color
+~/.claude/skills/print/scripts/print document.pdf --single-sided --color
 
 # Page range
-print document.pdf -P 1-5
+~/.claude/skills/print/scripts/print document.pdf -P 1-5
 ```
 
-Run `print --help` for all options.
+Run `~/.claude/skills/print/scripts/print --help` for all options.
 
 ## Printer-Specific Notes
 

@@ -38,7 +38,7 @@ everything. Do this in one pass, one voice, no agent fan-out.
 2. Screenshot each with headless Chromium and look at the PNG yourself before
    showing anything.
 3. Serve them (tiny Python HTTP server on a fixed port, `webbrowser.open`) and
-   open the browser for the user. State your pick and why in three sentences.
+   open the browser for the user. State your pick and why, briefly.
 4. After a direction is chosen: `design-<x>-full.html` with **every state**
    (healthy, running, failed, stale/warn, not set up, settings) each in its own
    card with a one-paragraph "why" under it, and the notification mocked
@@ -129,9 +129,9 @@ fixtures, screenshots or history.
 **No agent-instruction files in the plugin repo.** No `AGENTS.md`, `CLAUDE.md`,
 `GEMINI.md`, `.claude/`, `.cursor/`, `SKILL.md` or similar anywhere in the tree:
 `omarchy plugin add` copies the repo into a path coding agents auto-discover,
-and marketplace review blocks it (Kopia, 2026-09-11). Contributor guidance goes
+and marketplace review blocks it. Contributor guidance goes
 in `docs/CONTRIBUTING.md`. Copy `tools/check-agent-files` from
-`github.com/steveclarke/omarchy-headroom` (Kopia's older copy also flags `claude.svg`) into `bin/check` and CI from the first
+`github.com/steveclarke/omarchy-headroom` into `bin/check` and CI from the first
 commit.
 
 **Screenshots are crops of the panel border, never whole grabs.** A grab of the

@@ -64,7 +64,7 @@ When the user triggers the council, do two things before framing:
 - Recent council transcripts (to avoid re-counciling the same ground)
 - Other context files relevant to the specific question
 
-Use `Glob` and quick `Read` calls. Don't spend more than 30 seconds. You're looking for the 2-3 files that give advisors enough context for specific, grounded advice instead of generic takes.
+Keep the scan short. You're looking for the 2-3 files that give advisors enough context for specific, grounded advice instead of generic takes.
 
 **B. Frame the question.** Take the user's raw question AND the enriched context and reframe as a clear, neutral prompt that all five advisors receive:
 
@@ -87,7 +87,7 @@ Spawn all 5 advisors simultaneously as sub-agents. Each gets:
 2. The framed question
 3. Clear instruction: respond independently. Do not hedge. Do not try to be balanced. Lean fully into your assigned perspective. Your job is to represent your angle as strongly as possible. The synthesis comes later.
 
-Each advisor produces 150-300 words. Substantive but scannable.
+Each response is substantive but scannable; the chairman reads all five side by side.
 
 **Sub-agent prompt template:**
 
@@ -104,7 +104,7 @@ A user has brought this question to the council:
 
 Respond from your perspective. Be direct and specific. Don't hedge or try to be balanced. Lean fully into your assigned angle. The other advisors will cover the angles you're not covering.
 
-Keep your response between 150-300 words. No preamble. Go straight into your analysis.
+Keep it tight enough to read beside four other responses. No preamble. Go straight into your analysis.
 ```
 
 ### Step 3: Peer Review (5 sub-agents in parallel)
@@ -153,7 +153,7 @@ Answer these three questions. Be specific. Reference responses by letter.
 2. Which response has the biggest blind spot? What is it missing?
 3. What did ALL five responses miss that the council should consider?
 
-Keep your review under 200 words. Be direct.
+Keep the review short and direct.
 ```
 
 ### Step 4: Chairman Synthesis

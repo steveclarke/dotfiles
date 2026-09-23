@@ -15,7 +15,7 @@ Download transcripts (subtitles/captions) from YouTube videos using yt-dlp.
 
 ## Installation Check
 
-**IMPORTANT**: Always check if yt-dlp is installed first:
+Check that yt-dlp is installed:
 
 ```bash
 which yt-dlp || command -v yt-dlp
@@ -46,7 +46,7 @@ python3 -m pip install yt-dlp
 
 ## Check Available Subtitles
 
-**ALWAYS do this first** before attempting to download:
+List what's available before downloading:
 
 ```bash
 yt-dlp --list-subs "YOUTUBE_URL"
@@ -79,7 +79,7 @@ Both commands create a `.vtt` file (WebVTT subtitle format).
 
 ## Option 3: Whisper Transcription (Last Resort)
 
-**ONLY use this if both manual and auto-generated subtitles are unavailable.**
+Use this only when neither manual nor auto-generated subtitles exist.
 
 ### Step 1: Show File Size and Ask for Confirmation
 
@@ -91,9 +91,9 @@ yt-dlp --print "%(filesize,filesize_approx)s" -f "bestaudio" "YOUTUBE_URL"
 yt-dlp --print "%(duration)s %(title)s" "YOUTUBE_URL"
 ```
 
-**IMPORTANT**: Display the file size to the user and ask: "No subtitles are available. I can download the audio (approximately X MB) and transcribe it using Whisper. Would you like to proceed?"
+Show the file size and ask: "No subtitles are available. I can download the audio (approximately X MB) and transcribe it using Whisper. Would you like to proceed?"
 
-**Wait for user confirmation before continuing.**
+Wait for the user's answer before continuing.
 
 ### Step 2: Check for Whisper Installation
 
@@ -103,7 +103,7 @@ command -v whisper
 
 If not installed, ask user: "Whisper is not installed. Install it with `pip install openai-whisper` (requires ~1-3GB for models)? This is a one-time installation."
 
-**Wait for user confirmation before installing.**
+Wait for the user's answer before installing.
 
 Install if approved:
 ```bash
@@ -126,12 +126,8 @@ whisper audio_VIDEO_ID.mp3 --model base --output_format vtt
 whisper audio_VIDEO_ID.mp3 --model base --language en --output_format vtt
 ```
 
-**Model Options** (stick to `base` for now):
-- `tiny` - fastest, least accurate (~1GB)
-- `base` - good balance (~1GB) ← **USE THIS**
-- `small` - better accuracy (~2GB)
-- `medium` - very good (~5GB)
-- `large` - best accuracy (~10GB)
+Use `--model base` unless the user asks for more accuracy. Larger models
+(`small`, `medium`, `large`) are more accurate but slower and need more memory.
 
 ### Step 5: Cleanup
 
@@ -181,7 +177,7 @@ with open('transcript.en.vtt', 'r') as f:
 
 ```bash
 # Get video title
-VIDEO_TITLE=$(yt-dlp --print "%(title)s" "YOUTUBE_URL" | tr '/' '_' | tr ':' '-' | tr '?' '' | tr '"' '')
+VIDEO_TITLE=$(yt-dlp --print "%(title)s" "YOUTUBE_URL" | tr '/:' '_-' | tr -d '?"')
 
 # Find the VTT file
 VTT_FILE=$(ls *.vtt | head -n 1)
@@ -218,142 +214,6 @@ echo "✓ Cleaned up temporary VTT file"
 - The filename will be `{output_name}.{language_code}.vtt` (e.g., `transcript.en.vtt`)
 - Most YouTube videos have auto-generated English subtitles
 - Some videos may have multiple language options
-- If auto-subtitles aren't available, try `--write-sub` instead for manual subtitles
-
-## Complete Workflow Example
-
-```bash
-VIDEO_URL="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-
-# Get video title for filename
-VIDEO_TITLE=$(yt-dlp --print "%(title)s" "$VIDEO_URL" | tr '/' '_' | tr ':' '-' | tr '?' '' | tr '"' '')
-OUTPUT_NAME="transcript_temp"
-
-# ============================================
-# STEP 1: Check if yt-dlp is installed
-# ============================================
-if ! command -v yt-dlp &> /dev/null; then
-    echo "yt-dlp not found, attempting to install..."
-    if command -v brew &> /dev/null; then
-        brew install yt-dlp
-    elif command -v apt &> /dev/null; then
-        sudo apt update && sudo apt install -y yt-dlp
-    else
-        pip3 install yt-dlp
-    fi
-fi
-
-# ============================================
-# STEP 2: List available subtitles
-# ============================================
-echo "Checking available subtitles..."
-yt-dlp --list-subs "$VIDEO_URL"
-
-# ============================================
-# STEP 3: Try manual subtitles first
-# ============================================
-echo "Attempting to download manual subtitles..."
-if yt-dlp --write-sub --skip-download --output "$OUTPUT_NAME" "$VIDEO_URL" 2>/dev/null; then
-    echo "✓ Manual subtitles downloaded successfully!"
-    ls -lh ${OUTPUT_NAME}.*
-else
-    # ============================================
-    # STEP 4: Fallback to auto-generated
-    # ============================================
-    echo "Manual subtitles not available. Trying auto-generated..."
-    if yt-dlp --write-auto-sub --skip-download --output "$OUTPUT_NAME" "$VIDEO_URL" 2>/dev/null; then
-        echo "✓ Auto-generated subtitles downloaded successfully!"
-        ls -lh ${OUTPUT_NAME}.*
-    else
-        # ============================================
-        # STEP 5: Last resort - Whisper transcription
-        # ============================================
-        echo "⚠ No subtitles available for this video."
-
-        # Get file size
-        FILE_SIZE=$(yt-dlp --print "%(filesize_approx)s" -f "bestaudio" "$VIDEO_URL")
-        DURATION=$(yt-dlp --print "%(duration)s" "$VIDEO_URL")
-        TITLE=$(yt-dlp --print "%(title)s" "$VIDEO_URL")
-
-        echo "Video: $TITLE"
-        echo "Duration: $((DURATION / 60)) minutes"
-        echo "Audio size: ~$((FILE_SIZE / 1024 / 1024)) MB"
-        echo ""
-        echo "Would you like to download and transcribe with Whisper? (y/n)"
-        read -r RESPONSE
-
-        if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
-            # Check for Whisper
-            if ! command -v whisper &> /dev/null; then
-                echo "Whisper not installed. Install now? (requires ~1-3GB) (y/n)"
-                read -r INSTALL_RESPONSE
-                if [[ "$INSTALL_RESPONSE" =~ ^[Yy]$ ]]; then
-                    pip3 install openai-whisper
-                else
-                    echo "Cannot proceed without Whisper. Exiting."
-                    exit 1
-                fi
-            fi
-
-            # Download audio
-            echo "Downloading audio..."
-            yt-dlp -x --audio-format mp3 --output "audio_%(id)s.%(ext)s" "$VIDEO_URL"
-
-            # Get the actual audio filename
-            AUDIO_FILE=$(ls audio_*.mp3 | head -n 1)
-
-            # Transcribe
-            echo "Transcribing with Whisper (this may take a few minutes)..."
-            whisper "$AUDIO_FILE" --model base --output_format vtt
-
-            # Cleanup
-            echo "Transcription complete! Delete audio file? (y/n)"
-            read -r CLEANUP_RESPONSE
-            if [[ "$CLEANUP_RESPONSE" =~ ^[Yy]$ ]]; then
-                rm "$AUDIO_FILE"
-                echo "Audio file deleted."
-            fi
-
-            ls -lh *.vtt
-        else
-            echo "Transcription cancelled."
-            exit 0
-        fi
-    fi
-fi
-
-# ============================================
-# STEP 6: Convert to readable plain text with deduplication
-# ============================================
-VTT_FILE=$(ls ${OUTPUT_NAME}*.vtt 2>/dev/null || ls *.vtt | head -n 1)
-if [ -f "$VTT_FILE" ]; then
-    echo "Converting to readable format and removing duplicates..."
-    python3 -c "
-import sys, re
-seen = set()
-with open('$VTT_FILE', 'r') as f:
-    for line in f:
-        line = line.strip()
-        if line and not line.startswith('WEBVTT') and not line.startswith('Kind:') and not line.startswith('Language:') and '-->' not in line:
-            clean = re.sub('<[^>]*>', '', line)
-            clean = clean.replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<')
-            if clean and clean not in seen:
-                print(clean)
-                seen.add(clean)
-" > "${VIDEO_TITLE}.txt"
-    echo "✓ Saved to: ${VIDEO_TITLE}.txt"
-
-    # Clean up temporary VTT file
-    rm "$VTT_FILE"
-    echo "✓ Cleaned up temporary VTT file"
-else
-    echo "⚠ No VTT file found to convert"
-fi
-
-echo "✓ Complete!"
-```
-
-**Note**: This complete workflow handles all scenarios with proper error checking and user prompts at each decision point.
 
 ## Error Handling
 
@@ -378,7 +238,7 @@ echo "✓ Complete!"
 **4. Whisper installation fails**
 - May require system dependencies (ffmpeg, rust)
 - Provide fallback: "Install manually with: `pip3 install openai-whisper`"
-- Check available disk space (models require 1-10GB depending on size)
+- Check disk space: pip pulls in PyTorch (several GB); model files are 75MB–3GB
 
 **5. Download interrupted or failed**
 - Check internet connection
@@ -386,15 +246,6 @@ echo "✓ Complete!"
 - Try again with `--no-check-certificate` if SSL issues occur
 
 **6. Multiple subtitle languages**
-- By default, yt-dlp downloads all available languages
+- yt-dlp writes one subtitle language by default (English when available); use `--sub-langs <code>` or `--sub-langs all` for others
 - Can specify with `--sub-langs en` for English only
 - List available with `--list-subs` first
-
-### Best Practices:
-
-- Always check what's available before attempting download (`--list-subs`)
-- Verify success at each step before proceeding to next
-- Ask user before large downloads (audio files, Whisper models)
-- Clean up temporary files after processing
-- Provide clear feedback about what's happening at each stage
-- Handle errors gracefully with helpful messages

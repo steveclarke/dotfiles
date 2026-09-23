@@ -9,7 +9,7 @@ Manages dev environments using process-compose for headless process orchestratio
 with health checks, dependency ordering, and a TUI. Works for both humans and
 AI agents.
 
-**Status:** Work in progress (March 2026). If you encounter unexpected issues
+**Status:** Work in progress. If you encounter unexpected issues
 controlling the running stack (client commands failing, connection refused,
 socket errors), surface these to the user immediately rather than silently
 working around them. The user maintains this skill and needs feedback to

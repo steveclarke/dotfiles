@@ -65,13 +65,13 @@ Use answers already available in the conversation. Keep discovery brief, then cr
 
 ## Phase 2: Logo Generation
 
-Author the logo directly as editable SVG using the latest available flagship model from OpenAI or Anthropic, with the highest supported reasoning or effort setting. Prefer the strongest available model for visual design and code generation; do not hard-code model names or versions in this skill. Respect the user's explicit model choice. If the environment cannot change models or effort, state that briefly and work with the available model without blocking progress or claiming a switch occurred.
+Author the logo directly as editable SVG.
 
 Use the discovery brief to create a few distinct concepts when the user wants options, or refine the chosen direction directly. Write real vector geometry (paths, shapes, fills, and strokes), with a clean viewBox and no embedded raster image standing in for the logo. Keep the mark separate from the wordmark, which gets a proper font in Phase 3.
 
 Render the SVGs and inspect them visually before presenting them. Show concepts together on an HTML preview page, including small icon sizes and light/dark backgrounds. Check the silhouette, spacing, stroke consistency, and legibility. Iterate from the user's feedback; keep the approved version intact while exploring alternatives and replace it only when the user chooses a successor.
 
-Third-party SVG generators such as quiver.ai or recraft.ai are optional fallbacks when the user requests one or direct SVG iteration cannot achieve the desired result. Do not require accounts, external generation, or a copy-and-paste prompt handoff as the normal workflow.
+Third-party SVG generators such as quiver.ai or recraft.ai are optional fallbacks when the user requests one or direct SVG iteration cannot achieve the desired result.
 
 Once a mark is chosen, inspect its SVG structure (viewBox, dimensions, colors, and any embedded text or fonts) before producing the asset pack. Convert any remaining text to paths in Phase 4.
 
@@ -166,7 +166,7 @@ After conversion, verify with `grep -c '<text' output.svg` — should return 0.
 
 ### Color variants
 
-- **Black**: replace all fill colors with `#18181b` (zinc-950, not pure black — standard design practice for better readability)
+- **Black**: replace all fill colors with `#18181b` (zinc-900, not pure black — standard design practice for better readability)
 - **White**: replace all fill colors with `#ffffff`
 - For lockups, the mark keeps its colors in the "color" variant; text is `#18181b`. In black/white variants, everything is monochrome.
 

@@ -1,6 +1,6 @@
 # Quattro / Quickshell facts that are not obvious
 
-Each of these cost hours on a real plugin (Screen Push, Headroom, Kopia).
+Each of these is easy to get wrong and slow to diagnose.
 
 ## Layout and manifest
 

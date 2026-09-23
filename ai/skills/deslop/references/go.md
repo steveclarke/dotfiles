@@ -28,7 +28,7 @@ Relevant checks for deslop:
 
 ## deadcode — reachability analysis
 
-Go 1.22+ ships with a `deadcode` tool under `x/tools`:
+The `deadcode` tool from `golang.org/x/tools`:
 
 ```bash
 command -v deadcode >/dev/null 2>&1 || go install golang.org/x/tools/cmd/deadcode@latest
@@ -94,7 +94,7 @@ comments and string literals.
 
 ```bash
 rg -w "interface\{\}" --type go
-rg -w " any " --type go
+rg -w "any" --type go
 ```
 
 ## Go-specific AI slop comments
