@@ -49,7 +49,7 @@ exists — process-compose only auto-discovers in its own directory.
 
 Create `process-compose.yml` in the project root. Key rules:
 
-### Shell Configuration (CRITICAL)
+### Shell Configuration
 Always use a login shell so Docker, mise, and Homebrew are on PATH:
 ```yaml
 version: "0.5"
@@ -74,11 +74,11 @@ disable_exit_confirmation: false
 Built-in options: `Catppuccin Mocha`, `One Dark`, `Monokai`, `Cobalt`, `Material`.
 Do NOT put `theme:` in `process-compose.yml` — it will be silently ignored.
 
-### mise Activation (CRITICAL)
+### mise Activation
 
 The login shell (`bash -lc`) is not always sufficient to load mise-managed tool
-versions. Any process that uses a mise-managed tool (Ruby, Node, pnpm) MUST
-include `eval "$(mise activate bash)"` in its command:
+versions. Any process that uses a mise-managed tool (Ruby, Node, pnpm)
+includes `eval "$(mise activate bash)"` in its command:
 
 ```yaml
   rails:
@@ -184,7 +184,7 @@ Depend on rails being started (not healthy — just started):
         condition: process_started
 ```
 
-**CRITICAL — Tailwind CSS v4 `always` flag:** The `[always]` argument is required.
+**Tailwind CSS v4 `always` flag:** The `[always]` argument is required.
 Tailwind v4's watch mode (`-w`) exits when stdin is closed. Process-compose doesn't
 provide stdin to processes, so without `always` the CSS watcher does an initial build
 then silently dies. The process shows as "Completed" in status — easy to miss because
@@ -293,7 +293,7 @@ the TUI and when agents check logs.
 
 Replace the existing `bin/dev` (if any) with a process-compose wrapper.
 
-### Worktree Isolation via .pc_env (CRITICAL)
+### Worktree Isolation via .pc_env
 
 process-compose runs an HTTP API server that client commands (`status`,
 `restart`, `logs`, `down`) connect to. By default this listens on TCP port
@@ -332,7 +332,7 @@ This means `bin/dev` needs **zero UDS plumbing** — it's just convenience
 aliases around raw process-compose commands. Even bare `process-compose`
 commands work correctly in any worktree.
 
-**IMPORTANT:** Do NOT use `--no-server`. Despite the name, it disables ALL
+Do not use `--no-server`. Despite the name, it disables ALL
 servers — including UDS. In process-compose, UDS is HTTP-over-unix-socket, so
 "no server" kills UDS too. This is confirmed by the maintainer (GitHub #358).
 
@@ -440,8 +440,8 @@ Run through this checklist before committing:
 
 1. Dry-run: `process-compose up --dry-run` (validates config)
 2. Start: `bin/dev -D` (headless)
-3. Wait: `sleep 15` (give services time to start)
-4. Status: `bin/dev status` (JSON — all services running/healthy)
+3. Wait: `process-compose project is-ready --wait`
+4. Status: `bin/dev status --json` (all services running/healthy)
 5. Health: `curl -sf http://127.0.0.1:$PORT/up` (200 OK)
 6. Logs: `bin/dev logs rails` (shows recent output)
 7. Restart: `bin/dev restart rails` (restarts and comes back healthy)
@@ -449,8 +449,8 @@ Run through this checklist before committing:
 
 **If client commands fail** (connection refused, socket not found), check:
 - Is the server actually running? (`pgrep -f process-compose`)
-- Does the socket file exist? (`ls ${TMPDIR}process-compose-*.sock`)
-- Are you running `bin/dev` from the project root? (socket path is relative)
+- Does the socket file exist? (`ls /tmp/process-compose-*.sock`)
+- Are you running `bin/dev` from the project root? (process-compose reads `.pc_env` from the working directory)
 - Did you accidentally use `--no-server`? (removes ALL servers including UDS)
 
 ## 11. Commit

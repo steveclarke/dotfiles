@@ -65,8 +65,8 @@ Group related work into logical categories. Common ones:
 
 Merge related commits into single bullets. Twenty dependency commits become
 "Updated project dependencies and security patches"; five bug fixes become
-"Resolved reporting issues and fixed edge cases in user notifications". Aim for
-5–10 bullets total.
+"Resolved reporting issues and fixed edge cases in user notifications". Keep the
+list short enough for the client to scan at a glance.
 
 ## Step 5: Present
 

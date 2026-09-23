@@ -83,8 +83,6 @@ Cross-check each flagged item against the whole codebase with ripgrep before
 removing. `knip` can miss dynamic imports, string-based module references, and
 code referenced only by config files.
 
-Also check: `ts-prune` for an alternative view on unused exports.
-
 ### Ruby/Rails
 
 Primary tool: `debride` (https://github.com/seattlerb/debride). Install it to the user's gem path if not already present — don't add to the project's Gemfile for a one-off deslop run:
@@ -157,9 +155,8 @@ invert a dependency, or extract a common abstraction.
 
 ### Ruby/Rails
 
-Primary tool: `packwerk` if the project uses it. Otherwise, look for circular
-`require` patterns by inspecting require statements across files. Rails
-autoloading hides most import issues so circular deps are less common here.
+Primary tool: `packwerk` if the project uses it. Rails autoloading hides most
+import issues, so circular deps are less common here.
 
 If the project doesn't use packwerk, report "no boundary tooling configured"
 and suggest the user set it up, rather than running a manual analysis.

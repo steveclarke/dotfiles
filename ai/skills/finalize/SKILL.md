@@ -66,10 +66,6 @@ Skip this section if the changeset has no view/template/component files.
 - `$impeccable audit <target>` — accessibility, performance, responsive behavior, theming
 - `$impeccable polish <target>` — final UI quality pass: spacing, interaction states, typography, transitions, component-library fit, design-system compliance, tokens
 
-Use the current Impeccable command routing rather than legacy standalone
-skills. `normalize` was folded into `polish`; do not try to invoke it
-separately.
-
 Report which Impeccable commands were run and what they found. Fix issues directly.
 
 **Consistency with existing pages** (not covered by Impeccable):
@@ -97,8 +93,7 @@ Read the project's CLAUDE.md/AGENTS.md for a "Finalize Checklist" section (or
 similar). If it exists, work through those items too. These are project-specific
 requirements that the universal checklist can't know about.
 
-### 8. Memory
+### 8. Knowledge
 
-If this is a Claude Code session with persistent memory:
-- Update memory files with key learnings, decisions, or patterns discovered
+- Record lasting learnings, decisions, or patterns in the repo's docs, with a pointer from CLAUDE.md/AGENTS.md
 - Update status tracking (component counts, phase progress, etc.)

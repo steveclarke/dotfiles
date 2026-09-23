@@ -39,4 +39,4 @@ See [references/gum.md](references/gum.md) for setup and full API.
 ## Tips & Gotchas
 
 - Add `# rubocop:disable Rails/Output` to UI modules (stdout is intentional in CLIs)
-- Gum requires `brew install gum` on the host machine
+- The gum gem bundles the gum binary for common platforms; `GUM_INSTALL_DIR` points it at a system install elsewhere

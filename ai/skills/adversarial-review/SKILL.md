@@ -128,7 +128,7 @@ Severity definitions:
 - **Suggestion** = improvements that meaningfully affect quality, maintainability, or conformance
 - **Nitpick** = style preferences, minor naming quibbles, cosmetic issues
 
-Be thorough but honest about severity. Don't inflate Nitpicks to Suggestions.
+Be honest about severity. Don't inflate Nitpicks to Suggestions.
 If the code is solid, say so — an empty findings list is a valid result.
 ```
 

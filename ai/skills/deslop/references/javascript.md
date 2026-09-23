@@ -23,7 +23,7 @@ Config lives in `knip.json`, `knip.jsonc`, or the `knip` key in `package.json`.
 **Before removing a knip-flagged export**, cross-check with ripgrep:
 
 ```bash
-rg --type ts --type tsx --type js --type jsx "exportName"
+rg --type ts --type js "exportName"
 ```
 
 If ripgrep finds nothing outside the declaration, it's safer to remove.
@@ -43,16 +43,6 @@ For each cycle, madge prints the import chain. To break a cycle:
 1. Identify the "weaker" dependency (the one more likely to be a leaky abstraction)
 2. Extract shared types/interfaces to a third module that both sides import
 3. Or invert control — pass the dependency in instead of importing it
-
-## ts-prune — unused exports
-
-Alternative to knip for export-only analysis:
-
-```bash
-npx --yes ts-prune
-```
-
-Less comprehensive than knip but faster for a quick scan.
 
 ## TypeScript type checking
 
@@ -74,7 +64,7 @@ Most projects have ESLint rules that catch slop patterns. If the project uses
 ESLint, run it after each pass to catch regressions:
 
 ```bash
-npx eslint . --fix  # DO NOT use --fix in an auto-apply pass; use manually after
+npx eslint .
 ```
 
 Never run `--fix` as part of the deslop flow — its changes are out of scope

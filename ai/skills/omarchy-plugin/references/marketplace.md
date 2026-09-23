@@ -5,7 +5,7 @@
 - Ids are permanent and global; search `https://plugins.omarchy.org/catalog.json` first.
 - `preview.png` at the repo root is optional; the site crops it. Check all four edges at zoom for stray borders. Stand-in names only.
 - Before submitting: `omarchy plugin validate`, qmllint, tests in CI, and an annotated release tag (`references/release.md`) so the listing shows a version badge. No symlinks and no agent-instruction files anywhere in the tree.
-- Security review is a maintainer-run AI agent reading the full tree at the exact commit, separate from the static baseline bot. It blocked Kopia on its first pass for root `AGENTS.md`/`CLAUDE.md`. Load the `omarchy-plugin-security` skill before submitting; it is distilled from every past review comment.
+- Security review is a maintainer-run AI agent reading the full tree at the exact commit, separate from the static baseline bot. It blocks any agent-instruction file (`AGENTS.md`, `CLAUDE.md`) in the tree. Load the `omarchy-plugin-security` skill before submitting; it is distilled from every past review comment.
 - Exact-SHA binding: validation, baseline and review all bind to one 40-character commit. Any push after validation (even README or preview) makes the review stale. Put every fix on one final commit, then re-validate, then leave HEAD alone until approval.
 - Re-validation is triggered by editing the issue body (`gh issue edit <n> --repo omacom/omarchy-plugin-marketplace --body-file ...`); something in the body must change. A comment does not trigger it; reply with the fix SHA as a courtesy.
 - A submission with an open blocker and no response for seven days is closed.

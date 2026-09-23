@@ -140,6 +140,6 @@ Match the terminology from the service's docs.
 ## Prerequisites
 
 - 1Password app installed with CLI integration enabled
-- User signed in (`op signin` if not authenticated)
+- Desktop app integration handles sign-in: run the real `op read`/`op item` command and let the app prompt
 - Check vaults: `op vault list`
 - Docs: https://developer.1password.com/docs/cli

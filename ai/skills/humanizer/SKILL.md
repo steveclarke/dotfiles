@@ -1,7 +1,7 @@
 ---
 name: humanizer
 version: 2.2.0
-description: "Remove signs of AI-generated writing from text. Use when editing or reviewing text to sound natural and human-written. Based on Wikipedia's 'Signs of AI writing' — catches em dash overuse, rule of three, AI vocabulary, vague attributions, inflated symbolism, negative parallelisms, passive voice. For agent-facing text use simplified-technical-english-asd-ste100 instead."
+description: "Remove signs of AI-generated writing from text. Use when editing or reviewing text to sound natural and human-written. Based on Wikipedia's 'Signs of AI writing' — catches em dash overuse, rule of three, AI vocabulary, vague attributions, inflated symbolism, negative parallelisms, passive voice. Not for agent-facing text."
 allowed-tools:
   - Read
   - Write
@@ -31,7 +31,7 @@ Orwell's remaining rules are already covered below — short words over long (#7
 
 This skill adds voice and personality. That is wrong for text whose reader is a machine.
 
-For agent-facing English — tool descriptions, error messages, system prompts, inter-agent instructions, skill files — use the **`simplified-technical-english-asd-ste100`** skill instead. It applies ASD-STE100: one meaning per word, active voice, simple tenses, ≤20-word sentences. Deliberately flat, deliberately voiceless. Exactly what you do not want here, and exactly what you do want there.
+For agent-facing English — tool descriptions, error messages, system prompts, inter-agent instructions, skill files — use Simplified Technical English (ASD-STE100) instead: one meaning per word, active voice, simple tenses, ≤20-word sentences. Deliberately flat, deliberately voiceless. Exactly what you do not want here, and exactly what you do want there.
 
 Never run both on the same text. They pull in opposite directions.
 
@@ -41,9 +41,11 @@ When given text to humanize:
 
 1. **Identify AI patterns** - Scan for the patterns listed below
 2. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
-3. **Preserve meaning** - Keep the core message intact
+3. **Preserve meaning** - Keep the core message intact. Specifics in the examples below are illustrative; use only facts in the source or supplied by the user, and mark where a specific is needed but missing.
 4. **Maintain voice** - Match the intended tone (formal, casual, technical, etc.)
-5. **Add soul** - Don't just remove bad patterns; inject actual personality
+5. **Add voice where the tone allows** - For personal or opinion writing, give the text a human voice, not just a cleaned one. For reference, technical, or formal text, stop at removing the patterns.
+
+The revised text sounds natural read aloud, varies its sentence structure, prefers specific details to vague claims, and uses simple constructions (is/are/has) where they fit.
 
 ---
 
@@ -417,19 +419,6 @@ Passive is fine when the actor is genuinely unknown, irrelevant, or deliberately
 
 ---
 
-## Process
-
-1. Read the input text carefully
-2. Identify all instances of the patterns above
-3. Rewrite each problematic section
-4. Ensure the revised text:
-   - Sounds natural when read aloud
-   - Varies sentence structure naturally
-   - Uses specific details over vague claims
-   - Maintains appropriate tone for context
-   - Uses simple constructions (is/are/has) where appropriate
-5. Present the humanized version
-
 ## Output Format
 
 Provide:
@@ -466,4 +455,4 @@ Key insight from Wikipedia: "LLMs use statistical algorithms to guess what shoul
 
 That is George Orwell's first rule restated in statistics. See [Orwell's 6 Rules](https://sites.duke.edu/scientificwriting/orwells-6-rules/) (Duke Graduate School) for the 1946 original.
 
-For the opposite job — flattening English so a machine cannot misread it — see the `simplified-technical-english-asd-ste100` skill and [ASD-STE100](https://www.asd-ste100.org/). For a reader-side test of whether a document works at all, see [ISO 24495-1:2023 plain language](https://www.iplfederation.org/iso-standard/): readers get what they need, can find it, understand it, and use it.
+For the opposite job — flattening English so a machine cannot misread it — see [ASD-STE100](https://www.asd-ste100.org/). For a reader-side test of whether a document works at all, see [ISO 24495-1:2023 plain language](https://www.iplfederation.org/iso-standard/): readers get what they need, can find it, understand it, and use it.

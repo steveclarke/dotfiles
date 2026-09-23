@@ -80,7 +80,8 @@ Establish the ground truth before judging anything.
 
 ```bash
 # Project name from git remote (or directory name as fallback)
-PROJECT="$(basename "$(git remote get-url origin 2>/dev/null | sed 's/.*\///' | sed 's/\.git$//')" 2>/dev/null || basename "$PWD")"
+PROJECT="$(basename -s .git "$(git remote get-url origin 2>/dev/null)" 2>/dev/null)"
+[ -n "$PROJECT" ] || PROJECT="$(basename "$PWD")"
 
 # Current branch and HEAD. Full SHA — this is the readiness cache identity, not
 # a display string, so a short SHA isn't safe here.

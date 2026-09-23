@@ -9,7 +9,7 @@ Rich terminal UI using [Charm Ruby's gum gem](https://charm-ruby.dev/).
 spec.add_dependency "gum", "~> 0.1"
 ```
 
-Requires `gum` CLI: `brew install gum`
+The gum gem bundles the gum binary for common platforms. Set `GUM_INSTALL_DIR` to use a system install elsewhere.
 
 ## UI Module Pattern
 
@@ -48,7 +48,7 @@ module GemName::Cli::Ui
   def filter(items, placeholder: nil)  = Gum.filter(items, placeholder: placeholder)
 
   def spin(title, &block)
-    Gum.spin(title: title, spinner: :dot, &block)
+    Gum.spin(title, spinner: :dot, &block)
   end
 end
 ```

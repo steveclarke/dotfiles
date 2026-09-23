@@ -38,10 +38,9 @@ itself imply Touch ID is required or that sign-in is impossible.
 
 ## Written guide and approved video
 
-Steve's explicit workflow preference takes precedence over older automatic-video
-language: keep the written walkthrough current, and record or replace video only
-at a milestone Steve explicitly requests or approves after reviews, resulting
-fixes, and final checks. Use `unio-walkthrough` for an approved recording and
+Keep the written walkthrough current. Record or replace video only at a
+milestone Steve explicitly requests or approves after reviews, resulting fixes,
+and final checks; this overrides any Unio skill that records automatically. Use `unio-walkthrough` for an approved recording and
 `unio-media` only when publication is authorized. Follow the generic
 [QA and recording safeguards](qa-and-handoff.md) for data cleanup and media review.
 Approval of implementation, shipping, or an earlier video is not approval of a

@@ -52,8 +52,8 @@ be there for the agent.
 
 ### 2. Discover and run the worktree tool
 
-Look (see cheatsheet), don't assume. Common: `bin/worktree add <name>`,
-`bin/worktree add --pr 42`. Fallback: `git worktree add ../<repo>-<branch> -b <branch> origin/<default>`.
+Look (see cheatsheet), don't assume. Common: `bin/worktree create <name>`,
+`bin/worktree create --pr 42`. Fallback: `git worktree add ../<repo>-<branch> -b <branch> origin/<default>`.
 
 Creation often triggers a **full bootstrap** (deps, DB, secrets) that takes
 **minutes** — don't assume it hung. It may **prompt for a secret** (1Password,
@@ -99,10 +99,8 @@ back to the system version and bootstrap fails (e.g. *"Could not find bundler"*)
 - Detect: compare `ruby -v` etc. in your pane vs the user's. Mismatch = the smell.
 - Fix interactive panes: put shims on PATH, e.g. mise
   `export PATH="$HOME/.local/share/mise/shims:$PATH"`.
-- Fix the dev stack's child processes too. For **mise**, plain `mise activate` is
-  a **no-op in non-interactive `bash -lc`** — use `mise activate <shell> --shims`
-  or `mise exec --`. If the dev-stack config uses plain `mise activate`, that's a
-  real bug for agent/CI use — flag it.
+- Fix the dev stack's child processes too: each command that needs a
+  mise-managed tool runs `eval "$(mise activate bash)" && …` (or `mise exec --`).
 
 **Pane mechanics + safety → tmux-orchestration.** Pane-id targeting, never
 writing to your own pane, read-before-write, buffer-pasting multi-line prompts,
