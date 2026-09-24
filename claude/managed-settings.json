@@ -21,11 +21,7 @@
     ],
     "ask": [
       "Bash(git reset *)",
-      "Bash(git rebase *)",
-      "Bash(git merge *)",
-      "Bash(rm -rf *)",
-      "Bash(rm -r *)",
-      "Bash(rm *)"
+      "Bash(rm -rf *)"
     ],
     "defaultMode": "auto"
   },
