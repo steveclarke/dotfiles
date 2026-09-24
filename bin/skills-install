@@ -136,6 +136,9 @@ install_specific "External (cloudflare)" "cloudflare/security-audit-skill" \
 install_specific "External (typesafe)" "typesafe-ai/skills" \
   typesafe-ai
 
+install_specific "External (hermes)" "NousResearch/hermes-agent" \
+  hermes-agent
+
 # Planning half only. The superpowers plugin stays off in managed-settings.json:
 # its execution skills cost too many tokens.
 install_specific "External (superpowers)" "obra/superpowers" \
