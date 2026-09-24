@@ -35,9 +35,9 @@ The delegated gates (Adversarial, Finalize) push this same principle down into
 their own skills — those skills carry their own per-harness notes.
 
 - **Claude Code** — you have real parallel subagents (Task/Agent) and a
-  Workflow engine. For Code Review, fan out N independent reviewers with distinct
-  lenses and adversarially verify their findings. This is your edge — use it on
-  non-trivial diffs.
+  Workflow engine. For Code Review on a non-trivial diff, you can fan out
+  independent reviewers with distinct lenses and verify their findings before
+  acting.
 - **Codex** — default to a single thorough pass grounded in the actual repo:
   `git`, `rg`, targeted reads, `apply_patch` for narrow edits, and the
   sandbox/approval model for verification. You can parallelize read-only shell
@@ -119,7 +119,7 @@ done
 ```
 
 **Abort if `READINESS` is empty** — the pipeline can't track state. Tell the user
-the ship skill isn't installed where expected (`skills-install`).
+`scripts/readiness.sh` is missing and to reinstall the whole `ship` folder.
 
 **Abort if `BASE_REF` is empty** — the base branch has no local or remote ref.
 Tell the user to `git fetch origin "$BASE"` and re-run.
@@ -315,8 +315,7 @@ doc is left stale.
 **Invoke the `finalize` skill.** It runs the universal checklist — lint/format,
 tests, code-quality sweep (debug statements, secrets, dead code), documentation,
 UI/design quality on view changes, git/issue hygiene — plus any project-specific
-"Finalize Checklist" in the project's CLAUDE.md. This is why the separate Docs
-step folded in here: `finalize` already covers docs.
+"Finalize Checklist" in the project's CLAUDE.md, including docs.
 
 Ship's responsibility is the **gate decision**: if `finalize` reports failing
 tests or lint, log `failed`, stop the pipeline, show the dashboard, and report

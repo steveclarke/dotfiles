@@ -28,12 +28,7 @@ work done, not a report.
 ### 1. Lint & Format
 
 Run whatever lint/format tools the project uses. Check CLAUDE.md/AGENTS.md or
-package.json/Gemfile for the commands. Common ones:
-
-- Ruby: `standardrb`, `rubocop`
-- JS/TS: `eslint`, `oxlint`, `prettier`, `oxfmt`
-- CSS: `stylelint`
-- Python: `ruff`, `black`
+package.json/Gemfile for the commands.
 
 ### 2. Tests
 
@@ -96,4 +91,3 @@ requirements that the universal checklist can't know about.
 ### 8. Knowledge
 
 - Record lasting learnings, decisions, or patterns in the repo's docs, with a pointer from CLAUDE.md/AGENTS.md
-- Update status tracking (component counts, phase progress, etc.)
