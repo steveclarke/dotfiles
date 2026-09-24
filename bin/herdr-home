@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+#
+# herdr-home — make this machine's Herdr server a local one again.
+#
+#   herdr-home            restart the server here (asks first; every pane closes)
+#   herdr-home --status   say whether the running server was started over SSH
+#   herdr-home --dry-run  show what would happen; touch nothing
+#   herdr-home -y         skip the question
+#
+# A peer that connects while no server is running starts one over SSH. That
+# server, and every pane under it, carries the SSH session's environment: no
+# Touch ID for `op`, a locked keychain, no Wayland clipboard, agents that think
+# they are on the other machine. Herdr has no setting to stop it.
+#
+# This command:
+#   1. disables this machine on every peer (matched by hostname, no IDs)
+#   2. stops the server and any leftover peer bridges
+#   3. starts the server from the desktop session
+#        macOS: in a new Alacritty window (holds Local Network permission)
+#        Linux: the `herdr` systemd user unit
+#   4. re-enables this machine on the peers, which then just attach
+#
+# Run it from anywhere, including a Herdr pane: it hands off to a new window
+# (macOS) or a transient systemd unit (Linux) before the server stops.
+# Peers are the machines in this machine's `herdr machine list`.
+
+set -euo pipefail
+
+SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/herdr-home"
+LOG="$STATE_DIR/log"
+SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=5)
+PEER_PATH='PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:$PATH'
+
+mode=run
+assume_yes=false
+for arg in "$@"; do
+  case "$arg" in
+    --status) mode=status ;;
+    --dry-run) mode=dry-run ;;
+    --here) mode=here ;;
+    --reenable) mode=reenable ;;
+    -y | --yes) assume_yes=true ;;
+    -h | --help) sed -n '3,26p' "$SELF" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "herdr-home: unknown option $arg" >&2; exit 2 ;;
+  esac
+done
+
+mkdir -p "$STATE_DIR"
+log() { echo "$(date '+%F %T') $*" | tee -a "$LOG"; }
+
+short() { echo "${1%%.*}"; }
+ME="$(short "$(hostname)")"
+
+# pgrep misses processes started by other sessions on macOS; ps sees them.
+herdr_pids() { ps -axo pid=,command= | awk -v sub_="$1" '$2 ~ /(^|\/)herdr$/ && $3 == sub_ {print $1}'; }
+server_pid() { herdr_pids server | awk 'NF' | head -1; }
+
+# Prints "local", "ssh" or "none".
+server_origin() {
+  local pid parent
+  pid="$(server_pid)"
+  [[ -z "$pid" ]] && { echo none; return; }
+  parent="$(ps -o command= -p "$(ps -o ppid= -p "$pid" | tr -d ' ')" 2>/dev/null || true)"
+  if [[ "$parent" == *remote-client-bridge* ]]; then echo ssh; return; fi
+  if [[ -r "/proc/$pid/environ" ]] && tr '\0' '\n' <"/proc/$pid/environ" | grep -q '^SSH_CONNECTION='; then
+    echo ssh; return
+  fi
+  echo local
+}
+
+peer_hosts() { herdr machine list 2>/dev/null | awk -F'\t' 'NF>=3 {print $3}'; }
+
+# Prints "<id> <enabled|disabled>" for this machine's entry on a peer.
+my_entry_on() {
+  ssh "${SSH_OPTS[@]}" "$1" "$PEER_PATH herdr machine list" 2>/dev/null |
+    awk -F'\t' -v me="$ME" '{ h=$3; sub(/\..*/, "", h); if (h == me) print $1, $NF }'
+}
+
+peer_cmd() { ssh "${SSH_OPTS[@]}" "$1" "$PEER_PATH herdr machine $2 $3" >/dev/null; }
+
+show_plan() {
+  echo "This machine: $ME. Server: $(server_origin)."
+  local host entry
+  for host in $(peer_hosts); do
+    entry="$(my_entry_on "$host" || true)"
+    if [[ -n "$entry" ]]; then echo "  $host has $ME saved (${entry#* })"
+    else echo "  $host: no entry for $ME, or unreachable"; fi
+  done
+}
+
+reenable_when_up() {
+  for _ in $(seq 60); do [[ -n "$(server_pid)" ]] && break; sleep 0.5; done
+  sleep 2
+  log "  server up, started $(server_origin)"
+  while read -r host id; do
+    [[ -z "$host" ]] && continue
+    if peer_cmd "$host" enable "$id"; then log "  $host: re-enabled $ME"
+    else log "  $host: re-enable FAILED (herdr machine enable $id there)"; fi
+  done <"$STATE_DIR/reenable"
+  log "herdr-home on $ME: done"
+}
+
+case "$mode" in
+  reenable) reenable_when_up; exit 0 ;;
+  status)
+    case "$(server_origin)" in
+      local) echo "Herdr on $ME was started locally. Nothing to fix." ;;
+      ssh) echo "Herdr on $ME was started over SSH by a peer. Run: herdr-home" ;;
+      none) echo "No Herdr server running on $ME." ;;
+    esac
+    exit 0 ;;
+  dry-run) show_plan; exit 0 ;;
+esac
+
+if [[ "$mode" == run ]]; then
+  show_plan
+  if ! $assume_yes; then
+    read -r -p "Restart Herdr on $ME? Every pane here closes. [y/N] " answer
+    [[ "$answer" =~ ^[Yy] ]] || { echo "Nothing changed."; exit 0; }
+  fi
+  if [[ "$(uname)" == Darwin ]]; then
+    open -na Alacritty --args -e "$SELF" --here
+    echo "Finishing in a new Alacritty window. This pane closes when the server stops."
+  else
+    [[ -f "$HOME/.config/systemd/user/herdr.service" ]] || {
+      echo "No herdr systemd user unit on $ME; see docs/herdr-restart-restore.md in Hugo." >&2; exit 1; }
+    systemd-run --user --collect --quiet "$SELF" --here
+    echo "Restarting through systemd. This pane closes when the server stops; progress in $LOG."
+  fi
+  exit 0
+fi
+
+# --here: runs outside the server that is about to stop.
+log "herdr-home on $ME: start"
+: >"$STATE_DIR/reenable"
+for host in $(peer_hosts); do
+  entry="$(my_entry_on "$host" || true)"
+  [[ -z "$entry" ]] && { log "  $host: no entry for $ME, skipped"; continue; }
+  id="${entry%% *}"
+  if [[ "${entry#* }" == enabled ]]; then
+    peer_cmd "$host" disable "$id" && echo "$host $id" >>"$STATE_DIR/reenable" && log "  $host: disabled $ME"
+  else
+    log "  $host: $ME already disabled, left as is"
+  fi
+done
+
+if [[ -n "$(server_pid)" ]]; then
+  herdr server stop >/dev/null 2>&1 || true
+  for _ in $(seq 20); do [[ -z "$(server_pid)" ]] && break; sleep 0.5; done
+fi
+herdr_pids remote-client-bridge | xargs kill 2>/dev/null || true
+[[ -n "$(server_pid)" ]] && { log "server would not stop; peers left disabled (see $STATE_DIR/reenable)"; exit 1; }
+log "  server stopped"
+
+
+if [[ "$(uname)" == Darwin ]]; then
+  # The client in this window starts the server, so it inherits Alacritty's
+  # environment and Local Network permission.
+  nohup "$SELF" --reenable >/dev/null 2>&1 &
+  disown
+  exec herdr
+else
+  systemctl --user start herdr
+  reenable_when_up
+fi
