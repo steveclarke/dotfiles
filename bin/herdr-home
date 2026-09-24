@@ -121,7 +121,11 @@ if [[ "$mode" == run ]]; then
     [[ "$answer" =~ ^[Yy] ]] || { echo "Nothing changed."; exit 0; }
   fi
   if [[ "$(uname)" == Darwin ]]; then
-    open -na Alacritty --args -e "$SELF" --here
+    # `open` hands its caller's environment to the app, so start from a clean
+    # one, as the Dock would; otherwise the SSH variables ride along again.
+    env -i HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL="$SHELL" \
+      TMPDIR="$(getconf DARWIN_USER_TEMP_DIR)" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+      open -na Alacritty --args -e "$SELF" --here
     echo "Finishing in a new Alacritty window. This pane closes when the server stops."
   else
     [[ -f "$HOME/.config/systemd/user/herdr.service" ]] || {

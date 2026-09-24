@@ -400,3 +400,8 @@ fpath=(/Users/steve/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+# Give Codex and other development tools enough file descriptors.
+if (( $(ulimit -Sn) < 10240 )); then
+    ulimit -Sn 10240
+fi
