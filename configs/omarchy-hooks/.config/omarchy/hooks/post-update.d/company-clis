@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Runs after omarchy-update.
+#
+# The company CLIs (unio, out) ship as GitHub releases, not pacman
+# packages, so `omarchy update` has no way to see them. Run each dotfiles
+# installer, which is idempotent and returns early when already on the
+# latest release. Needs gh authenticated against myunio; failures are
+# swallowed so a stale CLI never breaks a system update.
+
+bin="${DOTFILES_DIR:-$HOME/.local/share/dotfiles}/bin"
+
+command -v gh >/dev/null || exit 0
+
+for installer in unio-install out-install; do
+  [[ -x "$bin/$installer" ]] && { "$bin/$installer" || true; }
+done

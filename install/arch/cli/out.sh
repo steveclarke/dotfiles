@@ -31,7 +31,7 @@ _install_out() (
   version=${tag#outport-app-cli-v}
 
   if is_installed out; then
-    current=$(out version 2>/dev/null | awk '{print $2}')
+    current=$(out version --json 2>/dev/null | jq -r '.data.version // empty')
     if [[ "$current" == "$version" ]]; then
       success "out ${version} already installed"
       return 0

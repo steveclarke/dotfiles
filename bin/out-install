@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Install or upgrade the Outport App CLI from the latest outport-app-cli-v* GitHub release.
+# Idempotent — skips if already on the latest version.
+exec bash "$(dirname "$(readlink -f "$0")")/../install/arch/cli/out.sh" "$@"
