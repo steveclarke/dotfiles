@@ -74,7 +74,7 @@ and list the gaps; fix; at least three rounds. Good is where the work starts.>
 ## Budget and autonomy
 <Time and usage to spend. Decide alone; log each decision with its reason in
 DECISIONS.md. Branch, commit and push freely. Commands that stop for approval
-(`rm -rf`, `git reset`) are never run. Stop only your own processes.>
+(`rm -rf`, `git reset`) are never run; delete with `trash` on a Mac. Stop only your own processes.>
 
 ## What to hand back
 <The finished work, a gallery/preview, a short note of what was built and why.
