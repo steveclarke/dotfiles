@@ -77,6 +77,9 @@ runs to the finish without checkpoints.
 - **Reactions become director's notes in exact words** ("slow every zoom to
   0.7x", "bring the background forward, keep contrast 4.5:1"). The AI names
   the change after the human reacts.
+- **Fix rounds ship one fix at a time.** Each small fix deploys as soon as it
+  works, checked with one screenshot at the size the problem was seen. The
+  heavy checks (every width, Lighthouse, batching) belong to the build run.
 - **Follow-ups go to the same agent** (resume its conversation), so it keeps
   what it learned.
 - **Polish passes are new prompts** with the same framing: polish, critique,
