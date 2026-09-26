@@ -66,7 +66,10 @@ runs to the finish without checkpoints.
    build.
 4. **Unattended runs avoid commands that stop for approval** (for example
    `rm -rf`, `git reset`). Name them in the prompt and say to work around them.
-5. **Watch for the finish.** The agent ends with one line starting `DONE:` or
+5. **Progress the human can see.** Number the brief's steps; the agent prints
+   `PROGRESS: n/N done, <step>; next <step>` after each, and the coordinator
+   relays each line to the human as a one-line status.
+6. **Watch for the finish.** The agent ends with one line starting `DONE:` or
    `BLOCKED:`; a watch on its pane reports it.
 
 ## After the run
