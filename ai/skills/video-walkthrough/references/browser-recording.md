@@ -10,6 +10,12 @@ Keep extra dependencies in an isolated runtime rather than the app manifest.
 Use Chrome when installed, otherwise a supported installed browser. Choose a
 fixed readable viewport, for example 1600×1000, with matching video dimensions.
 
+**Phone walkthroughs** use a current flagship phone, not the smallest supported width:
+402×874 CSS pixels (iPhone 17 Pro size) with `deviceScaleFactor: 3`, and record the video at the
+device pixels (1206×2622, or at least 804×1748 at scale 2). A phone recorded at scale 1 comes out
+as a 390-pixel-wide strip that looks cramped and soft on a desktop monitor, whatever width the
+layout was tested at. Test the narrowest widths separately; they are a check, not the recording.
+
 - Authenticate in an unrecorded context. Transfer storage state only when
   permitted; keep it outside Git and do not expose its contents. Some login
   methods need project-specific session handling beyond storage state.
