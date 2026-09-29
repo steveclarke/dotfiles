@@ -135,13 +135,24 @@ function injectPageNumbering(content, filename) {
   return matter.stringify(body, mergedFrontMatter)
 }
 
+// The GitHub theme never wraps code, so one long code span or line is wider
+// than the page and Chrome shrinks every page to fit it. Let code wrap instead.
+const WRAP_CODE_STYLE = `
+
+<style>
+code { white-space: pre-wrap !important; overflow-wrap: anywhere !important; }
+pre, pre code { white-space: pre-wrap !important; overflow-wrap: anywhere !important; }
+td, th { overflow-wrap: anywhere; }
+</style>
+`
+
 /**
  * Main render function
  */
 async function renderToPdf() {
   const chromePath = await findChrome()
 
-  const originalContent = readFileSync(inputPath, "utf-8")
+  const originalContent = readFileSync(inputPath, "utf-8") + WRAP_CODE_STYLE
   const filename = basename(inputPath)
 
   const contentWithPageNumbers = injectPageNumbering(originalContent, filename)
