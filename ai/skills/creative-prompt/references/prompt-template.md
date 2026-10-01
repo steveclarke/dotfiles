@@ -1,7 +1,7 @@
 # Prompt Template
 
 Thirteen pieces of information, from a twelve-hour unattended music-video run
-that worked (Donald Jewkes, September 2026), plus the framing that made it go
+that worked (September 2026), plus the framing that made it go
 past the obvious. Sections in this order. Every sentence should tell the agent
 something it could not guess.
 
