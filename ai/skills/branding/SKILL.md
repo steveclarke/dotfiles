@@ -1,6 +1,6 @@
 ---
 name: branding
-description: "Create a complete brand identity — logo authored directly as SVG, colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, logo, brand pack, brand color, project identity, social preview, visual identity."
+description: "Create a complete brand identity for a project — the logo mark (designed with the logo-design skill), colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, brand pack, brand color, project identity, social preview, visual identity."
 ---
 
 # Branding
@@ -64,6 +64,10 @@ Ask the user:
 Use answers already available in the conversation. Keep discovery brief, then create concepts.
 
 ## Phase 2: Logo Generation
+
+**Load the `logo-design` skill and follow it for the mark:** its brief, category research in its reference library, three concepts, its tests (16 px, one-colour, reversed, shelf test against competitors, `svg_audit.py`) and its concept checkpoint. Stop at the checkpoint; do not build its kit. Once the user picks a direction, the chosen mark comes back here for Phase 3 onward. Its library logos are trademarks, for study only.
+
+If `logo-design` is not installed, author the mark as below.
 
 Author the logo directly as editable SVG.
 
@@ -391,6 +395,7 @@ Present manual steps clearly at the end — don't try to automate things that re
 Before declaring done, verify:
 
 - [ ] 9 master SVGs with text converted to paths (no font dependencies)
+- [ ] `logo-design` audit and tests pass on the final mark (`svg_audit.py`; 16 px and one-colour checks in `preview_sheet.py`)
 - [ ] PNG exports at all standard sizes
 - [ ] Favicon set (ico, 16, 32, 180, 192, 512, webmanifest)
 - [ ] OG image at 1280x640, visually centered

@@ -145,6 +145,11 @@ install_specific "External (typesafe)" "typesafe-ai/skills" \
 install_specific "External (hermes)" "NousResearch/hermes-agent" \
   hermes-agent
 
+# Logo design: brief, concepts, 16 px / one-colour / shelf tests. The branding
+# skill hands off to it for the mark, then builds the asset pack.
+install_specific "External (logo-design)" "kaankiziltug/logo-design-skill" \
+  logo-design
+
 # Planning half only. The superpowers plugin stays off in managed-settings.json:
 # its execution skills cost too many tokens.
 install_specific "External (superpowers)" "obra/superpowers" \
