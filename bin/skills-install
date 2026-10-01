@@ -110,7 +110,13 @@ install_all "External (omarchy-plugin-security)" \
 # ─── External: specific skills only ─────────────────────────────────────────
 
 install_specific "External (antfu)" "antfu/skills" \
-  slidev nuxt vue-best-practices vue-testing-best-practices
+  nuxt
+
+install_specific "External (slidev)" "slidevjs/slidev" \
+  slidev
+
+install_specific "External (vuejs-ai)" "vuejs-ai/skills" \
+  vue-best-practices vue-testing-best-practices
 
 install_specific "External (nuxt)" "nuxt/ui" \
   nuxt-ui
