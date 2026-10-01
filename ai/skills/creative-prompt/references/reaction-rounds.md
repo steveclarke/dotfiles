@@ -8,9 +8,20 @@ The way taste gets into the prompt without the human needing design words.
   HTML page).
 - Numbered cards. Each shows the example at phone and desktop width (still
   screenshots) or as a short clip (motion).
-- Three buttons per card: **Yes / Sort of / No**, and an optional note. Taps
-  save without a submit step.
-- Terse answers are accepted as given ("3 yes, 7 no too corporate").
+- A 1-to-5 rating per card, as five large tap targets, and an optional note.
+  Taps save without a submit step.
+
+  | Rating | Meaning |
+  |---|---|
+  | 1 | Definite no |
+  | 2 | Leaning no |
+  | 3 | Maybe |
+  | 4 | Almost there; needs a little more |
+  | 5 | Definite yes |
+
+- The 2s and 4s carry the most information about where the line sits; the
+  principles name what would move each one up or down.
+- Terse answers are accepted as given ("3 is a 5, 7 is a 1, too corporate").
 
 ## The rounds
 
@@ -30,7 +41,7 @@ Write the principles the reactions imply, strongest first, each with:
 
 - the designer's term,
 - the plain-words version,
-- the examples that support it (yes and no).
+- the examples that support it, with their ratings.
 
 The human confirms or corrects them. The principles file becomes the human's
 own vocabulary, tied to their taste, and the prompt's "feel" section is built
