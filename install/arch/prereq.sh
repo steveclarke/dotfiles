@@ -31,6 +31,20 @@ else
   omarchy install dev-env rust
 fi
 
+# Herdr 0.9+ — Omarchy's package lags behind (0.8.2 at time of writing) and
+# herdr-lazy needs 0.9. The herdr-lazy sync in configs/stow.sh runs before
+# install/arch/cli.sh, so the upgrade has to land here. `herdr update` swaps
+# /usr/bin/herdr in place (pacman still reports the old package version), so
+# a later Omarchy package update can roll it back; re-running this fixes it.
+installing_banner "herdr"
+omarchy-pkg-add herdr
+herdr_version=$(herdr --version | awk '{print $2}')
+if [[ $(vercmp "$herdr_version" 0.9.0) -lt 0 ]]; then
+  sudo herdr update
+else
+  skipping "herdr update (${herdr_version})"
+fi
+
 # Development libraries (Rails/Ruby apps need these)
 installing_banner "jemalloc"
 omarchy-pkg-add jemalloc
