@@ -7,6 +7,11 @@ export PATH="$HOME/.local/bin:$PATH"
 # ~/bin is the stowed `bin` package (nomise, monitor-scaling-cycle, ...).
 # zsh already had this; bash didn't, so those scripts were zsh-only.
 export PATH="$HOME/bin:$PATH"
+# bun global installs (qmd, ...). bun from mise puts them in ~/.cache/.bun/bin.
+for _bun_dir in "$HOME/.bun/bin" "$HOME/.cache/.bun/bin"; do
+    [[ -d "$_bun_dir" ]] && PATH="$_bun_dir:$PATH"
+done
+unset _bun_dir
 
 # Android SDK — managed via Google's Android CLI (`android`).
 # Install: install/arch/cli/android-cli.sh + install/arch/cli/jdk.sh
