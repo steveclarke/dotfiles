@@ -36,7 +36,7 @@ sudo apt update && sudo apt install -y git curl
 ```
 
 **Omarchy/Arch:**
-No prerequisites — git, curl, stow, and yay are already installed.
+No prerequisites — git, curl, and yay are already installed. `install.sh` adds stow (Omarchy 4 no longer ships it).
 
 ### 2. Download the Config File
 
