@@ -99,3 +99,6 @@ o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
 -- restarting the bar in-session brought it back and hid the evidence. The same
 -- hazard applies to Quattro's bar, so it stays disarmed. No replacement.
 hl.unbind("SUPER + SHIFT + SPACE")
+
+-- Mint password window.
+o.bind("SUPER + CTRL + M", "Mint", os.getenv("HOME") .. "/.local/bin/mint gui --toggle")
