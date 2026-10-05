@@ -101,4 +101,4 @@ o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
 hl.unbind("SUPER + SHIFT + SPACE")
 
 -- Mint password window.
-o.bind("SUPER + CTRL + M", "Mint", os.getenv("HOME") .. "/.local/bin/mint gui --toggle")
+o.bind("SUPER + CTRL + M", "Mint", "/usr/bin/mint gui --toggle")
