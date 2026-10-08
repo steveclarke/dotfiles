@@ -266,6 +266,14 @@ fi
 # Omarchy-only packages
 # =============================================================================
 
+if is_linux; then
+  # Temp files on the home disk (fish conf.d/tmpdir.fish), cleared after 2 days
+  # by the systemd user timer systemd-tmpfiles-clean
+  ensure_dir "${HOME}/.config/user-tmpfiles.d"
+  cleanup_paths "${HOME}/.config/user-tmpfiles.d/tmpdir.conf"
+  stow_package "User tmpfiles" "tmpfiles"
+fi
+
 if is_omarchy; then
   # Voxtype — Omarchy updates can overwrite config with stock defaults
   ensure_dir "${HOME}/.config/voxtype"
