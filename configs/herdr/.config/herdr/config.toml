@@ -123,7 +123,7 @@ command = "herdr pane current --current | jq -r .result.pane.pane_id | clip"
 description = "copy pane id"
 
 [ui.toast]
-delivery = "herdr"   # steve: in-app toasts; open_notification_target (Alt+o) jumps to the latest one. Default "off" leaves Alt+o with nothing to jump to
+delivery = "off"   # steve: toasts cover text being typed, and many arrive at once
 
 # steve: agent rows — name first, bright and bold; a blank line between agents;
 # model in peach so kind is visible at a glance; workspace grey. Machine dropped:
