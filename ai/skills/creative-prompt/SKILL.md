@@ -15,23 +15,28 @@ cannot guess, and an agent that knows it can go further than it thinks.
 1. **Everything a person touches is in scope.** A share button, a sign-up, a
    form or a reminder is a journey from first moment to finished task, not a
    routine fix. UX carries the same weight as UI.
-2. **Start from the best.** Before any prompt, find how the best products in
+2. **Hire the specialist.** Before any task, name the professional who does
+   this for a living (copywriter, brand strategist, UX researcher, editor,
+   photographer) and follow their method and their language: their intake
+   questions, their drafts, their checks. Never work it out from first
+   principles. Copy: `references/copywriting.md`.
+3. **Start from the best.** Before any prompt, find how the best products in
    the world do this same job (any category) and capture their real flow on
    phone and computer. Almost every problem on a screen is solved somewhere;
    never start from first principles, API docs or the first idea.
-3. **Raise every agent's sights.** Every prompt opens with the mindset block
+4. **Raise every agent's sights.** Every prompt opens with the mindset block
    below. Agents assume human limits; this removes them.
-4. **Comps in context, then remix.** Show the human the real thing (their
+5. **Comps in context, then remix.** Show the human the real thing (their
    own page or screen) done three or four ways, same content, one question
    ("Buttons: which do you like?"). They react; the agent names why, and
    combines the liked parts into a new option to pick. Diverge, then
    converge. Never unrelated examples to compare across, never a method
    explained on the page.
-5. **Recognition, not recall.** The human knows great when they see it and
+6. **Recognition, not recall.** The human knows great when they see it and
    cannot describe it in advance. Show real examples, record reactions, and
    name the principles behind them. The human only reacts; the agent finds
    everything.
-6. **The bar is a floor.** The best existing work is the minimum to beat.
+7. **The bar is a floor.** The best existing work is the minimum to beat.
    Nothing reaches the human until the coordinator has put it beside those
    references and it holds up.
 
