@@ -8,11 +8,16 @@ something it could not guess.
 ```markdown
 # <Thing> prompt
 
+<The mindset block from SKILL.md, word for word.>
+
 You are <making what>, for <whom>, in <place/context>. <One line on why it matters.>
 
 ## The feeling
 Everything serves one feeling: <a concrete image, e.g. "standing on the shore
 as the sea comes in. Awe first, then a quiet welcome home">.
+
+## The best at this job
+<The 4 to 6 products studied, what each does best, and the pattern to match or beat.>
 
 ## The bar
 <What the category usually looks like, and why.> Go past the best-funded work
