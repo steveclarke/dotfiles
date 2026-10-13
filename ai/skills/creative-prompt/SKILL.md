@@ -64,8 +64,9 @@ cannot guess, and an agent that knows it can go further than it thinks.
 4. **Write the prompt** from `references/prompt-template.md`, opening with the
    mindset block. Read it back to the human before the build.
 5. **Run it** with a fresh agent in its own tab and worktree, pointed at the
-   prompt file: no checkpoints, numbered steps with `PROGRESS` lines, a final
-   `DONE:` or `BLOCKED:` line.
+   prompt file, briefed per the factory handbook
+   (`~/src/hugo/factory/agents.md`; the whole flow from idea to production is
+   `~/src/hugo/factory/flow.md`).
 6. **Check it beside the references** on a real screen before the human sees
    it. Reactions become exact director's notes; fixes ship one at a time.
 
