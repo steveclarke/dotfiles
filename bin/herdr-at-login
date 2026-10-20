@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# herdr-at-login: start the Herdr server from Alacritty when a Mac user logs in.
+#
+# macOS gives a program Local Network access only if the app that started it
+# holds the permission. A server started by launchd, or by a peer over SSH,
+# cannot reach LAN hosts, and every pane inherits that. Run from a launchd
+# agent at login, this opens Alacritty and starts Herdr there, so the server
+# always carries Alacritty's permission. If a peer already started the server
+# over SSH, herdr-home restarts it from Alacritty instead.
+set -euo pipefail
+
+[[ "$(uname)" == Darwin ]] || exit 0
+
+export PATH="/opt/homebrew/bin:$HOME/.local/bin:$HOME/.local/share/dotfiles/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+case "$(herdr-home --status 2>/dev/null)" in
+  *"started locally"*) exit 0 ;;
+  *"over SSH"*) cmd=(herdr-home --yes) ;;
+  *) cmd=(herdr) ;;
+esac
+
+# `open` hands its caller's environment to the app; start from a clean one,
+# as the Dock would. The login shell supplies the rest.
+exec env -i HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL="$SHELL" \
+  TMPDIR="$(getconf DARWIN_USER_TEMP_DIR)" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+  open -na Alacritty --args -e "$SHELL" -l -c "$(printf '%q ' "${cmd[@]}")"
