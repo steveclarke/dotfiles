@@ -53,3 +53,11 @@ from it.
   the coordinating session.
 - Screenshots of liked examples are kept beside the principles as evidence.
 - Reactions to the current thing and to AI defaults count as much as likes.
+
+## The page asks one plain question
+
+- The page title is the one thing being judged, in everyday words: "Buttons: which do you like?", never a sentence about the method.
+- Every card repeats the same short question beside its rating ("Do you like these buttons? 1 = no, 5 = yes").
+- Like is compared with like: an example of the same kind of page, or the human's own page redone in each style. Unrelated pages side by side read as apples and oranges.
+- A reader who sees only the title and one card knows exactly what to do. A round that needs explaining failed (2026-10-09: "Rate how much you like the way it shows what you can tap…" meant nothing to its reader).
+
