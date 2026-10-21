@@ -8,7 +8,7 @@ go = "latest"
 # Java 21 LTS, not latest: AGP 9 / Gradle / Android CLI need 21.
 java = "27"
 node = "lts"
-"npm:@usebruno/cli" = "4.1.0"
+"npm:@usebruno/cli" = "4.2.1"
 pnpm = "12"
 python = "latest"
 ruby = "4"
