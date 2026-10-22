@@ -3,11 +3,13 @@
 Learned in real runs. Read before writing a prompt for imagery, video, motion or any web build.
 
 
-- **Imagery.** Generated images only as nature fragments (water, rock, texture,
-  light). Never generated people, not even distant figures. Never a generated
-  place that poses as a real one; locals know. Whole places come from real
-  photographs. Check generated nature for local accuracy (a pelican on a
-  coast that has none fails).
+- **Imagery.** Generated people are fine when they read as real: one
+  reference image per character so the face holds from shot to shot, one
+  lighting look, natural skin. Historical and illustrative scenes (a Bible
+  story, a period setting) are fair game. Never a generated person or place
+  presented as a real, identifiable one (a real member, a real event, a real
+  local street); locals know, so those come from real photographs. Check
+  generated detail for accuracy (a pelican on a coast that has none fails).
 - **Resolution.** Generated stills are soft at 4K; use real footage for large
   motion.
 - **Sharp on every screen, measured.** Every web build's self-check runs a
