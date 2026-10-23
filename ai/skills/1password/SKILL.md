@@ -142,5 +142,5 @@ Match the terminology from the service's docs.
 - 1Password app installed with CLI integration enabled
 - Desktop app integration handles sign-in: run the real `op read`/`op item` command and let the app prompt
 - Check vaults: `op vault list`
-- Over SSH to another Mac, `op` uses that Mac's 1Password app: run `ssh <mac> 'op ...'` and any approval appears on that Mac's screen. Use it when the person is sitting at a different Mac from the agent, so they can approve where they are instead of signing in again
+- Over SSH to another Mac, `op` uses that Mac's 1Password app: run `ssh <mac> 'op ...'`. With that Mac's app unlocked it needs no prompt; whether a locked app shows Touch ID on that Mac is untested. Use it when the person is sitting at a different Mac from the agent, so they can approve where they are instead of signing in again
 - Docs: https://developer.1password.com/docs/cli
