@@ -46,7 +46,7 @@ Parse `$ARGUMENTS` to determine what to review:
 
 - **No args:** review uncommitted changes — run `git diff` and `git diff --cached` to get staged + unstaged changes
 - **File/dir paths:** review specific files — read them directly and present as the code to review
-- **`--base=<ref>` / `--fork=<sha>`:** an explicit base or fork point to diff against (a caller like `/ship` passes this so the review sees exactly the diff it inventoried). If given, review `<fork-or-base>...HEAD` and skip the auto-resolution below.
+- **`--base=<ref>` / `--fork=<sha>`:** an explicit base or fork point to diff against (a caller passes this so the review sees exactly the diff it means). If given, review `<fork-or-base>...HEAD` and skip the auto-resolution below.
 - **`--pr` flag:** review the full branch diff. **Resolve the base robustly** — don't assume `main`. Use the existing PR's base, else the repo default branch, resolved to a ref that exists locally, then the true fork point:
   ```bash
   BASE="$(gh pr view --json baseRefName -q .baseRefName 2>/dev/null || gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo main)"
