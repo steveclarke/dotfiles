@@ -127,6 +127,11 @@ if is_omarchy; then
   if ! grep -q 'config/bash/rc' "${HOME}/.bashrc" 2>/dev/null; then
     echo '[[ -f ~/.config/bash/rc ]] && source ~/.config/bash/rc' >> "${HOME}/.bashrc"
   fi
+  # Non-interactive ssh commands read ~/.bashrc only up to its early return, so
+  # the mise-first PATH and UTF-8 locale hook goes on the first line.
+  if ! grep -q 'config/bash/ssh-env' "${HOME}/.bashrc" 2>/dev/null; then
+    sed -i '1i [[ -f ~/.config/bash/ssh-env ]] \&\& source ~/.config/bash/ssh-env  # non-interactive ssh: mise first, UTF-8' "${HOME}/.bashrc"
+  fi
 fi
 
 ensure_dir "${HOME}/.config/fish"
