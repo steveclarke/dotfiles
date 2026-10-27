@@ -77,10 +77,11 @@ holds for any work: a screen, a journey, a codebase, a folder layout, a plan.
   cannot describe it in advance. Show real examples, record reactions, name
   the principles behind them. The human only reacts; the agent finds
   everything. Method: `references/reaction-rounds.md`.
-- **Comps in context, then remix.** Show the real thing (their own page or
-  screen) done three or four ways, same content, one question ("Buttons:
-  which do you like?"). The agent names why, and combines the liked parts
-  into a new option. Never unrelated examples, never a method explained on
-  the page.
+- **One good look first.** Show the real thing (their own page or screen)
+  done once, the agent's best design, in real content. Alternatives come only
+  when the human asks for them; a page of A, B and C per screen reads as a
+  test and overwhelms. When asked, show them in context, same content, one
+  question ("Buttons: which do you like?"), then combine the liked parts.
+  Never unrelated examples, never a method explained on the page.
 - **Words people read:** `references/copywriting.md`.
 - **Imagery, video, motion and web builds:** `references/craft-rules.md`.
