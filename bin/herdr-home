@@ -121,12 +121,25 @@ if [[ "$mode" == run ]]; then
     [[ "$answer" =~ ^[Yy] ]] || { echo "Nothing changed."; exit 0; }
   fi
   if [[ "$(uname)" == Darwin ]]; then
-    # `open` hands its caller's environment to the app, so start from a clean
-    # one, as the Dock would; otherwise the SSH variables ride along again.
-    env -i HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL="$SHELL" \
-      TMPDIR="$(getconf DARWIN_USER_TEMP_DIR)" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-      open -na Alacritty --args -e "$SELF" --here
-    echo "Finishing in a new Alacritty window. This pane closes when the server stops."
+    # macOS grants Local Network access through the Alacritty instance that
+    # started the server, and only while that instance runs. A window opened in
+    # the long-running instance keeps access after the window closes; a new
+    # instance (`open -n`) loses it the moment its window is closed.
+    clean=(env -i HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL="$SHELL"
+      TMPDIR="$(getconf DARWIN_USER_TEMP_DIR)" PATH=/usr/bin:/bin:/usr/sbin:/sbin)
+    sock=""
+    for pid in $(ps -axo pid=,lstart=,comm= | awk '$NF ~ /\/alacritty$/ {print $1}'); do
+      candidate="$(getconf DARWIN_USER_TEMP_DIR)Alacritty-$pid.sock"
+      [[ -S "$candidate" ]] && { sock="$candidate"; break; }
+    done
+    if [[ -n "$sock" ]] && "${clean[@]}" /Applications/Alacritty.app/Contents/MacOS/alacritty \
+        msg --socket "$sock" create-window -e "$SELF" --here; then
+      echo "Finishing in a new window of the running Alacritty. This pane closes when the server stops."
+    else
+      # `open` hands its caller's environment to the app, so start from a clean one.
+      "${clean[@]}" open -na Alacritty --args -e "$SELF" --here
+      echo "Finishing in a new Alacritty instance. Keep that window open: closing it cuts the home network."
+    fi
   else
     [[ -f "$HOME/.config/systemd/user/herdr.service" ]] || {
       echo "No herdr systemd user unit on $ME; see docs/herdr-restart-restore.md in Hugo." >&2; exit 1; }
