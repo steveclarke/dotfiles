@@ -21,6 +21,16 @@
 const { readFileSync, writeFileSync, mkdtempSync, unlinkSync, copyFileSync, existsSync } = require("fs")
 const { basename, join, resolve, dirname } = require("path")
 const { tmpdir } = require("os")
+const { execFileSync } = require("child_process")
+
+// The skill installer replaces this folder on every update, which drops
+// node_modules; install the dependencies on first use after an update.
+const skillDir = resolve(__dirname, "..")
+if (!existsSync(join(skillDir, "node_modules", "crossnote"))) {
+  console.error("md-to-pdf: installing dependencies (first run after an update)...")
+  execFileSync("npm", ["install", "--no-audit", "--no-fund", "--ignore-scripts", "--silent"], { cwd: skillDir, stdio: "inherit" })
+}
+
 const { Notebook } = require("crossnote")
 const matter = require("gray-matter")
 const he = require("he")
