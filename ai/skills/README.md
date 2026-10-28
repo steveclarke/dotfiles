@@ -1,13 +1,11 @@
 # Custom Agent Skills
 
 Skills teach AI agents how to do specific tasks. This directory contains only
-custom skills authored and maintained in this dotfiles repo. External skills
-and own-repo skills are installed from their original sources via
-`bin/skills-install`.
+custom skills authored and maintained in this dotfiles repo. Outport installs
+them, along with external and own-repo skills, from each skill's source repo.
 
 > [!NOTE]
 > For setup and architecture, see the [AI README](../README.md).
-> For the full skill classification, see [SKILLS-AUDIT.md](../SKILLS-AUDIT.md).
 
 ## Quick Links
 
@@ -72,7 +70,7 @@ my-skill/
 
 ### 4. Deploy
 
-Run `skills-install` to install the new skill globally across all agents.
+Commit and push. Outport's folder entry for `ai/skills` picks up new skills, and the next agent session on every machine installs it.
 
 ### 5. Test It
 

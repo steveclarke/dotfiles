@@ -14,11 +14,10 @@ if [ $# -eq 0 ]; then
   echo "Usage: dotfiles <command>"
   echo ""
   echo "Commands:"
-  echo "  up, update          Update everything (migrate, stow, brew, skills, mise)"
+  echo "  up, update          Update everything (migrate, stow, brew, mise)"
   echo "  stow                Update config symlinks"
   echo "  migrate [--list]    Run pending one-time migrations"
   echo "  brew                Update and upgrade Homebrew packages"
-  echo "  skills [subcmd]     Manage agent skills (install, list, status)"
   echo "  mise                Install/update tool versions"
   echo "  install <name>      Run an install script (e.g. dotfiles install cloudflared)"
   exit 1
@@ -67,67 +66,6 @@ run_brew() {
   brew cleanup
 }
 
-SKILLS_DIR="${HOME}/.agents/skills"
-
-run_skills_install() {
-  banner "Syncing agent skills"
-  "${DOTFILES_DIR}/bin/skills-install"
-}
-
-run_skills_list() {
-  banner "Configured skill sources"
-  grep -E '^install_(all|specific) ' "${DOTFILES_DIR}/bin/skills-install" \
-    | sed -E 's/^install_(all|specific) "([^"]+)" *\\?$/  - \2/' \
-    | sed -E 's/^install_(all|specific) "([^"]+)" *"([^"]*)".*/  - \2 (\3)/'
-  echo
-  if [[ -d "$SKILLS_DIR" ]]; then
-    local count
-    count=$(find "$SKILLS_DIR" -maxdepth 1 -mindepth 1 -type d | wc -l)
-    echo "Installed: ${count} skill(s) in ${SKILLS_DIR}"
-  else
-    echo "Installed: (none — ${SKILLS_DIR} does not exist)"
-  fi
-}
-
-run_skills_status() {
-  banner "Skills status"
-  if [[ -d "$SKILLS_DIR" ]]; then
-    local count
-    count=$(find "$SKILLS_DIR" -maxdepth 1 -mindepth 1 -type d | wc -l)
-    success "${count} skill(s) installed at ${SKILLS_DIR}"
-  else
-    error "Skills dir missing: ${SKILLS_DIR}"
-  fi
-  for agent_dir in "$HOME/.claude/skills" "$HOME/.config/opencode/skill" "$HOME/.config/crush/skills" "$HOME/.config/goose/skills" "$HOME/.cursor/skills" "$HOME/.codex/skills"; do
-    if [[ -e "$agent_dir" ]]; then
-      local agent_count
-      agent_count=$(find "$agent_dir" -maxdepth 1 -mindepth 1 | wc -l)
-      success "Agent dir: ${agent_dir} (${agent_count} entries)"
-    fi
-  done
-}
-
-run_skills() {
-  case "${1:-install}" in
-    install)         run_skills_install ;;
-    list|ls)         run_skills_list ;;
-    status)          run_skills_status ;;
-    -h|--help|help)
-      echo "Usage: dotfiles skills <subcommand>"
-      echo ""
-      echo "Subcommands:"
-      echo "  install   Sync all configured skills (idempotent)"
-      echo "  list      Show configured sources and installed count"
-      echo "  status    Skills dir + agent dir counts"
-      ;;
-    *)
-      error "Unknown skills subcommand: $1"
-      echo "Run 'dotfiles skills help' for usage"
-      exit 1
-      ;;
-  esac
-}
-
 run_mise() {
   banner "Updating mise tools"
   mise install
@@ -168,8 +106,6 @@ case $1 in
     run_migrations
     run_stow
     run_brew
-    # Skills come from Outport's session-start sync now (out skills setup);
-    # skills-install would delete them, so update no longer runs it.
     run_mise
     ;;
   stow)
@@ -184,10 +120,6 @@ case $1 in
     ;;
   brew)
     run_brew
-    ;;
-  skills)
-    shift
-    run_skills "$@"
     ;;
   mise)
     run_mise

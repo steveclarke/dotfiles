@@ -13,42 +13,21 @@ Shared resources for AI coding tools. Custom skills, agents, and guides maintain
 
 ## How Skills Are Installed
 
-Skills are synced globally via `bin/skills-install`, which uses
-[`npx skills`](https://github.com/vercel-labs/skills) to install or refresh from
-multiple sources into `~/.agents/skills/` and symlink to each agent's skill
-directory. Run the same command on fresh and existing machines; it is
-idempotent and also prunes known deprecated skills.
+Outport installs and updates every skill. Steve's Skills page lists each source:
+this repo's `ai/skills` folder, his own repos (kiso, ucmix, outport and others)
+and outside authors (pbakaus/impeccable, antfu/skills and others). Team skills
+come from `myunio/skills`.
 
-```
-bin/skills-install
-├── My custom skills    ← from this repo (ai/skills/)
-├── My own-repo skills  ← from steveclarke/kiso, outport, etc.
-└── External skills     ← from pbakaus/impeccable, antfu/skills, etc.
-```
-
-Each agent gets individual per-skill symlinks:
-
-```
-~/.agents/skills/
-├── 1password/        ← installed skill
-├── adapt/
-└── ...
-
-~/.claude/skills/
-├── 1password → ../../.agents/skills/1password
-├── adapt → ../../.agents/skills/adapt
-└── ...
-```
-
-### Commands
+At the start of each Claude Code or Codex session, `out skills sync` installs
+the latest pushed version of every source into `~/.agents/skills/`.
+`~/.claude/skills` is a link to that folder.
 
 | Task | Command |
 |------|---------|
-| Sync all skills | `skills-install` |
-| List without installing | `skills-install --list` |
-
-See `bin/skills-install` for the full list of sources and `ai/SKILLS-AUDIT.md`
-for the classification of each skill.
+| Set up a machine (once) | `out login`, then `out skills setup` |
+| See what is installed | `out skills status` |
+| List personal sources | `out skills github list` |
+| Add a source | `out skills github add <owner>/<repo>[/<path>]` |
 
 ## Quick Start
 
@@ -63,7 +42,7 @@ touch ai/skills/my-skill/SKILL.md
 
 See `ai/skills/README.md` for the full skill format.
 
-Then run `skills-install` to deploy it globally.
+Then commit and push; the next agent session installs it.
 
 ### Add an Agent
 
@@ -80,5 +59,3 @@ touch ai/agents/my-agent.md
 | `ai/skills/*/SKILL.md` | Custom skills. Folders with instructions agents can learn. |
 | `ai/agents/*.md` | Agent configs. Model and tool settings. |
 | `ai/guides/*.md` | Process docs. Workflows and best practices. |
-| `bin/skills-install` | Syncs all skills from configured sources. |
-| `ai/SKILLS-AUDIT.md` | Classification of all skills by source. |

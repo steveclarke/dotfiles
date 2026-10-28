@@ -63,12 +63,6 @@ run_install_flow () {
     # CLI tools
     source "${DOTFILES_DIR}"/install/arch/cli.sh
 
-    # Skills
-    if is_installed npx; then
-      banner "Installing skills"
-      bash "${DOTFILES_DIR}"/bin/skills-install
-    fi
-
     # GUI apps
     if [ "${DOTFILES_INSTALL_GUI^^}" = "TRUE" ]; then
       if [[ -f "${DOTFILES_DIR}/install/arch/apps.sh" ]]; then
