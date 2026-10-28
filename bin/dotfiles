@@ -168,7 +168,8 @@ case $1 in
     run_migrations
     run_stow
     run_brew
-    run_skills_install
+    # Skills come from Outport's session-start sync now (out skills setup);
+    # skills-install would delete them, so update no longer runs it.
     run_mise
     ;;
   stow)
