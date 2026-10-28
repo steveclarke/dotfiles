@@ -5,7 +5,6 @@
 # Android CLI itself installs via `dotfiles install android-cli`.
 cask "temurin@21"
 
-brew "steveclarke/tap/superthread"
 brew "steveclarke/tap/outport"
 brew "steveclarke/tap/scn-cli"
 brew "steveclarke/tap/ninjanizr-cli"

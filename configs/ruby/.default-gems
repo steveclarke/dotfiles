@@ -1,4 +1,3 @@
 # Default gems installed with every ruby version (via mise)
 # See: https://mise.jdx.dev/mise-cookbook/ruby.html
 
-superthread
