@@ -106,6 +106,10 @@ description: Fill out PDF forms. Use when working with PDFs.
 Use `scripts/extract_fields.py` to get form fields from a PDF.
 ```
 
+A skill's folder is replaced on every update, so nothing installed into it
+survives (`node_modules`, a `.venv`). A script that needs local dependencies
+installs them itself on first run, as `md-to-pdf/scripts/md-to-pdf.cjs` does.
+
 ## Security
 
 > [!CAUTION]
