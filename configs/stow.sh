@@ -237,6 +237,12 @@ ensure_dir "${HOME}/.config/herdr" "${HOME}/.config/herdr/plugins/config/persiya
 cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr/config.toml" "${HOME}/.config/herdr/plugins/config/ez-corp.git-status/config.toml"
 stow_package "Herdr" "herdr"
 
+# Herdr app — the desktop app owns ~/.config/herdr-app and rewrites most of it, so
+# only the theme files are stowed. ensure_dir keeps themes/ a real directory so
+# stow links each file instead of folding the folder.
+ensure_dir "${HOME}/.config/herdr-app/themes"
+stow_package "Herdr app" "herdr-app"
+
 # Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like
 # shell.json: herdr-lazy rewrites the lock atomically and a stow symlink would
 # detach on the first sync. The herdr-lazy wrapper in bin/ copies them back here
