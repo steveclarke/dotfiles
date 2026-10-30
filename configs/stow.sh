@@ -161,7 +161,7 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
-# Claude — hooks are shared and stowed into ~/.claude.
+# Claude — nothing is stowed into ~/.claude any more.
 #
 # ~/.claude/settings.json is deliberately NOT stowed. Claude Code writes to that
 # file at runtime (effort level, theme, the auto mode environment survey, which
@@ -173,11 +173,11 @@ stow_package "Just" "just"
 # symlinked to the system managed-settings path below. See claude/README.md.
 config_banner "Claude"
 ensure_dir "${HOME}/.claude"
-# hooks/ was removed from the claude package. Plain `stow` never cleans up a
-# symlink whose target is gone, so without this every migrating machine keeps a
-# dangling ~/.claude/hooks. cleanup_paths won't do it — that skips symlinks.
-cleanup_dead_symlinks "${HOME}/.claude/hooks"
-do_stow "claude"
+# hooks/ and statusline.sh were removed along with the claude stow package.
+# Plain `stow` never cleans up a symlink whose target is gone, so without this
+# every migrating machine keeps them dangling. cleanup_paths won't do it — that
+# skips symlinks.
+cleanup_dead_symlinks "${HOME}/.claude/hooks" "${HOME}/.claude/statusline.sh"
 
 # Claude managed settings — root-owned system path, so stow can't do this.
 stow_claude_managed_settings() {
