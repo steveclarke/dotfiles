@@ -71,7 +71,7 @@ Keep it under a minute to read. Self-contained — no "see above".
 Use the first route that works:
 
 1. **Another Claude Code session is running.** Find it with `ListAgents` and send the brief with `SendMessage`. Confirm which session it is before sending.
-2. **The target runs in Herdr or tmux.** Send the brief to the target pane with the `herdr` skill (inside Herdr) or the `tmux-orchestration` skill (plain tmux). Confirm the pane before sending.
+2. **The target runs in Herdr or tmux.** Send the brief with the `herdr-core` skill (`hc send`) when `$HC_TERMINAL_ID` is set (the Herdr desktop app), the `herdr` skill in the Herdr TUI (`HERDR_ENV=1`), or the `tmux-orchestration` skill in plain tmux. Confirm the target before sending.
 3. **No live target.** Write the brief to `${TMPDIR:-/tmp}/handoff-YYYY-MM-DD-<topic>.md`, copy a one-line resume prompt that points at it to the clipboard (`pbcopy` on macOS, `wl-copy` or `xclip -selection clipboard` on Linux), and give the user the path. The file is disposable; losing it on reboot is fine.
 
 Never write the brief into the project or commit it.
