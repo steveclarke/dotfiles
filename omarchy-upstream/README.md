@@ -7,7 +7,6 @@ losing the customizations.
 
 | File | Dotfiles version | Merge command |
 |------|------------------|---------------|
-| `herdr/config.toml` | `configs/herdr/.config/herdr/config.toml` | `herdr-upstream-merge` |
 | `tmux/tmux.conf` | `configs/tmux/.config/tmux/tmux.conf` | `tmux-upstream-merge` |
 
 `omarchy refresh <thing>` does not know about any of this: it copies the stock

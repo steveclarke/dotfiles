@@ -230,13 +230,6 @@ ensure_dir "${HOME}/.config/tmux"
 cleanup_paths "${HOME}/.config/tmux/tmux.conf"
 stow_package "Tmux" "tmux"
 
-# Herdr — same shape as tmux: Omarchy only seeds config.toml, and herdr edits it
-# in place, so the stow symlink holds. omarchy-upstream/herdr/ keeps the stock
-# copy for three-way merges (herdr-upstream-merge). Never `omarchy refresh herdr`.
-ensure_dir "${HOME}/.config/herdr" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr" "${HOME}/.config/herdr/plugins/config/ez-corp.git-status"
-cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins/config/persiyanov.reviewr/config.toml" "${HOME}/.config/herdr/plugins/config/ez-corp.git-status/config.toml"
-stow_package "Herdr" "herdr"
-
 # Herdr app — the desktop app owns ~/.config/herdr-app and rewrites most of it, so
 # only Steve's files are stowed: themes/ everywhere, and keys.json and settings.json
 # on macOS only (the keys are cmd-based; Linux Herdr's are ctrl-based). Herdr writes
@@ -255,31 +248,6 @@ if is_macos; then
   do_stow "herdr-app"
 else
   stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" --ignore='(keys|settings)\.json' herdr-app || error "Failed to stow herdr-app"
-fi
-
-# Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like
-# shell.json: herdr-lazy rewrites the lock atomically and a stow symlink would
-# detach on the first sync. The herdr-lazy wrapper in bin/ copies them back here
-# after every run. Install herdr-lazy itself once per machine:
-#   herdr plugin install natori-hrj/herdr-lazy && herdr-lazy sync
-config_banner "Herdr plugins (herdr-lazy list + lock)"
-ensure_dir "${HOME}/.config/herdr/plugins/config/herdr-lazy"
-for lazy_file in "${DOTFILES_DIR}"/herdr-plugins/plugins.list "${DOTFILES_DIR}"/herdr-plugins/plugins.lock; do
-  rm -f "${HOME}/.config/herdr/plugins/config/herdr-lazy/$(basename "$lazy_file")"
-  cp -a "$lazy_file" "${HOME}/.config/herdr/plugins/config/herdr-lazy/"
-  echo "  copied $(basename "$lazy_file")"
-done
-# Converge the installed plugins to the list. Idempotent, so it belongs here
-# rather than in a migration: a machine that pulls a new plugins.list gets the
-# plugin on its next `dotfiles up`. Skipped when herdr is not installed.
-if is_installed herdr; then
-  if ! herdr plugin list --json 2>/dev/null | grep -q '"plugin_id": *"herdr-lazy"'; then
-    echo "  installing herdr-lazy"
-    herdr plugin install natori-hrj/herdr-lazy --yes >/dev/null || error "herdr-lazy install failed"
-  fi
-  "${DOTFILES_DIR}/configs/bin/bin/herdr-lazy" sync || error "herdr-lazy sync failed"
-else
-  echo "  herdr not installed - skipping plugin sync"
 fi
 
 # =============================================================================

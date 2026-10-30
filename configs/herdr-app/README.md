@@ -5,8 +5,8 @@ shipped layouts and panels on every start. It never writes over these, so they
 are stowed here. Themes go to every machine; `keys.json` and `settings.json`
 go to the Macs only, because Linux Herdr's keys are ctrl-based:
 
-- `keys.json`: every key binding (Herdr's defaults plus Steve's alt keys, which
-  mirror the terminal Herdr in `configs/herdr`)
+- `keys.json`: every key binding (Herdr's defaults plus Steve's alt keys, kept
+  from the old terminal Herdr)
 - `settings.json`: zoom, sounds, appearance, and the theme (Catppuccin Mocha in
   dark mode, Latte in light)
 - `themes/`: Catppuccin Latte, Frappé, Macchiato and Mocha, each setting the
