@@ -254,7 +254,7 @@ if is_macos; then
   done
   do_stow "herdr-app"
 else
-  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" --ignore='^(keys|settings)\.json$' herdr-app || error "Failed to stow herdr-app"
+  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" --ignore='(keys|settings)\.json' herdr-app || error "Failed to stow herdr-app"
 fi
 
 # Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like
