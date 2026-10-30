@@ -1,0 +1,18 @@
+#!/bin/sh
+# herdr-core guard: on a Mac, a peer never starts this machine's core over SSH.
+#
+# macOS gives a program Local Network access only while the app that started it
+# runs. A core started by a peer's `herdr-core connect` belongs to that SSH
+# session, and every terminal in it loses the home network when the session
+# ends. Herdr.app starts the core on a Mac; a peer may only join a running one.
+# Peers find this script first on PATH; hc installs the real binary in
+# ~/.local/bin, which this passes everything else to.
+real="$HOME/.local/bin/herdr-core"
+
+if [ "$(uname)" = Darwin ] && [ "${1-}" = connect ] && [ -n "${SSH_CONNECTION-}" ] &&
+  ! pgrep -u "$(id -u)" -f "^$real serve\$" >/dev/null; then
+  echo "herdr-core: no core on $(hostname -s); Herdr.app starts it. Open Herdr there first." >&2
+  exit 1
+fi
+
+exec "$real" "$@"
