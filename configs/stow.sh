@@ -238,18 +238,24 @@ cleanup_paths "${HOME}/.config/herdr/config.toml" "${HOME}/.config/herdr/plugins
 stow_package "Herdr" "herdr"
 
 # Herdr app — the desktop app owns ~/.config/herdr-app and rewrites most of it, so
-# only Steve's files are stowed: keys.json, settings.json and themes/. Herdr writes
-# settings.json through the link (zoom), so it holds. A machine's own copies are
-# kept as *.pre-dotfiles the first time. ensure_dir keeps themes/ a real directory
-# so stow links each file instead of folding the folder.
+# only Steve's files are stowed: themes/ everywhere, and keys.json and settings.json
+# on macOS only (the keys are cmd-based; Linux Herdr's are ctrl-based). Herdr writes
+# settings.json through the link (zoom), so it holds. A Mac's own copies are kept as
+# *.pre-dotfiles the first time. ensure_dir keeps themes/ a real directory so stow
+# links each file instead of folding the folder.
 ensure_dir "${HOME}/.config/herdr-app/themes"
-for herdr_file in keys.json settings.json; do
-  herdr_path="${HOME}/.config/herdr-app/${herdr_file}"
-  if [ -f "$herdr_path" ] && [ ! -L "$herdr_path" ]; then
-    mv "$herdr_path" "${herdr_path}.pre-dotfiles"
-  fi
-done
-stow_package "Herdr app" "herdr-app"
+config_banner "Herdr app"
+if is_macos; then
+  for herdr_file in keys.json settings.json; do
+    herdr_path="${HOME}/.config/herdr-app/${herdr_file}"
+    if [ -f "$herdr_path" ] && [ ! -L "$herdr_path" ]; then
+      mv "$herdr_path" "${herdr_path}.pre-dotfiles"
+    fi
+  done
+  do_stow "herdr-app"
+else
+  stow -d "${DOTFILES_DIR}"/configs -t "${HOME}" --ignore='^(keys|settings)\.json$' herdr-app || error "Failed to stow herdr-app"
+fi
 
 # Herdr plugins — herdr-lazy's plugins.list and plugins.lock, COPIED like
 # shell.json: herdr-lazy rewrites the lock atomically and a stow symlink would

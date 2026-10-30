@@ -2,7 +2,8 @@
 
 The Herdr desktop app (`herdr-app`) owns `~/.config/herdr-app` and replaces its
 shipped layouts and panels on every start. It never writes over these, so they
-are stowed here and shared by every machine:
+are stowed here. Themes go to every machine; `keys.json` and `settings.json`
+go to the Macs only, because Linux Herdr's keys are ctrl-based:
 
 - `keys.json`: every key binding (Herdr's defaults plus Steve's alt keys, which
   mirror the terminal Herdr in `configs/herdr`)
