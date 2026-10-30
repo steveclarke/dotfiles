@@ -36,6 +36,12 @@ run_brew() {
 
   banner "Updating Homebrew"
   brew update
+  # Company CLIs (out, unio) download from a private server that needs the signed-in
+  # Outport token, which plain `brew upgrade` lacks (curl 401). `out upgrade` passes it,
+  # so they are current before the general upgrade below reaches them.
+  if is_installed out; then
+    out upgrade || echo "out upgrade failed - run 'out auth status' and sign in"
+  fi
   # --formula only: never upgrade casks here. Homebrew replaces the .app in place,
   # which breaks running apps (Docker, Chrome) and re-triggers Gatekeeper prompts.
   # Desktop apps update themselves; upgrade them deliberately with `brew upgrade --cask <name>`.
