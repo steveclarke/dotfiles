@@ -14,7 +14,7 @@ Symlinked by `configs/stow.sh` to the system managed-settings path:
 
 Those are root-owned directories, so the symlink is created with `sudo`.
 
-This file holds only settings written by hand: permissions, hooks, statusline,
+This file holds only settings written by hand: permissions, hooks,
 plugins, attribution, env. Claude Code never writes to it.
 
 It lives outside `configs/` because stow packages mirror `$HOME`, and this file

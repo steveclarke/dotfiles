@@ -161,7 +161,7 @@ stow_package "Idea" "idea"
 cleanup_paths "${HOME}/justfile"
 stow_package "Just" "just"
 
-# Claude — statusline and hooks are shared and stowed into ~/.claude.
+# Claude — hooks are shared and stowed into ~/.claude.
 #
 # ~/.claude/settings.json is deliberately NOT stowed. Claude Code writes to that
 # file at runtime (effort level, theme, the auto mode environment survey, which

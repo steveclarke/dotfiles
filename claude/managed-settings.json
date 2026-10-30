@@ -25,10 +25,6 @@
     ],
     "defaultMode": "auto"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"$HOME/.claude/statusline.sh\""
-  },
   "enabledPlugins": {
     "context7@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
