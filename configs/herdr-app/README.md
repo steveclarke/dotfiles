@@ -1,10 +1,21 @@
 # Herdr app config
 
-The Herdr desktop app (`herdr-app`) owns `~/.config/herdr-app` and rewrites most
-of it on every start, so only files Herdr never writes are stowed here: the
-Catppuccin themes in `themes/` (Latte, Frappé, Macchiato, Mocha). Each sets the
-terminal palette and every panel colour (sidebars and bars on mantle, terminals
-on base, mauve accent).
+The Herdr desktop app (`herdr-app`) owns `~/.config/herdr-app` and replaces its
+shipped layouts and panels on every start. It never writes over these, so they
+are stowed here and shared by every machine:
 
-Pick one in Herdr's theme picker, or `herdr-app do app.theme --name catppuccin-mocha`.
-The terminal Herdr (`configs/herdr`) has Catppuccin built in.
+- `keys.json`: every key binding (Herdr's defaults plus Steve's alt keys, which
+  mirror the terminal Herdr in `configs/herdr`)
+- `settings.json`: zoom, sounds, appearance, and the theme (Catppuccin Mocha in
+  dark mode, Latte in light)
+- `themes/`: Catppuccin Latte, Frappé, Macchiato and Mocha, each setting the
+  terminal palette and every panel colour
+
+Herdr writes `settings.json` itself (zoom keys), through the link. It does not
+notice a change made to the file behind the link, so settings pulled from
+another machine apply the next time Herdr starts. On a machine that had its own
+copies, the first stow keeps them as `*.pre-dotfiles`.
+
+Pick another theme in Herdr's theme picker, or
+`herdr-app do app.theme --name catppuccin-frappe`. A pick made in the picker
+stays on that machine (`layouts/.state/`).
