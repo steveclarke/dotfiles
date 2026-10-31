@@ -50,5 +50,9 @@
     "verbs": [
       "Working"
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.local/share/dotfiles/claude/statusline.sh\""
   }
 }

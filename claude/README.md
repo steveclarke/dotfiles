@@ -116,3 +116,9 @@ user file. See <https://code.claude.com/docs/en/settings>.
 
 Whatever can write the managed file controls the highest-precedence config on
 the machine, and no CLI flag can override it. Keep this file small and boring.
+
+## `statusline.sh` (shared)
+
+The status line every machine shows: folder, git branch and state, model and
+effort, a context bar, and the week's usage left. `managed-settings.json` runs
+it straight from this directory, so nothing is stowed. Needs `jq` and a Nerd Font.
