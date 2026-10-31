@@ -25,7 +25,7 @@ which inkscape && which magick
 The workflow has 7 phases. The first 3 are collaborative with the user; the last 4 are mostly automated production work.
 
 1. **Discovery** — understand the project and what the logo should convey
-2. **Logo generation** — author SVG concepts directly and review them with the user
+2. **Logo generation** — the agent generates concepts with today's best SVG generators, picks the strongest, and shows the user finished marks
 3. **Font and color selection** — pick a wordmark font and brand color
 4. **SVG refinement** — Inkscape: text to paths, viewBox cleanup, lockup creation
 5. **Asset pack production** — export all variants, sizes, and formats
@@ -65,15 +65,17 @@ Use answers already available in the conversation. Keep discovery brief, then cr
 
 ## Phase 2: Logo Generation
 
-Author the logo directly as editable SVG.
+Dedicated generators draw the mark. Language models writing SVG coordinates by hand produce simple, clip-art marks, so hand-drawn SVG is for cleanup only, never for the concept itself.
 
-Use the discovery brief to create a few distinct concepts when the user wants options, or refine the chosen direction directly. Write real vector geometry (paths, shapes, fills, and strokes), with a clean viewBox and no embedded raster image standing in for the logo. Keep the mark separate from the wordmark, which gets a proper font in Phase 3.
+**1. Find today's best generators.** The state of the art changes month to month, so do not rely on training data or on any tool named here. Search for the current leaders in text-to-SVG and vector logo generation as of today (human-preference leaderboards such as an SVG arena, recent comparisons, release notes). Keep the two or three that return real vector output and that you can call yourself.
 
-Render the SVGs and inspect them visually before presenting them. Show concepts together on an HTML preview page, including small icon sizes and light/dark backgrounds. Check the silhouette, spacing, stroke consistency, and legibility. Iterate from the user's feedback; keep the approved version intact while exploring alternatives and replace it only when the user chooses a successor.
+**2. Call them yourself.** Use each tool through its MCP server, API or CLI, never by handing the user a prompt to paste. Check what is connected (`claude mcp list`) and which API keys the user has (their password manager or environment); a hosted MCP that needs sign-in asks the user once to authenticate. If a leader needs an account or key the user does not have, say which, what it costs, and carry on with the tools available. As of October 2026, examples were Quiver's hosted MCP (`https://app.quiver.ai/mcp`) and Recraft's vector model on fal.ai; check they are still the best before using them.
 
-Third-party SVG generators such as quiver.ai or recraft.ai are optional fallbacks when the user requests one or direct SVG iteration cannot achieve the desired result.
+**3. Explore wide, then judge.** Write one brief from discovery and run it through each tool, several variations each, in distinct directions. Render every result and judge it as a design director would: idea, silhouette, balance, legibility at 16 px, one-colour use. Discard weak ones without showing them.
 
-Once a mark is chosen, inspect its SVG structure (viewBox, dimensions, colors, and any embedded text or fonts) before producing the asset pack. Convert any remaining text to paths in Phase 4.
+**4. Show the user finished options.** Present three or four of the best on one preview page (light and dark, small sizes), each with a line on its idea and which tool made it. The user reviews results, never prompts. Iterate from their feedback through the same tools; keep the approved version intact while exploring alternatives.
+
+**5. Clean up the chosen mark.** Inspect its SVG structure (viewBox, dimensions, colors, embedded text or fonts, stray nodes) and tidy it into clean, editable vector geometry with no embedded raster. Keep the mark separate from the wordmark, which gets a proper font in Phase 3. Convert any remaining text to paths in Phase 4.
 
 ## Phase 3: Font and Color Selection
 
