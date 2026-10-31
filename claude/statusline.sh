@@ -1,5 +1,6 @@
 #!/bin/bash
-# Claude Code status line: folder, git branch and state, model, context bar.
+# Claude Code status line, compact for narrow panes: folder, git branch and state,
+# model initial and version, effort, context used, weekly limit remaining.
 input=$(cat)
 dir=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // empty')
 model=$(echo "$input" | jq -r '.model.display_name // empty')
@@ -33,24 +34,28 @@ if [ -n "$dir" ]; then
   fi
 fi
 
-[ -n "$model" ] && out="${out}${sep}${cyan}󰚩 ${model}${reset}"
-[ -n "$effort" ] && out="${out} ${dim}·${reset} ${cyan}${effort}${reset}"
+if [ -n "$model" ]; then
+  # "Opus 5.5" -> "O5.5", "Fable 5.1" -> "F5.1"
+  name=${model%% *}; ver=${model#"$name"}; ver=${ver// /}
+  out="${out}${sep}${cyan}${name:0:1}${ver}${reset}"
+fi
+if [ -n "$effort" ]; then
+  case "$effort" in
+    medium) e=MED ;; xhigh) e=XHI ;; *) e=$(printf '%s' "$effort" | tr '[:lower:]' '[:upper:]') ;;
+  esac
+  out="${out} ${cyan}${e}${reset}"
+fi
 
 if [ -n "$used" ]; then
   pct=$(printf '%.0f' "$used")
   if [ "$pct" -ge 80 ]; then colour=$red; elif [ "$pct" -ge 50 ]; then colour=$yellow; else colour=$green; fi
-  filled=$(( (pct + 5) / 10 )); [ "$filled" -gt 10 ] && filled=10
-  bar=""
-  for ((i = 0; i < 10; i++)); do
-    if [ "$i" -lt "$filled" ]; then bar="${bar}━"; else bar="${bar}${dim}─${reset}${colour}"; fi
-  done
-  out="${out}${sep}${colour}${bar} ${pct}%${reset}"
+  out="${out}${sep}${colour}ctx ${pct}%${reset}"
 fi
 
 if [ -n "$week" ]; then
   left=$(( 100 - $(printf '%.0f' "$week") ))
   if [ "$left" -le 20 ]; then colour=$red; elif [ "$left" -le 50 ]; then colour=$yellow; else colour=$green; fi
-  out="${out}${sep}${colour}󰃭 week ${left}% left${reset}"
+  out="${out}${sep}${colour}wk ${left}%${reset}"
 fi
 
 printf '%s' "$out"
