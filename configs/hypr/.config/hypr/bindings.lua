@@ -52,26 +52,6 @@ o.bind("code:108", "Toggle dictation", "voxtype record toggle")
 -- Middle-click drag to move floating windows, no keyboard needed.
 o.bind("mouse:274", "Move window", hl.dsp.window.drag(), { mouse = true })
 
--- Numpad workspace switching -----------------------------------------------
--- Mirrors SUPER + top-row-N (an Omarchy default) so the top row and the numpad
--- are interchangeable. Workspace-to-monitor pinning is managed by hyprmoncfg,
--- not here.
---
--- Numpad keycodes are not sequential, hence the explicit table:
---   KP_1=87 KP_2=88 KP_3=89 / KP_4=83 KP_5=84 KP_6=85 / KP_7=79 KP_8=80 KP_9=81
-local numpad = { 87, 88, 89, 83, 84, 85, 79, 80, 81 }
-local labels = { "Main", "Dev", "Misc", "Prod", "DevL", "DB", "DevR", "Chat", "Music" }
-
-for workspace, code in ipairs(numpad) do
-  local key = "code:" .. tostring(code)
-  o.bind("SUPER + " .. key,
-    "Workspace " .. workspace .. " (" .. labels[workspace] .. ")",
-    hl.dsp.focus({ workspace = tostring(workspace) }))
-  o.bind("SUPER + SHIFT + " .. key,
-    "Move to workspace " .. workspace,
-    hl.dsp.window.move({ workspace = tostring(workspace) }))
-end
-
 -- Monitor handoff ----------------------------------------------------------
 -- The desk monitors are cabled to two machines. This brings them all HERE
 -- over DDC/CI instead of menu-diving on the monitor OSD. It runs the Screen

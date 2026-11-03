@@ -55,7 +55,7 @@
     }
   ],
   "workspaces": {
-    "enabled": true,
+    "enabled": false,
     "strategy": "manual",
     "max_workspaces": 9,
     "group_size": 3,
@@ -63,46 +63,7 @@
       "dell inc.|dell s2721qs|d0x1m43",
       "dell inc.|dell s2721qs|3ql0m43"
     ],
-    "rules": [
-      {
-        "workspace": "1",
-        "output_key": "dell inc.|dell s2721qs|3ql0m43",
-        "output_name": "DP-1",
-        "default": true,
-        "persistent": true
-      },
-      {
-        "workspace": "2",
-        "output_key": "dell inc.|dell s2721qs|3ql0m43",
-        "output_name": "DP-1",
-        "persistent": true
-      },
-      {
-        "workspace": "3",
-        "output_key": "dell inc.|dell s2721qs|3ql0m43",
-        "output_name": "DP-1",
-        "persistent": true
-      },
-      {
-        "workspace": "4",
-        "output_key": "dell inc.|dell s2721qs|d0x1m43",
-        "output_name": "DP-2",
-        "default": true,
-        "persistent": true
-      },
-      {
-        "workspace": "5",
-        "output_key": "dell inc.|dell s2721qs|d0x1m43",
-        "output_name": "DP-2",
-        "persistent": true
-      },
-      {
-        "workspace": "6",
-        "output_key": "dell inc.|dell s2721qs|d0x1m43",
-        "output_name": "DP-2",
-        "persistent": true
-      }
-    ]
+    "rules": []
   },
   "exec": ""
 }

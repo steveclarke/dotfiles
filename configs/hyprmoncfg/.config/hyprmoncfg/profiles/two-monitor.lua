@@ -17,10 +17,3 @@ hl.monitor({
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
 })
-
-hl.workspace_rule({ workspace = "1", monitor = "desc:Dell Inc. DELL S2721QS 3QL0M43", default = true, persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "desc:Dell Inc. DELL S2721QS 3QL0M43", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "desc:Dell Inc. DELL S2721QS 3QL0M43", persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "desc:Dell Inc. DELL S2721QS D0X1M43", default = true, persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "desc:Dell Inc. DELL S2721QS D0X1M43", persistent = true })
-hl.workspace_rule({ workspace = "6", monitor = "desc:Dell Inc. DELL S2721QS D0X1M43", persistent = true })
