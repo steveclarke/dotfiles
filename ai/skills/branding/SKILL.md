@@ -1,405 +1,129 @@
 ---
 name: branding
-description: "Create a complete brand identity for a project — the logo mark, colors, fonts, SVG refinement in Inkscape, and a full asset pack (PNGs, favicons, OG images), delivered as a brand guide HTML page. Triggers on branding, brand pack, brand color, project identity, social preview, visual identity."
+description: Creates a project's brand identity end to end: the logo mark (drawn with today's best vector generators), wordmark font, colour palette, master SVGs refined in Inkscape, a full asset pack (PNGs, favicons, social images) and a brand guide page. Use for a logo, brand, brand colour, visual identity, favicon set or social preview image for any project.
 ---
 
 # Branding
 
-Create a complete brand identity for a project: logo mark, wordmark lockups, color palette, font selection, a production-ready asset pack, and a brand guide.
+The job is what a brand identity designer delivers to a small software project: one strong mark, a wordmark, a palette with roles, master SVGs, every exported asset the project needs, and a one-page brand guide. The work follows that designer's method, starting from the best marks in the project's field (the `creative-prompt` skill) and judging every option at 16 px and in one colour before anyone else sees it.
 
-## Prerequisites
+Contents: how work is shown, then seven phases (discovery, mark, font and colour, master SVGs, asset pack, brand guide, project wiring) and a closing checklist.
 
-Verify these tools are installed before starting:
+## How work is shown
 
-```bash
-which inkscape && which magick
-```
+Steve's rules in global `AGENTS.md`, "The bar", hold here: show one best design, in light mode, and options only when he asks; a second model reviews before he does. So each decision point is one recommended result, finished and rendered, with the runner-ups kept ready in case he asks. He reacts to results, never to prompts, SVG files in folders or descriptions of what something would look like.
 
-- **Inkscape** — SVG manipulation, text-to-path conversion, PNG export
-  - macOS: `brew install --cask inkscape`
-- **ImageMagick v7+** — image compositing, resizing, format conversion
-  - macOS: `brew install imagemagick`
+Each result is shown as a self-contained HTML page: SVGs inlined, fonts from Google Fonts `<link>` tags, no other outside files. It is published the way the person's instructions say private pages go (for Steve, a Hugo artifact page). Plain HTML and CSS is enough; where script is needed, the DOM is built with `textContent` and `createElement`, because security hooks block `innerHTML`. Working files go in the project's `tmp/` and are removed before commit.
 
-## Overview
+## Tools
 
-The workflow has 7 phases. The first 3 are collaborative with the user; the last 4 are mostly automated production work.
+Inkscape (text to paths, canvas fitting, SVG to PNG) and ImageMagick 7 (`magick`, compositing and `.ico`). The agent installs whichever is missing. Inkscape renders SVG to PNG more faithfully than ImageMagick, so every PNG comes from Inkscape and ImageMagick only composites.
 
-1. **Discovery** — understand the project and what the logo should convey
-2. **Logo generation** — the agent generates concepts with today's best SVG generators, picks the strongest, and shows the user finished marks
-3. **Font and color selection** — pick a wordmark font and brand color
-4. **SVG refinement** — Inkscape: text to paths, viewBox cleanup, lockup creation
-5. **Asset pack production** — export all variants, sizes, and formats
-6. **Brand guide** — generate a comprehensive HTML brand reference page
-7. **Project wiring** — place assets where they're needed (optional)
+## 1. Discovery
 
-## Browser-Based Previews
+Most answers are in the conversation and the project itself; the agent asks only for what is missing: the exact name and casing for the wordmark, what the project does in one sentence, who it is for, the feeling the mark should carry, any symbol or meaning the name suggests, and existing colours to keep. Discovery stays short; the mark concepts are the real discovery.
 
-Throughout the collaborative phases, use temporary HTML pages to show the user their options. This is a core technique in this workflow — never ask the user to open SVG files from folders or guess what things look like.
+## 2. The mark
 
-**The pattern:**
+Dedicated generators draw the mark. A language model writing SVG coordinates by hand produces simple clip-art, so hand-written SVG is for cleanup only, never for the concept.
 
-1. Generate a self-contained HTML file in the project's `tmp/` directory (e.g., `tmp/brand-fonts.html`)
-2. Open it in Chrome: `open -a "Google Chrome" /path/to/file.html`
-3. The user reviews and gives feedback
-4. Clean up `tmp/` files before committing
+1. Find today's best generators. The leaders change month to month, so search for the current best text-to-SVG and vector logo models (human-preference leaderboards such as an SVG arena, recent comparisons, release notes) rather than trusting training data or the examples here. Keep the two or three that return real vector output and that the agent can call itself. As of October 2026 the leaders included Quiver's hosted MCP (`https://app.quiver.ai/mcp`) and Recraft's vector model on fal.ai; check they still lead.
+2. Call them directly through their MCP server, API or CLI, never by handing the person a prompt to paste. Check what is connected (`claude mcp list`) and which API keys exist (the password manager or environment). A hosted MCP that needs sign-in asks the person once. When a leader needs an account or key that does not exist, say which, what it costs, and carry on with what is available.
+3. Study the best first. Look at the marks of the strongest products in the same field and adjacent ones, and write down what makes them work (one idea, a clear silhouette, how they hold at favicon size). The brief to the generators names that bar.
+4. Explore wide, then judge. Run one brief from discovery through each tool, several variations each, in clearly different directions. Render every result and judge it as a design director would: the idea, silhouette, balance, legibility at 16 px, one-colour use, whether it is distinct from the field. Discard the weak ones unseen.
+5. Show the best one, finished: on a light page at large size, at 16, 32 and 64 px, in one colour, and beside its wordmark in a plain font. One line says its idea and which tool made it. Iterate on feedback through the same tools, keeping the approved version intact while trying alternatives.
+6. Clean up the chosen mark. Inspect its SVG (viewBox, dimensions, colours, embedded text or fonts, stray nodes, embedded raster) and tidy it into clean, editable vector paths. The mark stays separate from the wordmark, which gets a real font next.
 
-**Key rules for preview pages:**
-- Use plain HTML and CSS only — avoid JavaScript where possible. If JS is needed, use safe DOM methods (`textContent`, `createElement`) rather than `innerHTML`, which security hooks may block.
-- Load Google Fonts via `<link>` tags in the `<head>` for font previews — they render instantly in the browser.
-- Inline SVG marks directly in the HTML for lockup previews (no external file references).
-- Keep pages self-contained — no external dependencies beyond Google Fonts CDN.
-
----
-
-## Phase 1: Discovery
-
-Ask the user:
-
-1. **Project name** — exact casing and spelling for the wordmark
-2. **What it does** — one sentence, so you understand the domain
-3. **Logo vibe** — abstract geometric? lettermark? mascot? isometric? minimal?
-4. **Any symbols or metaphors** — things the name evokes (e.g., "Kiso" means "foundation" in Japanese, which led to stacked building blocks)
-5. **Color preferences** — warm/cool, any existing colors, or "surprise me"
-
-Use answers already available in the conversation. Keep discovery brief, then create concepts.
-
-## Phase 2: Logo Generation
-
-Dedicated generators draw the mark. Language models writing SVG coordinates by hand produce simple, clip-art marks, so hand-drawn SVG is for cleanup only, never for the concept itself.
-
-**1. Find today's best generators.** The state of the art changes month to month, so do not rely on training data or on any tool named here. Search for the current leaders in text-to-SVG and vector logo generation as of today (human-preference leaderboards such as an SVG arena, recent comparisons, release notes). Keep the two or three that return real vector output and that you can call yourself.
-
-**2. Call them yourself.** Use each tool through its MCP server, API or CLI, never by handing the user a prompt to paste. Check what is connected (`claude mcp list`) and which API keys the user has (their password manager or environment); a hosted MCP that needs sign-in asks the user once to authenticate. If a leader needs an account or key the user does not have, say which, what it costs, and carry on with the tools available. As of October 2026, examples were Quiver's hosted MCP (`https://app.quiver.ai/mcp`) and Recraft's vector model on fal.ai; check they are still the best before using them.
-
-**3. Explore wide, then judge.** Write one brief from discovery and run it through each tool, several variations each, in distinct directions. Render every result and judge it as a design director would: idea, silhouette, balance, legibility at 16 px, one-colour use. Discard weak ones without showing them.
-
-**4. Show the user finished options.** Present three or four of the best on one preview page (light and dark, small sizes), each with a line on its idea and which tool made it. The user reviews results, never prompts. Iterate from their feedback through the same tools; keep the approved version intact while exploring alternatives.
-
-**5. Clean up the chosen mark.** Inspect its SVG structure (viewBox, dimensions, colors, embedded text or fonts, stray nodes) and tidy it into clean, editable vector geometry with no embedded raster. Keep the mark separate from the wordmark, which gets a proper font in Phase 3. Convert any remaining text to paths in Phase 4.
-
-## Phase 3: Font and Color Selection
+## 3. Font and colour
 
 ### Font
 
-Suggest 4-6 fonts that pair well with the mark's style. Build a **single HTML preview page** that shows all candidates side by side:
+The wordmark font is the Google Font (for licence and availability) that best fits the mark, shown as the real lockup at the brand colour, at bold and regular weights, with a line of body text. Runner-ups stay ready.
 
-- Each font rendered as the project name in bold (700/800) at large size using the proposed brand color
-- A second line in regular weight (400) for comparison
-- A body text sample ("The quick brown fox...")
-- Weight demos (400, 600, 700, 800) if the font supports them
-- Brief notes on personality and fit (e.g., "Geometric, modern — closest to current wordmark")
+The chosen font file comes from the Google Fonts repo, which is more reliable than the CSS API: `https://raw.githubusercontent.com/google/fonts/main/ofl/<family>/<File>.ttf`, where variable fonts have names like `Inter%5Bopsz,wght%5D.ttf` (listing the folder through the GitHub API gives the exact name). `file` checks the download: a wrong path saves an HTML error page that looks like a font. It is installed locally (`~/Library/Fonts/` on macOS, `~/.local/share/fonts/` then `fc-cache` on Linux), because Inkscape only sees installed fonts, and copied to `brand/fonts/`.
 
-Load fonts via Google Fonts `<link>` tags. Open the page in Chrome for the user to compare.
+### Colour
 
-**After the user picks a font:**
+When the project already has a logo, every colour in its SVG is pulled out first and named by its role. The recommended palette has four roles:
 
-1. Download from the Google Fonts GitHub repo (most reliable source):
-   ```bash
-   curl -L -o /tmp/FontName.ttf "https://raw.githubusercontent.com/google/fonts/main/ofl/fontname/FontName%5Bwght%5D.ttf"
-   ```
-   Note: use the `ofl/` path for most Google Fonts. Verify the download with `file /tmp/FontName.ttf` — it should say "TrueType Font data", not "HTML" or "ASCII text".
-2. Install locally: `cp /tmp/FontName.ttf ~/Library/Fonts/` (macOS)
-3. Save to `brand/fonts/` for the asset pack
+- Primary: buttons, links, focus and active states
+- Dark: headings, sidebars, dark surfaces
+- Accent: alerts, destructive actions, points of interest
+- Highlight: info banners, selected states
 
-### Color
+The agent generates a 50 to 950 OKLCH scale for the primary (and any colour the project's UI will use as a Tailwind colour), with 500 at or near the chosen hex, and checks text contrast on the light and dark steps. When a colour is questioned ("that red is too dark"), the full mark is shown with the best replacement swapped in, variants ready.
 
-If the user already has a logo with colors, extract them first. Show all colors found in the SVG as chips in a preview HTML page — name each one by its role (e.g., "Hull Navy", "Sail Red").
+The guide records the final values: each colour's name, role, hex and OKLCH, and the full scales.
 
-Then present **brand color candidates** as large clickable-looking cards with:
-- A big color swatch showing the hex
-- A name and description of its personality
-- A recommendation note on the best one
+## 4. Master SVGs
 
-Include a **proposed color schema** section showing how the colors would be used:
-- **Primary** — buttons, links, active states
-- **Dark/Navy** — sidebar, headings, dark surfaces
-- **Accent** — alerts, destructive actions, visual interest
-- **Highlight** — info banners, selected states
+Everything later derives from nine master SVGs:
 
-**Color variant exploration:** If the user wants to try different shades or swap a color (e.g., "that red is too dark"), generate a comparison page with 4-6 variants showing the full mark with each color swapped in. Use `sed` to replace hex values in the SVG for quick iteration — inline each variant SVG directly in the HTML.
+| | Mark only | Horizontal lockup | Stacked lockup |
+|---|---|---|---|
+| Colour | `mark-color.svg` | `logo-horizontal-color.svg` | `logo-stacked-color.svg` |
+| Black | `mark-black.svg` | `logo-horizontal-black.svg` | `logo-stacked-black.svg` |
+| White | `mark-white.svg` | `logo-horizontal-white.svg` | `logo-stacked-white.svg` |
 
-**Tailwind color scale:** When the user settles on a brand color, they'll need a full shade scale for Tailwind. Direct them to generate one at:
-- **uicolors.app** — excellent OKLCH-based scales
-- **kigen.design/color** — alternative generator
+A horizontal lockup has the mark left and the wordmark right, vertically centred; a stacked lockup has the mark above and the wordmark centred below. The colour horizontal lockup comes first: the wordmark's cap height around 40 to 60 percent of the mark's height (stacked: wordmark width close to the mark's), tight viewBox, little padding. The lockups are shown for approval of proportion and spacing while the text is still editable.
 
-The user pastes their hex, gets back a 50-950 scale in OKLCH, and shares it with you to wire into the project.
+Gotchas:
 
-### Recording color decisions
+- Inkscape ignores Google Fonts `@import` and silently substitutes another font. Install the font first, then convert all text to paths (`object-to-path` on everything) so the SVGs need no font. Afterwards `grep -c '<text'` must return 0, and the render must still show the real font.
+- Black variants use `#18181b` (zinc-900), not pure black; white variants use `#ffffff`. In the colour lockups the mark keeps its colours and the wordmark is `#18181b`; black and white variants are fully one colour.
+- Colour swaps by text replacement must catch every form: `fill="#..."`, `fill:#...` inside `style`, `stroke` in both forms, three-digit hex, named colours and gradient stops. Render each variant after swapping to see nothing was missed.
+- After compositing, fit the canvas to the drawing (`fit-canvas-to-selection`) or set the viewBox from `inkscape --query-all`, or every export carries the dead space.
 
-Record the final colors for the asset pack:
-- **Primary**: the main brand color with its Tailwind scale name
-- **All logo colors**: hex values and roles (hull, sails, water, etc.)
-- **Tailwind scale**: the full 50-950 OKLCH values
-
-## Phase 4: SVG Refinement
-
-This phase produces the master SVGs that everything else is derived from. You need **9 SVG files**:
-
-| Variant | Mark only | Horizontal lockup | Stacked lockup |
-|---------|-----------|-------------------|----------------|
-| **Color** | mark-color.svg | logo-horizontal-color.svg | logo-stacked-color.svg |
-| **Black** | mark-black.svg | logo-horizontal-black.svg | logo-stacked-black.svg |
-| **White** | mark-white.svg | logo-horizontal-white.svg | logo-stacked-white.svg |
-
-### Creating lockups
-
-A **lockup** is the mark + wordmark text composed together. Two layouts:
-- **Horizontal** — mark on the left, text to the right, vertically centered
-- **Stacked** — mark on top, text centered below
-
-Start with the color horizontal lockup:
-
-1. Open the mark SVG, note its dimensions
-2. Create a new SVG combining the mark with a `<text>` element using the chosen font
-3. Size the text proportionally — the text cap-height should be roughly 40-60% of the mark height for horizontal, and the text width should roughly match the mark width for stacked
-4. Set the viewBox to tightly fit the content with minimal padding
-
-**Preview each lockup in Chrome** before converting text to paths. Open the SVG directly — `open -a "Google Chrome" file.svg`. The user should confirm the proportions, spacing, and overall feel before proceeding. Adjust text x position, font-size, and viewBox width based on feedback.
-
-### Text to paths
-
-Google Fonts `@import` doesn't work in Inkscape. The font must be installed locally first (done in Phase 3). Then convert all text to paths so the SVG is self-contained:
-
-```bash
-inkscape input.svg --actions="select-all;object-to-path;export-filename:output.svg;export-do"
-```
-
-After conversion, verify with `grep -c '<text' output.svg` — should return 0.
-
-### Color variants
-
-- **Black**: replace all fill colors with `#18181b` (zinc-900, not pure black — standard design practice for better readability)
-- **White**: replace all fill colors with `#ffffff`
-- For lockups, the mark keeps its colors in the "color" variant; text is `#18181b`. In black/white variants, everything is monochrome.
-
-Use `sed` for color replacement — handle both `fill="#hex"` attributes and `fill:#hex` in style attributes:
-```bash
-sed 's/fill="#[0-9A-Fa-f]\{6\}"/fill="#18181b"/g; s/fill:#[0-9a-fA-F]\{6\}/fill:#18181b/g' input.svg > output.svg
-```
-
-### ViewBox cleanup
-
-After compositing, trim the viewBox to fit content tightly:
-
-```bash
-inkscape file.svg --actions="select-all;fit-canvas-to-selection;export-filename:file.svg;export-do"
-```
-
-Or manually adjust the viewBox after checking element bounding boxes:
-
-```bash
-inkscape file.svg --query-all
-```
-
-## Phase 5: Asset Pack Production
-
-### Directory structure
+## 5. Asset pack
 
 ```
 brand/
-├── svg/          9 master SVGs (from Phase 4)
-├── png/          rasterized variants at standard sizes
-├── favicon/      ico + png sizes + webmanifest
-├── social/       platform-specific images
-└── fonts/        font files + README
+├── svg/       the nine masters
+├── png/       marks at 64, 128, 256, 512, 1024 (square);
+│              horizontal lockups at 400, 600, 800 wide; stacked at 300, 500 wide
+├── favicon/   favicon.ico (16 + 32), favicon-16x16.png, favicon-32x32.png,
+│              apple-touch-icon.png (180), android-chrome-192x192.png,
+│              android-chrome-512x512.png, site.webmanifest (name, icons,
+│              theme_color = primary hex, background_color, display standalone)
+├── social/    og-image-1280x640.png (horizontal lockup centred on white),
+│              github-avatar-500.png, discord-icon-512.png, npm-icon-256.png
+└── fonts/     the font files and a README: family, foundry, weight used, licence, source URL
 ```
 
-### PNG exports
+Gotchas:
 
-Export from the master SVGs using Inkscape (better SVG rendering than ImageMagick):
+- When compositing an SVG onto a canvas with ImageMagick (the OG image), trim it and reset its page (`-trim +repage`) before centring, or ImageMagick centres the viewBox rather than the drawing and the logo sits off-centre.
+- A mark that holds at 512 px can turn to mush at 16. When it does, a simplified favicon version of the mark is drawn rather than shrinking the full one.
+- Look at the favicon, OG image and avatars once rendered; a file existing does not mean it looks right.
 
-**Marks** — export at: 64, 128, 256, 512, 1024px (square, width = height)
-```bash
-inkscape mark-color.svg --export-type=png --export-filename=../png/mark-color-256.png --export-width=256
-```
+## 6. Brand guide
 
-**Lockups** — export at widths appropriate for the aspect ratio:
-- Horizontal: 400, 600, 800px wide
-- Stacked: 300, 500px wide
+`brand/brand-guide.html` is the brand board a designer hands over: one page anyone on the team can open to use the brand correctly. Self-contained (SVGs inline, the brand font by Google Fonts link), no script, styled in the brand's own colours on white, readable when printed. It holds:
 
-### Favicons
+- The name and one-line description.
+- All nine logo versions in a grid, colour and black rows on white and the white row on a dark surface, each labelled with its file name and use: the mark for favicons, app icons, avatars and small spaces; horizontal for headers, READMEs and email signatures; stacked for splash screens, print and tall spaces. Minimum sizes: mark 32 px, lockups 120 px wide.
+- The palette: a large swatch per colour with name, role, hex, OKLCH and Tailwind class, the full 50 to 950 ramps, and the mark's own colours.
+- Typography: family, foundry, licence, source, the wordmark weight and letter-spacing, samples at the wordmark and regular weights, and where the files live.
+- The asset inventory: every file in `brand/` by folder, with its size or purpose and format.
 
-Use the `/favicon` skill if available. Otherwise, generate manually from the mark:
+A second model reviews it before it is shown.
 
-```bash
-# PNG sizes for favicons
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/favicon/favicon-16x16.png --export-width=16
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/favicon/favicon-32x32.png --export-width=32
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/favicon/apple-touch-icon.png --export-width=180
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/favicon/android-chrome-192x192.png --export-width=192
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/favicon/android-chrome-512x512.png --export-width=512
+## 7. Project wiring
 
-# ICO (multi-resolution)
-magick brand/favicon/favicon-16x16.png brand/favicon/favicon-32x32.png brand/favicon/favicon.ico
-```
+The agent asks which of these apply, then does them:
 
-Create `brand/favicon/site.webmanifest`:
-```json
-{
-  "name": "PROJECT_NAME",
-  "short_name": "PROJECT_NAME",
-  "icons": [
-    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
-  ],
-  "theme_color": "#HEX_OF_BRAND_COLOR",
-  "background_color": "#ffffff",
-  "display": "standalone"
-}
-```
+- README: the horizontal lockup at the top, centred, linked to the project's site, with a `width` attribute (around 280), because GitHub otherwise renders an SVG at full width.
+- Website or app: favicons in the static assets with their `<link>` tags, `<meta name="theme-color">` set to the primary, the webmanifest, and the mark in the header.
+- Tailwind: the scales as `--color-primary-50` through `--color-primary-950` in the `@theme` block.
+- npm: `homepage` in `package.json`.
 
-### Social images
-
-**OG image** (1280x640) — for GitHub social preview, Open Graph tags:
-```bash
-magick -size 1280x640 xc:white \
-  \( brand/svg/logo-horizontal-color.svg -resize 1100x -trim +repage \) \
-  -gravity center -composite \
-  brand/social/og-image-1280x640.png
-```
-
-The `-trim +repage` before `-gravity center` is critical — it strips the SVG's internal whitespace so ImageMagick centers the actual visual content, not the viewBox bounding box. Without this, the logo will appear off-center.
-
-**Platform icons:**
-- Discord server icon: 512x512 from the mark
-- GitHub avatar: 500x500 from the mark
-- npm icon: 256x256 from the mark
-
-```bash
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/social/discord-icon-512.png --export-width=512
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/social/github-avatar-500.png --export-width=500
-inkscape brand/svg/mark-color.svg --export-type=png --export-filename=brand/social/npm-icon-256.png --export-width=256
-```
-
-### Fonts README
-
-Create `brand/fonts/README.md` documenting the font choice, license, and source:
-
-```markdown
-# Brand Font
-
-**[Font Name]** by [Foundry]
-
-- Weight: 700 (Bold) for wordmark
-- License: SIL Open Font License
-- Source: [GitHub URL]
-
-The full font family archive is included for reference.
-```
-
-## Phase 6: Brand Guide
-
-Generate a comprehensive HTML brand guide page at `brand/brand-guide.html`. This is what a designer would deliver as a "brand style guide" or "brand board" — a single-page reference that anyone on the team can open to understand how to use the brand.
-
-The brand guide should include these sections:
-
-### 1. Header
-Project name and tagline/description at the top.
-
-### 2. Logo Versions
-Show all 9 SVG variants organized in a grid:
-- **Color** row: mark, horizontal lockup, stacked lockup (on white background)
-- **Black** row: same three (on white background)
-- **White** row: same three (on dark background, e.g., `#0f172a`)
-
-Label each with its filename and recommended usage:
-- **Mark** — favicons, app icons, social avatars, small spaces
-- **Horizontal** — headers, README badges, email signatures
-- **Stacked** — splash screens, print, when vertical space allows
-
-Include minimum size guidance: mark should not be displayed smaller than 32px, lockups not smaller than 120px wide.
-
-### 3. Color Palette
-Show each brand color as a large swatch with:
-- Color name and role (e.g., "Primary — buttons, links, focus rings")
-- Hex value
-- OKLCH value (if available)
-- Tailwind class (e.g., `bg-primary-500`)
-
-If a full Tailwind scale was generated, show the complete 50-950 ramp as a horizontal strip of swatches with labels.
-
-Show all logo-specific colors too (hull, sails, water, etc.) with their hex values.
-
-### 4. Typography
-- Font name, foundry, license
-- Wordmark weight and letter-spacing
-- Preview of the font at the wordmark weight, plus regular weight
-- Note the font source (Google Fonts, GitHub repo) and where files are stored in `brand/fonts/`
-
-### 5. Asset Inventory
-A table listing every file in the `brand/` directory with:
-- Filename
-- Dimensions or purpose
-- Format
-
-Organized by subdirectory (svg/, png/, favicon/, social/, fonts/).
-
-### Construction notes
-
-- **Self-contained HTML** — inline all SVGs directly, load the brand font via Google Fonts `<link>`. No external file references (the guide should work when opened from any location).
-- **No JavaScript** — pure HTML and CSS. This ensures it works everywhere and avoids security hook issues.
-- **Clean, professional design** — use the brand colors themselves to style the page. White background, brand-colored headings and accents.
-- **Print-friendly** — reasonable layout at standard page widths.
-
-After generating, open in Chrome for the user to review: `open -a "Google Chrome" brand/brand-guide.html`
-
-## Phase 7: Project Wiring (Optional)
-
-This phase is project-specific. Ask the user which of these apply:
-
-### README
-```html
-<p align="center">
-  <a href="PROJECT_URL">
-    <img src="brand/svg/logo-horizontal-color.svg" width="280" alt="PROJECT_NAME">
-  </a>
-</p>
-```
-
-GitHub renders SVGs from the repo inline. The `width` attribute prevents it from blowing up to full width. Wrap in `<a>` to link to the project's website.
-
-### Docs site / web app
-- Copy favicons to the static assets directory
-- Add favicon `<link>` tags to `<head>`
-- Add `<meta name="theme-color" content="#HEX">`
-- Add mark to the navbar/header
-
-### Tailwind theme
-If the user has a Tailwind scale, wire it into the CSS:
-```css
-@theme {
-  --color-primary-50: oklch(...);
-  --color-primary-100: oklch(...);
-  /* ... */
-  --color-primary-950: oklch(...);
-}
-```
-
-### GitHub
-- **Social preview**: repo Settings → Social preview → upload OG image (manual step)
-- **Avatar**: only applies if using a GitHub Organization (manual step)
-
-### npm
-- Add `"homepage"` to package.json pointing to the docs/website
-
-### Other platforms
-- Discord server icon (manual upload)
-- 1Password: note which account owns the Discord server
-
-Present manual steps clearly at the end — don't try to automate things that require browser UI interaction.
+Some steps need a person in a web UI: the GitHub social preview (repo Settings, Social preview), an organisation avatar, a Discord server icon. They are listed at the end with the file to upload for each.
 
 ## Checklist
 
-Before declaring done, verify:
-
-- [ ] 9 master SVGs with text converted to paths (no font dependencies)
-- [ ] PNG exports at all standard sizes
-- [ ] Favicon set (ico, 16, 32, 180, 192, 512, webmanifest)
-- [ ] OG image at 1280x640, visually centered
-- [ ] Platform icons (Discord 512, GitHub 500, npm 256)
-- [ ] Font files saved with README
-- [ ] Brand guide HTML generated and reviewed
-- [ ] All assets committed to `brand/` directory
-- [ ] Temporary preview files in `tmp/` cleaned up
-- [ ] Project wiring completed (if applicable)
-- [ ] Manual steps communicated to user
+- Nine master SVGs, no `<text>` left, each rendered and checked
+- PNGs at every size listed, favicon set with webmanifest, OG image visibly centred, platform icons
+- Fonts with their README
+- Brand guide reviewed by a second model, then shown
+- Everything committed under `brand/`, `tmp/` previews removed
+- Wiring done, manual steps listed with their files

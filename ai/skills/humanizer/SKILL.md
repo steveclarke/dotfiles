@@ -1,458 +1,165 @@
 ---
 name: humanizer
-version: 2.2.0
-description: "Remove signs of AI-generated writing from text. Use when editing or reviewing text to sound natural and human-written. Based on Wikipedia's 'Signs of AI writing' — catches em dash overuse, rule of three, AI vocabulary, vague attributions, inflated symbolism, negative parallelisms, passive voice. Not for agent-facing text."
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - AskUserQuestion
+description: Finds and removes the habits that mark prose as machine-written (em dashes, "not X but Y", groups of three, bolded list headers, padded closers) in drafts, reports, docs, pages and messages, including the agent's own. Use when asked to humanize, de-AI, clean up or tighten writing, or before handing over any long prose.
 ---
 
-# Humanizer: Remove AI Writing Patterns
+# Humanizer
 
-Identify and remove signs of AI-generated text to make writing sound more natural and human. Based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
+A model reads its own draft as fine because every phrase in it was the likeliest one to write. The likeliest phrase is the one readers have seen a thousand times, and it tells them nobody chose the words. This skill lists the habits that survive in frontier-model prose, each with a fix, and a way to catch them in text the agent wrote itself.
 
-## The One Principle Behind All 25 Patterns
+Contents: where it sits with the other writing rules, how to run the pass, the habits (19, each with a before and after), and text written for a machine.
 
-Orwell, 1946, "Politics and the English Language":
+## Where it sits with the other writing rules
 
-> Never use a metaphor, simile, or other figure of speech which you are used to seeing in print.
+- Messages Steve sends in his own voice follow the `my-voice` skill. It already bans em dashes, AI words, rule-of-three padding and motivational closers; this pass runs after drafting and never adds a voice of its own.
+- Writing to Steve follows global `AGENTS.md`, "Talking to Steve": answer first, plain and few words.
+- Docs and skills follow global `AGENTS.md`, "Documents": reference voice, third person, present tense.
 
-That single rule predicts nearly every pattern in this skill. A language model picks the most statistically likely next token — which is, by definition, the phrase you are most used to seeing in print. Em dash overuse, the rule of three, "delve," negative parallelisms, "stands as a testament to": these are not separate diseases. They are the same disease, and Orwell named it eighty years before the models existed.
+The pass removes habits. It adds no personality, opinions, asides or "mess": the target is the plainest version that says what the writer means. Facts stay as the source has them; where a vague claim needs a specific the source does not hold, the rewrite marks the gap rather than inventing one.
 
-Use this when a passage feels off but matches none of the numbered patterns. Ask: **have I seen this exact phrasing a thousand times?** If yes, rewrite it, even though it isn't on the list. The list is symptoms; this is the cause.
+## How to run the pass
 
-Orwell's remaining rules are already covered below — short words over long (#7), cut what you can (#22), no jargon where plain English works (#7), and his own escape hatch: *"Break any of these rules sooner than say anything outright barbarous."* Do not mangle a sentence to satisfy a rule.
+1. Scan mechanically first, because reading will not catch what the eye expects:
+   `grep -niE '—|–|\*\*[^*]+:\*\*|\b(delve|crucial|pivotal|robust|seamless|leverage|landscape|tapestry|testament|underscore|showcase|foster|navigate|realm|elevate|genuinely|honestly|quietly|truly|essentially|load-bearing)\b|not (just|only|merely)|it.s worth|here.s the thing' FILE`
+2. Read it sentence by sentence against the list below, asking of each: would a person writing this by hand have typed these exact words?
+3. Rewrite the hits, then read the result once more. Fixes breed new tics (every em dash turned into a colon reveal).
+4. Return the rewritten text. List the changes only if asked.
 
-## When NOT to Use This Skill
+## The habits
 
-This skill adds voice and personality. That is wrong for text whose reader is a machine.
+### Em dashes
 
-For agent-facing English — tool descriptions, error messages, system prompts, inter-agent instructions, skill files — use Simplified Technical English (ASD-STE100) instead: one meaning per word, active voice, simple tenses, ≤20-word sentences. Deliberately flat, deliberately voiceless. Exactly what you do not want here, and exactly what you do want there.
+The strongest single tell. A comma, a period or parentheses does the job. En dashes used as dashes count too; a range (9–5) is fine.
 
-Never run both on the same text. They pull in opposite directions.
+- Before: The fix was small — one line — but it took a day to find.
+- After: The fix was one line, but it took a day to find.
 
-## Your Task
+### "Not X, but Y" and its cousins
 
-When given text to humanize:
+"It's not just A, it's B", "This isn't about A. It's about B." A contrast nobody proposed.
 
-1. **Identify AI patterns** - Scan for the patterns listed below
-2. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
-3. **Preserve meaning** - Keep the core message intact. Specifics in the examples below are illustrative; use only facts in the source or supplied by the user, and mark where a specific is needed but missing.
-4. **Maintain voice** - Match the intended tone (formal, casual, technical, etc.)
-5. **Add voice where the tone allows** - For personal or opinion writing, give the text a human voice, not just a cleaned one. For reference, technical, or formal text, stop at removing the patterns.
+- Before: This isn't a bug in the parser. It's a gap in the spec.
+- After: The spec never says what happens with an empty file.
 
-The revised text sounds natural read aloud, varies its sentence structure, prefers specific details to vague claims, and uses simple constructions (is/are/has) where they fit.
+### Groups of three
 
----
+Three adjectives, three parallel clauses, three bullets where there are two real points.
 
-## PERSONALITY AND SOUL
+- Before: Fast, reliable and easy to maintain.
+- After: It deploys in under a minute and nobody has touched it since March.
 
-Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as obvious as slop. Good writing has a human behind it.
+### The colon or question reveal
 
-### Signs of soulless writing (even if technically "clean"):
-- Every sentence is the same length and structure
-- No opinions, just neutral reporting
-- No acknowledgment of uncertainty or mixed feelings
-- No first-person perspective when appropriate
-- No humor, no edge, no personality
-- Reads like a Wikipedia article or press release
+"The fix? A single flag." "Here's the thing:" "The result:" A setup line that delays the point.
 
-### How to add voice:
+- Before: The culprit? A stale cache.
+- After: A stale cache caused it.
 
-**Have opinions.** Don't just report facts - react to them. "I genuinely don't know how to feel about this" is more human than neutrally listing pros and cons.
+### Punchy fragments
 
-**Vary your rhythm.** Short punchy sentences. Then longer ones that take their time getting where they're going. Mix it up.
+Short sentences stacked for drama.
 
-**Acknowledge complexity.** Real humans have mixed feelings. "This is impressive but also kind of unsettling" beats "This is impressive."
+- Before: It works. Every time. No exceptions.
+- After: It has passed every run since the fix.
 
-**Use "I" when it fits.** First person isn't unprofessional - it's honest. "I keep coming back to..." or "Here's what gets me..." signals a real person thinking.
+### Bolded inline headers in lists
 
-**Let some mess in.** Perfect structure feels algorithmic. Tangents, asides, and half-formed thoughts are human.
+`- **Performance:** Performance improved...` repeats the header in the sentence. Bold is for the one thing a skimmer must not miss.
 
-**Be specific about feelings.** Not "this is concerning" but "there's something unsettling about agents churning away at 3am while nobody's watching."
+- Before: **Speed:** The new build is faster.
+- After: The build takes 40 seconds instead of three minutes.
 
-### Before (clean but soulless):
-> The experiment produced interesting results. The agents generated 3 million lines of code. Some developers were impressed while others were skeptical. The implications remain unclear.
+### Significance and legacy
 
-### After (has a pulse):
-> I genuinely don't know how to feel about this one. 3 million lines of code, generated while the humans presumably slept. Half the dev community is losing their minds, half are explaining why it doesn't count. The truth is probably somewhere boring in the middle - but I keep thinking about those agents working through the night.
+"marks a pivotal moment", "a testament to", "underscores the importance of", "sets the stage for", where the sentence should say what happened.
 
----
+- Before: The migration marks a key milestone in the platform's evolution.
+- After: All clients now run on the new database.
 
-## CONTENT PATTERNS
+### Tail clauses in -ing
 
-### 1. Undue Emphasis on Significance, Legacy, and Broader Trends
+"..., ensuring that...", "..., highlighting...", "..., making it easy to...". Usually an unproven claim bolted on.
 
-**Words to watch:** stands/serves as, is a testament/reminder, a vital/significant/crucial/pivotal/key role/moment, underscores/highlights its importance/significance, reflects broader, symbolizing its ongoing/enduring/lasting, contributing to the, setting the stage for, marking/shaping the, represents/marks a shift, key turning point, evolving landscape, focal point, indelible mark, deeply rooted
+- Before: We added retries, ensuring a seamless experience for users.
+- After: We added retries, so a dropped connection no longer fails the import.
 
-**Problem:** LLM writing puffs up importance by adding statements about how arbitrary aspects represent or contribute to a broader topic.
+### Avoiding "is" and "has"
 
-**Before:**
-> The Statistical Institute of Catalonia was officially established in 1989, marking a pivotal moment in the evolution of regional statistics in Spain. This initiative was part of a broader movement across Spain to decentralize administrative functions and enhance regional governance.
+"serves as", "stands as", "boasts", "features", "offers".
 
-**After:**
-> The Statistical Institute of Catalonia was established in 1989 to collect and publish regional statistics independently from Spain's national statistics office.
+- Before: The page serves as the single source of truth and features a full history.
+- After: The page is the record and keeps every past version.
 
----
+### Inflated vocabulary
 
-### 2. Undue Emphasis on Notability and Media Coverage
+delve, crucial, pivotal, robust, seamless, leverage, landscape, realm, navigate (figurative), foster, elevate, empower, streamline, comprehensive, key (adjective), additionally, moreover. The plain word, or nothing, reads better.
 
-**Words to watch:** independent coverage, local/regional/national media outlets, written by a leading expert, active social media presence
+- Before: This robust approach lets us leverage the existing cache.
+- After: This reuses the existing cache.
 
-**Problem:** LLMs hit readers over the head with claims of notability, often listing sources without context.
+### Intensifiers and sincerity markers
 
-**Before:**
-> Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers.
+genuinely, honestly, truly, really, quietly, deeply, incredibly, "to be clear". They imply the rest was less sincere or less true.
 
-**After:**
-> In a 2024 New York Times interview, she argued that AI regulation should focus on outcomes rather than methods.
+- Before: I genuinely think this quietly solves the problem.
+- After: I think this solves the problem.
 
----
+### Signposting and throat-clearing
 
-### 3. Superficial Analyses with -ing Endings
+"Let's dive in", "It's worth noting that", "It's important to remember", "In short", "At its core", "When it comes to".
 
-**Words to watch:** highlighting/underscoring/emphasizing..., ensuring..., reflecting/symbolizing..., contributing to..., cultivating/fostering..., encompassing..., showcasing...
+- Before: It's worth noting that the API rate-limits at 100 requests.
+- After: The API allows 100 requests a minute.
 
-**Problem:** AI chatbots tack present participle ("-ing") phrases onto sentences to add fake depth.
+### Hedges stacked on hedges
 
-**Before:**
-> The temple's color palette of blue, green, and gold resonates with the region's natural beauty, symbolizing Texas bluebonnets, the Gulf of Mexico, and the diverse Texan landscapes, reflecting the community's deep connection to the land.
+"could potentially", "may possibly", "it seems likely that it might". One hedge belongs where there is real doubt, with what the doubt is.
 
-**After:**
-> The temple uses blue, green, and gold colors. The architect said these were chosen to reference local bluebonnets and the Gulf coast.
+- Before: This could potentially cause issues in some cases.
+- After: This breaks if two users save in the same second.
 
----
+### Synonym cycling
 
-### 4. Promotional and Advertisement-like Language
+One thing given several names. Readers take a new word for a new thing, so the name repeats.
 
-**Words to watch:** boasts a, vibrant, rich (figurative), profound, enhancing its, showcasing, exemplifies, commitment to, natural beauty, nestled, in the heart of, groundbreaking (figurative), renowned, breathtaking, must-visit, stunning
+- Before: The importer reads the file. The tool then validates rows, and the utility writes them out.
+- After: The importer reads the file, validates the rows and writes them out.
 
-**Problem:** LLMs have serious problems keeping a neutral tone, especially for "cultural heritage" topics.
+### Summary and pep closers
 
-**Before:**
-> Nestled within the breathtaking region of Gonder in Ethiopia, Alamata Raya Kobo stands as a vibrant town with a rich cultural heritage and stunning natural beauty.
+"In summary...", "Overall, this sets us up for success", "Exciting times ahead", "Hope this helps!", "Let me know if you'd like me to...". The text stops when the content stops; an offer stays only when there is a real next step.
 
-**After:**
-> Alamata Raya Kobo is a town in the Gonder region of Ethiopia, known for its weekly market and 18th-century church.
+- Before: Overall, these changes position the project well for future growth.
+- After: (deleted)
 
----
+### Chat residue in content
 
-### 5. Vague Attributions and Weasel Words
+"Great question!", "You're absolutely right", "Certainly!", "Here is the updated document:" left in anything that is not a live reply.
 
-**Words to watch:** Industry reports, Observers have cited, Experts argue, Some critics argue, several sources/publications (when few cited)
+- Before: Here's a summary of the release notes: version 2.3 adds export.
+- After: Version 2.3 adds export.
 
-**Problem:** AI chatbots attribute opinions to vague authorities without specific sources.
+### Structure the text does not need
 
-**Before:**
-> Due to its unique characteristics, the Haolai River is of interest to researchers and conservationists. Experts believe it plays a crucial role in the regional ecosystem.
+Headings over three paragraphs, bullets for one idea, a table for two facts, bold every few words, Title Case Headings. Prose serves until the content has real parts.
 
-**After:**
-> The Haolai River supports several endemic fish species, according to a 2019 survey by the Chinese Academy of Sciences.
+- Before: ## Overview, then one bullet: "The script backs up the database."
+- After: The script backs up the database.
 
----
+### Passive that hides who
 
-### 6. Outline-like "Challenges and Future Prospects" Sections
+"Mistakes were made", "it was decided". The actor is named when known; passive is fine when the actor is unknown or does not matter.
 
-**Words to watch:** Despite its... faces several challenges..., Despite these challenges, Challenges and Legacy, Future Outlook
+- Before: It was determined that the config was not validated.
+- After: Nobody checked the config before the deploy.
 
-**Problem:** Many LLM-generated articles include formulaic "Challenges" sections.
+### Symmetry
 
-**Before:**
-> Despite its industrial prosperity, Korattur faces challenges typical of urban areas, including traffic congestion and water scarcity. Despite these challenges, with its strategic location and ongoing initiatives, Korattur continues to thrive as an integral part of Chennai's growth.
+Every paragraph three sentences, every bullet the same length, each section ending on a one-line takeaway. Length follows the content.
 
-**After:**
-> Traffic congestion increased after 2015 when three new IT parks opened. The municipal corporation began a stormwater drainage project in 2022 to address recurring floods.
+- Before: three bullets of eight words each, the last a takeaway ("This keeps things simple.").
+- After: two bullets of whatever length the facts need, no takeaway.
 
----
+## When the text is for a machine
 
-## LANGUAGE AND GRAMMAR PATTERNS
-
-### 7. Overused "AI Vocabulary" Words
-
-**High-frequency AI words:** Additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
-
-**Problem:** These words appear far more frequently in post-2023 text. They often co-occur.
-
-**Before:**
-> Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
-
-**After:**
-> Somali cuisine also includes camel meat, which is considered a delicacy. Pasta dishes, introduced during Italian colonization, remain common, especially in the south.
-
----
-
-### 8. Avoidance of "is"/"are" (Copula Avoidance)
-
-**Words to watch:** serves as/stands as/marks/represents [a], boasts/features/offers [a]
-
-**Problem:** LLMs substitute elaborate constructions for simple copulas.
-
-**Before:**
-> Gallery 825 serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces and boasts over 3,000 square feet.
-
-**After:**
-> Gallery 825 is LAAA's exhibition space for contemporary art. The gallery has four rooms totaling 3,000 square feet.
-
----
-
-### 9. Negative Parallelisms
-
-**Problem:** Constructions like "Not only...but..." or "It's not just about..., it's..." are overused.
-
-**Before:**
-> It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere. It's not merely a song, it's a statement.
-
-**After:**
-> The heavy beat adds to the aggressive tone.
-
----
-
-### 10. Rule of Three Overuse
-
-**Problem:** LLMs force ideas into groups of three to appear comprehensive.
-
-**Before:**
-> The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
-
-**After:**
-> The event includes talks and panels. There's also time for informal networking between sessions.
-
----
-
-### 11. Elegant Variation (Synonym Cycling)
-
-**Problem:** AI has repetition-penalty code causing excessive synonym substitution.
-
-**Before:**
-> The protagonist faces many challenges. The main character must overcome obstacles. The central figure eventually triumphs. The hero returns home.
-
-**After:**
-> The protagonist faces many challenges but eventually triumphs and returns home.
-
----
-
-### 12. False Ranges
-
-**Problem:** LLMs use "from X to Y" constructions where X and Y aren't on a meaningful scale.
-
-**Before:**
-> Our journey through the universe has taken us from the singularity of the Big Bang to the grand cosmic web, from the birth and death of stars to the enigmatic dance of dark matter.
-
-**After:**
-> The book covers the Big Bang, star formation, and current theories about dark matter.
-
----
-
-## STYLE PATTERNS
-
-### 13. Em Dash Overuse
-
-**Problem:** LLMs use em dashes (—) more than humans, mimicking "punchy" sales writing.
-
-**Before:**
-> The term is primarily promoted by Dutch institutions—not by the people themselves. You don't say "Netherlands, Europe" as an address—yet this mislabeling continues—even in official documents.
-
-**After:**
-> The term is primarily promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
-
----
-
-### 14. Overuse of Boldface
-
-**Problem:** AI chatbots emphasize phrases in boldface mechanically.
-
-**Before:**
-> It blends **OKRs (Objectives and Key Results)**, **KPIs (Key Performance Indicators)**, and visual strategy tools such as the **Business Model Canvas (BMC)** and **Balanced Scorecard (BSC)**.
-
-**After:**
-> It blends OKRs, KPIs, and visual strategy tools like the Business Model Canvas and Balanced Scorecard.
-
----
-
-### 15. Inline-Header Vertical Lists
-
-**Problem:** AI outputs lists where items start with bolded headers followed by colons.
-
-**Before:**
-> - **User Experience:** The user experience has been significantly improved with a new interface.
-> - **Performance:** Performance has been enhanced through optimized algorithms.
-> - **Security:** Security has been strengthened with end-to-end encryption.
-
-**After:**
-> The update improves the interface, speeds up load times through optimized algorithms, and adds end-to-end encryption.
-
----
-
-### 16. Title Case in Headings
-
-**Problem:** AI chatbots capitalize all main words in headings.
-
-**Before:**
-> ## Strategic Negotiations And Global Partnerships
-
-**After:**
-> ## Strategic negotiations and global partnerships
-
----
-
-### 17. Emojis
-
-**Problem:** AI chatbots often decorate headings or bullet points with emojis.
-
-**Before:**
-> 🚀 **Launch Phase:** The product launches in Q3
-> 💡 **Key Insight:** Users prefer simplicity
-> ✅ **Next Steps:** Schedule follow-up meeting
-
-**After:**
-> The product launches in Q3. User research showed a preference for simplicity. Next step: schedule a follow-up meeting.
-
----
-
-### 18. Curly Quotation Marks
-
-**Problem:** ChatGPT uses curly quotes (“...”) instead of straight quotes ("...").
-
-**Before:**
-> He said “the project is on track” but others disagreed.
-
-**After:**
-> He said "the project is on track" but others disagreed.
-
----
-
-## COMMUNICATION PATTERNS
-
-### 19. Collaborative Communication Artifacts
-
-**Words to watch:** I hope this helps, Of course!, Certainly!, You're absolutely right!, Would you like..., let me know, here is a...
-
-**Problem:** Text meant as chatbot correspondence gets pasted as content.
-
-**Before:**
-> Here is an overview of the French Revolution. I hope this helps! Let me know if you'd like me to expand on any section.
-
-**After:**
-> The French Revolution began in 1789 when financial crisis and food shortages led to widespread unrest.
-
----
-
-### 20. Knowledge-Cutoff Disclaimers
-
-**Words to watch:** as of [date], Up to my last training update, While specific details are limited/scarce..., based on available information...
-
-**Problem:** AI disclaimers about incomplete information get left in text.
-
-**Before:**
-> While specific details about the company's founding are not extensively documented in readily available sources, it appears to have been established sometime in the 1990s.
-
-**After:**
-> The company was founded in 1994, according to its registration documents.
-
----
-
-### 21. Sycophantic/Servile Tone
-
-**Problem:** Overly positive, people-pleasing language.
-
-**Before:**
-> Great question! You're absolutely right that this is a complex topic. That's an excellent point about the economic factors.
-
-**After:**
-> The economic factors you mentioned are relevant here.
-
----
-
-## FILLER AND HEDGING
-
-### 22. Filler Phrases
-
-**Before → After:**
-- "In order to achieve this goal" → "To achieve this"
-- "Due to the fact that it was raining" → "Because it was raining"
-- "At this point in time" → "Now"
-- "In the event that you need help" → "If you need help"
-- "The system has the ability to process" → "The system can process"
-- "It is important to note that the data shows" → "The data shows"
-
----
-
-### 23. Excessive Hedging
-
-**Problem:** Over-qualifying statements.
-
-**Before:**
-> It could potentially possibly be argued that the policy might have some effect on outcomes.
-
-**After:**
-> The policy may affect outcomes.
-
----
-
-### 24. Generic Positive Conclusions
-
-**Problem:** Vague upbeat endings.
-
-**Before:**
-> The future looks bright for the company. Exciting times lie ahead as they continue their journey toward excellence. This represents a major step in the right direction.
-
-**After:**
-> The company plans to open two more locations next year.
-
----
-
-### 25. Passive Voice Where Active Works
-
-**Problem:** The actor disappears. Nobody is responsible for anything, and sentences get longer to say less. Orwell's rule 4: never use the passive where you can use the active.
-
-**Before:**
-> Mistakes were made during the deployment. It has been determined that the configuration was not validated before the changes were applied.
-
-**After:**
-> We broke the deployment. Nobody validated the config before applying the changes.
-
-Passive is fine when the actor is genuinely unknown, irrelevant, or deliberately withheld ("the server was compromised" — you don't know by whom yet). It is not fine as a default, and it is not fine as a way to avoid naming who did something.
-
----
-
-## Output Format
-
-Provide:
-1. The rewritten text
-2. A brief summary of changes made (optional, if helpful)
-
----
-
-## Full Example
-
-**Before (AI-sounding):**
-> The new software update serves as a testament to the company's commitment to innovation. Moreover, it provides a seamless, intuitive, and powerful user experience—ensuring that users can accomplish their goals efficiently. It's not just an update, it's a revolution in how we think about productivity. Industry experts believe this will have a lasting impact on the entire sector, highlighting the company's pivotal role in the evolving technological landscape.
-
-**After (Humanized):**
-> The software update adds batch processing, keyboard shortcuts, and offline mode. Early feedback from beta testers has been positive, with most reporting faster task completion.
-
-**Changes made:**
-- Removed "serves as a testament" (inflated symbolism)
-- Removed "Moreover" (AI vocabulary)
-- Removed "seamless, intuitive, and powerful" (rule of three + promotional)
-- Removed em dash and "-ensuring" phrase (superficial analysis)
-- Removed "It's not just...it's..." (negative parallelism)
-- Removed "Industry experts believe" (vague attribution)
-- Removed "pivotal role" and "evolving landscape" (AI vocabulary)
-- Added specific features and concrete feedback
-
----
-
-## Reference
-
-This skill is based on [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup. The patterns documented there come from observations of thousands of instances of AI-generated text on Wikipedia.
-
-Key insight from Wikipedia: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
-
-That is George Orwell's first rule restated in statistics. See [Orwell's 6 Rules](https://sites.duke.edu/scientificwriting/orwells-6-rules/) (Duke Graduate School) for the 1946 original.
-
-For the opposite job — flattening English so a machine cannot misread it — see [ASD-STE100](https://www.asd-ste100.org/). For a reader-side test of whether a document works at all, see [ISO 24495-1:2023 plain language](https://www.iplfederation.org/iso-standard/): readers get what they need, can find it, understand it, and use it.
+Tool descriptions, error messages, system prompts and agent briefs lose these habits too, and want nothing added back: one meaning per word, active voice, short sentences, the aim and its reason stated once.
