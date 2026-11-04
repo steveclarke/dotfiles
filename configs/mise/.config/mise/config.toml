@@ -10,6 +10,9 @@ java = "27"
 node = "lts"
 "npm:@doist/todoist-cli" = "latest"
 "npm:@slidev/cli" = "latest"
+# Sunra's CLI: the aube npm backend refuses package names under 30 days old
+# (first published 2026-10-15), so until 2026-11-14 install it with
+# MISE_NPM_PACKAGE_MANAGER=npm mise install npm:@sunra/cli
 "npm:@sunra/cli" = "latest"
 "npm:@usebruno/cli" = "4.3.0"
 # Cloudflare CLI ships only betas; mise "latest" skips prereleases.
