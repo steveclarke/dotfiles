@@ -1,6 +1,6 @@
 ---
 name: branding
-description: Creates a project's brand identity end to end - the logo mark (drawn with today's best vector generators), wordmark font, colour palette, master SVGs refined in Inkscape, a full asset pack (PNGs, favicons, social images) and a brand guide page. Use for a logo, brand, brand colour, visual identity, favicon set or social preview image for any project.
+description: Creates a project's brand identity end to end: the logo mark (drawn with today's best vector generators), wordmark font, colour palette, master SVGs refined in Inkscape, a full asset pack (PNGs, favicons, social images) and a brand guide page. Use for a logo, brand, brand colour, visual identity, favicon set or social preview image for any project.
 ---
 
 # Branding
