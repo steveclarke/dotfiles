@@ -1,7 +1,7 @@
 ---
 name: doc-writer
 license: MIT
-description: Writes and restructures documents people read (specs, guides, setup instructions, plans, READMEs, reports, runbooks, briefs) with the answer first and detail layered by progressive disclosure, and measures reading level with bundled Flesch-Kincaid and common-vocabulary scorers. Use when writing, revising or reviewing any such document, or when asked for the reading level of a text. Not for chat replies, email replies or code comments.
+description: Writes and restructures documents people read (specs, guides, plans, READMEs, reports, runbooks, briefs) answer first, with progressive disclosure, and measures reading level with bundled Flesch-Kincaid and common-word scorers. Use when writing, revising or reviewing such a document, or when asked how readable a text is. Not for chat replies, email replies or code comments.
 ---
 
 # Doc writer
