@@ -56,18 +56,15 @@ often go wrong.
   before step 1, not at step 6.
 - Plan: the decision or go it needs, then steps sized in agent time, then
   risks only where they would change the decision.
-- README: what it does and the quickest working start; everything else links
-  to docs.
+- README: what it does and the quickest working start; the rest links to docs.
 - Report: the finding and what it means for the reader, then the evidence,
   with the scope and filters behind any search.
 
 ## Voice
 
-Docs are in reference voice, as Steve's global `AGENTS.md`, "Documents",
-defines it: third person, present tense, the why kept, no conversational
-commentary. One term per concept throughout, acronyms defined on first use,
-and prose a reader with English as a second language follows: short
-sentences, active voice, one idea per sentence, no idioms.
+Docs are in reference voice (Steve's global `AGENTS.md`, "Documents"). One
+term per concept, acronyms defined on first use, and prose a reader with
+English as a second language follows: short sentences, active voice, no idioms.
 
 ## Measure every draft
 
