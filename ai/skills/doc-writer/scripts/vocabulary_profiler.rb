@@ -2,7 +2,8 @@
 # frozen_string_literal: true
 
 # Vocabulary Profiler
-# Reads text from STDIN and reports what percentage uses the top 1000 basic English words
+# Reads text from STDIN and reports what percentage uses the top 1000 basic English words.
+# Pass --markdown to score only the prose of a markdown file.
 # Word list from: https://simple.wikipedia.org/wiki/Wikipedia:List_of_1000_basic_words
 
 TOP_1000_WORDS = %w[
@@ -86,6 +87,11 @@ def extract_words(text)
 end
 
 text = $stdin.read
+
+if ARGV.include?("--markdown")
+  require_relative "markdown_prose"
+  text = MarkdownProse.extract(text)
+end
 
 if text.strip.empty?
   warn "No input provided. Please pipe text to this script."
