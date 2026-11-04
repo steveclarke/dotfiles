@@ -1,146 +1,36 @@
 ---
 name: 1password
-description: "Fetch secrets and create/manage 1Password items via CLI. Use when needing API keys, tokens, or credentials, or storing new secrets. Ask for the op://Vault/Item/field reference, not the secret itself."
+description: "Creates and edits 1Password items with the `op` CLI so field types and names come out right, and reads secrets by reference. Use when storing or changing a credential, API key or login in 1Password, or when a command needs a secret."
 ---
 
 # 1Password CLI
 
-Use the 1Password CLI (`op`) to fetch and manage secrets without exposing them in plain text.
+Ask for the secret reference (`op://vault/item/field`, from "Copy Secret Reference" in 1Password), never the secret, and read it inside the command that needs it: `some-cli --token "$(op read 'op://vault/item/field')"`. TOTP and SSH keys read with `?attribute=otp` and `?ssh-format=openssh`. Never print a secret to the session.
 
-## Fetching Secrets
+Run the real `op` command and let the 1Password app prompt for sign-in. Over SSH to another Mac, `op` uses that Mac's app (`ssh <mac> 'op ...'`) and the Touch ID prompt appears on that Mac's screen, so use it when the person is at a different Mac from the agent. Where Hugo's docs cover an item or a non-interactive sign-in, they are the source of truth.
 
-Ask the user for their **1Password secret reference** (right-click field in 1Password → "Copy Secret Reference"):
+## Field types
 
-```bash
-# Read a secret value
-op read "op://Vault/Item/field"
-
-# Use in a command (secret never shown in shell history)
-some-cli --token "$(op read 'op://Vault/Item/api-key')"
-
-# Use as environment variable
-export API_KEY="$(op read 'op://Vault/Item/api-key')"
-```
-
-### Common Patterns
+A field with no type suffix is concealed, so a bare URL or username disappears behind dots. State the type on every field, in `op item create` and in `op item edit`:
 
 ```bash
-# CLI auth
-toggl auth "$(op read 'op://Employee/Toggl/api key')"
-gh auth login --with-token < <(op read 'op://Personal/GitHub/token')
-
-# Docker login
-docker login -u $(op read op://Vault/Docker/username) -p $(op read op://Vault/Docker/password)
+"Field Name[text]=value"        # visible
+"Field Name[concealed]=value"   # hidden
+"Field Name[url]=https://..."   # clickable
+"Field Name[delete]"            # remove
 ```
 
-### Reference Format
-
-```
-op://vault-name/item-name/field-name
-op://vault-name/item-name/section-name/field-name
-```
-
-Special fields:
-```bash
-op read "op://Vault/Item/one-time password?attribute=otp"      # TOTP
-op read "op://Vault/Item/private key?ssh-format=openssh"        # SSH key
-```
-
-## Creating Items
-
-### Field Type Syntax
+Conceal only real secrets: passwords, API keys, tokens. Client IDs, usernames, URLs, hostnames and ports stay `[text]` or `[url]`; if someone would read it aloud in a meeting, it is not a secret.
 
 ```bash
-"Field Name[text]=value"        # Plain text (visible)
-"Field Name[concealed]=value"   # Password/secret (hidden)
-"Field Name[url]=https://..."   # Clickable URL
-"Field Name[delete]"            # Remove a field
-```
-
-Default (no suffix) = concealed. **Always be explicit about field types.**
-
-### Principles
-
-1. **Only conceal actual secrets** — passwords, API keys, tokens. URLs, usernames, client IDs, hostnames, ports, and other non-sensitive identifiers must use `[text]` or `[url]`. If someone would read it aloud in a meeting, it's not a secret.
-2. **Use clear, descriptive field names** — Match the source terminology
-3. **Include context** — Add account info, notes, and details
-4. **Clean up template cruft** — Remove or set default fields from templates
-
-### OAuth API Credential
-
-```bash
-op item create --category="API Credential" --title="Service Name - App Name" --vault="VaultName" \
-  "Client ID[text]=ABC123" \
-  "Client Secret[concealed]=secret-value-here" \
-  "Account[text]=user@example.com" \
-  "Redirect URL[text]=http://localhost:8080" \
-  "Authorization URL[text]=https://service.com/oauth2/authorize" \
-  "Token Request URL[text]=https://api.service.com/oauth2/token" \
-  "Developer Portal[url]=https://developer.service.com" \
-  "notesPlain=Context about this credential and any gotchas."
-```
-
-### Simple API Key
-
-```bash
-op item create --category="API Credential" --title="Service Name API" --vault="VaultName" \
-  "API Key[concealed]=sk-xxxxxxxxxxxx" \
-  "Account[text]=user@example.com" \
-  "Documentation[url]=https://docs.service.com/api" \
-  "notesPlain=Used for X purpose. Rate limit: 1000/day."
-```
-
-### Database Credential
-
-```bash
-op item create --category="Database" --title="Production DB - ServiceName" --vault="VaultName" \
-  "type[text]=postgresql" \
-  "server[text]=db.example.com" \
-  "port[text]=5432" \
-  "database[text]=myapp_production" \
-  "username[text]=app_user" \
-  "password[concealed]=secret-password" \
-  "notesPlain=Read replica. Primary is on port 5433."
-```
-
-### Editing Existing Items
-
-When adding fields to existing items with `op item edit`, the same type rules apply — **always specify the field type explicitly**:
-
-```bash
-# WRONG — defaults to concealed, hides the URL and username
+# wrong: URL and username become concealed
 op item edit "My Item" "Section.URL=https://example.com" "Section.username=admin"
-
-# RIGHT — only the password is concealed
-op item edit "My Item" "Section.URL[url]=https://example.com" "Section.username[text]=admin" "Section.password[concealed]=secret"
+# right
+op item edit "My Item" "Section.URL[url]=https://example.com" "Section.username[text]=admin" "Section.password[concealed]=..."
 ```
 
-### Handling Template Fields
+## Naming and tidiness
 
-Some categories add default fields like `valid from` and `expires` set to epoch 0.
-
-```bash
-# Delete if not applicable
-op item edit "Item Name" --vault="VaultName" "valid from[delete]" "expires[delete]"
-
-# Set if applicable
-op item edit "Item Name" --vault="VaultName" "valid from=2026-01-27" "expires=2027-01-27"
-```
-
-### Field Naming
-
-| Bad | Good |
-|-----|------|
-| `credential` | `Client ID` |
-| `token_uri` | `Token Request URL` |
-| `secret` | `Client Secret` or `API Key` |
-
-Match the terminology from the service's docs.
-
-## Prerequisites
-
-- 1Password app installed with CLI integration enabled
-- Desktop app integration handles sign-in: run the real `op read`/`op item` command and let the app prompt
-- Check vaults: `op vault list`
-- Over SSH to another Mac, `op` uses that Mac's 1Password app: run `ssh <mac> 'op ...'`. The Touch ID prompt appears on that Mac's screen. Use it when the person is sitting at a different Mac from the agent, so they can approve where they are instead of signing in again
-- Docs: https://developer.1password.com/docs/cli
+- Name fields as the service's docs do: `Client ID`, `Token Request URL`, `Client Secret` or `API Key`, never `credential`, `token_uri` or `secret`.
+- Title items `Service - App` and put the account, the purpose and any rate limit or gotcha in `notesPlain`.
+- Template categories add fields such as `valid from` and `expires`, set to epoch 0. Delete them (`"valid from[delete]" "expires[delete]"`) or set real dates.

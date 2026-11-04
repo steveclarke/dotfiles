@@ -1,14 +1,13 @@
 ---
 name: simplify
-description: "Review recently changed code for reuse, simplification, efficiency, and consistency cleanups, then apply the fixes. Quality only — doesn't hunt for bugs. Triggers on 'simplify', 'clean this up', 'simplify this diff'."
+description: "Reviews the current diff for duplication, dead code, needless abstraction and inconsistency with surrounding code, then applies the high-confidence fixes. Quality cleanup only, not a bug hunt. Use on 'simplify', 'clean this up' or 'simplify this diff', and from ship."
 ---
 
 # Simplify
 
-Standalone version of the Simplify gate `ship` runs inline. Use this
-directly for a lightweight cleanup pass on whatever you're currently
-working on, without running the rest of ship's pre-merge pipeline (clean
-working tree requirement, Code Review, PR creation, etc.).
+A lightweight cleanup pass on the current diff. `ship` runs it when a repo
+documents no review path of its own. It exists for harnesses without a
+built-in `/simplify`, such as Codex.
 
 **Contract:** the current diff introduces no avoidable complexity.
 

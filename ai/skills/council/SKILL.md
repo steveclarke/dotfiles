@@ -13,7 +13,7 @@ Adapted from Andrej Karpathy's LLM Council. He dispatches queries to multiple mo
 
 ## When to Run the Council
 
-The council is for questions where being wrong is expensive.
+The council is for questions where being wrong is expensive. A session spawns 11 sub-agents (5 advisors, 5 reviewers, 1 chairman), so a question with one right answer, a creation task or a summary is answered directly instead.
 
 **Good council questions:**
 - "Should I build this as a multi-tenant SaaS or single-tenant first?"
@@ -21,11 +21,6 @@ The council is for questions where being wrong is expensive.
 - "I'm thinking of pivoting from X to Y. Am I crazy?"
 - "Should I hire for this role or build an automation first?"
 - "We're choosing between these two architecture approaches"
-
-**Bad council questions:**
-- "What's the capital of France?" (one right answer)
-- "Write me a tweet" (creation task, not a decision)
-- "Summarize this article" (processing task, not judgment)
 
 If you already know the answer and just want validation, the council will tell you things you don't want to hear. That's the point.
 
@@ -81,7 +76,7 @@ Save the framed question for the transcript.
 
 ### Step 2: Convene the Council (5 sub-agents in parallel)
 
-Spawn all 5 advisors simultaneously as sub-agents. Each gets:
+Spawn all 5 advisors simultaneously as sub-agents (sequential spawning lets earlier answers bleed into later ones). Each gets:
 
 1. Their advisor identity and thinking style
 2. The framed question
@@ -111,7 +106,7 @@ Keep it tight enough to read beside four other responses. No preamble. Go straig
 
 This is the step that makes the council more than just "ask 5 times." It's the core of Karpathy's insight.
 
-Collect all 5 advisor responses. **Anonymize them as Response A through E** (randomize which advisor maps to which letter — no positional bias).
+Collect all 5 advisor responses. Anonymize them as Response A through E, randomizing which advisor maps to which letter: reviewers who know who said what defer to a thinking style instead of judging the argument.
 
 Spawn 5 new sub-agents. Each reviewer sees all 5 anonymized responses and answers three questions:
 
@@ -158,7 +153,7 @@ Keep the review short and direct.
 
 ### Step 4: Chairman Synthesis
 
-One agent gets everything: the original question, all 5 advisor responses (de-anonymized), and all 5 peer reviews.
+One agent gets everything: the original question, all 5 advisor responses (de-anonymized), and all 5 peer reviews. The chairman may side with a lone dissenter when that advisor's reasoning is the strongest.
 
 The chairman produces the final council output:
 
@@ -192,7 +187,7 @@ ADVISOR RESPONSES:
 PEER REVIEWS:
 [all 5 peer reviews]
 
-Produce the council verdict using this exact structure:
+Produce the council verdict in this structure:
 
 ## Where the Council Agrees
 [Points multiple advisors converged on independently. High-confidence signals.]
@@ -224,11 +219,3 @@ Then save the full transcript as `council-transcript-[YYYY-MM-DD-HHMM].md` in th
 - The chairman's full synthesis
 
 This transcript is the artifact. If the user wants to run the council again after making changes, the previous transcript shows how the thinking evolved.
-
-## Important Notes
-
-- **Always spawn all 5 advisors in parallel.** Sequential spawning wastes time and lets earlier responses bleed into later ones.
-- **Always anonymize for peer review.** If reviewers know which advisor said what, they'll defer to certain thinking styles instead of evaluating on merit.
-- **The chairman can disagree with the majority.** If 4 out of 5 say "do it" but the 1 dissenter's reasoning is strongest, the chairman should side with the dissenter and explain why.
-- **Don't council trivial questions.** If there's one right answer, just answer it.
-- **Token budget awareness.** This skill spawns 11 sub-agents (5 advisors + 5 reviewers + 1 chairman). It's thorough but expensive. Worth it for real decisions, overkill for minor ones.
