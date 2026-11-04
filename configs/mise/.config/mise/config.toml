@@ -10,6 +10,7 @@ java = "27"
 node = "lts"
 "npm:@doist/todoist-cli" = "latest"
 "npm:@slidev/cli" = "latest"
+"npm:@sunra/cli" = "latest"
 "npm:@usebruno/cli" = "4.3.0"
 # Cloudflare CLI ships only betas; mise "latest" skips prereleases.
 "npm:cf" = "1.0.0-beta.27"
