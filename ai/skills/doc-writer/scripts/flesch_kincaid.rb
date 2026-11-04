@@ -2,7 +2,8 @@
 # frozen_string_literal: true
 
 # Flesch-Kincaid Grade Level Calculator
-# Reads text from STDIN and outputs the grade level
+# Reads text from STDIN and outputs the grade level.
+# Pass --markdown to score only the prose of a markdown file.
 
 def count_syllables(word)
   word = word.downcase.gsub(/[^a-z]/, "")
@@ -46,6 +47,11 @@ def flesch_kincaid_grade_level(text)
 end
 
 text = $stdin.read
+
+if ARGV.include?("--markdown")
+  require_relative "markdown_prose"
+  text = MarkdownProse.extract(text)
+end
 
 if text.strip.empty?
   warn "No input provided. Please pipe text to this script."
