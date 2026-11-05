@@ -34,3 +34,10 @@ if o.dictation_installed and o.dictation_installed() then
   o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
   o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
 end
+
+-- Caps Lock as a second push-to-talk key, beside Omarchy's Right Alt, so
+-- either hand can dictate. Superwhisper's own hold key can't be Caps Lock.
+-- code:66 is Caps Lock (evdev 58 + 8); input.lua turns its own job off.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind_hold("code:66", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop", { ignore_mods = true })
+end
