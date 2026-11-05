@@ -20,7 +20,7 @@ state_file = "auto"
 # Known cost: the daemon occasionally wedges at 100% CPU and stops responding
 # to the hotkey. Fix is `voxkick`. That is a worse day than losing Caps Lock
 # would be, so the grabber stays.
-enabled = true
+enabled = false
 key = "CAPSLOCK"
 modifiers = []
 mode = "push_to_talk"

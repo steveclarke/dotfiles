@@ -1,84 +1,29 @@
--- Personal keybinding overrides. Ported from bindings.conf on 2026-08-13 during
--- the Omarchy 4 upgrade, which converted Hyprland's config to Lua and left every
--- .conf file inert.
---
--- See current bindings: omarchy menu keybindings --print
---
--- Roughly half of the old bindings.conf became redundant: Quattro now ships
--- defaults for Terminal, Tmux, Browser, File manager, Passwords, ChatGPT, Grok,
--- YouTube, WhatsApp, Google Messages, X, X Post and Music TUI on the same keys.
--- Only the genuinely personal ones are kept below.
+-- Keep only your personal keybinding overrides here. Add new bindings or
+-- unbind defaults before replacing them.
 
--- Applications not covered by Omarchy's defaults ----------------------------
+-- See current bindings and descriptions:
+--   omarchy menu keybindings --print
 
-o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
-o.bind("SUPER + SHIFT + N", "Editor", "omarchy-launch-editor")
-o.bind("SUPER + SHIFT + D", "Docker", "omarchy-launch-tui lazydocker")
--- o.launch_sole wraps the command in uwsm-app itself, so pass it bare.
-o.bind("SUPER + SHIFT + O", "Obsidian",
-  o.launch_sole("^obsidian$", "obsidian -disable-gpu --enable-wayland-ime"))
-o.bind("SUPER + SHIFT + E", "Email", o.launch_webapp("https://app.hey.com"))
-o.bind("SUPER + SHIFT + P", "Google Photos",
-  o.launch_webapp_sole("Google Photos", "https://photos.google.com/"))
+-- To disable every Omarchy default binding, set this in
+-- ~/.config/hypr/hyprland.lua before require("default.hypr.omarchy"), then add
+-- only the bindings you want below:
+--   omarchy_default_bindings = false
 
--- SUPER + SHIFT + C is "Calendar" in Quattro's defaults. Unbind it first; this
--- key has meant VS Code here for years. Calendar is still on SUPER + CTRL + ALT + D.
-hl.unbind("SUPER + SHIFT + C")
-o.bind("SUPER + SHIFT + C", "VS Code", "setsid uwsm-app -- code")
+-- To disable all preinstalled app/webapp bindings, set:
+--   omarchy_preinstalled_bindings = false
 
--- Dictation ----------------------------------------------------------------
--- Right Alt push-to-talk is NOT bound here. It is handled by voxtype's own
--- evdev grabber ([hotkey] in ~/.config/voxtype/config.toml), because Hyprland
--- never fires a release event for a bare modifier. Do not try to move it here;
--- it has been tested twice and the release edge never arrives.
---
--- Omarchy's stock binds stay as they are: SUPER + CTRL + X toggles dictation,
--- SUPER + CTRL + V opens the clipboard manager to recover a lost transcript.
--- Stock F9 is unusable on the MX Keys, whose F-row needs Fn held.
+-- Add a new binding.
+-- o.bind("SUPER + SHIFT + R", "SSH", "alacritty -e ssh your-server")
 
--- Dictation toggle ---------------------------------------------------------
--- Right Alt (X11 keycode 108 = evdev 100 + 8) toggles dictation: press to
--- start, press again to stop. Caps Lock is the hold-to-talk key, handled by
--- voxtype's own evdev grabber.
---
--- A toggle only needs the key-down edge, which Hyprland does deliver for a bare
--- modifier. It is the key-UP edge that never arrives, which is why hold-to-talk
--- cannot live here and stays on the grabber.
---
--- See docs/dictation.md in the hugo repo for the full constraint list.
-o.bind("code:108", "Toggle dictation", "voxtype record toggle")
+-- Change an existing binding by unbinding it first, then binding the key again.
+-- This example changes SUPER+SPACE from the launcher to the Omarchy root menu.
+-- hl.unbind("SUPER + SPACE")
+-- o.bind("SUPER + SPACE", "Omarchy menu", "omarchy-menu toggle root")
 
--- Mouse --------------------------------------------------------------------
--- Middle-click drag to move floating windows, no keyboard needed.
-o.bind("mouse:274", "Move window", hl.dsp.window.drag(), { mouse = true })
+-- Disable a default binding without replacing it.
+-- hl.unbind("SUPER + SHIFT + B")
 
--- Monitor handoff ----------------------------------------------------------
--- The desk monitors are cabled to two machines. This brings them all HERE
--- over DDC/CI instead of menu-diving on the monitor OSD. It runs the Screen
--- Push plugin's engine (github.com/steveclarke/omarchy-screenpush); the desk,
--- its computers and input codes live in ~/.config/screenpush/desks.json,
--- written by the plugin's setup sheet, and are machine-specific.
---
--- One-way on purpose: each machine has its own keyboard now, so the key on
--- each side means "I am here, send me the screens". The earlier toggle was
--- for a Mac with no input device of its own.
---
--- It works blind - Hyprland still gets the keypress with no picture on
--- screen - which is what makes it a real recovery rather than a convenience.
--- It calls the engine directly, not the shell's IPC, so it still works while
--- the shell is dead or restarting. Absolute path: Hyprland launches binds
--- with a PATH that lacks ~/bin and may not go through a shell for "$HOME".
-o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
-  os.getenv("HOME") .. "/.config/omarchy/plugins/io.github.steveclarke.screenpush/bin/screenpush switch this")
-
--- Disarmed bindings --------------------------------------------------------
-
--- SUPER + SHIFT + SPACE toggles the top bar, and sits one Shift away from
--- SUPER + SPACE (the Omarchy menu), so it gets fat-fingered. Under Waybar this
--- cost a bar-less login that went undiagnosed for two months, because anything
--- restarting the bar in-session brought it back and hid the evidence. The same
--- hazard applies to Quattro's bar, so it stays disarmed. No replacement.
-hl.unbind("SUPER + SHIFT + SPACE")
-
--- Mint password window.
-o.bind("SUPER + CTRL + M", "Mint", "/usr/bin/mint gui --toggle")
+-- Logitech MX Keys examples:
+-- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
+-- o.bind("SUPER + H", nil, "voxtype record toggle")
+-- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")

@@ -1,26 +1,20 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 -- List current monitors and supported resolutions with: hyprctl monitors all
---
--- The actual layout is NOT written here. It is managed by hyprmoncfg, which
--- keys each panel by make/model/serial rather than DP port and re-applies the
--- matching profile automatically on plug/unplug:
---
---   hyprmoncfg              open the TUI: drag to arrange, `s` to save
---   hyprmoncfg save <name>  capture the current live layout as a profile
---   hyprmoncfg profiles     list saved profiles
---
--- This file holds only the things that must survive hyprmoncfg overwriting its
--- own output, since it rewrites its target file wholesale.
 
 local omarchy_gdk_scale = 2
+local omarchy_monitor_scale = "auto"
 
 hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy_monitor_scale })
 
--- Catch-all for any panel that has no profile rule yet. Specific rules win over
--- this one, so it cannot override the generated layout below - it just means a
--- newly attached monitor lights up instead of staying blank.
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+-- Configure a specific monitor.
+-- hl.monitor({ output = "DP-2", mode = "2560x1440@144", position = "0x0", scale = 1 })
 
--- The generated layout is NOT loaded here. hyprmoncfg maintains its own
--- include at the end of hyprland.lua (see `hyprmoncfg doctor`), and loading it
--- from here as well just applied the same rules twice.
+-- Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°).
+-- hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = 1, transform = 1 })
+
+-- uber-om desk: which Dell is left and which is right, so the mouse crosses to
+-- the right screen. Scale stays Omarchy's default. Kept during the 2026-11
+-- vanilla trial; see infrastructure/omarchy/set-aside-2026-11.md in hugo.
+hl.monitor({ output = "desc:Dell Inc. DELL S2721QS D0X1M43", mode = "preferred", position = "0x0", scale = omarchy_monitor_scale })
+hl.monitor({ output = "desc:Dell Inc. DELL S2721QS 3QL0M43", mode = "preferred", position = "auto-right", scale = omarchy_monitor_scale })
