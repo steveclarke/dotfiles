@@ -41,3 +41,22 @@ end
 if o.dictation_installed and o.dictation_installed() then
   o.bind_hold("code:66", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop", { ignore_mods = true })
 end
+
+-- Monitor handoff ----------------------------------------------------------
+-- The desk monitors are cabled to two machines. This brings them all HERE
+-- over DDC/CI instead of menu-diving on the monitor OSD. It runs the Screen
+-- Push plugin's engine (github.com/steveclarke/omarchy-screenpush); the desk,
+-- its computers and input codes live in ~/.config/screenpush/desks.json,
+-- written by the plugin's setup sheet, and are machine-specific.
+--
+-- One-way on purpose: each machine has its own keyboard now, so the key on
+-- each side means "I am here, send me the screens". The earlier toggle was
+-- for a Mac with no input device of its own.
+--
+-- It works blind - Hyprland still gets the keypress with no picture on
+-- screen - which is what makes it a real recovery rather than a convenience.
+-- It calls the engine directly, not the shell's IPC, so it still works while
+-- the shell is dead or restarting. Absolute path: Hyprland launches binds
+-- with a PATH that lacks ~/bin and may not go through a shell for "$HOME".
+o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
+  os.getenv("HOME") .. "/.config/omarchy/plugins/io.github.steveclarke.screenpush/bin/screenpush switch this")
