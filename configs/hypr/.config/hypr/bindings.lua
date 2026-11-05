@@ -60,3 +60,8 @@ end
 -- with a PATH that lacks ~/bin and may not go through a shell for "$HOME".
 o.bind("SUPER + SHIFT + H", "Bring the monitors to this machine",
   os.getenv("HOME") .. "/.config/omarchy/plugins/io.github.steveclarke.screenpush/bin/screenpush switch this")
+
+-- Snap Layouts plugin (github.com/n0rthstar88/omarchy-snap-layouts): open the
+-- Windows 11-style layout picker for the focused window. Drag a floating
+-- window to the top of the screen for the same picker.
+o.bind("SUPER + Z", "Snap layouts", hl.dsp.event("io.github.n0rthstar88.snap-layouts:toggle"))
