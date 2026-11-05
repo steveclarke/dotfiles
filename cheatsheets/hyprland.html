@@ -26,7 +26,7 @@
     --notes-bg: #f8fafc;
   }
 
-  @page { size: letter; margin: 0.3in; }
+  @page { size: letter landscape; margin: 0.3in; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -68,7 +68,7 @@
 
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px 12px;
   }
 
@@ -281,244 +281,186 @@
     border-top: 1px solid var(--rule);
   }
   .layout-hint kbd { margin: 0 1px; }
+
+  .hero { grid-column: 1 / -1; min-width: 0; }
+  .grid > section { min-width: 0; }
+  body { zoom: 0.84; padding-right: 6px; }
+  .cols { column-count: 3; column-gap: 14px; margin-top: 4px; }
+  .cols section { display: block; }
+  .grid { grid-template-columns: 1fr !important; }
+  .hero-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-top: 3px; }
+  .card { background: var(--layout-bg); border: 1px solid #fde68a; border-radius: 4px; padding: 3px 6px; color: var(--ink); }
+  .card .k { display: block; margin-bottom: 3px; }
+  .card .k kbd { font-size: 9pt; background: white; border-color: #fcd34d; }
+  .card b { display: block; font-size: 8.5pt; }
+  .card span.d { font-size: 7pt; color: var(--muted); }
+  .screens { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .screen { border: 1.5px solid var(--workspaces); border-radius: 4px; padding: 3px 6px; background: white; color: var(--ink); }
+  .screen .monitor-label { color: var(--workspaces); }
+  .ws-strip { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+  .ws-strip div { background: var(--workspaces-bg); border: 1px solid #a7f3d0; border-radius: 3px; text-align: center; font-weight: 800; font-size: 8.5pt; color: #047857; padding: 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Hyprland <small>cheatsheet</small></h1>
+  <h1>Omarchy 4.5 <small>uber-om cheatsheet · November 2026</small></h1>
   <div class="meta">
-    <kbd>◆</kbd> = Super (Win/Mod key) <span class="sep">·</span> bindings via Omarchy + custom
+    <kbd>◆</kbd> = Super (Win key) <span class="sep">·</span> forgot one? <kbd>◆ K</kbd> searches them all
   </div>
 </header>
 
 <div class="grid">
 
-  <section class="workspaces layout-hero">
-    <h2>Monitor &amp; Workspace Layout</h2>
-    <div class="monitor-grid">
-      <div class="monitor">
-        <div class="monitor-label"><span class="pos">Left</span> <span class="gpu">HDMI · dGPU</span></div>
-        <div class="ws-row">
-          <div class="ws-tile">
-            <span class="num">4</span>
-            <span class="code">PR</span>
-            <span class="name">Prod</span>
-            <span class="app">Slack · Todoist · 1Password</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">5</span>
-            <span class="code">DL</span>
-            <span class="name">DevL</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">6</span>
-            <span class="code">DB</span>
-            <span class="name">Database</span>
-            <span class="app">DataGrip</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="monitor primary">
-        <div class="monitor-label"><span class="pos">Middle · Primary</span> <span class="gpu">DP-2 · dGPU</span></div>
-        <div class="ws-row">
-          <div class="ws-tile">
-            <span class="num">1</span>
-            <span class="code">MN</span>
-            <span class="name">Main</span>
-            <span class="app">Chrome</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">2</span>
-            <span class="code">DV</span>
-            <span class="name">Dev</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">3</span>
-            <span class="code">MC</span>
-            <span class="name">Misc</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="monitor">
-        <div class="monitor-label"><span class="pos">Right</span> <span class="gpu">DP-4 · iGPU</span></div>
-        <div class="ws-row">
-          <div class="ws-tile">
-            <span class="num">7</span>
-            <span class="code">DR</span>
-            <span class="name">DevR</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">8</span>
-            <span class="code">CH</span>
-            <span class="name">Chat</span>
-            <span class="app">Telegram · WhatsApp · Discord</span>
-          </div>
-          <div class="ws-tile">
-            <span class="num">9</span>
-            <span class="code">MS</span>
-            <span class="name">Music</span>
-            <span class="app">Spotify</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="layout-hint">
-      <kbd>◆ 1</kbd> … <kbd>9</kbd> switch · <kbd>◆ Shift 1</kbd> … <kbd>9</kbd> move window · top-row digits and numpad both work
+  <section class="layout hero">
+    <h2>Most used</h2>
+    <div class="hero-grid">
+      <div class="card"><span class="k"><kbd>◆ T</kbd></span><b>Float / tile this window</b><span class="d">Pull it out to move and resize; press again to drop it back in</span></div>
+      <div class="card"><span class="k"><kbd>◆ L</kbd></span><b>Cycle workspace layout</b><span class="d">Tiling → scrolling → floating with dock. <kbd>◆ Alt L</kbd> goes back</span></div>
+      <div class="card"><span class="k"><kbd>◆ M</kbd></span><b>Minimize to the dock</b><span class="d">Dock shows on floating workspaces</span></div>
+      <div class="card"><span class="k"><kbd>◆ O</kbd></span><b>Pop out &amp; pin</b><span class="d">Floats and follows you to every workspace</span></div>
+      <div class="card"><span class="k"><kbd>Hold Caps Lock</kbd></span><b>Dictate (push-to-talk)</b><span class="d">Or hold <kbd>Right Alt</kbd> · Superwhisper</span></div>
+      <div class="card"><span class="k"><kbd>Alt Space</kbd></span><b>Dictation on / off</b><span class="d">Also <kbd>◆ Ctrl X</kbd> · <kbd>Esc</kbd> cancels</span></div>
+      <div class="card"><span class="k"><kbd>◆ Space</kbd></span><b>Omarchy menu</b><span class="d">Apps launcher: <kbd>◆ Alt Space</kbd></span></div>
+      <div class="card"><span class="k"><kbd>◆ Shift H</kbd></span><b>Bring monitors here</b><span class="d">Screen Push; works with a blank screen</span></div>
     </div>
   </section>
 
+  <section class="workspaces hero">
+    <h2>Screens &amp; workspaces</h2>
+    <div class="screens">
+      <div class="screen"><div class="monitor-label"><span class="pos">Left screen</span></div>
+        <div class="ws-strip"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>0</div></div></div>
+      <div class="screen"><div class="monitor-label"><span class="pos">Right screen</span></div>
+        <div class="ws-strip"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>0</div></div></div>
+    </div>
+    <div class="layout-hint">
+      Each screen has its own ten. <kbd>◆ 1</kbd> … <kbd>◆ 0</kbd> switch on the screen you're on <span class="sep">·</span>
+      <kbd>◆ Shift 1</kbd> … <kbd>0</kbd> move window <span class="sep">·</span>
+      <kbd>◆ Shift Ctrl ←→</kbd> window to other screen <span class="sep">·</span>
+      <kbd>Ctrl Alt Tab</kbd> focus other screen
+    </div>
+  </section>
+
+</div>
+<div class="cols">
   <section class="apps">
     <h2>Apps</h2>
     <table>
       <tr><td class="action">Terminal</td><td class="keys"><kbd>◆ Return</kbd></td></tr>
-      <tr><td class="action">Tmux session</td><td class="keys"><kbd>◆ Alt Return</kbd></td></tr>
-      <tr><td class="action">Browser</td><td class="keys"><kbd>◆ Shift B</kbd> <span class="sep">·</span> <kbd>◆ Shift Return</kbd></td></tr>
-      <tr><td class="action">Browser (private)</td><td class="keys"><kbd>◆ Shift Alt B</kbd></td></tr>
-      <tr><td class="action">File manager</td><td class="keys"><kbd>◆ Shift F</kbd></td></tr>
-      <tr><td class="action">File manager (cwd)</td><td class="keys"><kbd>◆ Shift Alt F</kbd></td></tr>
-      <tr><td class="action">Editor (Neovim)</td><td class="keys"><kbd>◆ Shift N</kbd></td></tr>
-      <tr><td class="action">VS Code</td><td class="keys"><kbd>◆ Shift C</kbd></td></tr>
-      <tr><td class="action">Obsidian</td><td class="keys"><kbd>◆ Shift O</kbd></td></tr>
-      <tr><td class="action">Typora</td><td class="keys"><kbd>◆ Shift W</kbd></td></tr>
-      <tr><td class="action">LazyDocker</td><td class="keys"><kbd>◆ Shift D</kbd></td></tr>
-      <tr><td class="action">Spotify</td><td class="keys"><kbd>◆ Shift M</kbd></td></tr>
-      <tr><td class="action">Telegram</td><td class="keys"><kbd>◆ Shift G</kbd></td></tr>
-      <tr><td class="action">1Password</td><td class="keys"><kbd>◆ Shift /</kbd></td></tr>
+      <tr><td class="action">Herdr · Tmux</td><td class="keys"><kbd>◆ Ctrl Return</kbd> <span class="sep">·</span> <kbd>◆ Alt Return</kbd></td></tr>
+      <tr><td class="action">Quake console (drop-down)</td><td class="keys"><kbd>◆ `</kbd> <span class="sep">·</span> send window <kbd>◆ Shift `</kbd></td></tr>
+      <tr><td class="action">Browser · private</td><td class="keys"><kbd>◆ Shift B</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt B</kbd></td></tr>
+      <tr><td class="action">File manager · here</td><td class="keys"><kbd>◆ Shift F</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt F</kbd></td></tr>
+      <tr><td class="action">Editor · Obsidian</td><td class="keys"><kbd>◆ Shift N</kbd> <span class="sep">·</span> <kbd>◆ Shift O</kbd></td></tr>
+      <tr><td class="action">Omawrite</td><td class="keys"><kbd>◆ Shift W</kbd></td></tr>
+      <tr><td class="action">Agent</td><td class="keys"><kbd>◆ Shift Ctrl A</kbd></td></tr>
+      <tr><td class="action">Passwords (1Password)</td><td class="keys"><kbd>◆ Shift /</kbd></td></tr>
+      <tr><td class="action">Music · music TUI</td><td class="keys"><kbd>◆ Shift M</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt M</kbd></td></tr>
+      <tr><td class="action">Signal</td><td class="keys"><kbd>◆ Shift G</kbd></td></tr>
+      <tr><td class="action">Docker</td><td class="keys"><kbd>◆ Shift D</kbd></td></tr>
+      <tr><td class="action">Calculator · Activity</td><td class="keys"><kbd>◆ Shift Q</kbd> <span class="sep">·</span> <kbd>◆ Shift T</kbd></td></tr>
     </table>
   </section>
 
   <section class="apps">
     <h2>Web Apps</h2>
     <table>
-      <tr><td class="action">ChatGPT</td><td class="keys"><kbd>◆ Shift A</kbd></td></tr>
-      <tr><td class="action">Grok</td><td class="keys"><kbd>◆ Shift Alt A</kbd></td></tr>
-      <tr><td class="action">Email (Hey)</td><td class="keys"><kbd>◆ Shift E</kbd></td></tr>
+      <tr><td class="action">Email · new email</td><td class="keys"><kbd>◆ Shift E</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt E</kbd></td></tr>
+      <tr><td class="action">Calendar</td><td class="keys"><kbd>◆ Shift C</kbd></td></tr>
+      <tr><td class="action">ChatGPT · Grok</td><td class="keys"><kbd>◆ Shift A</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt A</kbd></td></tr>
+      <tr><td class="action">Google Photos · Maps</td><td class="keys"><kbd>◆ Shift P</kbd> <span class="sep">·</span> <kbd>◆ Shift S</kbd></td></tr>
       <tr><td class="action">YouTube</td><td class="keys"><kbd>◆ Shift Y</kbd></td></tr>
-      <tr><td class="action">Google Photos</td><td class="keys"><kbd>◆ Shift P</kbd></td></tr>
-      <tr><td class="action">WhatsApp</td><td class="keys"><kbd>◆ Shift Alt G</kbd></td></tr>
-      <tr><td class="action">Google Messages</td><td class="keys"><kbd>◆ Shift Ctrl G</kbd></td></tr>
-      <tr><td class="action">X / Twitter</td><td class="keys"><kbd>◆ Shift X</kbd></td></tr>
-      <tr><td class="action">X compose post</td><td class="keys"><kbd>◆ Shift Alt X</kbd></td></tr>
+      <tr><td class="action">WhatsApp · Messages</td><td class="keys"><kbd>◆ Shift Alt G</kbd> <span class="sep">·</span> <kbd>◆ Shift Ctrl G</kbd></td></tr>
+      <tr><td class="action">X · post</td><td class="keys"><kbd>◆ Shift X</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt X</kbd></td></tr>
+      <tr><td class="action">Copy page URL</td><td class="keys"><kbd>Shift Alt L</kbd></td></tr>
     </table>
   </section>
 
   <section class="windows">
-    <h2>Windows · Focus &amp; Swap</h2>
+    <h2>Windows · Focus &amp; Move</h2>
     <table>
-      <tr><td class="action">Focus L / D / U / R</td><td class="keys"><kbd>◆ ←↓↑→</kbd></td></tr>
-      <tr><td class="action">Swap window in direction</td><td class="keys"><kbd>◆ Shift ←↓↑→</kbd></td></tr>
-      <tr><td class="action">Cycle next / prev window</td><td class="keys"><kbd>Alt Tab</kbd> <span class="sep">·</span> <kbd>Alt Shift Tab</kbd></td></tr>
-      <tr><td class="action">Move (drag)</td><td class="keys"><kbd>◆ LMB</kbd> <span class="sep">·</span> <kbd>Middle-click</kbd></td></tr>
-      <tr><td class="action">Resize (drag)</td><td class="keys"><kbd>◆ RMB</kbd></td></tr>
-      <tr><td class="action">Resize active ←/→</td><td class="keys"><kbd>◆ -</kbd> <kbd>◆ =</kbd></td></tr>
-      <tr><td class="action">Resize active ↑/↓</td><td class="keys"><kbd>◆ Shift -</kbd> <kbd>◆ Shift =</kbd></td></tr>
-      <tr><td class="action">Close active</td><td class="keys"><kbd>◆ W</kbd></td></tr>
-      <tr><td class="action">Close all</td><td class="keys"><kbd>Ctrl Alt Delete</kbd></td></tr>
+      <tr><td class="action">Focus in direction</td><td class="keys"><kbd>◆ ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Swap in direction</td><td class="keys"><kbd>◆ Shift ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Next / prev window</td><td class="keys"><kbd>Alt Tab</kbd> <span class="sep">·</span> <kbd>Shift Alt Tab</kbd></td></tr>
+      <tr><td class="action">Move · resize (drag)</td><td class="keys"><kbd>◆ LMB</kbd> <span class="sep">·</span> <kbd>◆ RMB</kbd></td></tr>
+      <tr><td class="action">Resize wider / narrower</td><td class="keys"><kbd>◆ -</kbd> <kbd>◆ =</kbd></td></tr>
+      <tr><td class="action">Resize taller / shorter</td><td class="keys"><kbd>◆ Shift =</kbd> <kbd>◆ Shift -</kbd></td></tr>
+      <tr><td class="action">Close · close all</td><td class="keys"><kbd>◆ W</kbd> / <kbd>◆ Q</kbd> <span class="sep">·</span> <kbd>Ctrl Alt Del</kbd></td></tr>
     </table>
   </section>
 
   <section class="windows">
     <h2>Windows · Modes</h2>
     <table>
-      <tr><td class="action">Full screen</td><td class="keys"><kbd>◆ F</kbd></td></tr>
+      <tr><td class="action">Full screen · full width</td><td class="keys"><kbd>◆ F</kbd> <span class="sep">·</span> <kbd>◆ Alt F</kbd></td></tr>
       <tr><td class="action">Tiled full screen</td><td class="keys"><kbd>◆ Ctrl F</kbd></td></tr>
-      <tr><td class="action">Full width</td><td class="keys"><kbd>◆ Alt F</kbd></td></tr>
-      <tr><td class="action">Toggle floating</td><td class="keys"><kbd>◆ T</kbd></td></tr>
-      <tr><td class="action">Pop out (float &amp; pin)</td><td class="keys"><kbd>◆ O</kbd></td></tr>
+      <tr><td class="action">Single window as square</td><td class="keys"><kbd>◆ Ctrl Backspace</kbd></td></tr>
       <tr><td class="action">Toggle split</td><td class="keys"><kbd>◆ J</kbd></td></tr>
       <tr><td class="action">Pseudo window</td><td class="keys"><kbd>◆ P</kbd></td></tr>
-      <tr><td class="action">Toggle transparency</td><td class="keys"><kbd>◆ Backspace</kbd></td></tr>
-      <tr><td class="action">Toggle gaps</td><td class="keys"><kbd>◆ Shift Backspace</kbd></td></tr>
+      <tr><td class="action">Transparency · gaps</td><td class="keys"><kbd>◆ Backspace</kbd> <span class="sep">·</span> <kbd>◆ Shift Backspace</kbd></td></tr>
+      <tr><td class="action">Save / restore width</td><td class="keys"><kbd>◆ Alt Home</kbd> <span class="sep">·</span> <kbd>◆ Home</kbd></td></tr>
     </table>
   </section>
 
   <section class="workspaces">
     <h2>Workspaces</h2>
     <table>
-      <tr><td class="action">Switch to workspace N</td><td class="keys"><kbd>◆ 1</kbd> … <kbd>◆ 9</kbd></td></tr>
-      <tr><td class="action">Switch via numpad</td><td class="keys"><kbd>◆ KP1</kbd> … <kbd>◆ KP9</kbd></td></tr>
-      <tr><td class="action">Move active window to N</td><td class="keys"><kbd>◆ Shift 1</kbd> … <kbd>9</kbd></td></tr>
-      <tr><td class="action">Move silently to N</td><td class="keys"><kbd>◆ Shift Alt 1</kbd> … <kbd>9</kbd></td></tr>
+      <tr><td class="action">Move window silently</td><td class="keys"><kbd>◆ Shift Alt 1</kbd> … <kbd>0</kbd></td></tr>
       <tr><td class="action">Next / prev workspace</td><td class="keys"><kbd>◆ Tab</kbd> <span class="sep">·</span> <kbd>◆ Shift Tab</kbd></td></tr>
-      <tr><td class="action">Former workspace</td><td class="keys"><kbd>◆ Ctrl Tab</kbd></td></tr>
-      <tr><td class="action">Scroll workspace ±1</td><td class="keys"><kbd>◆ Wheel</kbd></td></tr>
-      <tr><td class="action">Toggle scratchpad</td><td class="keys"><kbd>◆ S</kbd></td></tr>
-      <tr><td class="action">Send window to scratchpad</td><td class="keys"><kbd>◆ Alt S</kbd></td></tr>
+      <tr><td class="action">Last used workspace</td><td class="keys"><kbd>◆ Ctrl Tab</kbd></td></tr>
+      <tr><td class="action">Scroll workspaces</td><td class="keys"><kbd>◆ Wheel</kbd></td></tr>
+      <tr><td class="action">Workspace to other screen</td><td class="keys"><kbd>◆ Shift Alt ←→</kbd></td></tr>
+      <tr><td class="action">Scratchpad · send to it</td><td class="keys"><kbd>◆ S</kbd> <span class="sep">·</span> <kbd>◆ Alt S</kbd></td></tr>
     </table>
   </section>
 
   <section class="workspaces">
-    <h2>Monitors &amp; Groups</h2>
+    <h2>Groups (tabbed windows)</h2>
     <table>
-      <tr><td class="action">Focus next / prev monitor</td><td class="keys"><kbd>Ctrl Alt Tab</kbd> <span class="sep">·</span> <kbd>Ctrl Alt Shift Tab</kbd></td></tr>
-      <tr><td class="action">Move workspace to monitor</td><td class="keys"><kbd>◆ Shift Alt ←↓↑→</kbd></td></tr>
-      <tr><td class="action">Toggle group</td><td class="keys"><kbd>◆ G</kbd></td></tr>
-      <tr><td class="action">Move out of group</td><td class="keys"><kbd>◆ Alt G</kbd></td></tr>
-      <tr><td class="action">Add to group in direction</td><td class="keys"><kbd>◆ Alt ←↓↑→</kbd></td></tr>
-      <tr><td class="action">Cycle group fwd / back</td><td class="keys"><kbd>◆ Alt Tab</kbd> <span class="sep">·</span> <kbd>◆ Alt Shift Tab</kbd></td></tr>
-      <tr><td class="action">Group focus L / R</td><td class="keys"><kbd>◆ Ctrl ←</kbd> <kbd>→</kbd></td></tr>
-      <tr><td class="action">Activate group window N</td><td class="keys"><kbd>◆ Alt 1</kbd> … <kbd>5</kbd></td></tr>
+      <tr><td class="action">Group on / off</td><td class="keys"><kbd>◆ G</kbd></td></tr>
+      <tr><td class="action">Leave group</td><td class="keys"><kbd>◆ Alt G</kbd></td></tr>
+      <tr><td class="action">Join group in direction</td><td class="keys"><kbd>◆ Alt ←↓↑→</kbd></td></tr>
+      <tr><td class="action">Next / prev in group</td><td class="keys"><kbd>◆ Alt Tab</kbd> <span class="sep">·</span> <kbd>◆ Shift Alt Tab</kbd></td></tr>
+      <tr><td class="action">Group window N</td><td class="keys"><kbd>◆ Alt 1</kbd> … <kbd>5</kbd></td></tr>
     </table>
   </section>
 
   <section class="menus">
-    <h2>Menus</h2>
+    <h2>Menus &amp; Panels</h2>
     <table>
-      <tr><td class="action">App launcher (Walker)</td><td class="keys"><kbd>◆ Space</kbd></td></tr>
-      <tr><td class="action">Omarchy menu</td><td class="keys"><kbd>◆ Alt Space</kbd></td></tr>
       <tr><td class="action">System menu</td><td class="keys"><kbd>◆ Esc</kbd></td></tr>
-      <tr><td class="action">Show key bindings</td><td class="keys"><kbd>◆ K</kbd></td></tr>
-      <tr><td class="action">Capture menu</td><td class="keys"><kbd>◆ Ctrl C</kbd></td></tr>
-      <tr><td class="action">Toggle menu</td><td class="keys"><kbd>◆ Ctrl O</kbd></td></tr>
-      <tr><td class="action">Hardware menu</td><td class="keys"><kbd>◆ Ctrl H</kbd></td></tr>
-      <tr><td class="action">Emoji picker</td><td class="keys"><kbd>◆ Ctrl E</kbd></td></tr>
-      <tr><td class="action">Theme menu</td><td class="keys"><kbd>◆ Shift Ctrl Space</kbd></td></tr>
-      <tr><td class="action">Background menu</td><td class="keys"><kbd>◆ Ctrl Space</kbd></td></tr>
-      <tr><td class="action">Share menu</td><td class="keys"><kbd>◆ Ctrl S</kbd></td></tr>
+      <tr><td class="action">Clipboard history</td><td class="keys"><kbd>◆ Ctrl V</kbd></td></tr>
+      <tr><td class="action">Emoji</td><td class="keys"><kbd>◆ Ctrl E</kbd></td></tr>
+      <tr><td class="action">Audio · Bluetooth</td><td class="keys"><kbd>◆ Ctrl A</kbd> <span class="sep">·</span> <kbd>◆ Ctrl B</kbd></td></tr>
+      <tr><td class="action">Network · Display · Power</td><td class="keys"><kbd>◆ Ctrl N</kbd> <span class="sep">·</span> <kbd>D</kbd> <span class="sep">·</span> <kbd>P</kbd></td></tr>
+      <tr><td class="action">Themes · backgrounds</td><td class="keys"><kbd>◆ Ctrl T</kbd> <span class="sep">·</span> <kbd>◆ Ctrl W</kbd></td></tr>
+      <tr><td class="action">Toggle menu (night light…)</td><td class="keys"><kbd>◆ Ctrl O</kbd></td></tr>
+      <tr><td class="action">Capture · Share · Hardware</td><td class="keys"><kbd>◆ Ctrl C</kbd> <span class="sep">·</span> <kbd>S</kbd> <span class="sep">·</span> <kbd>H</kbd></td></tr>
+      <tr><td class="action">Calendar · world clock</td><td class="keys"><kbd>◆ Ctrl Alt D</kbd> <span class="sep">·</span> <kbd>E</kbd></td></tr>
+      <tr><td class="action">Set · show reminders</td><td class="keys"><kbd>◆ Ctrl R</kbd> <span class="sep">·</span> <kbd>◆ Ctrl Alt R</kbd></td></tr>
+      <tr><td class="action">Bar panel N</td><td class="keys"><kbd>◆ Ctrl 1</kbd> … <kbd>9</kbd></td></tr>
     </table>
   </section>
 
   <section class="system">
-    <h2>System &amp; Captures</h2>
+    <h2>System, Captures &amp; Notifications</h2>
     <table>
-      <tr><td class="action">Lock screen</td><td class="keys"><kbd>◆ Ctrl L</kbd></td></tr>
-      <tr><td class="action">Screenshot</td><td class="keys"><kbd>PrintScreen</kbd></td></tr>
-      <tr><td class="action">Screen recording</td><td class="keys"><kbd>Alt PrintScreen</kbd></td></tr>
-      <tr><td class="action">Color picker</td><td class="keys"><kbd>◆ PrintScreen</kbd></td></tr>
-      <tr><td class="action">Toggle top bar</td><td class="keys"><kbd>◆ Shift Space</kbd></td></tr>
-      <tr><td class="action">Cycle monitor scaling</td><td class="keys"><kbd>◆ /</kbd></td></tr>
-      <tr><td class="action">Audio / BT / Wifi</td><td class="keys"><kbd>◆ Ctrl A/B/W</kbd></td></tr>
-      <tr><td class="action">Activity (btop)</td><td class="keys"><kbd>◆ Ctrl T</kbd></td></tr>
-      <tr><td class="action">Toggle nightlight</td><td class="keys"><kbd>◆ Ctrl N</kbd></td></tr>
-      <tr><td class="action">Toggle idle locking</td><td class="keys"><kbd>◆ Ctrl I</kbd></td></tr>
-      <tr><td class="action">Zoom in / reset</td><td class="keys"><kbd>◆ Ctrl Z</kbd> <span class="sep">·</span> <kbd>◆ Ctrl Alt Z</kbd></td></tr>
-      <tr><td class="action">Show time / battery</td><td class="keys"><kbd>◆ Ctrl Alt T</kbd> <span class="sep">·</span> <kbd>B</kbd></td></tr>
-      <tr><td class="action">Dismiss notification</td><td class="keys"><kbd>◆ ,</kbd></td></tr>
-      <tr><td class="action">Dismiss all / silence</td><td class="keys"><kbd>◆ Shift ,</kbd> <span class="sep">·</span> <kbd>◆ Ctrl ,</kbd></td></tr>
-      <tr><td class="action">Dictation toggle</td><td class="keys"><kbd>Right Alt</kbd></td></tr>
+      <tr><td class="action">Lock · toggle idle lock</td><td class="keys"><kbd>◆ Ctrl L</kbd> <span class="sep">·</span> <kbd>◆ Ctrl I</kbd></td></tr>
+      <tr><td class="action">Screenshot · recording</td><td class="keys"><kbd>Print</kbd> <span class="sep">·</span> <kbd>Alt Print</kbd></td></tr>
+      <tr><td class="action">Text from screen (OCR)</td><td class="keys"><kbd>◆ Ctrl Print</kbd></td></tr>
+      <tr><td class="action">Colour picker</td><td class="keys"><kbd>◆ Print</kbd></td></tr>
+      <tr><td class="action">Copy · paste · cut · all</td><td class="keys"><kbd>◆ C</kbd> <kbd>V</kbd> <kbd>X</kbd> <kbd>A</kbd></td></tr>
+      <tr><td class="action">Top bar · scaling</td><td class="keys"><kbd>◆ Shift Space</kbd> <span class="sep">·</span> <kbd>◆ /</kbd></td></tr>
+      <tr><td class="action">Zoom in · reset</td><td class="keys"><kbd>◆ Ctrl Z</kbd> <span class="sep">·</span> <kbd>◆ Ctrl Alt Z</kbd></td></tr>
+      <tr><td class="action">Newest notification (act)</td><td class="keys"><kbd>◆ ,</kbd></td></tr>
+      <tr><td class="action">Dismiss last · all</td><td class="keys"><kbd>◆ Alt ,</kbd> <span class="sep">·</span> <kbd>◆ Shift ,</kbd></td></tr>
+      <tr><td class="action">History · silence</td><td class="keys"><kbd>◆ Shift Alt ,</kbd> <span class="sep">·</span> <kbd>◆ Ctrl Alt ,</kbd></td></tr>
     </table>
-  </section>
-
-  <section class="notes">
-    <h2>Notes</h2>
-    <ul class="notes-list">
-      <li><kbd>◆</kbd> = Super (Win key). <kbd>Shift</kbd>/<kbd>Ctrl</kbd>/<kbd>Alt</kbd> escalate.</li>
-      <li>Numpad workspace keys mirror the top-row digits exactly — see the layout above.</li>
-      <li>Volume / brightness: media keys with OSD. Add <kbd>Alt</kbd> for 1% precision.</li>
-      <li>Resize keys: <kbd>-</kbd>/<kbd>=</kbd> for L/R, <kbd>Shift -</kbd>/<kbd>Shift =</kbd> for U/D (100px steps).</li>
-      <li>Forgot a binding? <kbd>◆ K</kbd> opens the live keybindings menu.</li>
-    </ul>
   </section>
 
 </div>
 
-<footer>
-  <span>Config: <kbd>~/.config/hypr/bindings.conf</kbd> + Omarchy defaults</span>
-  <span>Lookup: <kbd>◆ K</kbd></span>
-</footer>
 
 </body>
 </html>
