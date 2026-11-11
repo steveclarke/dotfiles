@@ -11,6 +11,17 @@ machine, approve the plan, fix the outage. Agents tend to write the opposite:
 background first, every detail at the same depth, one long page, prose scored
 by feel. This skill holds what goes wrong and how to check it.
 
+## Name the reader
+
+Choose before writing. A Brief for Steve asks for decisions in one or two
+pages; Hugo's `docs/feature-briefs.md` sets its shape. A team explainer opens
+each section with what it is and why it matters, then gives the detail. A
+design document is for builders: code references and technical depth belong
+there. It is never handed to Steve as his reading.
+
+Write for someone with none of the writer's context. Explain each idea where
+it first appears. Each section gives enough context to make sense on its own.
+
 ## Answer first
 
 The first two lines say what this is and what the reader does with it. A spec
@@ -66,6 +77,14 @@ Docs are in reference voice (Steve's global `AGENTS.md`, "Documents"). One
 term per concept, acronyms defined on first use, and prose a reader with
 English as a second language follows: short sentences, active voice, no idioms.
 
+Real technical names stay: database, API, webhook, DNS record, Durable
+Object. No coined phrases, buzzwords or clever labels. Describe what happens.
+
+- "Immutable intake evidence" becomes "The form keeps the details first sent."
+- "Operation receipts" becomes "A saved record shows whether the change worked."
+- "Sealed approval snapshots" becomes "Approval applies to this saved version."
+- "Each fact has one writer" becomes "Outport alone changes customer details."
+
 ## Measure every draft
 
 Reading level is measured, never estimated. The scorers are in this skill's
@@ -80,8 +99,8 @@ ruby $S/flesch_kincaid.rb --markdown < doc.md
 ruby $S/vocabulary_profiler.rb --markdown < doc.md
 ```
 
-- Grade level: 11 or below for the surrounding prose, unless the brief sets a
-  lower target (newsletters and public pages often ask for 5 to 8). Technical
+- Grade level: 9 or below for anything Steve or the team reads. A builder
+  design document may use a higher target set by its brief. Technical
   terms raise the score and stay; the score comes down by splitting sentences
   and using plain connectors, not by renaming technical things.
 - Common-word coverage: the share of words among the 1000 most common English
@@ -89,7 +108,7 @@ ruby $S/vocabulary_profiler.rb --markdown < doc.md
   kept simple.
 
 Run both on the first draft and the final one, and report both pairs of
-numbers with the document: "grade 13.2 → 9.8, common words 41% → 49%".
+numbers with the document: "grade 13.2 → 8.8, common words 41% → 49%".
 
 ## Before handing it over
 
@@ -97,3 +116,11 @@ numbers with the document: "grade 13.2 → 9.8, common words 41% → 49%".
 2. Read only the headings: they tell the story in order.
 3. Check each section earns its place under "Progressive disclosure".
 4. Run the scorers and record the numbers.
+5. Run the explain-back test: three fresh readers each get only the page text
+   and the reader profile. They share no answers. For each section, they say
+   what it means in plain words
+   and list each phrase they cannot explain or that is a coined label.
+   Any listed phrase fails. Revise and repeat before handoff. In Hugo,
+   `coordinators/bin/readable <file-or-folder>` runs both checks; use
+   `--kind team` for an explainer or `--kind design` for builder reference.
+   The default is a Brief for Steve. The coordinator still reads it in full.
