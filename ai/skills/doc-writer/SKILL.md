@@ -116,8 +116,9 @@ numbers with the document: "grade 13.2 → 8.8, common words 41% → 49%".
 2. Read only the headings: they tell the story in order.
 3. Check each section earns its place under "Progressive disclosure".
 4. Run the scorers and record the numbers.
-5. Run the explain-back test: a fresh reader gets only the page text and the
-   reader profile. For each section, they say what it means in plain words
+5. Run the explain-back test: three fresh readers each get only the page text
+   and the reader profile. They share no answers. For each section, they say
+   what it means in plain words
    and list each phrase they cannot explain or that is a coined label.
    Any listed phrase fails. Revise and repeat before handoff. In Hugo,
    `coordinators/bin/readable <file-or-folder>` runs both checks; use
