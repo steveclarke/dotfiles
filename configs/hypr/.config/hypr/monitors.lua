@@ -16,6 +16,6 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy
 -- uber-om desk: three Dell S2725QC, left to right, so the mouse crosses to the
 -- right screen. Positions assume the 1.5 scale Omarchy picks for these 4K
 -- screens (2560 logical pixels wide each).
-hl.monitor({ output = "desc:Dell Inc. DELL S2725QC 5C4G464", mode = "preferred", position = "0x0", scale = omarchy_monitor_scale })
-hl.monitor({ output = "desc:Dell Inc. DELL S2725QC 154G464", mode = "preferred", position = "2560x0", scale = omarchy_monitor_scale })
-hl.monitor({ output = "desc:Dell Inc. DELL S2725QC H04G464", mode = "preferred", position = "5120x0", scale = omarchy_monitor_scale })
+hl.monitor({ output = "desc:Dell Inc. DELL S2725QC 5C4G464", mode = "3840x2160@120", position = "0x0", scale = omarchy_monitor_scale })
+hl.monitor({ output = "desc:Dell Inc. DELL S2725QC 154G464", mode = "3840x2160@120", position = "2560x0", scale = omarchy_monitor_scale })
+hl.monitor({ output = "desc:Dell Inc. DELL S2725QC H04G464", mode = "3840x2160@120", position = "5120x0", scale = omarchy_monitor_scale })
