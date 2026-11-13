@@ -41,3 +41,23 @@ export PATH
 # including ones that predate a Hyprland reload (a long-lived tmux server, SSH).
 [[ -d $HOME/.config/hypr ]] &&
   export HYPRMONCFG_MONITORS_CONF="$HOME/.config/hypr/monitors-generated.lua"
+
+# mise shims ahead of /usr/bin for every interactive bash (terminals and agent
+# shells), not only login shells (.bash_profile does the same there). Omarchy's
+# env-bootstrap appends the shims after the system dirs, and `mise activate`
+# leaves inherited install dirs in place, so /usr/bin/ruby (Arch ruby, needed by
+# tobi-try) shadowed a repo's mise Ruby. Omarchy's mise command-wrappers stay
+# first so claude and codex keep their account-switch wrappers.
+_mise_shims="$HOME/.local/share/mise/shims"
+_mise_wrappers="$HOME/.local/share/mise/command-wrappers/bin"
+if [[ -d "$_mise_shims" ]]; then
+  PATH=":${PATH}:"
+  PATH="${PATH//:${_mise_shims}:/:}"
+  PATH="${PATH//:${_mise_wrappers}:/:}"
+  PATH="${PATH#:}"
+  PATH="${PATH%:}"
+  PATH="${_mise_shims}:${PATH}"
+  [[ -d "$_mise_wrappers" ]] && PATH="${_mise_wrappers}:${PATH}"
+  export PATH
+fi
+unset _mise_shims _mise_wrappers
