@@ -24,6 +24,9 @@ node = "lts"
 pnpm = "12"
 python = "latest"
 ruby = "4"
+gcloud = "593.0.0"
+kubectl = "1.37.2"
+sentry-cli = "latest"
 
 [settings]
 # Skip mise's new-release quarantine for Claude Code and Codex — always take
