@@ -53,3 +53,11 @@
 -- Find its class with: hyprctl clients
 -- o.transparent_window("my-app")
 -- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.
+
+-- Draw the cursor in software so it shows in screen shares (Slack, Chrome).
+-- xdg-desktop-portal-hyprland does not pass a hardware cursor to apps.
+hl.config({
+  cursor = {
+    no_hardware_cursors = true,
+  },
+})
