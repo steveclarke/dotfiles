@@ -61,3 +61,7 @@ hl.config({
     no_hardware_cursors = true,
   },
 })
+
+-- Keep Chrome from stealing focus when it asks to be activated
+-- (the Claude extension switching tabs while it works).
+o.window("google-chrome", { focus_on_activate = false })
