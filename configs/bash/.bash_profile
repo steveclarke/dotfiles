@@ -39,3 +39,7 @@ fi
 # Rust/cargo on PATH. Appended by rustup, guarded by hand: this file is shared
 # across machines and sourcing a missing .cargo/env breaks shell startup.
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+# gog keeps its Google token in a file keyring on Linux; this unlocks it without a desktop
+# prompt. The password file is per machine and never in this repo (Hugo docs/gws-cli.md).
+[[ -r "$HOME/.config/gogcli/keyring-password" ]] && export GOG_KEYRING_PASSWORD="$(<"$HOME/.config/gogcli/keyring-password")"
