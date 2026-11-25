@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code status line, compact for narrow panes: folder, git branch and state,
-# model initial and version, effort, context used, weekly limit remaining.
+# model initial and version, effort, context used, weekly limit used.
 input=$(cat)
 dir=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // empty')
 model=$(echo "$input" | jq -r '.model.display_name // empty')
@@ -53,9 +53,9 @@ if [ -n "$used" ]; then
 fi
 
 if [ -n "$week" ]; then
-  left=$(( 100 - $(printf '%.0f' "$week") ))
-  if [ "$left" -le 20 ]; then colour=$red; elif [ "$left" -le 50 ]; then colour=$yellow; else colour=$green; fi
-  out="${out}${sep}${colour}wk ${left}%${reset}"
+  wpct=$(printf '%.0f' "$week")
+  if [ "$wpct" -ge 80 ]; then colour=$red; elif [ "$wpct" -ge 50 ]; then colour=$yellow; else colour=$green; fi
+  out="${out}${sep}${colour}wk ${wpct}%${reset}"
 fi
 
 printf '%s' "$out"
