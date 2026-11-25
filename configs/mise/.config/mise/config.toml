@@ -20,11 +20,13 @@ node = "lts"
 "npm:hunkdiff" = "latest"
 "npm:playwright" = "latest"
 "npm:skills" = "latest"
+# Twilio CLI: @twilio/cli-core 9.3.0 moved to a new release workflow in twilio/twilio-cli-core, which trips the trust check (verified 2026-11-19).
+"npm:twilio-cli" = { version = "7.3.0", trust_policy_excludes = ["@twilio/cli-core@9.3.0"] }
 "npm:yarn" = "latest"
 pnpm = "12"
 python = "latest"
 ruby = "4"
-gcloud = "593.0.0"
+gcloud = "594.0.0"
 kubectl = "1.37.2"
 sentry-cli = "latest"
 
